@@ -1,0 +1,32 @@
+{
+  "name": "houselights",
+  "version": "0.5.0",
+  "description": "A Qloo-grounded slate optimizer with auditable receipts",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "test": "node --test",
+    "probe": "node --env-file-if-exists=.env scripts/probe.mjs",
+    "eval": "node --env-file-if-exists=.env scripts/eval.mjs",
+    "contingency": "node --env-file-if-exists=.env scripts/contingency.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@qloo/qloo-harness": "^0.1.26",
+    "express": "^5.2.1"
+  },
+  "overrides": {
+    "@earendil-works/pi-coding-agent": {
+      "undici": "8.10.2",
+      "brace-expansion": "5.0.12"
+    }
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
