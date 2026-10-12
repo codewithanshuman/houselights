@@ -119,6 +119,8 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.equal(intelligenceSaved.snapshot.parentId, saved.id);
   assert.equal(intelligenceSaved.snapshot.intelligence.markets.length, 3);
   assert.equal(intelligenceSaved.snapshot.intelligence.cohesion.pairCount, 1);
+  assert.equal(intelligenceSaved.snapshot.intelligence.audienceProfile.enabled, true);
+  assert.equal(intelligenceSaved.snapshot.intelligence.audienceProfile.crossDomain.length, 3);
   assert.equal(intelligenceSaved.snapshot.intelligence.venueScouting.length, 2);
   assert.ok(intelligenceSaved.snapshot.intelligence.receipts.every(receipt => receipt.id.startsWith('i')));
   const qualifications = intelligenceSaved.snapshot.intelligence.venueScouting.map(group => ({

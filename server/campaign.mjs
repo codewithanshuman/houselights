@@ -77,6 +77,12 @@ export function buildCampaign(snapshot, pipeline) {
     routeStops: intelligence.route.stops.map(stop => ({ market: stop.name, showDate: stop.showDate })),
     venueLeadCount: intelligence.venueScouting.reduce((sum, row) => sum + row.candidates.length, 0),
     receiptIds: intelligence.receipts.map(receipt => receipt.id),
+    audienceActivation: intelligence.audienceProfile?.enabled ? {
+      tags: intelligence.audienceProfile.tags.map(row => row.name).filter(Boolean),
+      demographics: intelligence.audienceProfile.demographics.map(row => ({ artistId: row.artistId, artistName: row.artistName, labels: row.rows.map(item => item.name).filter(Boolean), receiptId: row.receiptId })),
+      crossDomain: intelligence.audienceProfile.crossDomain.map(row => ({ targetType: row.targetType, names: row.rows.map(item => item.name).filter(Boolean), receiptId: row.receiptId })),
+      guard: intelligence.audienceProfile.interpretation
+    } : null,
     venuePlan: snapshot.venuePlan ? {
       routeEconomics: snapshot.venuePlan.routeEconomics,
       stops: snapshot.venuePlan.stops.map(stop => ({ market: stop.market, status: stop.qualificationStatus, venue: stop.selectedVenue?.venueName || null, breakEvenTickets: stop.economics.breakEvenTickets, breakEvenWithinCapacity: stop.economics.breakEvenWithinCapacity }))
@@ -91,6 +97,7 @@ export function buildCampaign(snapshot, pipeline) {
   if (marketBrief?.routeFeasible && !marketBrief.venuePlan) recommendations.push({ priority: 'routing', action: 'qualify_venue_leads', detail: `Verify capacity, availability and commercial terms for ${marketBrief.venueLeadCount} cultural place leads across the exact route.` });
   if (marketBrief?.venuePlan && marketBrief.venuePlan.routeEconomics.fallbackStops) recommendations.push({ priority: 'venue', action: 'source_in_band_rooms', detail: `${marketBrief.venuePlan.routeEconomics.fallbackStops} routed stop${marketBrief.venuePlan.routeEconomics.fallbackStops === 1 ? '' : 's'} use a sourced but out-of-band capacity fallback.` });
   if (marketBrief?.venuePlan?.routeEconomics.unqualifiedStops) recommendations.push({ priority: 'venue', action: 'complete_venue_qualification', detail: `${marketBrief.venuePlan.routeEconomics.unqualifiedStops} routed stop${marketBrief.venuePlan.routeEconomics.unqualifiedStops === 1 ? '' : 's'} still need a sourced venue capacity, cost and availability decision.` });
+  if (marketBrief?.audienceActivation) recommendations.push({ priority: 'campaign', action: 'review_activation_signals', detail: `Review ${marketBrief.audienceActivation.tags.length} aggregate slate tags and ${marketBrief.audienceActivation.crossDomain.length} cross-domain evidence groups before approving campaign language.` });
 
   return {
     version: '1.0', generatedAt: new Date().toISOString(), sourceId: snapshot.id, pipelineRevision: pipeline.revision,

@@ -54,12 +54,23 @@ test('linked market intelligence is carried into dossier answers and exports', (
     generatedAt: '2026-10-12T00:00:00Z',
     markets: [{ name: 'Paris', marketScore: 72.5, meanAffinity: .75, coverage: 1, artists: [] }],
     route: { feasible: true, method: 'exact-permutation-search', checkedCount: 2, totalDistanceKm: 344, stops: [{ name: 'Paris', sequence: 1, from: 'London', fromKm: 344, showDate: '2026-11-20' }] },
-    cohesion: { evidenceCoveragePercent: 100 }, venueScouting: [], receipts: [{ id: 'i1' }], limitations: ['fixture limit']
+    cohesion: { evidenceCoveragePercent: 100 }, venueScouting: [], receipts: [{ id: 'i1' }], limitations: ['fixture limit'],
+    audienceProfile: {
+      enabled: true, tags: [{ name: '<indie>' }], tagReceiptId: 'i2',
+      demographics: [{ artistId: 'a', artistName: 'A', rows: [{ name: 'age 25-34' }], receiptId: 'i3' }],
+      crossDomain: [{ targetType: 'movie', rows: [{ name: 'Moon Film' }], receiptId: 'i4' }],
+      interpretation: 'aggregate fixture'
+    }
   };
   const dossier = buildDossier(routed);
   assert.equal(dossier.culturalIntelligence.route.stops[0].market, 'Paris');
   const answer = answerDossierQuestion(dossier, 'Which market should we inspect?');
   assert.deepEqual(answer.receiptIds, ['i1']);
   assert.match(answer.answer, /Paris: 72.5/);
-  assert.match(dossierHtml(dossier), /Exact route/);
+  const audience = answerDossierQuestion(dossier, 'What audience activation signals exist?');
+  assert.deepEqual(audience.receiptIds, ['i2', 'i3', 'i4']);
+  const html = dossierHtml(dossier);
+  assert.match(html, /Exact route/);
+  assert.match(html, /Aggregate audience activation/);
+  assert.match(html, /&lt;indie&gt;/);
 });

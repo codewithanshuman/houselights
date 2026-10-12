@@ -1,6 +1,6 @@
 {
   "name": "houselights",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A Qloo-grounded slate optimizer with auditable receipts",
   "scripts": {
     "start": "node --env-file-if-exists=.env server/index.mjs",

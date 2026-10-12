@@ -86,6 +86,9 @@ function markdown(dossier) {
       ...dossier.culturalIntelligence.markets.map(item => `- ${item.name}: policy score ${item.marketScore}; evidence coverage ${item.evidenceCoveragePercent}%`),
       `- Exact route: ${dossier.culturalIntelligence.route.stops.map(item => item.market).join(' → ') || 'no feasible route'}`,
       `- Pair evidence coverage: ${dossier.culturalIntelligence.cohesion.evidenceCoveragePercent}%`, ''] : []),
+    ...(dossier.audienceProfile?.enabled ? ['## Aggregate audience activation', '',
+      `- Slate tags: ${dossier.audienceProfile.tags.map(item => item.name).filter(Boolean).join(', ') || 'none returned'}`,
+      ...dossier.audienceProfile.crossDomain.map(item => `- ${item.targetType}: ${item.rows.map(row => row.name).filter(Boolean).join(', ') || 'none returned'}; receipt ${item.receiptId}`), ''] : []),
     ...(dossier.venuePlan ? ['## Venue qualification and economics', '',
       `- Qualified stops: ${dossier.venuePlan.routeEconomics.qualifiedStops}; out-of-band fallbacks: ${dossier.venuePlan.routeEconomics.fallbackStops}; unqualified: ${dossier.venuePlan.routeEconomics.unqualifiedStops}`,
       `- Total declared fixed cost: ${dossier.venuePlan.routeEconomics.totalDeclaredFixedCost} ${dossier.venuePlan.routeEconomics.currency}`,
@@ -138,6 +141,7 @@ export function buildDossier(snapshot) {
       receiptIds: snapshot.intelligence.receipts.map(receipt => receipt.id),
       limitations: snapshot.intelligence.limitations
     } : null,
+    audienceProfile: snapshot.intelligence?.audienceProfile || null,
     venuePlan: snapshot.venuePlan ? {
       generatedAt: snapshot.venuePlan.generatedAt,
       rules: snapshot.venuePlan.rules,
@@ -206,6 +210,14 @@ export function answerDossierQuestion(dossier, question) {
       facts = dossier.marketEvidence.artists; receiptIds = unique(facts.flatMap(item => item.receiptIds));
       answer = `For ${dossier.marketEvidence.city || 'the saved city'}, ` + facts.map(item => `${item.name}: ${item.status}`).join('; ') + '. This reports evidence availability, not market size.';
     }
+  } else if (/audience|demographic|brand|movie|podcast|campaign|activation|theme|tag/.test(lower) && dossier.audienceProfile?.enabled) {
+    facts = [dossier.audienceProfile];
+    receiptIds = unique([
+      dossier.audienceProfile.tagReceiptId,
+      ...dossier.audienceProfile.demographics.map(item => item.receiptId),
+      ...dossier.audienceProfile.crossDomain.map(item => item.receiptId)
+    ]);
+    answer = `The aggregate slate profile returned ${dossier.audienceProfile.tags.length} tags and ${dossier.audienceProfile.crossDomain.length} cross-domain groups. These are campaign-planning signals, not individual traits or conversion predictions.`;
   } else if (/evidence|receipt|source|proof/.test(lower)) {
     facts = dossier.sourceReceipts; receiptIds = facts.map(item => item.id);
     answer = `The dossier contains ${facts.length} compact source receipts. Each retains tool, status, source, fetch time and digest; the digest is not a provider signature.`;
@@ -226,6 +238,10 @@ export function dossierHtml(dossier) {
   const receipts = dossier.sourceReceipts.map(item => `<code>${escapeHtml(item.id)}</code> · ${escapeHtml(item.tool)} · ${escapeHtml(item.status)} · ${escapeHtml(item.digest)}`);
   const markets = dossier.culturalIntelligence?.markets.map(item => `<strong>${escapeHtml(item.name)}</strong> — policy score ${escapeHtml(item.marketScore)}; evidence coverage ${escapeHtml(item.evidenceCoveragePercent)}%`) || [];
   const route = dossier.culturalIntelligence?.route.stops.map(item => escapeHtml(`${item.sequence}. ${item.market} · ${item.showDate} · ${item.fromKm} km from ${item.from}`)) || [];
+  const profile = dossier.audienceProfile?.enabled ? [
+    `<strong>Slate tags</strong> — ${escapeHtml(dossier.audienceProfile.tags.map(item => item.name).filter(Boolean).join(', ') || 'none returned')}`,
+    ...dossier.audienceProfile.crossDomain.map(item => `<strong>${escapeHtml(item.targetType)}</strong> — ${escapeHtml(item.rows.map(row => row.name).filter(Boolean).join(', ') || 'none returned')}`)
+  ] : [];
   const venues = dossier.venuePlan?.stops.map(item => `<strong>${escapeHtml(item.market)}</strong> — ${escapeHtml(item.qualificationStatus)}; ${escapeHtml(item.venueName || 'no qualified venue')}; break-even ${escapeHtml(item.breakEvenTickets)} tickets`) || [];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.audienceProfile?.enabled ? `<section><h2>Aggregate audience activation</h2>${listHtml(profile)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
 }

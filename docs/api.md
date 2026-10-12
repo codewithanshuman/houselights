@@ -39,7 +39,9 @@ Content-Type: application/json
     { "name": "Berlin", "lat": 52.52, "lon": 13.405 }
   ],
   "stopCount": 2,
-  "startDate": "2026-11-20"
+  "startDate": "2026-11-20",
+  "includeAudienceProfile": true,
+  "profileTargets": ["brand", "movie", "podcast"]
 }
 ```
 
@@ -49,7 +51,9 @@ For each selected artist in each requested market, the server records one `where
 
 The route engine searches every ordered route of the requested length. It rejects routes whose selected markets are less than 150 km apart or whose legs exceed 1,800 km, maximizes total market policy score, and uses total distance then market names as deterministic tie-breakers. Travel days use a declared 700 km-per-day rule. The response reports the number of routes checked and rejected, every scheduled leg, a chart-ready market/artist matrix, venue leads and all supporting receipt IDs.
 
-The route stores a new immutable child snapshot and returns its ID. The source snapshot is unchanged. An analysis is rejected before any provider call when its deterministic workflow count exceeds `INTELLIGENCE_CALL_BUDGET`, capped at 60. The endpoint also allows three runs per IP per minute and 50 per process-day. These process-local controls are quota safeguards rather than authentication.
+Audience profiling is enabled by default. It adds one group `entity_tags` workflow, one `audience_demographics` workflow per selected artist and one `recommend` workflow per requested cross-domain target. Supported targets are `book`, `brand`, `movie`, `podcast`, `tv_show` and `videogame`, with at most five in one run. The default targets are brand, movie and podcast. Set `includeAudienceProfile` to `false` to omit this module and its calls. Returned labels are aggregate activation context; they do not identify people, establish protected traits or predict attendance or conversion.
+
+The route stores a new immutable child snapshot and returns its ID. The source snapshot is unchanged. Before calling Qloo, the server counts `markets × selected artists + selected-artist pairs + route stops`, plus the enabled profile calls described above. An analysis is rejected when that count exceeds `INTELLIGENCE_CALL_BUDGET`, capped at 60. The endpoint also allows three runs per IP per minute and 50 per process-day. These process-local controls are quota safeguards rather than authentication.
 
 ## Venue qualification and route economics
 
@@ -161,6 +165,7 @@ GET /api/campaign/:savedRunId
 Returns a deterministic four-stage control report over the saved evidence and current persistent pipeline:
 
 - `research` orders artists by missing evidence and includes the linked market/route brief when available.
+- When present, `research.audienceActivation` exposes receipt-linked tags, demographic labels and cross-domain names for human review before campaign language is approved.
 - `pitching` counts approved, waiting and sent deals while retaining the human-approval gate.
 - `analytics` exposes recorded response, acceptance, objection, fee and next-action metrics.
 - `followup` combines Day 3/7/14 due work with an artist-specific maximum rate that keeps the current slate inside its declared budget.

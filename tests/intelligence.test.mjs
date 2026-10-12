@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Run } from '../server/qloo.mjs';
-import { buildCulturalIntelligence, distanceKm, normalizeIntelligenceInput, optimizeMarketRoute } from '../server/intelligence.mjs';
+import { buildCulturalIntelligence, distanceKm, intelligenceWorkflowCount, normalizeIntelligenceInput, optimizeMarketRoute } from '../server/intelligence.mjs';
 
 const input = normalizeIntelligenceInput({
   origin: { name: 'London', lat: 51.5074, lon: -0.1278 },
@@ -19,6 +19,8 @@ test('geographic inputs are strict and distance uses great-circle kilometers', (
   assert.throws(() => normalizeIntelligenceInput({ markets: [], startDate: '2026-11-20' }), /2–8/);
   assert.throws(() => normalizeIntelligenceInput({ markets: [input.markets[0], input.markets[1]], startDate: '2026-02-30' }), /valid/);
   assert.throws(() => normalizeIntelligenceInput({ markets: [input.markets[0], { ...input.markets[1], name: 'London' }], startDate: '2026-11-20' }), /unique/);
+  assert.throws(() => normalizeIntelligenceInput({ markets: input.markets.slice(0, 2), startDate: '2026-11-20', profileTargets: ['restaurant'] }), /supports/);
+  assert.equal(intelligenceWorkflowCount(input, 2), 15);
 });
 
 test('route search checks every ordered route and maximizes declared taste utility before distance', () => {
@@ -46,8 +48,24 @@ test('cultural intelligence produces receipt-backed market, cohesion, route and 
   assert.ok(report.cohesion.pairs[0].sharedTastes.length > 0);
   assert.equal(report.venueScouting.length, 2);
   assert.ok(report.venueScouting.every(row => row.candidates.length === 3));
-  assert.equal(report.receipts.length, 9);
+  assert.equal(report.receipts.length, 15);
   assert.ok(report.receipts.every(receipt => receipt.id.startsWith('i') && receipt.source === 'synthetic'));
   assert.equal(report.chartData.artistMarketMatrix.length, 6);
+  assert.equal(report.audienceProfile.enabled, true);
+  assert.equal(report.audienceProfile.tags.length, 3);
+  assert.equal(report.audienceProfile.demographics.length, 2);
+  assert.deepEqual(report.audienceProfile.crossDomain.map(row => row.targetType), ['brand', 'movie', 'podcast']);
+  assert.ok(report.audienceProfile.crossDomain.every(row => row.rows.length === 3));
+  assert.match(report.audienceProfile.interpretation, /not describe an individual/);
   assert.match(report.cohesion.interpretation, /not audience overlap/);
+});
+
+test('audience profile can be disabled to preserve a smaller explicit workflow budget', async () => {
+  const snapshot = { id: 'fixture', memo: { slate: { feasible: true, selectedIds: ['a'] }, items: [{ id: 'a', name: 'Alpha' }] } };
+  const compactInput = { ...input, includeAudienceProfile: false, profileTargets: [] };
+  const run = new Run({ mode: 'mock', budget: 10, receiptPrefix: 'i', cacheStore: new Map(), delay: async () => {} });
+  const report = await buildCulturalIntelligence(snapshot, compactInput, run);
+  assert.equal(report.audienceProfile.enabled, false);
+  assert.equal(report.receipts.length, 5);
+  assert.equal(intelligenceWorkflowCount(compactInput, 1), 5);
 });

@@ -86,9 +86,11 @@ The robust-slate search enumerates every exact-size candidate subset, removes an
 
 The engine calls `compare_audiences` for every selected-artist pair, retaining shared cultural labels and support coverage. It explicitly does not convert those labels into overlap percentages, audience cannibalization or sales claims. After routing, it calls `recommend` with `target_type: place` in each chosen stop to produce leads that still require independent capacity, availability and commercial verification.
 
+The optional audience-profile branch calls `entity_tags` once for the complete selected slate, `audience_demographics` once per selected artist and `recommend` once per configured cross-domain target. It reuses the selected artist IDs in a combined profile and uses the first routed market only as declared signal context. Brand, movie, podcast, book, TV and videogame results remain named aggregate associations with receipt IDs. The application does not infer personal identities, protected traits, campaign conversion or attendance from these rows.
+
 Routing enumerates every ordered selection of the requested size, at most `P(8,5) = 6,720` routes. Every selected-market pair must be at least 150 km apart and every route leg must be at most 1,800 km. Feasible routes are ordered by summed market score, total great-circle distance and a stable market-name tie-breaker. The schedule uses 700 km per travel day and inserts the declared day-off rule after five shows. The response includes checked and rejected counts, legs, travel days and show dates so the result is inspectable.
 
-Before any call, `server/app.mjs` computes `markets × selected artists + selected-artist pairs + route stops`. Requests above the bounded intelligence budget are rejected. Successful results become immutable child snapshots containing namespaced `i…` receipts so their evidence links cannot collide with the source memo's `r…` receipts.
+Before any call, `server/app.mjs` computes `markets × selected artists + selected-artist pairs + route stops`, plus one tag call, one demographic call per artist and the configured cross-domain calls when audience profiling is enabled. Requests above the bounded intelligence budget are rejected. Successful results become immutable child snapshots containing namespaced `i…` receipts so their evidence links cannot collide with the source memo's `r…` receipts.
 
 ## Venue qualification and deterministic economics
 

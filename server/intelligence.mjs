@@ -4,6 +4,7 @@ const finite = value => typeof value === 'number' && Number.isFinite(value);
 const round = value => Math.round((value + Number.EPSILON) * 1e6) / 1e6;
 const clamp = value => Math.max(0, Math.min(1, value));
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+const PROFILE_TARGETS = new Set(['book', 'brand', 'movie', 'podcast', 'tv_show', 'videogame']);
 
 function validDate(value) {
   if (!datePattern.test(String(value || ''))) return false;
@@ -35,10 +36,21 @@ export function normalizeIntelligenceInput(raw) {
   const stopCount = Number(value.stopCount ?? Math.min(5, markets.length));
   if (!Number.isInteger(stopCount) || stopCount < 2 || stopCount > Math.min(5, markets.length)) throw new Error('stopCount must be an integer from 2 to 5 and no larger than the market list.');
   if (!validDate(value.startDate)) throw new Error('startDate must be a valid YYYY-MM-DD date.');
+  const includeAudienceProfile = value.includeAudienceProfile !== false;
+  const requestedTargets = value.profileTargets ?? ['brand', 'movie', 'podcast'];
+  if (!Array.isArray(requestedTargets) || requestedTargets.length > 5) throw new Error('profileTargets must be an array of at most five supported Qloo entity types.');
+  const profileTargets = [...new Set(requestedTargets.map(target => String(target).trim().toLowerCase()))];
+  if (profileTargets.some(target => !PROFILE_TARGETS.has(target))) throw new Error('profileTargets supports book, brand, movie, podcast, tv_show and videogame.');
   return {
-    origin, markets, stopCount, startDate: value.startDate,
+    origin, markets, stopCount, startDate: value.startDate, includeAudienceProfile,
+    profileTargets: includeAudienceProfile ? profileTargets : [],
     rules: { minMarketDistanceKm: 150, maxLegKm: 1800, maxDriveKmPerDay: 700, dayOffAfterShows: 5 }
   };
+}
+
+export function intelligenceWorkflowCount(input, artistCount) {
+  const base = input.markets.length * artistCount + artistCount * (artistCount - 1) / 2 + input.stopCount;
+  return base + (input.includeAudienceProfile ? 1 + artistCount + input.profileTargets.length : 0);
 }
 
 export function distanceKm(a, b) {
@@ -142,6 +154,28 @@ export async function buildCulturalIntelligence(snapshot, rawInput, run) {
     sharedThemes: [...new Set(cohesionPairs.flatMap(pair => pair.sharedTastes))], pairs: cohesionPairs,
     interpretation: 'Pair coverage and shared-theme breadth from aggregate comparison responses; not audience overlap, ticket cannibalization or sales lift.'
   };
+  let audienceProfile = { enabled: false, tags: [], demographics: [], crossDomain: [], interpretation: 'Audience profile was disabled for this run.' };
+  if (input.includeAudienceProfile) {
+    const artistIds = artists.map(item => item.id);
+    const tagCall = await run.call('entity_tags', { entities: artistIds, entity_type: 'artist', limit: 20 }, 'Find aggregate cultural concepts that characterize the selected slate');
+    const demographics = [];
+    for (const artist of artists) {
+      const { receipt } = await run.call('audience_demographics', { entity: artist.id, entity_type: 'artist', limit: 12 }, `Inspect aggregate demographic context associated with ${artist.name}`);
+      demographics.push({ artistId: artist.id, artistName: artist.name, rows: receipt.evidence?.rows || [], status: receipt.status, receiptId: receipt.id });
+    }
+    const crossDomain = [];
+    const signalLocation = route.stops[0]?.name || input.markets[0].name;
+    for (const targetType of input.profileTargets) {
+      const { receipt } = await run.call('recommend', { target_type: targetType, signals: artistIds, signal_location: signalLocation, limit: 8 }, `Find ${targetType} context associated with the selected slate near ${signalLocation}`);
+      crossDomain.push({ targetType, signalLocation, rows: receipt.evidence?.rows || [], status: receipt.status, receiptId: receipt.id });
+    }
+    audienceProfile = {
+      enabled: true,
+      tags: tagCall.receipt.evidence?.rows || [], tagReceiptId: tagCall.receipt.id, tagStatus: tagCall.receipt.status,
+      demographics, crossDomain,
+      interpretation: 'Aggregate Qloo taste context for campaign planning. It does not describe an individual, establish protected traits, or predict attendance or conversion.'
+    };
+  }
   const venueScouting = [];
   for (const stop of route.stops) {
     const { receipt } = await run.call('recommend', { target_type: 'place', signals: artists.map(item => item.id), filter_location: stop.name, limit: 8 }, `Scout Qloo place candidates for the selected slate in ${stop.name}`);
@@ -149,17 +183,23 @@ export async function buildCulturalIntelligence(snapshot, rawInput, run) {
   }
   return {
     version: '1.0', generatedAt: new Date().toISOString(), sourceId: snapshot.id, input,
-    artists: artists.map(item => ({ id: item.id, name: item.name })), markets: marketRows, route, cohesion, venueScouting,
+    artists: artists.map(item => ({ id: item.id, name: item.name })), markets: marketRows, route, cohesion, audienceProfile, venueScouting,
     receipts: run.receipts,
     chartData: {
       marketBars: marketRows.map(row => ({ market: row.name, policyScore: row.marketScore, evidenceCoveragePercent: round(row.coverage * 100), meanObservedAffinity: row.meanAffinity })),
       artistMarketMatrix: marketRows.flatMap(row => row.artists.map(artist => ({ market: row.name, artist: artist.artistName, affinity: artist.affinity, receiptId: artist.receiptId }))),
-      cohesionEdges: cohesionPairs.map(pair => ({ source: pair.names[0], target: pair.names[1], sharedTasteCount: pair.sharedTasteCount, supported: pair.comparisonAvailable, receiptId: pair.receiptId }))
+      cohesionEdges: cohesionPairs.map(pair => ({ source: pair.names[0], target: pair.names[1], sharedTasteCount: pair.sharedTasteCount, supported: pair.comparisonAvailable, receiptId: pair.receiptId })),
+      profileCounts: audienceProfile.enabled ? [
+        { category: 'tags', count: audienceProfile.tags.length },
+        ...audienceProfile.demographics.map(row => ({ category: `demographics:${row.artistName}`, count: row.rows.length })),
+        ...audienceProfile.crossDomain.map(row => ({ category: row.targetType, count: row.rows.length }))
+      ] : []
     },
     limitations: [
       'Market scores compare only the requested markets and selected artists under the declared 70% affinity / 30% evidence-coverage policy.',
       'Qloo cultural affinity is not ticket demand. Coordinates are user-supplied routing inputs, not Qloo evidence.',
-      'Venue candidates are cultural-context leads; capacity, availability, offer and contact details remain unverified.'
+      'Venue candidates are cultural-context leads; capacity, availability, offer and contact details remain unverified.',
+      'Audience tags, demographics and cross-domain results are aggregate cultural context; they do not identify individuals or predict campaign performance.'
     ]
   };
 }

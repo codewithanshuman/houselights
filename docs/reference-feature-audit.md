@@ -56,10 +56,12 @@ The four supplied archives were inspected as reference implementations. Their do
 - Enforces the declared market-separation, leg-distance, travel-day and day-off rules.
 - Discovers cultural place leads at chosen stops and labels capacity, availability and commercial terms unverified.
 - Saves the complete output and namespaced receipts as a linked child snapshot.
+- Optionally adds slate-level cultural tags, per-artist aggregate demographics and bounded cross-domain recommendations, each linked to its own receipt.
 
 ### Four-stage campaign control
 
 - Orders research by evidence gaps and incorporates any linked market brief.
+- Feeds receipt-linked audience activation signals into the campaign review while retaining a human approval gate.
 - Preserves human approval before recorded outreach.
 - Derives outcome analytics solely from stored pipeline events.
 - Calculates each act's maximum slate-preserving rate from the saved budget and other selected fees.

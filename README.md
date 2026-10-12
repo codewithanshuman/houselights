@@ -55,6 +55,7 @@ npm start
 - Joins research, human pitch approval, outreach, outcomes, negotiation ceilings, scheduled follow-ups, contingency replacements and route intelligence into a four-stage campaign control report.
 - Exports a standalone, escaped, print-ready HTML decision dossier with its source receipt index.
 - Qualifies routed Qloo place leads with caller-supplied capacity sources, availability and costs; applies explicit 60%–250% room-fit rules and produces cent-reconciled per-stop break-even call sheets.
+- Builds an optional receipt-backed aggregate audience activation profile from slate tags, per-artist demographics and selected cross-domain Qloo recommendations such as brands, movies, podcasts, books, TV and games.
 - Turns decision practice into a six-mission Decision Gauntlet: reduce the source budget, book a discovered act, protect genre breadth, survive a 10% quote increase, keep rank receipts complete, and record a lock or exclusion. XP is recomputed on the server from saved evidence and is never a demand forecast.
 - Produces per-artist claims linked to receipts and saves named alternative scenarios with a parent link and the original evidence.
 - Presents the workflow in a responsive midnight-blue and gold workspace with owner-supplied atmospheric artwork and an optional motion setting.

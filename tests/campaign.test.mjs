@@ -11,7 +11,13 @@ const items = [
 const snapshot = {
   id: 'source', intelligence: {
     markets: [{ name: 'London', marketScore: 78, coverage: 1 }], route: { feasible: true, stops: [{ name: 'London', showDate: '2026-11-20' }] },
-    venueScouting: [{ candidates: [{ name: 'Venue' }] }], receipts: [{ id: 'i1' }]
+    venueScouting: [{ candidates: [{ name: 'Venue' }] }], receipts: [{ id: 'i1' }],
+    audienceProfile: {
+      enabled: true, tags: [{ name: 'indie' }],
+      demographics: [{ artistId: 'a', artistName: 'Alpha', rows: [{ name: 'age 25-34' }], receiptId: 'i2' }],
+      crossDomain: [{ targetType: 'brand', rows: [{ name: 'Example Brand' }], receiptId: 'i3' }],
+      interpretation: 'Aggregate context only.'
+    }
   },
   memo: {
     slate: { feasible: true, selectedIds: ['a', 'b'] }, items,
@@ -30,6 +36,7 @@ test('campaign loop joins research, approval, follow-up, analytics, ceilings and
   assert.equal(campaign.loop.pitching.awaitingResponse, 1);
   assert.equal(campaign.loop.followup.due.length, 1);
   assert.equal(campaign.loop.research.marketBrief.topMarkets[0].name, 'London');
+  assert.deepEqual(campaign.loop.research.marketBrief.audienceActivation.tags, ['indie']);
   const alpha = campaign.deals.find(deal => deal.artistId === 'a');
   assert.equal(alpha.negotiation.maxRateKeepingCurrentSlateFeasible, 7000);
   assert.equal(alpha.negotiation.headroomFromProposedRate, 1000);
@@ -37,4 +44,5 @@ test('campaign loop joins research, approval, follow-up, analytics, ceilings and
   assert.equal(alpha.fallback.feasible, true);
   assert.deepEqual(alpha.fallback.replacements.map(item => item.id), ['c']);
   assert.ok(campaign.recommendations.some(item => item.action === 'qualify_venue_leads'));
+  assert.ok(campaign.recommendations.some(item => item.action === 'review_activation_signals'));
 });

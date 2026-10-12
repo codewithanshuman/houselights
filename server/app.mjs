@@ -9,7 +9,7 @@ import { buildContingencyPlan } from './contingency.mjs';
 import { buildBookingPacket } from './operations.mjs';
 import { buildDossier, answerDossierQuestion, dossierHtml } from './dossier.mjs';
 import { createPipeline, applyPipelineEvent } from './pipeline.mjs';
-import { normalizeIntelligenceInput, buildCulturalIntelligence } from './intelligence.mjs';
+import { normalizeIntelligenceInput, buildCulturalIntelligence, intelligenceWorkflowCount } from './intelligence.mjs';
 import { buildCampaign } from './campaign.mjs';
 import { buildVenuePlan } from './venues.mjs';
 import { hasLLM } from './llm.mjs';
@@ -64,7 +64,7 @@ export function createApp() {
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.8.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.9.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -134,7 +134,7 @@ export function createApp() {
     catch (error) { return res.status(400).json({ error: error.message }); }
     const artistCount = source.memo?.slate?.selectedIds?.length || 0;
     if (!artistCount || !source.memo?.slate?.feasible) return res.status(400).json({ error: 'A feasible saved slate is required.' });
-    const expectedCalls = input.markets.length * artistCount + artistCount * (artistCount - 1) / 2 + input.stopCount;
+    const expectedCalls = intelligenceWorkflowCount(input, artistCount);
     if (expectedCalls > intelligenceBudget) return res.status(400).json({ error: `This analysis requires ${expectedCalls} workflows; reduce markets, route stops or slate size to the ${intelligenceBudget}-workflow limit.`, expectedCalls, callBudget: intelligenceBudget });
     resetDay();
     const now = Date.now();
