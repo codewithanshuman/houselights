@@ -1,0 +1,21 @@
+# Third-party notices
+
+## Routed
+
+`server/operations.mjs` implements standards-compliant iCalendar line folding and an evidence-number guard adapted from the approach in the supplied `routed-main` reference archive. The implementation was rewritten for Houselights' data model. Routed is distributed under the MIT License:
+
+MIT License
+
+Copyright (c) 2026 Rohan Borade
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Other supplied references
+
+The supplied Alloy archive declares MIT but contains an unfilled copyright template. Houselights uses its report-scoped analysis pattern as product inspiration; no Alloy source was copied.
+
+The supplied Scaena and GeoTaste archives do not expose a project-level license in the supplied roots. Houselights therefore implements its booking pipeline, analytics and geographic evidence model independently and does not copy their source code or assets.

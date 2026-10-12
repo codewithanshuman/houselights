@@ -28,9 +28,11 @@ Allow roughly five minutes. Use a live-key fixture that has actually been tested
 6. **Show the trade-off.** Inspect a feasible swap and a frontier option. Explain which constraints or policy components account for the difference.
 7. **Stress the decision.** Show the 80–120% budget ladder and the 0%, 10%, 20% and 30% fee increases. Explain whether the original slate survives a higher quote, whether a replacement slate exists, and which artists change. Keep locks and availability fixed. These are hypothetical planning cases, not success probabilities.
 8. **Rehearse a cancellation.** Run `npm run contingency -- <saved-run-id>` or call `POST /api/contingency`. Show that the other booked artists stay fixed, name the exact replacement and surface any critical dependency. Compare the optimum with the robust slate and state its visible utility cost. Coverage describes only the declared drills; it is not a probability.
-9. **Save an alternative.** Edit a quote or constraint, save a named scenario and open its share link in a fresh session. Show its parent run and the preserved source receipts. The server recomputes this scenario from saved evidence, rather than trusting scores sent by the browser.
-10. **Play the Decision Gauntlet.** Score the current slate, apply the 90% budget mission and re-optimize. Show how clearing the budget mission can lose the quote-shock mission. This is the core lesson: robust booking is multi-objective, and every badge is derived from the displayed constraints and saved evidence.
-11. **Compare.** If a model is configured, inspect the Qloo-off comparison in the exported memo or its optional UI section as a descriptive contrast. The optimizer's input-order baseline is a separate comparison, not the tool-free LLM answer. End with the specific buyer decision the product supports.
+9. **Move from decision to execution.** Generate a booking packet for an explicit event. Inspect one hold request's evidence lines and number guard, download or inspect its calendar payload, then move one artist through pitch approval, outreach and an accepted response. Show the Day 3/7/14 reminders and logistics gate.
+10. **Interrogate the dossier.** Run `npm run dossier -- <saved-run-id>` and ask the report API about risks, geography or receipts. Ask for a ticket-sales prediction and show the evidence boundary refusing it.
+11. **Save an alternative.** Edit a quote or constraint, save a named scenario and open its share link in a fresh session. Show its parent run and the preserved source receipts. The server recomputes this scenario from saved evidence, rather than trusting scores sent by the browser.
+12. **Play the Decision Gauntlet.** Score the current slate, apply the 90% budget mission and re-optimize. Show how clearing the budget mission can lose the quote-shock mission. This is the core lesson: robust booking is multi-objective, and every badge is derived from the displayed constraints and saved evidence.
+13. **Compare.** If a model is configured, inspect the Qloo-off comparison in the exported memo or its optional UI section as a descriptive contrast. The optimizer's input-order baseline is a separate comparison, not the tool-free LLM answer. End with the specific buyer decision the product supports.
 
 ## Evidence to collect before claiming impact
 
@@ -45,13 +47,13 @@ Allow roughly five minutes. Use a live-key fixture that has actually been tested
 - [ ] Calibrate adapters against real Qloo outputs; keep unknown measurements unknown until their semantics are established.
 - [ ] Complete real-booker testing or explicitly disclose that impact validation remains pending.
 - [ ] Publish a working external demo and verify it is accessible end-to-end without private access.
-- [ ] Publish the complete source repository, assets and reproducible setup instructions.
-- [ ] Include [artwork provenance](../public/assets/SOURCES.md) and appropriate distribution rights for the supplied visuals; the MIT code license does not assert ownership of them.
-- [ ] Verify that the MIT `LICENSE` file is visible in the public repository and recognized in its About/license area.
-- [ ] Add verified public demo and repository links to this document and the README.
+- [x] Publish the complete source repository and reproducible setup instructions.
+- [ ] Confirm appropriate distribution rights for the supplied visuals; [artwork provenance](../public/assets/SOURCES.md) is included, but the MIT code license does not assert ownership of them.
+- [x] Verify that the MIT `LICENSE` file is visible in the public repository and recognized in its About/license area.
+- [ ] Add the verified public demo link to this document and the README.
 - [ ] Capture final screenshots and label the data mode honestly.
 - [ ] Check current official eligibility, deadline, submission fields and API requirements before submitting.
 
 The **user-supplied hackathon brief** lists **31 October 2026 at 9:15 a.m. India time (GMT+5:30)** as the deadline, requires a working externally hosted application, a public code repository, a text description and an open-source license, and says a video is not required. These requirements and the deadline have not been independently verified in this document. The supplied brief lists a $15,000 first prize; no placing or award can be promised.
 
-Public demo: pending. Public repository: pending. Live integration validation: pending. Real-booker outcome evidence: pending.
+Public demo: pending. Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live integration validation: pending. Real-booker outcome evidence: pending.

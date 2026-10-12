@@ -26,6 +26,9 @@ For a plain Node service, install with `npm ci --omit=dev` and start with `npm s
 - Change the budget, lock or exclude an artist, and confirm the displayed slate and diagnostics respond to the constraint.
 - Run budget and fee stress cases. Confirm locked artists remain locked, unknown fees remain ineligible, and the original slate's continued feasibility is distinguished from finding a replacement.
 - Generate a contingency report for a saved run. Confirm each cancellation excludes the canceled act, preserves every survivor and either supplies one replacement or declares infeasibility. Inspect the robust slate's utility sacrifice and cancellation coverage.
+- Generate a dossier and ask it about risks, costs, geography and receipts. Confirm an unsupported forecast question is refused and supported answers return saved receipt IDs.
+- Generate an operational packet with an explicit date. Validate every hold draft's number guard and import the returned iCalendar payload into a calendar client.
+- Move one selected artist through pitch approval and outreach. Confirm Day 3/7/14 follow-ups, revision-conflict handling, response cancellation of reminders and the logistics gate.
 - Save a named scenario, open it in a fresh session, and verify its parent link, edited terms and unchanged source receipts. Confirm the source run itself is unchanged.
 - Open a saved share link in a fresh browser session, restart the service, and confirm it remains available from persistent storage.
 - Confirm no server key appears in browser network responses, generated snapshots, source control or logs.

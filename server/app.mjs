@@ -6,8 +6,12 @@ import { optimizeSlate } from './optimizer.mjs';
 import { analyzeSlate } from './analysis.mjs';
 import { evaluateGauntlet } from './gauntlet.mjs';
 import { buildContingencyPlan } from './contingency.mjs';
+import { buildBookingPacket } from './operations.mjs';
+import { buildDossier, answerDossierQuestion } from './dossier.mjs';
+import { createPipeline, applyPipelineEvent } from './pipeline.mjs';
 import { hasLLM } from './llm.mjs';
 import * as store from './store.mjs';
+import * as pipelineStore from './pipeline-store.mjs';
 
 const pub = fileURLToPath(new URL('../public', import.meta.url));
 const list = (value, max) => [...new Set((Array.isArray(value) ? value : String(value || '').split(',')).map(s => String(s).trim().slice(0, 100)).filter(Boolean))].slice(0, max);
@@ -56,12 +60,48 @@ export function createApp() {
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.5.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.6.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
     res.set('Cache-Control', 'no-store');
     return snapshot ? res.json(snapshot) : res.status(404).json({ error: 'Saved run not found.' });
+  });
+  app.get('/api/dossier/:id', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    res.set('Cache-Control', 'no-store');
+    if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
+    try { return res.json(buildDossier(snapshot)); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.post('/api/dossier/:id/ask', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
+    try { return res.json(answerDossierQuestion(buildDossier(snapshot), req.body?.question)); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.post('/api/packet/:id', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
+    try { return res.json(buildBookingPacket(snapshot, req.body?.event)); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.get('/api/pipeline/:id', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    res.set('Cache-Control', 'no-store');
+    if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
+    try {
+      const pipeline = pipelineStore.load(req.params.id) || pipelineStore.save(req.params.id, createPipeline(snapshot));
+      return res.json(pipeline);
+    } catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.post('/api/pipeline/:id/events', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
+    try {
+      const pipeline = pipelineStore.load(req.params.id) || createPipeline(snapshot);
+      return res.json(pipelineStore.save(req.params.id, applyPipelineEvent(pipeline, req.body)));
+    } catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.post('/api/optimize', (req, res) => {
     if (!Array.isArray(req.body?.items) || req.body.items.length > 10) return res.status(400).json({ error: 'Provide at most 10 candidates.' });

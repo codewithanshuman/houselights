@@ -82,6 +82,27 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.equal(contingency.resilience.totalScenarios, memo.constraints.slots * 4 + 7);
   assert.ok(contingency.cancellations.every(row => !row.selectedIds.includes(row.canceledId)));
   assert.equal((await post('/api/contingency', { sourceId: saved.id, terms: { unknown: { fee: 1 } } })).status, 400);
+  const dossierResponse = await fetch(url + '/api/dossier/' + saved.id);
+  assert.equal(dossierResponse.status, 200);
+  const dossier = await dossierResponse.json();
+  assert.deepEqual(dossier.decision.selectedIds, memo.slate.selectedIds);
+  assert.equal(dossier.mode, 'synthetic');
+  const answerResponse = await post('/api/dossier/' + saved.id + '/ask', { question: 'What are the budget and fees?' });
+  assert.equal(answerResponse.status, 200);
+  assert.equal((await answerResponse.json()).grounding, 'saved_dossier_only');
+  const packetResponse = await post('/api/packet/' + saved.id, { event: { name: 'Test Night', date: '2026-11-20', venue: 'Test Room', contactEmail: 'buyer@example.com' } });
+  assert.equal(packetResponse.status, 200);
+  const packet = await packetResponse.json();
+  assert.equal(packet.holdRequests.length, memo.constraints.slots);
+  assert.ok(packet.holdRequests.every(item => item.numericGuard.passed && item.status === 'draft_not_sent'));
+  assert.match(packet.calendarIcs, /BEGIN:VCALENDAR/);
+  const pipelineResponse = await fetch(url + '/api/pipeline/' + saved.id);
+  assert.equal(pipelineResponse.status, 200);
+  let pipeline = await pipelineResponse.json();
+  const pipelineArtist = pipeline.deals[0].artistId;
+  pipeline = await (await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: pipelineArtist })).json();
+  assert.equal(pipeline.deals.find(item => item.artistId === pipelineArtist).stage, 'pitch_approved');
+  assert.equal((await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: 'unknown' })).status, 400);
 });
 
 test('invalid inputs fail early; infeasible optimization is an explained result', async () => {

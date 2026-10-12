@@ -11,6 +11,11 @@
 | `POST /api/analyze` | Analyze hypothetical budget and fee scenarios without Qloo calls |
 | `POST /api/gauntlet` | Verify six decision missions against server-stored evidence and a freshly optimized slate |
 | `POST /api/contingency` | Generate cancellation, quote, budget and combined-shock playbooks from server-stored evidence |
+| `GET /api/dossier/:id` | Build an executive report from a saved run, including risks, opportunities and receipt index |
+| `POST /api/dossier/:id/ask` | Answer supported questions from that report only |
+| `POST /api/packet/:id` | Generate evidence-bound hold drafts, a logistics checklist and iCalendar payload |
+| `GET /api/pipeline/:id` | Create or read the persistent selected-artist booking pipeline |
+| `POST /api/pipeline/:id/events` | Apply one validated pipeline event and recompute analytics |
 | `POST /api/scenario` | Save edited terms and constraints against evidence loaded from a saved source run |
 | `GET /api/memo/:id` | Read a saved snapshot |
 | `GET /m/:id` | Open a snapshot in the workspace |
@@ -62,6 +67,18 @@ The response reports feasibility, retained and replaced IDs, cost and score chan
 The robust-slate search enumerates every exact-size candidate subset, removes any slate that violates the original constraints, and rehearses one frozen-survivor cancellation per selected artist. It orders the remaining slates by cancellation coverage, worst fallback score, average fallback score, original policy score, cost and deterministic ID order. `utilitySacrifice` exposes how many policy points the robust slate gives up against the original optimum. Up to five ranked alternatives are returned as the robustness frontier. At ten candidates the search remains bounded by the same small exact decision space as the optimizer.
 
 `POST /api/contingency` accepts a saved `sourceId`, current terms keyed by known candidate ID and current constraints. Like the Gauntlet, it restores scores, evidence and receipts from the saved run and applies only valid term edits. Client-provided candidate arrays and fit scores are ignored. `npm run contingency -- <saved-run-id>` generates the same analysis directly from a stored snapshot for demos or downstream automation.
+
+## Operational packet and booking pipeline
+
+`server/operations.mjs` turns a feasible saved slate and explicit event details into unsent hold-request drafts, per-artist logistics checklists and an RFC 5545 calendar. Draft evidence lines contain only the saved artist, buyer-entered terms, event fields and claim ledger. A deterministic guard compares every number in a draft with those evidence lines and visibly strikes anything unsupported. The API never sends an email or asserts that a booking is confirmed.
+
+`server/pipeline.mjs` is a guarded state machine. A deal must pass research, pitch approval and recorded outreach before a response can be stored. Outreach schedules Day 3/7/14 follow-ups. Accepted responses cancel those reminders and open the logistics checklist. Core confirmation requires date, rate and contact; show scheduling additionally requires set length, load-in and payment. Promotional assets and contract/invoice remain separately visible completion items. `server/pipeline-store.mjs` persists this operational state beneath `DATA_DIR/pipelines`, separate from immutable evidence snapshots.
+
+## Executive dossier and scoped analyst
+
+`server/dossier.mjs` composes the exact optimizer result, selected-artist evidence coverage, pairwise planning relationships, city-scoped evidence availability, contingency analysis, risk register, opportunity register and compact receipt index. Pairwise rows use buyer-entered genres, relative ranks and evidence completeness; they are explicitly not presented as Qloo pairwise affinity scores.
+
+The dossier analyst is deterministic and report-scoped. It can answer about a selected artist, costs, risks, cancellation resilience, geographic evidence and receipts. Its response includes the supporting facts and receipt IDs. Unsupported questions receive a refusal instead of a model-generated guess. The CLI prints Markdown by default or JSON with `--json`.
 
 ## Decision Gauntlet
 

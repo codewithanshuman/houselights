@@ -46,6 +46,9 @@ npm start
 - Stress-tests budgets from 80% to 120% and known fees at 0%, 10%, 20% and 30% increases while preserving the other constraints.
 - Builds a contingency playbook for every selected-act cancellation, three quote shocks per act, four budget cuts and three combined shocks. Cancellation drills keep the surviving bookings fixed, identify the replacement, and flag any slate with no clean fallback.
 - Searches every feasible exact slate for a robust alternative, ranking bills by cancellation coverage, worst-case fallback utility, average fallback utility and then baseline utility. It reports the utility sacrificed for resilience instead of silently changing the objective.
+- Generates an evidence-bound booking packet with unsent hold-request drafts, unsupported-number checks, an eight-field logistics checklist and a standards-compliant `.ics` calendar payload.
+- Runs a persistent booking pipeline through research, pitch approval, outreach, response, negotiation, secured logistics and show scheduling, including Day 3/7/14 follow-ups and outcome-derived analytics.
+- Builds an executive decision dossier containing evidence coverage, geographic status, planning relationships, risks, opportunities, contingency resilience and a report-scoped analyst that answers only from saved evidence.
 - Turns decision practice into a six-mission Decision Gauntlet: reduce the source budget, book a discovered act, protect genre breadth, survive a 10% quote increase, keep rank receipts complete, and record a lock or exclusion. XP is recomputed on the server from saved evidence and is never a demand forecast.
 - Produces per-artist claims linked to receipts and saves named alternative scenarios with a parent link and the original evidence.
 - Presents the workflow in a responsive midnight-blue and gold workspace with owner-supplied atmospheric artwork and an optional motion setting.
@@ -80,9 +83,23 @@ Generate a machine-readable contingency report for any saved run:
 
 ```powershell
 npm run contingency -- <saved-run-id>
+npm run dossier -- <saved-run-id>
+npm run dossier -- <saved-run-id> --json
 ```
 
-The command reads the snapshot from `DATA_DIR` and writes JSON to standard output, which makes the planning engine usable in demos and automation before a dedicated interface is added.
+These commands read the snapshot from `DATA_DIR`, making the planning engines usable in demos and automation before dedicated interfaces are added.
+
+The operational APIs also remain interface-independent:
+
+| Route | Purpose |
+|---|---|
+| `GET /api/dossier/:id` | Complete saved-evidence decision report |
+| `POST /api/dossier/:id/ask` | Report-scoped deterministic question answering |
+| `POST /api/packet/:id` | Hold drafts, logistics checklist and iCalendar payload for an explicit event |
+| `GET /api/pipeline/:id` | Create or read the persistent selected-artist pipeline |
+| `POST /api/pipeline/:id/events` | Apply a validated pipeline transition or outcome |
+
+See the [operational API contract](docs/api.md) for payloads, legal transitions and response semantics.
 
 ## Receipts and limits
 
@@ -104,6 +121,6 @@ The probe uses live quota unless mock mode is set. Inspect its returned shapes b
 
 Deployment needs a Node runtime supporting child processes, outbound HTTPS and a writable, persistent `DATA_DIR`. Cloudflare Workers and other isolate-only runtimes do not run this stdio harness. See the [deployment runbook](docs/deployment.md) and [submission checklist and demo script](docs/submission.md).
 
-Public demo, public repository URL and release screenshots: **pending verification and publication**. No live integration or judged outcome is claimed by the synthetic demo.
+Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Public demo, live-key verification and release screenshots remain pending. No live integration or judged outcome is claimed by the synthetic demo.
 
-Built using the [official Qloo hackathon kit](https://github.com/qloo/qloo-hackathon-kit) and `@qloo/qloo-harness`. Code is provided under the [MIT license](LICENSE). The five supplied artwork files and their provenance are listed in [asset sources](public/assets/SOURCES.md); no ownership of that artwork is asserted. The rain-lantern GIF is approximately 18.3 MB and is reserved for opt-in motion.
+Built using the [official Qloo hackathon kit](https://github.com/qloo/qloo-hackathon-kit) and `@qloo/qloo-harness`. Code is provided under the [MIT license](LICENSE). Reference-derived functionality and licensing are documented in [the feature audit](docs/reference-feature-audit.md) and [third-party notices](THIRD_PARTY_NOTICES.md). The five supplied artwork files and their provenance are listed in [asset sources](public/assets/SOURCES.md); no ownership of that artwork is asserted. The rain-lantern GIF is approximately 18.3 MB and is reserved for opt-in motion.
