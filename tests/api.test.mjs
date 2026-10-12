@@ -121,8 +121,23 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.equal(intelligenceSaved.snapshot.intelligence.cohesion.pairCount, 1);
   assert.equal(intelligenceSaved.snapshot.intelligence.venueScouting.length, 2);
   assert.ok(intelligenceSaved.snapshot.intelligence.receipts.every(receipt => receipt.id.startsWith('i')));
-  const routedCampaign = await (await fetch(url + '/api/campaign/' + intelligenceSaved.id)).json();
+  const qualifications = intelligenceSaved.snapshot.intelligence.venueScouting.map(group => ({
+    market: group.market, venueId: group.candidates[0].id, capacity: 500,
+    capacitySource: 'Synthetic API fixture', available: true, venueCost: 1000, otherFixedCost: 250
+  }));
+  const venueResponse = await post('/api/venues/' + intelligenceSaved.id + '/qualify', {
+    expectedCrowd: 400, ticketPrice: 45, variableCostPerAttendee: 5, travelCostPerKm: .5,
+    artistFeeMode: 'whole_route', qualifications
+  });
+  assert.equal(venueResponse.status, 201);
+  const venueSaved = await venueResponse.json();
+  assert.equal(venueSaved.snapshot.parentId, intelligenceSaved.id);
+  assert.equal(venueSaved.snapshot.venuePlan.routeEconomics.qualifiedStops, 2);
+  const routedCampaign = await (await fetch(url + '/api/campaign/' + venueSaved.id)).json();
   assert.equal(routedCampaign.loop.research.marketBrief.routeStops.length, 2);
+  assert.equal(routedCampaign.loop.research.marketBrief.venuePlan.routeEconomics.qualifiedStops, 2);
+  const routedDossier = await (await fetch(url + '/api/dossier/' + venueSaved.id)).json();
+  assert.equal(routedDossier.venuePlan.stops.length, 2);
   assert.equal((await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: 'unknown' })).status, 400);
 });
 

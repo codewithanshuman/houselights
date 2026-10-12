@@ -86,6 +86,10 @@ function markdown(dossier) {
       ...dossier.culturalIntelligence.markets.map(item => `- ${item.name}: policy score ${item.marketScore}; evidence coverage ${item.evidenceCoveragePercent}%`),
       `- Exact route: ${dossier.culturalIntelligence.route.stops.map(item => item.market).join(' → ') || 'no feasible route'}`,
       `- Pair evidence coverage: ${dossier.culturalIntelligence.cohesion.evidenceCoveragePercent}%`, ''] : []),
+    ...(dossier.venuePlan ? ['## Venue qualification and economics', '',
+      `- Qualified stops: ${dossier.venuePlan.routeEconomics.qualifiedStops}; out-of-band fallbacks: ${dossier.venuePlan.routeEconomics.fallbackStops}; unqualified: ${dossier.venuePlan.routeEconomics.unqualifiedStops}`,
+      `- Total declared fixed cost: ${dossier.venuePlan.routeEconomics.totalDeclaredFixedCost} ${dossier.venuePlan.routeEconomics.currency}`,
+      ...dossier.venuePlan.stops.map(item => `- ${item.market}: ${item.qualificationStatus}; ${item.venueName || 'no qualified venue'}; break-even ${item.breakEvenTickets} tickets`), ''] : []),
     '## Limits', '', ...dossier.limitations.map(item => `- ${item}`)
   ];
   return lines.join('\n');
@@ -134,6 +138,20 @@ export function buildDossier(snapshot) {
       receiptIds: snapshot.intelligence.receipts.map(receipt => receipt.id),
       limitations: snapshot.intelligence.limitations
     } : null,
+    venuePlan: snapshot.venuePlan ? {
+      generatedAt: snapshot.venuePlan.generatedAt,
+      rules: snapshot.venuePlan.rules,
+      artistFees: snapshot.venuePlan.artistFees,
+      routeEconomics: snapshot.venuePlan.routeEconomics,
+      stops: snapshot.venuePlan.stops.map(stop => ({
+        market: stop.market, showDate: stop.showDate, qualificationStatus: stop.qualificationStatus,
+        venueId: stop.selectedVenue?.venueId || null, venueName: stop.selectedVenue?.venueName || null,
+        capacity: stop.selectedVenue?.capacity ?? null, capacitySource: stop.selectedVenue?.capacitySource || null,
+        breakEvenTickets: stop.economics.breakEvenTickets, breakEvenWithinCapacity: stop.economics.breakEvenWithinCapacity,
+        declaredFixedCost: stop.economics.declaredFixedCost, scenarios: stop.economics.scenarios, action: stop.action
+      })),
+      limitations: snapshot.venuePlan.limitations
+    } : null,
     contingency: {
       resilience: contingency.resilience, robustSlate: contingency.robustSlate,
       backupBench: contingency.backupBench, criticalDependencies: contingency.criticalDependencies
@@ -147,7 +165,8 @@ export function buildDossier(snapshot) {
       'Qloo evidence describes cultural context and relative ranking; it does not forecast ticket sales, attendance or revenue.',
       'Fees, availability, genres and operational status are buyer-entered unless a contract is recorded elsewhere.',
       'Compatibility rows are planning comparisons, not pairwise affinity scores.',
-      'Synthetic mode is product-development evidence and must not be represented as a live Qloo result.'
+      'Synthetic mode is product-development evidence and must not be represented as a live Qloo result.',
+      ...(snapshot.venuePlan?.limitations || [])
     ]
   };
   dossier.riskRegister = risks(snapshot, selected, contingency);
@@ -177,8 +196,8 @@ export function answerDossierQuestion(dossier, question) {
       ? `The robust slate covers ${dossier.contingency.robustSlate.cancellationCoverage} of ${dossier.contingency.robustSlate.cancellationCount} cancellations and gives up ${dossier.contingency.robustSlate.utilitySacrifice} policy points versus the optimum.`
       : 'No robust slate is available for this saved decision.';
   } else if (/budget|cost|fee|money/.test(lower)) {
-    facts = [dossier.decision];
-    answer = `The selected slate totals ${dossier.decision.totalFee ?? 'unknown'} and leaves ${dossier.decision.remainingBudget ?? 'unknown'} in the declared budget.`;
+    facts = dossier.venuePlan ? [dossier.decision, dossier.venuePlan.routeEconomics] : [dossier.decision];
+    answer = `The selected slate totals ${dossier.decision.totalFee ?? 'unknown'} and leaves ${dossier.decision.remainingBudget ?? 'unknown'} in the declared budget.` + (dossier.venuePlan ? ` The route plan records ${dossier.venuePlan.routeEconomics.totalDeclaredFixedCost} ${dossier.venuePlan.routeEconomics.currency} in entered fixed costs; its attendance rows are arithmetic scenarios, not forecasts.` : '');
   } else if (/city|geo|local|market/.test(lower)) {
     if (dossier.culturalIntelligence) {
       facts = dossier.culturalIntelligence.markets; receiptIds = dossier.culturalIntelligence.receiptIds;
@@ -207,5 +226,6 @@ export function dossierHtml(dossier) {
   const receipts = dossier.sourceReceipts.map(item => `<code>${escapeHtml(item.id)}</code> · ${escapeHtml(item.tool)} · ${escapeHtml(item.status)} · ${escapeHtml(item.digest)}`);
   const markets = dossier.culturalIntelligence?.markets.map(item => `<strong>${escapeHtml(item.name)}</strong> — policy score ${escapeHtml(item.marketScore)}; evidence coverage ${escapeHtml(item.evidenceCoveragePercent)}%`) || [];
   const route = dossier.culturalIntelligence?.route.stops.map(item => escapeHtml(`${item.sequence}. ${item.market} · ${item.showDate} · ${item.fromKm} km from ${item.from}`)) || [];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
+  const venues = dossier.venuePlan?.stops.map(item => `<strong>${escapeHtml(item.market)}</strong> — ${escapeHtml(item.qualificationStatus)}; ${escapeHtml(item.venueName || 'no qualified venue')}; break-even ${escapeHtml(item.breakEvenTickets)} tickets`) || [];
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
 }

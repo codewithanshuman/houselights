@@ -11,6 +11,7 @@ import { buildDossier, answerDossierQuestion, dossierHtml } from './dossier.mjs'
 import { createPipeline, applyPipelineEvent } from './pipeline.mjs';
 import { normalizeIntelligenceInput, buildCulturalIntelligence } from './intelligence.mjs';
 import { buildCampaign } from './campaign.mjs';
+import { buildVenuePlan } from './venues.mjs';
 import { hasLLM } from './llm.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
@@ -52,9 +53,9 @@ function trustedScenarioInput(source, body, label) {
 }
 
 export function createApp() {
-  const app = express(), hits = new Map(), scenarioHits = new Map(), intelligenceHits = new Map();
-  let day = { date: '', count: 0, scenarioCount: 0, intelligenceCount: 0 };
-  const resetDay = () => { const date = new Date().toISOString().slice(0, 10); if (day.date !== date) day = { date, count: 0, scenarioCount: 0, intelligenceCount: 0 }; };
+  const app = express(), hits = new Map(), scenarioHits = new Map(), intelligenceHits = new Map(), venueHits = new Map();
+  let day = { date: '', count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0 };
+  const resetDay = () => { const date = new Date().toISOString().slice(0, 10); if (day.date !== date) day = { date, count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0 }; };
   const dailyCap = positiveInteger(process.env.DAILY_MEMO_CAP, 150);
   const budget = Math.min(60, positiveInteger(process.env.CALL_BUDGET, 30));
   const intelligenceBudget = Math.min(60, positiveInteger(process.env.INTELLIGENCE_CALL_BUDGET, 60));
@@ -63,7 +64,7 @@ export function createApp() {
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.7.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.8.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -148,6 +149,22 @@ export function createApp() {
       const id = store.save(snapshot);
       return res.status(201).json({ id, expectedCalls, workflowsUsed: run.used, snapshot: store.load(id) });
     } catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.post('/api/venues/:id/qualify', (req, res) => {
+    const source = store.load(req.params.id);
+    if (!source) return res.status(404).json({ error: 'Saved run not found.' });
+    let venuePlan;
+    try { venuePlan = buildVenuePlan(source, req.body); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+    resetDay();
+    const now = Date.now();
+    for (const [ip, times] of venueHits) if (times.every(time => now - time >= 60000)) venueHits.delete(ip);
+    const recent = (venueHits.get(req.ip) || []).filter(time => now - time < 60000);
+    if (recent.length >= 12 || day.venueCount >= 200) return res.status(429).json({ error: 'Venue-plan save limit reached. Existing plans remain available from their saved snapshots.' });
+    venueHits.set(req.ip, [...recent, now]); day.venueCount++;
+    const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, venuePlan };
+    const id = store.save(snapshot);
+    return res.status(201).json({ id, snapshot: store.load(id) });
   });
   app.post('/api/optimize', (req, res) => {
     if (!Array.isArray(req.body?.items) || req.body.items.length > 10) return res.status(400).json({ error: 'Provide at most 10 candidates.' });

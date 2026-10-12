@@ -76,7 +76,11 @@ export function buildCampaign(snapshot, pipeline) {
     routeFeasible: intelligence.route.feasible,
     routeStops: intelligence.route.stops.map(stop => ({ market: stop.name, showDate: stop.showDate })),
     venueLeadCount: intelligence.venueScouting.reduce((sum, row) => sum + row.candidates.length, 0),
-    receiptIds: intelligence.receipts.map(receipt => receipt.id)
+    receiptIds: intelligence.receipts.map(receipt => receipt.id),
+    venuePlan: snapshot.venuePlan ? {
+      routeEconomics: snapshot.venuePlan.routeEconomics,
+      stops: snapshot.venuePlan.stops.map(stop => ({ market: stop.market, status: stop.qualificationStatus, venue: stop.selectedVenue?.venueName || null, breakEvenTickets: stop.economics.breakEvenTickets, breakEvenWithinCapacity: stop.economics.breakEvenWithinCapacity }))
+    } : null
   } : null;
   const recommendations = [];
   for (const plan of dealPlans) {
@@ -84,7 +88,9 @@ export function buildCampaign(snapshot, pipeline) {
     if (plan.negotiation.currentRateWithinCeiling === false) recommendations.push({ priority: 'budget', artistId: plan.artistId, action: 'activate_fallback_or_reoptimize', detail: `${plan.artistName}'s recorded rate exceeds the maximum that keeps the current slate inside budget.` });
     if (plan.stage === 'declined' && !plan.fallback?.feasible) recommendations.push({ priority: 'critical', artistId: plan.artistId, action: 'expand_candidate_pool', detail: `No clean replacement for ${plan.artistName} satisfies the unchanged brief.` });
   }
-  if (marketBrief?.routeFeasible) recommendations.push({ priority: 'routing', action: 'qualify_venue_leads', detail: `Verify capacity, availability and commercial terms for ${marketBrief.venueLeadCount} cultural place leads across the exact route.` });
+  if (marketBrief?.routeFeasible && !marketBrief.venuePlan) recommendations.push({ priority: 'routing', action: 'qualify_venue_leads', detail: `Verify capacity, availability and commercial terms for ${marketBrief.venueLeadCount} cultural place leads across the exact route.` });
+  if (marketBrief?.venuePlan && marketBrief.venuePlan.routeEconomics.fallbackStops) recommendations.push({ priority: 'venue', action: 'source_in_band_rooms', detail: `${marketBrief.venuePlan.routeEconomics.fallbackStops} routed stop${marketBrief.venuePlan.routeEconomics.fallbackStops === 1 ? '' : 's'} use a sourced but out-of-band capacity fallback.` });
+  if (marketBrief?.venuePlan?.routeEconomics.unqualifiedStops) recommendations.push({ priority: 'venue', action: 'complete_venue_qualification', detail: `${marketBrief.venuePlan.routeEconomics.unqualifiedStops} routed stop${marketBrief.venuePlan.routeEconomics.unqualifiedStops === 1 ? '' : 's'} still need a sourced venue capacity, cost and availability decision.` });
 
   return {
     version: '1.0', generatedAt: new Date().toISOString(), sourceId: snapshot.id, pipelineRevision: pipeline.revision,

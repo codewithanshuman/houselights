@@ -54,6 +54,7 @@ npm start
 - Searches every permitted ordered route exactly, enforcing a 150 km market-separation rule, a 1,800 km maximum leg and explicit travel-day scheduling. It maximizes the declared Qloo evidence policy before using distance as the tie-breaker.
 - Joins research, human pitch approval, outreach, outcomes, negotiation ceilings, scheduled follow-ups, contingency replacements and route intelligence into a four-stage campaign control report.
 - Exports a standalone, escaped, print-ready HTML decision dossier with its source receipt index.
+- Qualifies routed Qloo place leads with caller-supplied capacity sources, availability and costs; applies explicit 60%–250% room-fit rules and produces cent-reconciled per-stop break-even call sheets.
 - Turns decision practice into a six-mission Decision Gauntlet: reduce the source budget, book a discovered act, protect genre breadth, survive a 10% quote increase, keep rank receipts complete, and record a lock or exclusion. XP is recomputed on the server from saved evidence and is never a demand forecast.
 - Produces per-artist claims linked to receipts and saves named alternative scenarios with a parent link and the original evidence.
 - Presents the workflow in a responsive midnight-blue and gold workspace with owner-supplied atmospheric artwork and an optional motion setting.
@@ -106,6 +107,7 @@ The operational APIs also remain interface-independent:
 | `POST /api/pipeline/:id/events` | Apply a validated pipeline transition or outcome |
 | `POST /api/intelligence/:id` | Run and save multi-market Qloo evidence, pair cohesion, venue scouting and exact routing |
 | `GET /api/campaign/:id` | Derive the four-stage campaign controller from evidence and the persistent pipeline |
+| `POST /api/venues/:id/qualify` | Save sourced venue qualification, room-fit decisions and deterministic route economics |
 
 See the [operational API contract](docs/api.md) for payloads, legal transitions and response semantics.
 

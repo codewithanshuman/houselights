@@ -51,6 +51,38 @@ The route engine searches every ordered route of the requested length. It reject
 
 The route stores a new immutable child snapshot and returns its ID. The source snapshot is unchanged. An analysis is rejected before any provider call when its deterministic workflow count exceeds `INTELLIGENCE_CALL_BUDGET`, capped at 60. The endpoint also allows three runs per IP per minute and 50 per process-day. These process-local controls are quota safeguards rather than authentication.
 
+## Venue qualification and route economics
+
+```http
+POST /api/venues/:savedIntelligenceRunId/qualify
+Content-Type: application/json
+
+{
+  "expectedCrowd": 400,
+  "ticketPrice": 45,
+  "variableCostPerAttendee": 5,
+  "travelCostPerKm": 0.5,
+  "artistFeeMode": "whole_route",
+  "qualifications": [{
+    "market": "Paris",
+    "venueId": "qloo-place-id-from-intelligence",
+    "capacity": 500,
+    "capacitySource": "Venue technical sheet, checked 2026-10-12",
+    "available": true,
+    "venueCost": 1000,
+    "otherFixedCost": 250
+  }]
+}
+```
+
+Every qualification must refer to a Qloo place candidate stored in the intelligence snapshot, and each capacity needs an explicit caller-provided source. Qloo remains the cultural discovery source; capacity, availability and commercial facts remain caller-supplied. The engine will not attach facts to an unknown place ID.
+
+A room is in-band when its sourced capacity is from 60% to 250% of the entered expected crowd. The engine prefers available in-band rooms, then the closest capacity ratio, lower venue cost and stable name order. If no in-band room is available, it labels the closest sourced option `fallback_out_of_band`; if no candidate is qualified, the stop remains `needs_verified_venue`.
+
+`artistFeeMode` is required because an entered artist fee may mean a per-show guarantee or one whole-route amount. `per_stop` repeats the selected-slate fee total at every stop. `whole_route` allocates it across stops and assigns any rounding remainder to the final stop so totals reconcile to the cent. Break-even divides declared fixed costs by ticket price minus per-attendee cost and rounds up to a whole ticket. The 50%, 70%, 90% and 100% attendance rows are arithmetic scenarios, capped by sourced capacity; they are not forecasts.
+
+The result saves another child snapshot and becomes part of its campaign report, dossier JSON and printable HTML. Venue-plan saves are limited to twelve per IP per minute and 200 per process-day.
+
 ## Booking packet
 
 ```http

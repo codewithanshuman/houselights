@@ -28,7 +28,7 @@ async function conn() {
     const bin = fileURLToPath(new URL('./bin.js', import.meta.resolve('@qloo/qloo-harness')));
     const transport = new StdioClientTransport({ command: process.execPath, args: [bin, 'mcp'], env: process.env, stderr: 'pipe' });
     transport.stderr?.on('data', () => {});
-    const client = new Client({ name: 'houselights', version: '0.7.0' });
+    const client = new Client({ name: 'houselights', version: '0.8.0' });
     entry.client = client;
     client.onclose = () => { if (connection === entry) connection = undefined; };
     try { await client.connect(transport); return client; }

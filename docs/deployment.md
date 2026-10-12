@@ -30,6 +30,7 @@ For a plain Node service, install with `npm ci --omit=dev` and start with `npm s
 - Generate an operational packet with an explicit date. Validate every hold draft's number guard and import the returned iCalendar payload into a calendar client.
 - Move one selected artist through pitch approval and outreach. Confirm Day 3/7/14 follow-ups, revision-conflict handling, response cancellation of reminders and the logistics gate.
 - Run a three-market intelligence request. Confirm its child snapshot, namespaced receipts, artist-market matrix, pair comparisons, exact route diagnostics and unverified venue leads. Then read the campaign report and verify its negotiation ceiling and cancellation replacement against the saved budget and contingency output.
+- Qualify at least one Qloo place lead per route stop with a demonstrably sourced capacity and test both `per_stop` and `whole_route` artist-fee modes. Confirm out-of-band rooms remain labeled, unknown place IDs are rejected and stop allocations reconcile to the route total.
 - Save a named scenario, open it in a fresh session, and verify its parent link, edited terms and unchanged source receipts. Confirm the source run itself is unchanged.
 - Open a saved share link in a fresh browser session, restart the service, and confirm it remains available from persistent storage.
 - Confirm no server key appears in browser network responses, generated snapshots, source control or logs.

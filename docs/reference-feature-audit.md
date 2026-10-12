@@ -11,7 +11,7 @@ The four supplied archives were inspected as reference implementations. Their do
 
 | Reference | Core mechanism retained | Houselights implementation | Deliberate boundary |
 |---|---|---|---|
-| Routed | Route constraints and exhaustive itinerary selection, plus evidence-only hold drafts, unsupported-number guard and operational calendar export | `server/intelligence.mjs`, `server/operations.mjs`; intelligence and packet APIs | Exact bounded routing over explicit coordinates and Qloo market evidence; no unsupported demand, capacity or availability claim |
+| Routed | Route constraints, exhaustive itinerary selection, sourced room sizing, evidence-only hold drafts, unsupported-number guard and operational calendar export | `server/intelligence.mjs`, `server/venues.mjs`, `server/operations.mjs`; intelligence, venue and packet APIs | Exact bounded routing plus buyer-sourced room facts; Qloo place leads never become unsupported capacity or availability claims |
 | Scaena | Research → human approval → outreach → response/negotiation → follow-up/logistics, with Day 3/7/14 checkpoints and outcome feedback | `server/pipeline.mjs`, `server/pipeline-store.mjs`, `server/campaign.mjs`; pipeline and campaign APIs | Original implementation because no project-level license was present; derives ceilings and fallbacks but sends no email and fabricates no response |
 | Alloy | Executive diligence modules, risk/opportunity register, report-aware analyst and shareable report artifact | `server/dossier.mjs`; dossier JSON, analyst, CLI and standalone HTML | Deterministic saved-evidence answers; no invented “cultural compatibility score” and no live-web claims |
 | GeoTaste | Multi-market geographic comparison, per-artist matrix and visible market ranking | `server/intelligence.mjs`; saved intelligence snapshot and dossier integration | Qloo observations use explicit user coordinates only for routing; simulated ratings, trends, density and seasonality were rejected |
@@ -64,6 +64,15 @@ The four supplied archives were inspected as reference implementations. Their do
 - Derives outcome analytics solely from stored pipeline events.
 - Calculates each act's maximum slate-preserving rate from the saved budget and other selected fees.
 - Attaches the exact frozen-survivor cancellation fallback and one next action to every deal.
+
+### Venue qualification and economics
+
+- Accepts capacity and commercial facts only against a place candidate saved from the Qloo scouting pass.
+- Requires a capacity source and keeps it attached to the selected room.
+- Applies the reference 60%–250% room-fit band, then labels the closest available sourced fallback when no in-band room exists.
+- Requires the buyer to declare whether artist fees apply per stop or to the whole route.
+- Reconciles whole-route fee allocations to the cent and computes break-even from only entered prices and costs.
+- Caps arithmetic attendance scenarios by sourced capacity and explicitly refuses to call them forecasts.
 
 ## Licensing
 

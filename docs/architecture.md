@@ -19,6 +19,7 @@
 | `POST /api/pipeline/:id/events` | Apply one validated pipeline event and recompute analytics |
 | `POST /api/intelligence/:id` | Measure selected artists across requested markets, compare every pair, scout places and save an exact route |
 | `GET /api/campaign/:id` | Join evidence, pipeline state, negotiation limits, follow-ups and fallbacks into one control loop |
+| `POST /api/venues/:id/qualify` | Bind sourced room facts to routed Qloo leads and save room-fit and break-even call sheets |
 | `POST /api/scenario` | Save edited terms and constraints against evidence loaded from a saved source run |
 | `GET /api/memo/:id` | Read a saved snapshot |
 | `GET /m/:id` | Open a snapshot in the workspace |
@@ -88,6 +89,14 @@ The engine calls `compare_audiences` for every selected-artist pair, retaining s
 Routing enumerates every ordered selection of the requested size, at most `P(8,5) = 6,720` routes. Every selected-market pair must be at least 150 km apart and every route leg must be at most 1,800 km. Feasible routes are ordered by summed market score, total great-circle distance and a stable market-name tie-breaker. The schedule uses 700 km per travel day and inserts the declared day-off rule after five shows. The response includes checked and rejected counts, legs, travel days and show dates so the result is inspectable.
 
 Before any call, `server/app.mjs` computes `markets × selected artists + selected-artist pairs + route stops`. Requests above the bounded intelligence budget are rejected. Successful results become immutable child snapshots containing namespaced `i…` receipts so their evidence links cannot collide with the source memo's `r…` receipts.
+
+## Venue qualification and deterministic economics
+
+`server/venues.mjs` closes the gap between a cultural place recommendation and a usable room plan. It accepts facts only for place IDs in the saved route's Qloo venue leads. Capacity requires a source string, and availability and costs remain explicit caller inputs. Candidate ordering is deterministic: available first, capacity inside 60%–250% of expected crowd, distance from the target capacity, venue cost and name. An out-of-band selection stays visibly labeled, while absent facts produce no selected venue.
+
+Each stop combines the selected-slate artist-fee allocation, great-circle leg distance times the entered travel rate, venue cost and other entered fixed cost. Break-even tickets are `ceil(fixed costs / (ticket price − variable attendee cost))`. The engine rejects non-positive ticket margin. Its 50%, 70%, 90% and 100% rows are transparent arithmetic and never described as likely attendance. Whole-route artist fees are allocated to cents, with the final stop absorbing the rounding remainder so the stop sum equals the route total exactly.
+
+Venue plans become immutable child snapshots. The campaign controller uses their qualification status and break-even results, and the dossier includes the chosen room, capacity source, entered costs and planning limits. No venue lead is treated as a confirmed room merely because Qloo returned it.
 
 ## Executive dossier and scoped analyst
 
