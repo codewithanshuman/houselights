@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDossier, answerDossierQuestion } from '../server/dossier.mjs';
+import { buildDossier, answerDossierQuestion, dossierHtml } from '../server/dossier.mjs';
 
 const candidate = (id, fee, fit, genre, evidence = {}) => ({
   id, name: id.toUpperCase(), fit, rank: Math.round((1 - fit) * 4) + 1, of: 5, found: id === 'd',
@@ -36,4 +36,30 @@ test('report analyst stays inside supported dossier topics and returns receipt I
   assert.ok(artist.receiptIds.includes('r-a'));
   const unknown = answerDossierQuestion(dossier, 'What will ticket sales be?');
   assert.match(unknown.answer, /not answerable/);
+});
+
+test('printable dossier is a standalone escaped HTML report', () => {
+  const edited = structuredClone(snapshot);
+  edited.memo.items[0].name = '<Alpha & Co>';
+  const html = dossierHtml(buildDossier(edited));
+  assert.match(html, /^<!doctype html>/);
+  assert.match(html, /&lt;Alpha &amp; Co&gt;/);
+  assert.ok(!html.includes('<Alpha & Co>'));
+  assert.match(html, /Receipt index/);
+});
+
+test('linked market intelligence is carried into dossier answers and exports', () => {
+  const routed = structuredClone(snapshot);
+  routed.intelligence = {
+    generatedAt: '2026-10-12T00:00:00Z',
+    markets: [{ name: 'Paris', marketScore: 72.5, meanAffinity: .75, coverage: 1, artists: [] }],
+    route: { feasible: true, method: 'exact-permutation-search', checkedCount: 2, totalDistanceKm: 344, stops: [{ name: 'Paris', sequence: 1, from: 'London', fromKm: 344, showDate: '2026-11-20' }] },
+    cohesion: { evidenceCoveragePercent: 100 }, venueScouting: [], receipts: [{ id: 'i1' }], limitations: ['fixture limit']
+  };
+  const dossier = buildDossier(routed);
+  assert.equal(dossier.culturalIntelligence.route.stops[0].market, 'Paris');
+  const answer = answerDossierQuestion(dossier, 'Which market should we inspect?');
+  assert.deepEqual(answer.receiptIds, ['i1']);
+  assert.match(answer.answer, /Paris: 72.5/);
+  assert.match(dossierHtml(dossier), /Exact route/);
 });

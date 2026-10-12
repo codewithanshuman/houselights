@@ -90,6 +90,10 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   const answerResponse = await post('/api/dossier/' + saved.id + '/ask', { question: 'What are the budget and fees?' });
   assert.equal(answerResponse.status, 200);
   assert.equal((await answerResponse.json()).grounding, 'saved_dossier_only');
+  const reportResponse = await fetch(url + '/api/dossier/' + saved.id + '/report');
+  assert.equal(reportResponse.status, 200);
+  assert.match(reportResponse.headers.get('content-type'), /text\/html/);
+  assert.match(await reportResponse.text(), /Houselights decision dossier/);
   const packetResponse = await post('/api/packet/' + saved.id, { event: { name: 'Test Night', date: '2026-11-20', venue: 'Test Room', contactEmail: 'buyer@example.com' } });
   assert.equal(packetResponse.status, 200);
   const packet = await packetResponse.json();
@@ -102,6 +106,23 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   const pipelineArtist = pipeline.deals[0].artistId;
   pipeline = await (await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: pipelineArtist })).json();
   assert.equal(pipeline.deals.find(item => item.artistId === pipelineArtist).stage, 'pitch_approved');
+  const campaignResponse = await fetch(url + '/api/campaign/' + saved.id);
+  assert.equal(campaignResponse.status, 200);
+  assert.equal((await campaignResponse.json()).pipelineRevision, pipeline.revision);
+  const intelligenceResponse = await post('/api/intelligence/' + saved.id, {
+    origin: { name: 'London', lat: 51.5074, lon: -0.1278 },
+    markets: [{ name: 'London', lat: 51.5074, lon: -0.1278 }, { name: 'Paris', lat: 48.8566, lon: 2.3522 }, { name: 'Berlin', lat: 52.52, lon: 13.405 }],
+    stopCount: 2, startDate: '2026-11-20'
+  });
+  assert.equal(intelligenceResponse.status, 201);
+  const intelligenceSaved = await intelligenceResponse.json();
+  assert.equal(intelligenceSaved.snapshot.parentId, saved.id);
+  assert.equal(intelligenceSaved.snapshot.intelligence.markets.length, 3);
+  assert.equal(intelligenceSaved.snapshot.intelligence.cohesion.pairCount, 1);
+  assert.equal(intelligenceSaved.snapshot.intelligence.venueScouting.length, 2);
+  assert.ok(intelligenceSaved.snapshot.intelligence.receipts.every(receipt => receipt.id.startsWith('i')));
+  const routedCampaign = await (await fetch(url + '/api/campaign/' + intelligenceSaved.id)).json();
+  assert.equal(routedCampaign.loop.research.marketBrief.routeStops.length, 2);
   assert.equal((await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: 'unknown' })).status, 400);
 });
 

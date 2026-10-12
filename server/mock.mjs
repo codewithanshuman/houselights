@@ -27,7 +27,9 @@ export function mockCall(tool, args) {
     }
     case 'entity_tags': return envelope(['indie rock', 'dream pop', 'lo-fi'].map(name => ({ name })));
     case 'audience_demographics': return envelope([{ name: 'age 25-34' }]);
-    case 'recommend': return envelope([1, 2, 3].map(i => entity(`Mock Discovery ${i}`, `mock-d${i}`)));
+    case 'recommend': return args.target_type === 'place'
+      ? envelope([1, 2, 3].map(i => ({ name: `Mock Venue ${i} · ${args.filter_location}`, entity_id: `mock-v-${h(args.filter_location)}-${i}`, type: 'urn:entity:place' })))
+      : envelope([1, 2, 3].map(i => entity(`Mock Discovery ${i}`, `mock-d${i}`)));
     case 'rank': return envelope([...args.options].sort((a, b) => h(a) - h(b)).map(resolve));
     case 'where_popular': return envelope(h(args.entity) % 3 ? [{ name: args.within, query: { affinity: .42 } }] : []);
     case 'compare_audiences': return { ...envelope([], 'ok'), results: {

@@ -81,6 +81,7 @@ export function compactEvidence(tool, env) {
     ...(tool === 'compare_audiences' ? { interpretation: comparisonOf(env).summary,
       comparisonAvailable: comparisonOf(env).available,
       ...(record(env.comparison) ? { returnedFields: Object.keys(env.comparison).slice(0, 20) } : {}),
+      ...(Array.isArray(env.comparison?.shared) ? { sharedNames: env.comparison.shared.map(nameOf).filter(Boolean).slice(0, 12) } : {}),
     } : {}),
     ...(env.error ? { error: env.error.code } : {}),
   };

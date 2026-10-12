@@ -32,6 +32,7 @@ npm start
 | `HOST` | Bind address; defaults to `127.0.0.1` locally; hosted Node needs `0.0.0.0` |
 | `DATA_DIR` | Dedicated snapshot directory; defaults to `./data` |
 | `CALL_BUDGET` | Workflow attempts per memo; defaults to `30` |
+| `INTELLIGENCE_CALL_BUDGET` | Workflow attempts per multi-market intelligence run; defaults to and is capped at `60` |
 | `DAILY_MEMO_CAP` | Per-process daily memo cap; defaults to `150` |
 | `QLOO_CACHE_TTL_S` | In-memory Qloo cache lifetime; defaults to six hours |
 | `TRUST_PROXY` | Set to `1` only when the deployment has one trusted proxy hop |
@@ -49,6 +50,10 @@ npm start
 - Generates an evidence-bound booking packet with unsent hold-request drafts, unsupported-number checks, an eight-field logistics checklist and a standards-compliant `.ics` calendar payload.
 - Runs a persistent booking pipeline through research, pitch approval, outreach, response, negotiation, secured logistics and show scheduling, including Day 3/7/14 follow-ups and outcome-derived analytics.
 - Builds an executive decision dossier containing evidence coverage, geographic status, planning relationships, risks, opportunities, contingency resilience and a report-scoped analyst that answers only from saved evidence.
+- Runs a receipt-backed multi-market intelligence pass across every selected artist and requested market, compares every selected-artist pair, discovers cultural place leads, and saves the result as a linked snapshot.
+- Searches every permitted ordered route exactly, enforcing a 150 km market-separation rule, a 1,800 km maximum leg and explicit travel-day scheduling. It maximizes the declared Qloo evidence policy before using distance as the tie-breaker.
+- Joins research, human pitch approval, outreach, outcomes, negotiation ceilings, scheduled follow-ups, contingency replacements and route intelligence into a four-stage campaign control report.
+- Exports a standalone, escaped, print-ready HTML decision dossier with its source receipt index.
 - Turns decision practice into a six-mission Decision Gauntlet: reduce the source budget, book a discovered act, protect genre breadth, survive a 10% quote increase, keep rank receipts complete, and record a lock or exclusion. XP is recomputed on the server from saved evidence and is never a demand forecast.
 - Produces per-artist claims linked to receipts and saves named alternative scenarios with a parent link and the original evidence.
 - Presents the workflow in a responsive midnight-blue and gold workspace with owner-supplied atmospheric artwork and an optional motion setting.
@@ -94,10 +99,13 @@ The operational APIs also remain interface-independent:
 | Route | Purpose |
 |---|---|
 | `GET /api/dossier/:id` | Complete saved-evidence decision report |
+| `GET /api/dossier/:id/report` | Standalone printable HTML decision report |
 | `POST /api/dossier/:id/ask` | Report-scoped deterministic question answering |
 | `POST /api/packet/:id` | Hold drafts, logistics checklist and iCalendar payload for an explicit event |
 | `GET /api/pipeline/:id` | Create or read the persistent selected-artist pipeline |
 | `POST /api/pipeline/:id/events` | Apply a validated pipeline transition or outcome |
+| `POST /api/intelligence/:id` | Run and save multi-market Qloo evidence, pair cohesion, venue scouting and exact routing |
+| `GET /api/campaign/:id` | Derive the four-stage campaign controller from evidence and the persistent pipeline |
 
 See the [operational API contract](docs/api.md) for payloads, legal transitions and response semantics.
 

@@ -1,0 +1,53 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Run } from '../server/qloo.mjs';
+import { buildCulturalIntelligence, distanceKm, normalizeIntelligenceInput, optimizeMarketRoute } from '../server/intelligence.mjs';
+
+const input = normalizeIntelligenceInput({
+  origin: { name: 'London', lat: 51.5074, lon: -0.1278 },
+  markets: [
+    { name: 'London', lat: 51.5074, lon: -0.1278 },
+    { name: 'Paris', lat: 48.8566, lon: 2.3522 },
+    { name: 'Berlin', lat: 52.52, lon: 13.405 }
+  ],
+  stopCount: 2,
+  startDate: '2026-11-20'
+});
+
+test('geographic inputs are strict and distance uses great-circle kilometers', () => {
+  assert.ok(distanceKm(input.markets[0], input.markets[1]) > 330);
+  assert.throws(() => normalizeIntelligenceInput({ markets: [], startDate: '2026-11-20' }), /2–8/);
+  assert.throws(() => normalizeIntelligenceInput({ markets: [input.markets[0], input.markets[1]], startDate: '2026-02-30' }), /valid/);
+  assert.throws(() => normalizeIntelligenceInput({ markets: [input.markets[0], { ...input.markets[1], name: 'London' }], startDate: '2026-11-20' }), /unique/);
+});
+
+test('route search checks every ordered route and maximizes declared taste utility before distance', () => {
+  const scored = input.markets.map((market, index) => ({ ...market, marketScore: [92, 80, 20][index] }));
+  const result = optimizeMarketRoute(scored, input);
+  assert.equal(result.feasible, true);
+  assert.equal(result.checkedCount, 6);
+  assert.deepEqual(new Set(result.stops.map(stop => stop.name)), new Set(['London', 'Paris']));
+  assert.equal(result.tasteUtility, 172);
+  assert.ok(result.stops.every(stop => /^2026-11-\d{2}$/.test(stop.showDate)));
+});
+
+test('cultural intelligence produces receipt-backed market, cohesion, route and venue modules', async () => {
+  const snapshot = {
+    id: 'fixture', memo: {
+      slate: { feasible: true, selectedIds: ['a', 'b'] },
+      items: [{ id: 'a', name: 'Alpha' }, { id: 'b', name: 'Beta' }]
+    }
+  };
+  const run = new Run({ mode: 'mock', budget: 20, receiptPrefix: 'i', cacheStore: new Map(), delay: async () => {} });
+  const report = await buildCulturalIntelligence(snapshot, input, run);
+  assert.equal(report.markets.length, 3);
+  assert.equal(report.cohesion.pairCount, 1);
+  assert.equal(report.cohesion.supportedPairCount, 1);
+  assert.ok(report.cohesion.pairs[0].sharedTastes.length > 0);
+  assert.equal(report.venueScouting.length, 2);
+  assert.ok(report.venueScouting.every(row => row.candidates.length === 3));
+  assert.equal(report.receipts.length, 9);
+  assert.ok(report.receipts.every(receipt => receipt.id.startsWith('i') && receipt.source === 'synthetic'));
+  assert.equal(report.chartData.artistMarketMatrix.length, 6);
+  assert.match(report.cohesion.interpretation, /not audience overlap/);
+});

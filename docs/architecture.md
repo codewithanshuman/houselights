@@ -13,9 +13,12 @@
 | `POST /api/contingency` | Generate cancellation, quote, budget and combined-shock playbooks from server-stored evidence |
 | `GET /api/dossier/:id` | Build an executive report from a saved run, including risks, opportunities and receipt index |
 | `POST /api/dossier/:id/ask` | Answer supported questions from that report only |
+| `GET /api/dossier/:id/report` | Export the supported dossier as standalone printable HTML |
 | `POST /api/packet/:id` | Generate evidence-bound hold drafts, a logistics checklist and iCalendar payload |
 | `GET /api/pipeline/:id` | Create or read the persistent selected-artist booking pipeline |
 | `POST /api/pipeline/:id/events` | Apply one validated pipeline event and recompute analytics |
+| `POST /api/intelligence/:id` | Measure selected artists across requested markets, compare every pair, scout places and save an exact route |
+| `GET /api/campaign/:id` | Join evidence, pipeline state, negotiation limits, follow-ups and fallbacks into one control loop |
 | `POST /api/scenario` | Save edited terms and constraints against evidence loaded from a saved source run |
 | `GET /api/memo/:id` | Read a saved snapshot |
 | `GET /m/:id` | Open a snapshot in the workspace |
@@ -74,11 +77,23 @@ The robust-slate search enumerates every exact-size candidate subset, removes an
 
 `server/pipeline.mjs` is a guarded state machine. A deal must pass research, pitch approval and recorded outreach before a response can be stored. Outreach schedules Day 3/7/14 follow-ups. Accepted responses cancel those reminders and open the logistics checklist. Core confirmation requires date, rate and contact; show scheduling additionally requires set length, load-in and payment. Promotional assets and contract/invoice remain separately visible completion items. `server/pipeline-store.mjs` persists this operational state beneath `DATA_DIR/pipelines`, separate from immutable evidence snapshots.
 
+`server/campaign.mjs` is the control layer over that state. It derives research order from evidence gaps, retains the approval gate, exposes response analytics and turns every active deal into one next action. For each selected artist, it subtracts the other selected fees from the saved budget to produce the maximum rate that preserves the current slate. It also attaches the frozen-survivor cancellation result from the contingency engine. These are deterministic decision bounds over buyer-entered terms, not automated negotiation or market-value estimates.
+
+## Multi-market intelligence and exact routing
+
+`server/intelligence.mjs` takes two to eight named coordinates plus an origin, start date and two-to-five-stop route size. Coordinates are validated caller inputs. For every selected artist and candidate market it calls `where_popular` and keeps observed affinity, missingness, receipt status and receipt ID. A market score combines 70% mean observed affinity with 30% evidence coverage. Because a missing observation contributes no invented affinity and reduces coverage, sparse markets cannot appear fully supported.
+
+The engine calls `compare_audiences` for every selected-artist pair, retaining shared cultural labels and support coverage. It explicitly does not convert those labels into overlap percentages, audience cannibalization or sales claims. After routing, it calls `recommend` with `target_type: place` in each chosen stop to produce leads that still require independent capacity, availability and commercial verification.
+
+Routing enumerates every ordered selection of the requested size, at most `P(8,5) = 6,720` routes. Every selected-market pair must be at least 150 km apart and every route leg must be at most 1,800 km. Feasible routes are ordered by summed market score, total great-circle distance and a stable market-name tie-breaker. The schedule uses 700 km per travel day and inserts the declared day-off rule after five shows. The response includes checked and rejected counts, legs, travel days and show dates so the result is inspectable.
+
+Before any call, `server/app.mjs` computes `markets × selected artists + selected-artist pairs + route stops`. Requests above the bounded intelligence budget are rejected. Successful results become immutable child snapshots containing namespaced `i…` receipts so their evidence links cannot collide with the source memo's `r…` receipts.
+
 ## Executive dossier and scoped analyst
 
 `server/dossier.mjs` composes the exact optimizer result, selected-artist evidence coverage, pairwise planning relationships, city-scoped evidence availability, contingency analysis, risk register, opportunity register and compact receipt index. Pairwise rows use buyer-entered genres, relative ranks and evidence completeness; they are explicitly not presented as Qloo pairwise affinity scores.
 
-The dossier analyst is deterministic and report-scoped. It can answer about a selected artist, costs, risks, cancellation resilience, geographic evidence and receipts. Its response includes the supporting facts and receipt IDs. Unsupported questions receive a refusal instead of a model-generated guess. The CLI prints Markdown by default or JSON with `--json`.
+The dossier analyst is deterministic and report-scoped. It can answer about a selected artist, costs, risks, cancellation resilience, geographic evidence and receipts. When a child snapshot has multi-market intelligence, geographic answers use its requested-market scores and intelligence receipt IDs. Unsupported questions receive a refusal instead of a model-generated guess. The CLI prints Markdown by default or JSON with `--json`; the HTML endpoint emits a self-contained, escaped, print-ready report.
 
 ## Decision Gauntlet
 

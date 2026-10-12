@@ -11,6 +11,12 @@ GET /api/dossier/:savedRunId
 Returns the optimizer decision, selected-artist evidence coverage, planning-relationship matrix, city-scoped evidence status, contingency summary, risks, opportunities, receipt index and a Markdown rendering.
 
 ```http
+GET /api/dossier/:savedRunId/report
+```
+
+Returns the same supported decision record as a standalone escaped HTML document with print styling and an attachment filename. When the run contains multi-market intelligence, the report includes requested-market scores and the exact route.
+
+```http
 POST /api/dossier/:savedRunId/ask
 Content-Type: application/json
 
@@ -18,6 +24,32 @@ Content-Type: application/json
 ```
 
 Supported topics are selected artists, budget and fees, risks, cancellation resilience, geographic evidence and receipts. The result contains `grounding: "saved_dossier_only"`, supporting `facts` and any relevant `receiptIds`. Unsupported questions return a boundary response rather than a generated guess.
+
+## Multi-market cultural intelligence
+
+```http
+POST /api/intelligence/:savedRunId
+Content-Type: application/json
+
+{
+  "origin": { "name": "London", "lat": 51.5074, "lon": -0.1278 },
+  "markets": [
+    { "name": "London", "lat": 51.5074, "lon": -0.1278 },
+    { "name": "Paris", "lat": 48.8566, "lon": 2.3522 },
+    { "name": "Berlin", "lat": 52.52, "lon": 13.405 }
+  ],
+  "stopCount": 2,
+  "startDate": "2026-11-20"
+}
+```
+
+The request accepts two to eight uniquely named candidate markets. Coordinates and the start date are explicit routing inputs supplied by the caller; they are not Qloo observations. `stopCount` is an integer from two to five and cannot exceed the market count.
+
+For each selected artist in each requested market, the server records one `where_popular` receipt. It compares every selected-artist pair with `compare_audiences`, then requests cultural place candidates in every chosen stop. The market policy score is `70 × mean observed affinity + 30 × evidence coverage`; missing affinity lowers coverage and is never replaced with a guessed value. Shared comparison labels are reported as cultural themes, not unique-audience overlap or cannibalization.
+
+The route engine searches every ordered route of the requested length. It rejects routes whose selected markets are less than 150 km apart or whose legs exceed 1,800 km, maximizes total market policy score, and uses total distance then market names as deterministic tie-breakers. Travel days use a declared 700 km-per-day rule. The response reports the number of routes checked and rejected, every scheduled leg, a chart-ready market/artist matrix, venue leads and all supporting receipt IDs.
+
+The route stores a new immutable child snapshot and returns its ID. The source snapshot is unchanged. An analysis is rejected before any provider call when its deterministic workflow count exceeds `INTELLIGENCE_CALL_BUDGET`, capped at 60. The endpoint also allows three runs per IP per minute and 50 per process-day. These process-local controls are quota safeguards rather than authentication.
 
 ## Booking packet
 
@@ -87,3 +119,18 @@ The logistics checklist accepts only:
 - `contractInvoiceSent`
 
 The first three move a secured deal to `logistics_pending`. The first six move it to `show_scheduled`; promotional assets and contract/invoice completion remain separately visible.
+
+## Campaign controller
+
+```http
+GET /api/campaign/:savedRunId
+```
+
+Returns a deterministic four-stage control report over the saved evidence and current persistent pipeline:
+
+- `research` orders artists by missing evidence and includes the linked market/route brief when available.
+- `pitching` counts approved, waiting and sent deals while retaining the human-approval gate.
+- `analytics` exposes recorded response, acceptance, objection, fee and next-action metrics.
+- `followup` combines Day 3/7/14 due work with an artist-specific maximum rate that keeps the current slate inside its declared budget.
+
+Every deal also includes its current stage, next action, evidence gaps, negotiation headroom, checklist and the exact contingency replacement produced when that artist is canceled and all other selected artists stay fixed. A ceiling is a budget-preservation calculation, not an estimate of artist market value. This route derives a report; it does not send outreach, accept an offer or book a venue.
