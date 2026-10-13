@@ -28,7 +28,7 @@ async function conn() {
     const bin = fileURLToPath(new URL('./bin.js', import.meta.resolve('@qloo/qloo-harness')));
     const transport = new StdioClientTransport({ command: process.execPath, args: [bin, 'mcp'], env: process.env, stderr: 'pipe' });
     transport.stderr?.on('data', () => {});
-    const client = new Client({ name: 'houselights', version: '1.0.0' });
+    const client = new Client({ name: 'houselights', version: '1.1.0' });
     entry.client = client;
     client.onclose = () => { if (connection === entry) connection = undefined; };
     try { await client.connect(transport); return client; }
@@ -85,7 +85,7 @@ export class Run {
   used = 0;
   constructor({ budget = 30, emit = () => {}, mode = isMock() ? 'mock' : 'live', execute, receiptPrefix = 'r',
     receiptOffset = 0,
-    cacheStore = cache, ttl = TTL, now = Date.now, timeoutMs = 45000,
+    cacheStore = cache, ttl = TTL, now = Date.now, timeoutMs = 45000, deadlineMs = Infinity,
     delay = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
     this.budget = Math.max(0, Math.floor(positive(budget, 30)));
     this.emit = emit;
@@ -96,6 +96,7 @@ export class Run {
     this.now = now;
     this.delay = delay;
     this.timeoutMs = Math.max(1, positive(timeoutMs, 45000));
+    this.deadlineAt = now() + (Number.isFinite(deadlineMs) ? Math.max(0, deadlineMs) : Infinity);
     this.receiptPrefix = /^[a-z][a-z0-9_-]{0,15}$/i.test(receiptPrefix) ? receiptPrefix : 'r';
     this.receiptOffset = Math.max(0, Math.floor(positive(receiptOffset, 0)));
     this.scope = `${mode}:${credentialScope()}`;
@@ -105,19 +106,22 @@ export class Run {
     const key = hash(this.scope + tool + stable(args));
     const t0 = this.now(), hit = this.cache.get(key);
     let env, cached = false, fetchedAt, attempts = 0;
-    if (hit && t0 - hit.at < this.ttl) {
+    if (t0 >= this.deadlineAt) {
+      env = failure('DEADLINE', 'The research deadline has elapsed. Remaining evidence is unavailable.');
+      fetchedAt = t0;
+    } else if (hit && t0 - hit.at < this.ttl) {
       env = structuredClone(hit.env); cached = true; fetchedAt = hit.at;
     } else {
       if (hit) this.cache.delete(key);
       env = failure('BUDGET', 'Per-memo workflow attempt budget exhausted.');
-      while (attempts < 3 && this.used < this.budget) {
+      while (attempts < 3 && this.used < this.budget && this.now() < this.deadlineAt) {
         this.used++; attempts++;
-        try { env = normalizeEnvelope(await timedCall(this.execute, tool, args, this.timeoutMs), tool); }
+        try { env = normalizeEnvelope(await timedCall(this.execute, tool, args, Math.max(1, Math.min(this.timeoutMs, this.deadlineAt - this.now()))), tool); }
         catch (error) { env = error?.name === 'TimeoutError' || error?.code === -32001
           ? failure('TIMEOUT', 'The Qloo workflow exceeded its time limit. Retry the memo when the service is available.')
           : failure('TRANSPORT', 'The Qloo harness connection failed. Check installation and server credentials.'); }
         if (env.status !== 'error' || !env.error?.retryable || attempts >= 3 || this.used >= this.budget) break;
-        await this.delay(700 * attempts);
+        await this.delay(Math.max(0, Math.min(700 * attempts, this.deadlineAt - this.now())));
       }
       fetchedAt = this.now();
       if (['ok', 'empty', 'partial'].includes(env.status)) {

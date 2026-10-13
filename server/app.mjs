@@ -14,6 +14,8 @@ import { buildCampaign } from './campaign.mjs';
 import { buildVenuePlan } from './venues.mjs';
 import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput } from './activation.mjs';
 import { hasLLM } from './llm.mjs';
+import { registerGMRoutes } from './gm-api.mjs';
+import { withoutDerived } from './gm.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -68,8 +70,9 @@ export function createApp() {
   if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
+  registerGMRoutes(app);
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.0.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.1.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -248,7 +251,7 @@ export function createApp() {
     const terms = { ...source.input?.terms, ...Object.fromEntries(items.flatMap(item =>
       [...new Set([item.originalName, item.name].filter(Boolean))].map(name => [name, item.terms]))) };
     const snapshot = {
-      ...source, id: undefined, createdAt: undefined, parentId: source.id, scenario: true,
+      ...withoutDerived(source), id: undefined, createdAt: undefined, parentId: source.id, scenario: true,
       scenarioName: String(b.name || 'Alternative slate').trim().slice(0, 80),
       input: { ...source.input, currency, exampleBookingTerms, constraints: normalizedConstraints, terms },
       memo: { ...source.memo, currency, exampleBookingTerms, input: { ...source.memo.input, currency, exampleBookingTerms, constraints: normalizedConstraints }, items, constraints: normalizedConstraints, slate }

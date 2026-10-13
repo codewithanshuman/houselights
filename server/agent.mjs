@@ -126,7 +126,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     order: baseRaw.order.filter(value => typeof value === 'string').slice(0, 10),
     verdicts: baseRaw.verdicts.filter(value => value && typeof value.name === 'string' && typeof value.reason === 'string' && ['lean yes', 'growth bet', 'hold', 'lean pass'].includes(value.verdict)).slice(0, 10)
   } : null;
-  const memo = { items, slate, constraints, input: { city, anchors, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
+  const memo = { items, slate, constraints, input: { city, anchors, anchorIds: anchorRefs, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
     mode: run.mode === 'mock' || run.receipts.some(receipt => receipt.source === 'synthetic') ? 'mock' : 'live', caveats, crowd,
     writer: written ? 'claim-selector' : 'template', summary: '', removed, base,
     quality: { resolved: candidates.size, ranked: order.length, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },

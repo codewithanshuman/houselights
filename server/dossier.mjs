@@ -76,6 +76,12 @@ function markdown(dossier) {
   const lines = [
     `# Houselights decision dossier`, '', `Source: ${dossier.sourceId}`, `Mode: ${dossier.mode}`, `City: ${dossier.marketEvidence.city || 'Not supplied'}`, '',
     '## Executive decision', '', dossier.executiveSummary, '',
+    ...(dossier.gmDecision ? ['## Festival GM', '', `State: ${dossier.gmDecision.state}. Mode: ${dossier.gmDecision.mode}.`, ''] : []),
+    ...(dossier.festivalResearch ? ['## Market DNA and Taste Fit', '',
+      ...dossier.festivalResearch.markets.map(market => `- ${market.city}: ${market.domains.length} domains; audience pool ${market.audience.returned}/${market.audience.requested}; comparable: ${market.audience.complete} [${market.audience.receiptId}]`),
+      ...dossier.festivalResearch.profiles.map(profile => `- ${profile.name}: Taste Fit ${profile.tasteFit.total}; measured weight ${profile.tasteFit.measuredWeight}; missing ${profile.tasteFit.estimated.join(', ') || 'none'}; sensitivity bounds ${profile.tasteFit.uncertaintyBounds.lower}–${profile.tasteFit.uncertaintyBounds.upper}.`), ''] : []),
+    ...(dossier.llmBenchmark ? ['## LLM-only control', '', `Status: ${dossier.llmBenchmark.status}. ${dossier.llmBenchmark.methodology}`, ''] : []),
+    ...(dossier.themeSeason ? ['## Themed dates', '', ...dossier.themeSeason.nights.map(night => `- ${night.date}: ${night.title}; ${night.rights.status}.`), ''] : []),
     '## Selected slate', '',
     ...dossier.selectedArtists.map(item => `- **${item.name}** — fee ${item.fee ?? 'unknown'}; relative rank ${item.rank ?? 'unsupported'}; evidence ${item.evidenceCoverage.percent}%`), '',
     '## Risk register', '', ...(dossier.riskRegister.length ? dossier.riskRegister.map(item => `- **${item.severity.toUpperCase()} · ${item.type}:** ${item.text}`) : ['- No additional deterministic risks were produced from the saved fields.']), '',
@@ -144,6 +150,10 @@ export function buildDossier(snapshot) {
       receiptIds: snapshot.intelligence.receipts.map(receipt => receipt.id),
       limitations: snapshot.intelligence.limitations
     } : null,
+    festivalResearch: snapshot.festivalResearch || null,
+    gmDecision: snapshot.gm || null,
+    llmBenchmark: snapshot.benchmark || null,
+    themeSeason: snapshot.themeSeason || null,
     audienceProfile: snapshot.intelligence?.audienceProfile || null,
     localActivation: snapshot.localActivation ? {
       generatedAt: snapshot.localActivation.generatedAt, headliner: snapshot.localActivation.headliner,
@@ -179,7 +189,9 @@ export function buildDossier(snapshot) {
       'Compatibility rows are planning comparisons, not pairwise affinity scores.',
       'Synthetic mode is product-development evidence and must not be represented as a live Qloo result.',
       ...(snapshot.venuePlan?.limitations || []),
-      ...(snapshot.localActivation?.limitations || [])
+      ...(snapshot.localActivation?.limitations || []),
+      ...(snapshot.festivalResearch?.limitations || []),
+      ...(snapshot.themeSeason?.limitations || [])
     ]
   };
   dossier.riskRegister = risks(snapshot, selected, contingency);
@@ -200,6 +212,14 @@ export function answerDossierQuestion(dossier, question) {
   if (artist) {
     facts = [artist]; receiptIds = artist.receiptIds;
     answer = `${artist.name} has a buyer-entered fee of ${artist.fee ?? 'unknown'}, relative rank ${artist.rank ?? 'unsupported'}, ${artist.evidenceCoverage.percent}% evidence coverage, local status ${artist.local}, and momentum ${artist.momentum}.`;
+  } else if (/benchmark|llm|control/.test(lower) && dossier.llmBenchmark) {
+    facts = [dossier.llmBenchmark];
+    answer = `The identical-brief control is ${dossier.llmBenchmark.status}. ` + (dossier.llmBenchmark.comparison
+      ? `Qloo policy-point difference: ${dossier.llmBenchmark.comparison.policyPointDelta}. This is one policy comparison, not measured commercial uplift.`
+      : 'No valid comparative result is available.');
+  } else if (/market dna|taste fit|demographic|cross.genre/.test(lower) && dossier.festivalResearch) {
+    facts = dossier.festivalResearch.profiles; receiptIds = unique(facts.flatMap(profile => profile.receipts));
+    answer = `Research covers ${dossier.festivalResearch.markets.length} markets and ${facts.length} candidate profiles. Taste Fit uses five explicit policy weights with missing measurements marked estimated; full-pool ranks drive the booking optimizer.`;
   } else if (/risk|weak|concern|clash/.test(lower)) {
     facts = dossier.riskRegister; receiptIds = unique(facts.flatMap(item => item.receiptIds || []));
     answer = facts.length ? dossier.riskRegister.map(item => `${item.severity}: ${item.text}`).join(' ') : 'The deterministic dossier produced no additional risk rows from the saved fields.';

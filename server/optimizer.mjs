@@ -48,12 +48,14 @@ function normalizeConstraints(raw, count) {
     riskTolerance: raw.riskTolerance ?? 50,
     lockedIds: raw.lockedIds ?? [],
     excludedIds: raw.excludedIds ?? [],
+    ...(raw.minimumAverageFit != null ? { minimumAverageFit: raw.minimumAverageFit } : {}),
   };
   if (!isMoney(constraints.budget)) errors.push('Budget must be a finite, non-negative monetary amount.');
   if (!Number.isInteger(constraints.slots) || constraints.slots < 1 || constraints.slots > MAX_CANDIDATES) errors.push('Slots must be an integer between 1 and 10.');
   if (!Number.isInteger(constraints.discoveryMin) || constraints.discoveryMin < 0 || constraints.discoveryMin > MAX_CANDIDATES) errors.push('Discovery minimum must be an integer between 0 and 10.');
   if (!Number.isInteger(constraints.maxPerGenre) || constraints.maxPerGenre < 1 || constraints.maxPerGenre > MAX_CANDIDATES) errors.push('Maximum per genre must be an integer between 1 and 10.');
   if (!finite(constraints.riskTolerance) || constraints.riskTolerance < 0 || constraints.riskTolerance > 100) errors.push('Risk tolerance must be a number between 0 and 100.');
+  if (constraints.minimumAverageFit != null && (!finite(constraints.minimumAverageFit) || constraints.minimumAverageFit < 0 || constraints.minimumAverageFit > 1)) errors.push('Minimum average fit must be between 0 and 1.');
   for (const field of ['lockedIds', 'excludedIds']) {
     if (!Array.isArray(constraints[field]) || constraints[field].some(id => typeof id !== 'string' || !id.trim())) {
       errors.push(`${field} must be an array of non-empty candidate IDs.`);
@@ -134,6 +136,7 @@ function evaluate(selected, constraints) {
   };
   const rawScore = Object.values(breakdown).reduce((sum, value) => sum + value, 0);
   const supportedFitCount = selected.filter(item => item.fit != null).length;
+  if (constraints.minimumAverageFit != null && (supportedFitCount !== count || selected.reduce((sum, item) => sum + (item.fit ?? 0), 0) / divisor + EPSILON < constraints.minimumAverageFit)) addViolation('fitFloor', 'The slate lacks complete rank evidence or falls below the required average fit.');
   return {
     selectedIds: ids,
     totalFee: feeCents == null ? null : money(feeCents),
@@ -175,6 +178,13 @@ function publicSlate(result) {
 /** Find the global best slate under the declared policy for at most 10 candidates.
  * The function is pure: it never writes candidate terms, calls Qloo, or infers fees.
  */
+export function evaluateSelection(candidates, rawConstraints, selectedIds) {
+  const validation = optimizeSlate(candidates, rawConstraints);
+  if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
+  if (!Array.isArray(selectedIds) || unique(selectedIds).length !== selectedIds.length || selectedIds.some(id => !candidates.some(item => item.id === id))) throw new Error('Selection must contain unique known candidate IDs.');
+  return publicSlate(evaluate(candidates.filter(item => selectedIds.includes(item.id)).map(item => normalizeCandidate(item, validation.constraints.excludedIds)), validation.constraints));
+}
+
 export function optimizeSlate(candidates, rawConstraints = {}) {
   const input = Array.isArray(candidates) ? candidates : [];
   const { constraints, errors } = normalizeConstraints(rawConstraints, input.length);
