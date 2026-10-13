@@ -1,0 +1,65 @@
+import test, { after } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+process.env.QLOO_MODE = 'mock';
+process.env.LLM_MODE = 'off';
+const directory = mkdtempSync(join(tmpdir(), 'houselights-gm-'));
+process.env.DATA_DIR = directory;
+const { createApp } = await import('../server/app.mjs');
+const store = await import('../server/store.mjs');
+const { mockCall } = await import('../server/mock.mjs');
+const { optimizeSlate } = await import('../server/optimizer.mjs');
+const server = createApp().listen(0, '127.0.0.1');
+await new Promise(resolve => server.once('listening', resolve));
+const base = `http://127.0.0.1:${server.address().port}`;
+after(async () => { await new Promise(resolve => server.close(resolve)); rmSync(directory, { recursive: true, force: true }); });
+const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+
+test('festival research → dossier → benchmark → season → revision works through saved APIs', async () => {
+  const items = ['GM Alpha', 'GM Beta', 'GM Gamma'].map((name, i) => ({ name, id: mockCall('describe', { entity: name }).results[0].entity_id,
+    fit: 1 - i / 2, evidence: { rank: true }, terms: { fee: 10, genre: `genre${i}`, available: true }, receipts: [] }));
+  const constraints = { budget: 100, slots: 2, maxPerGenre: 1 };
+  const id = store.save({ mock: true, receipts: [], input: { city: 'London', anchors: ['Radiohead'] },
+    memo: { mode: 'mock', input: { city: 'London', anchors: ['Radiohead'] }, items, constraints, slate: optimizeSlate(items, constraints) } });
+  const runResponse = await post(`/api/gm/${id}/run`, { markets: ['London', 'Paris'], demographic: '35_to_44' });
+  assert.equal(runResponse.status, 201);
+  const run = await runResponse.json();
+  assert.equal(run.snapshot.parentId, id);
+  assert.equal(run.snapshot.gm.state, 'decision_ready');
+  assert.equal(run.snapshot.festivalResearch.overlap.length, 1);
+  const demographicReceipts = run.snapshot.receipts.filter(receipt => receipt.args.demographic);
+  assert.ok(demographicReceipts.length > 0);
+  assert.ok(demographicReceipts.every(receipt => receipt.args.demographic === '35-44'));
+  const dossier = await (await fetch(`${base}/api/dossier/${run.id}`)).json();
+  assert.equal(dossier.festivalResearch.markets.length, 2);
+  assert.match(dossier.markdown, /Market DNA and Taste Fit/);
+  const benchResponse = await post(`/api/gm/${run.id}/benchmark`, {});
+  assert.equal(benchResponse.status, 201);
+  const bench = await benchResponse.json();
+  assert.equal(bench.snapshot.benchmark.status, 'unavailable');
+  const seasonResponse = await post(`/api/gm/${bench.id}/season`, { sport: 'baseball', count: 3 });
+  assert.equal(seasonResponse.status, 201);
+  const season = await seasonResponse.json();
+  assert.equal(season.snapshot.themeSeason.nights.length, 3);
+  const selected = run.snapshot.memo.items.find(item => run.snapshot.memo.slate.selectedIds.includes(item.id));
+  const reviseResponse = await post(`/api/gm/${season.id}/revise`, { request: `Replace ${selected.name}, keep the budget` });
+  assert.equal(reviseResponse.status, 201);
+  const revision = await reviseResponse.json();
+  assert.equal(revision.snapshot.benchmark, undefined);
+  assert.equal(revision.snapshot.themeSeason, undefined);
+  assert.equal(revision.snapshot.festivalResearch, undefined);
+  assert.equal(revision.snapshot.memo.constraints.budget, 100);
+  assert.ok(!revision.snapshot.memo.slate.selectedIds.includes(selected.id));
+  assert.equal(store.load(id).gm, undefined);
+  const invalid = await post(`/api/gm/${run.id}/run`, { markets: ['London', 'London'] });
+  assert.equal(invalid.status, 400);
+});
+
+test('schedule API validates synthetic fixture choices', async () => {
+  const response = await post('/api/gm/schedule', { sport: 'soccer', count: 4 });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).synthetic, true);
+  assert.equal((await post('/api/gm/schedule', { sport: '__proto__' })).status, 400);
+});

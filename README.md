@@ -39,6 +39,8 @@ npm start
 
 ## What the product does
 
+The Theme Night GM backend integration adds five-domain Market DNA, fixed-pool regional and audience rankings, five-part Taste Fit with uncertainty, a verified GM decision pipeline, an identical-brief LLM-only control, natural-language slate revisions and evidence-linked themed-date planning. Use the API or `npm run gm`; see the [integration map, commands and remaining source differences](docs/theme-night-integration.md). UI work remains deferred.
+
 - Resolves artist names and offers a choice when the provider reports ambiguity.
 - Discovers artists outside the initial shortlist and ranks candidates against the room's anchors and city.
 - Allocates deeper geographic, audience-comparison and trend checks within a bounded workflow budget.

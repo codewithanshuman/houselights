@@ -69,7 +69,7 @@ export function comparisonOf(env) {
 
 // Only public entity labels and documented scalar evidence enter the ledger.
 export function compactEvidence(tool, env) {
-  const rows = env.results.slice(0, 12).map(row => {
+  const rows = env.results.slice(0, tool === 'recommend' || tool === 'where_popular' ? 50 : 12).map(row => {
     const out = {};
     const name = nameOf(row), id = idOf(row);
     if (name) out.name = name.slice(0, 180);
@@ -78,6 +78,13 @@ export function compactEvidence(tool, env) {
     if (finite(row?.query?.affinity)) out.affinity = row.query.affinity;
     if (finite(row?.query?.affinity_rank)) out.affinityRank = row.query.affinity_rank;
     if (finite(row?.query?.popularity)) out.popularity = row.query.popularity;
+    if (tool === 'audience_demographics') {
+      for (const field of ['age', 'gender']) {
+        const values = row?.query?.[field] ?? row?.[field];
+        if (record(values)) out[field] = Object.fromEntries(Object.entries(values).filter(([, value]) => finite(value)).slice(0, 20));
+      }
+    }
+    if (Array.isArray(row?.tags)) out.tags = row.tags.map(nameOf).filter(Boolean).slice(0, 20);
     const lat = coordinate(row, 'location.latitude', 'location.lat', 'properties.location.latitude', 'properties.location.lat', 'latitude', 'lat');
     const lon = coordinate(row, 'location.longitude', 'location.lon', 'properties.location.longitude', 'properties.location.lon', 'longitude', 'lon', 'lng');
     if (finite(lat) && lat >= -90 && lat <= 90 && finite(lon) && lon >= -180 && lon <= 180) {
