@@ -28,7 +28,7 @@ async function conn() {
     const bin = fileURLToPath(new URL('./bin.js', import.meta.resolve('@qloo/qloo-harness')));
     const transport = new StdioClientTransport({ command: process.execPath, args: [bin, 'mcp'], env: process.env, stderr: 'pipe' });
     transport.stderr?.on('data', () => {});
-    const client = new Client({ name: 'houselights', version: '0.9.0' });
+    const client = new Client({ name: 'houselights', version: '1.0.0' });
     entry.client = client;
     client.onclose = () => { if (connection === entry) connection = undefined; };
     try { await client.connect(transport); return client; }
@@ -84,6 +84,7 @@ export class Run {
   receipts = [];
   used = 0;
   constructor({ budget = 30, emit = () => {}, mode = isMock() ? 'mock' : 'live', execute, receiptPrefix = 'r',
+    receiptOffset = 0,
     cacheStore = cache, ttl = TTL, now = Date.now, timeoutMs = 45000,
     delay = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
     this.budget = Math.max(0, Math.floor(positive(budget, 30)));
@@ -96,6 +97,7 @@ export class Run {
     this.delay = delay;
     this.timeoutMs = Math.max(1, positive(timeoutMs, 45000));
     this.receiptPrefix = /^[a-z][a-z0-9_-]{0,15}$/i.test(receiptPrefix) ? receiptPrefix : 'r';
+    this.receiptOffset = Math.max(0, Math.floor(positive(receiptOffset, 0)));
     this.scope = `${mode}:${credentialScope()}`;
   }
 
@@ -128,7 +130,7 @@ export class Run {
     const provenance = env.provenance ? Object.fromEntries(['source', 'endpoint', 'documentation'].flatMap(key =>
       typeof env.provenance[key] === 'string' ? [[key, env.provenance[key].slice(0, 500)]] : [])) : {};
     const receipt = {
-      id: `${this.receiptPrefix}${this.receipts.length + 1}`, tool, args: structuredClone(args), why,
+      id: `${this.receiptPrefix}${this.receiptOffset + this.receipts.length + 1}`, tool, args: structuredClone(args), why,
       status: env.status, summary: env.summary, count: env.result_count, cached,
       ms: this.now() - t0, attempts, source, fetchedAt: new Date(fetchedAt).toISOString(),
       observedAt: new Date(this.now()).toISOString(), evidence, provenance,

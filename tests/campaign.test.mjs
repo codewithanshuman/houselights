@@ -46,3 +46,18 @@ test('campaign loop joins research, approval, follow-up, analytics, ceilings and
   assert.ok(campaign.recommendations.some(item => item.action === 'qualify_venue_leads'));
   assert.ok(campaign.recommendations.some(item => item.action === 'review_activation_signals'));
 });
+
+test('campaign ceilings use current negotiated commitments and flag excessive counteroffers', () => {
+  let pipeline = createPipeline(snapshot, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'approve_pitch', artistId: 'a' }, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'send_outreach', artistId: 'a' }, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'record_response', artistId: 'a', responseType: 'accepted', agreedRate: 6500 }, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'approve_pitch', artistId: 'b' }, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'send_outreach', artistId: 'b' }, '2026-10-12T10:00:00.000Z');
+  pipeline = applyPipelineEvent(pipeline, { type: 'record_response', artistId: 'b', responseType: 'negotiating', counterofferRate: 4000 }, '2026-10-12T10:00:00.000Z');
+  const campaign = buildCampaign(snapshot, pipeline);
+  const beta = campaign.deals.find(deal => deal.artistId === 'b');
+  assert.equal(beta.negotiation.maxRateKeepingCurrentSlateFeasible, 3500);
+  assert.equal(beta.negotiation.latestCounterofferWithinCeiling, false);
+  assert.ok(campaign.recommendations.some(item => item.action === 'counter_within_ceiling_or_reoptimize'));
+});

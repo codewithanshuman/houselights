@@ -9,6 +9,7 @@ process.env.LLM_MODE = 'off';
 const testDirectory = mkdtempSync(join(tmpdir(), 'houselights-api-'));
 process.env.DATA_DIR = testDirectory;
 const { createApp } = await import('../server/app.mjs');
+const apiStore = await import('../server/store.mjs');
 const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
 const url = `http://127.0.0.1:${server.address().port}`;
@@ -21,6 +22,25 @@ test('health and asset endpoints expose mode without credentials', async () => {
   assert.equal(typeof health.keyed, 'boolean');
   assert.equal((await fetch(url)).status, 200);
   assert.equal((await fetch(url + '/api/memo/not-found')).status, 404);
+});
+
+test('activation and tour calendar APIs persist an evidence-linked child snapshot', async () => {
+  const sourceId = apiStore.save({ mock: true, receipts: [], input: { city: 'London' }, memo: {
+    slate: { feasible: true, selectedIds: ['head'] },
+    items: [{ id: 'head', name: 'Headliner', terms: { fee: 1000, available: true } }]
+  }, intelligence: { route: { feasible: true, stops: [
+    { sequence: 1, name: 'London', lat: 51.5074, lon: -.1278, from: 'London', fromKm: 0, travelDays: 0, dayOffBefore: false, showDate: '2026-11-20' }
+  ] } } });
+  const response = await post(`/api/activation/${sourceId}`, { marketNames: ['London'], maxOpeners: 1 });
+  assert.equal(response.status, 201);
+  const result = await response.json();
+  assert.equal(result.snapshot.parentId, sourceId);
+  assert.equal(result.snapshot.localActivation.summary.marketCount, 1);
+  assert.ok(result.snapshot.receipts.every((receipt, index, rows) => rows.findIndex(item => item.id === receipt.id) === index));
+  const calendar = await fetch(`${url}/api/tour-calendar/${result.id}`);
+  assert.equal(calendar.status, 200);
+  assert.match(calendar.headers.get('content-type'), /text\/calendar/);
+  assert.match(await calendar.text(), /SUMMARY:Show: Headliner — London/);
 });
 
 test('SSE runs carry booking terms through optimization and a reloadable receipt snapshot', async () => {

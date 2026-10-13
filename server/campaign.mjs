@@ -45,11 +45,13 @@ export function buildCampaign(snapshot, pipeline) {
   const intelligence = snapshot.intelligence || null;
   const dealPlans = pipeline.deals.map(deal => {
     const item = selectedItems.find(row => row.id === deal.artistId);
-    const otherCommitted = selectedItems.reduce((sum, row) => row.id === deal.artistId ? sum : sum + (row.terms?.fee || 0), 0);
+    const otherCommitted = pipeline.deals.reduce((sum, other) => other.artistId === deal.artistId ? sum :
+      sum + (other.agreedRate ?? other.proposedRate ?? selectedItems.find(row => row.id === other.artistId)?.terms?.fee ?? 0), 0);
     const ceiling = typeof budget === 'number' ? money(Math.max(0, budget - otherCommitted)) : null;
     const proposed = deal.proposedRate ?? item?.terms?.fee ?? null;
     const agreed = deal.agreedRate ?? null;
     const rateForDecision = agreed ?? proposed;
+    const latestCounteroffer = deal.negotiation?.counteroffers?.at(-1) || null;
     const withinCeiling = typeof rateForDecision === 'number' && typeof ceiling === 'number' ? rateForDecision <= ceiling : null;
     return {
       artistId: deal.artistId,
@@ -60,9 +62,14 @@ export function buildCampaign(snapshot, pipeline) {
         proposedRate: proposed, agreedRate: agreed, maxRateKeepingCurrentSlateFeasible: ceiling,
         headroomFromProposedRate: typeof proposed === 'number' && typeof ceiling === 'number' ? money(ceiling - proposed) : null,
         currentRateWithinCeiling: withinCeiling,
+        latestCounteroffer,
+        latestCounterofferWithinCeiling: latestCounteroffer && typeof ceiling === 'number' ? latestCounteroffer.amount <= ceiling : null,
+        history: deal.negotiation?.counteroffers || [],
         policy: 'A rate above this ceiling makes the current selected slate exceed the declared budget; it is not a market-value estimate.'
       },
       response: deal.response,
+      pitch: deal.pitch || null,
+      outreach: deal.outreach || null,
       nextScheduledFollowUp: deal.followUps.find(item => item.status === 'scheduled') || null,
       nextAction: nextAction(deal),
       fallback: fallbackFor(contingency, deal.artistId, names),
@@ -86,18 +93,30 @@ export function buildCampaign(snapshot, pipeline) {
     venuePlan: snapshot.venuePlan ? {
       routeEconomics: snapshot.venuePlan.routeEconomics,
       stops: snapshot.venuePlan.stops.map(stop => ({ market: stop.market, status: stop.qualificationStatus, venue: stop.selectedVenue?.venueName || null, breakEvenTickets: stop.economics.breakEvenTickets, breakEvenWithinCapacity: stop.economics.breakEvenWithinCapacity }))
+    } : null,
+    localActivation: snapshot.localActivation ? {
+      headliner: snapshot.localActivation.headliner,
+      summary: snapshot.localActivation.summary,
+      markets: snapshot.localActivation.markets.map(row => ({ market: row.market, showDate: row.showDate,
+        hotspotAvailable: !!row.hotspot, eligibleOpeners: row.openerDiscovery.eligibleCount,
+        openerSizeChecksRequired: row.openerDiscovery.evidenceRequiredCount,
+        posterLeadsWithinRadius: row.posterRun.confirmedWithinRadius,
+        aftershowLeadsWithinRadius: row.aftershow.confirmedWithinRadius }))
     } : null
   } : null;
   const recommendations = [];
   for (const plan of dealPlans) {
     if (plan.evidenceCoverage.missing.length) recommendations.push({ priority: 'evidence', artistId: plan.artistId, action: 'inspect_missing_evidence', detail: `${plan.artistName} lacks ${plan.evidenceCoverage.missing.join(', ')} evidence.` });
     if (plan.negotiation.currentRateWithinCeiling === false) recommendations.push({ priority: 'budget', artistId: plan.artistId, action: 'activate_fallback_or_reoptimize', detail: `${plan.artistName}'s recorded rate exceeds the maximum that keeps the current slate inside budget.` });
+    if (plan.negotiation.latestCounterofferWithinCeiling === false) recommendations.push({ priority: 'budget', artistId: plan.artistId, action: 'counter_within_ceiling_or_reoptimize', detail: `${plan.artistName}'s latest recorded counteroffer exceeds the current slate-preserving ceiling.` });
     if (plan.stage === 'declined' && !plan.fallback?.feasible) recommendations.push({ priority: 'critical', artistId: plan.artistId, action: 'expand_candidate_pool', detail: `No clean replacement for ${plan.artistName} satisfies the unchanged brief.` });
   }
   if (marketBrief?.routeFeasible && !marketBrief.venuePlan) recommendations.push({ priority: 'routing', action: 'qualify_venue_leads', detail: `Verify capacity, availability and commercial terms for ${marketBrief.venueLeadCount} cultural place leads across the exact route.` });
   if (marketBrief?.venuePlan && marketBrief.venuePlan.routeEconomics.fallbackStops) recommendations.push({ priority: 'venue', action: 'source_in_band_rooms', detail: `${marketBrief.venuePlan.routeEconomics.fallbackStops} routed stop${marketBrief.venuePlan.routeEconomics.fallbackStops === 1 ? '' : 's'} use a sourced but out-of-band capacity fallback.` });
   if (marketBrief?.venuePlan?.routeEconomics.unqualifiedStops) recommendations.push({ priority: 'venue', action: 'complete_venue_qualification', detail: `${marketBrief.venuePlan.routeEconomics.unqualifiedStops} routed stop${marketBrief.venuePlan.routeEconomics.unqualifiedStops === 1 ? '' : 's'} still need a sourced venue capacity, cost and availability decision.` });
   if (marketBrief?.audienceActivation) recommendations.push({ priority: 'campaign', action: 'review_activation_signals', detail: `Review ${marketBrief.audienceActivation.tags.length} aggregate slate tags and ${marketBrief.audienceActivation.crossDomain.length} cross-domain evidence groups before approving campaign language.` });
+  if (marketBrief?.routeFeasible && !marketBrief.localActivation) recommendations.push({ priority: 'campaign', action: 'build_local_activation', detail: 'Build receipt-linked opener, poster and aftershow plans for the routed markets.' });
+  if (marketBrief?.localActivation && marketBrief.localActivation.markets.some(row => row.openerSizeChecksRequired > 0)) recommendations.push({ priority: 'campaign', action: 'verify_opener_size', detail: 'At least one opener lead lacks the returned popularity evidence required by the smaller-act rule.' });
 
   return {
     version: '1.0', generatedAt: new Date().toISOString(), sourceId: snapshot.id, pipelineRevision: pipeline.revision,

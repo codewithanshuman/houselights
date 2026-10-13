@@ -49,13 +49,16 @@ npm start
 - Searches every feasible exact slate for a robust alternative, ranking bills by cancellation coverage, worst-case fallback utility, average fallback utility and then baseline utility. It reports the utility sacrificed for resilience instead of silently changing the objective.
 - Generates an evidence-bound booking packet with unsent hold-request drafts, unsupported-number checks, an eight-field logistics checklist and a standards-compliant `.ics` calendar payload.
 - Runs a persistent booking pipeline through research, pitch approval, outreach, response, negotiation, secured logistics and show scheduling, including Day 3/7/14 follow-ups and outcome-derived analytics.
+- Retains approved pitch angles and venue segments, outreach metadata, categorized objections and a complete received/proposed counteroffer history; campaign ceilings use current agreed commitments.
 - Builds an executive decision dossier containing evidence coverage, geographic status, planning relationships, risks, opportunities, contingency resilience and a report-scoped analyst that answers only from saved evidence.
 - Runs a receipt-backed multi-market intelligence pass across every selected artist and requested market, compares every selected-artist pair, discovers cultural place leads, and saves the result as a linked snapshot.
-- Searches every permitted ordered route exactly, enforcing a 150 km market-separation rule, a 1,800 km maximum leg and explicit travel-day scheduling. It maximizes the declared Qloo evidence policy before using distance as the tie-breaker.
+- Searches every permitted ordered route exactly, enforcing a 150 km market-separation rule, a 1,800 km maximum leg and explicit travel-day scheduling. It maximizes comparable returned-evidence coverage before using distance as the tie-breaker; heatmap percentiles from separate queries are never compared.
 - Joins research, human pitch approval, outreach, outcomes, negotiation ceilings, scheduled follow-ups, contingency replacements and route intelligence into a four-stage campaign control report.
 - Exports a standalone, escaped, print-ready HTML decision dossier with its source receipt index.
 - Qualifies routed Qloo place leads with caller-supplied capacity sources, availability and costs; applies explicit 60%–250% room-fit rules and produces cent-reconciled per-stop break-even call sheets.
 - Builds an optional receipt-backed aggregate audience activation profile from slate tags, per-artist demographics and selected cross-domain Qloo recommendations such as brands, movies, podcasts, books, TV and games.
+- Builds per-market local activation plans: receipt-backed opener discovery and shared themes, strict returned-popularity size checks, neighborhood hotspots, coordinate-gated poster runs and aftershow place leads.
+- Exports a standards-compliant whole-tour calendar containing every routed show, transfer and rule-inserted day off.
 - Turns decision practice into a six-mission Decision Gauntlet: reduce the source budget, book a discovered act, protect genre breadth, survive a 10% quote increase, keep rank receipts complete, and record a lock or exclusion. XP is recomputed on the server from saved evidence and is never a demand forecast.
 - Produces per-artist claims linked to receipts and saves named alternative scenarios with a parent link and the original evidence.
 - Presents the workflow in a responsive midnight-blue and gold workspace with owner-supplied atmospheric artwork and an optional motion setting.
@@ -104,13 +107,15 @@ The operational APIs also remain interface-independent:
 | `GET /api/dossier/:id/report` | Standalone printable HTML decision report |
 | `POST /api/dossier/:id/ask` | Report-scoped deterministic question answering |
 | `POST /api/packet/:id` | Hold drafts, logistics checklist and iCalendar payload for an explicit event |
+| `GET /api/tour-calendar/:id` | Whole-route show, transfer and day-off iCalendar export |
 | `GET /api/pipeline/:id` | Create or read the persistent selected-artist pipeline |
 | `POST /api/pipeline/:id/events` | Apply a validated pipeline transition or outcome |
 | `POST /api/intelligence/:id` | Run and save multi-market Qloo evidence, pair cohesion, venue scouting and exact routing |
 | `GET /api/campaign/:id` | Derive the four-stage campaign controller from evidence and the persistent pipeline |
 | `POST /api/venues/:id/qualify` | Save sourced venue qualification, room-fit decisions and deterministic route economics |
+| `POST /api/activation/:id` | Save local opener, hotspot, poster-run and aftershow planning with receipts |
 
-See the [operational API contract](docs/api.md) for payloads, legal transitions and response semantics.
+See the [operational API contract](docs/api.md) for payloads, legal transitions and response semantics. The [file-level archive gap audit](docs/archive-gap-audit.md) maps the supplied reference modules to implemented behavior and explicit evidence boundaries.
 
 ## Receipts and limits
 

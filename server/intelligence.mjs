@@ -2,7 +2,6 @@ import { nameOf } from './shape.mjs';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const round = value => Math.round((value + Number.EPSILON) * 1e6) / 1e6;
-const clamp = value => Math.max(0, Math.min(1, value));
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const PROFILE_TARGETS = new Set(['book', 'brand', 'movie', 'podcast', 'tv_show', 'videogame']);
 
@@ -34,7 +33,7 @@ export function normalizeIntelligenceInput(raw) {
   if (new Set(markets.map(market => market.name.toLowerCase())).size !== markets.length) throw new Error('Market names must be unique.');
   const origin = normalizePoint(value.origin || markets[0], 'Origin');
   const stopCount = Number(value.stopCount ?? Math.min(5, markets.length));
-  if (!Number.isInteger(stopCount) || stopCount < 2 || stopCount > Math.min(5, markets.length)) throw new Error('stopCount must be an integer from 2 to 5 and no larger than the market list.');
+  if (!Number.isInteger(stopCount) || stopCount < 2 || stopCount > Math.min(8, markets.length)) throw new Error('stopCount must be an integer from 2 to 8 and no larger than the market list.');
   if (!validDate(value.startDate)) throw new Error('startDate must be a valid YYYY-MM-DD date.');
   const includeAudienceProfile = value.includeAudienceProfile !== false;
   const requestedTargets = value.profileTargets ?? ['brand', 'movie', 'podcast'];
@@ -67,14 +66,18 @@ function permutations(values, size, prefix = [], out = []) {
 }
 
 function schedule(route, origin, startDate, rules) {
-  let date = startDate, previous = origin;
+  let date = startDate, previous = origin, consecutiveShows = 0;
   return route.map((market, index) => {
     const fromKm = distanceKm(previous, market);
-    const travelDays = index === 0 ? Math.max(0, Math.ceil(fromKm / rules.maxDriveKmPerDay) - 1) : Math.max(1, Math.ceil(fromKm / rules.maxDriveKmPerDay));
-    if (index > 0 || travelDays > 0) date = addDays(date, travelDays);
-    if (index > 0 && index % rules.dayOffAfterShows === 0) date = addDays(date, 1);
-    const stop = { ...market, sequence: index + 1, from: previous.name, fromKm, travelDays, showDate: date };
-    date = addDays(date, 1); previous = market;
+    const travelDays = fromKm === 0 ? 0 : Math.max(1, Math.ceil(fromKm / rules.maxDriveKmPerDay));
+    let dayOffBefore = false;
+    if (index === 0) date = addDays(date, Math.max(0, travelDays - 1));
+    else {
+      date = addDays(date, Math.max(0, travelDays - 1));
+      if (consecutiveShows >= rules.dayOffAfterShows) { date = addDays(date, 1); consecutiveShows = 0; dayOffBefore = true; }
+    }
+    const stop = { ...market, sequence: index + 1, from: previous.name, fromKm, travelDays, dayOffBefore, showDate: date };
+    date = addDays(date, 1); previous = market; consecutiveShows++;
     return stop;
   });
 }
@@ -103,10 +106,10 @@ export function optimizeMarketRoute(scoredMarkets, input) {
   if (!best) return { feasible: false, checkedCount, rejectedRadius, rejectedLeg, stops: [], reasons: ['No route satisfies the declared market-distance and leg-distance rules.'] };
   return {
     feasible: true, method: 'exact-permutation-search', checkedCount, rejectedRadius, rejectedLeg,
-    tasteUtility: best.tasteUtility, totalDistanceKm: best.totalDistanceKm,
+    tasteUtility: best.tasteUtility, evidenceCoverageUtility: best.tasteUtility, objective: 'evidence_coverage', totalDistanceKm: best.totalDistanceKm,
     stops: schedule(best.route, input.origin, input.startDate, input.rules), reasons: [
-      `Checked ${checkedCount} ordered routes and selected the highest market utility; distance breaks utility ties.`,
-      'Market utility is a declared policy score from observed Qloo affinity coverage, not ticket demand.'
+      `Checked ${checkedCount} ordered routes and selected the highest comparable evidence coverage; distance breaks coverage ties.`,
+      'Separate heatmap responses do not share a comparable affinity scale. Route utility therefore uses returned-evidence coverage only, never cross-query affinity.'
     ]
   };
 }
@@ -114,8 +117,9 @@ export function optimizeMarketRoute(scoredMarkets, input) {
 function marketScore(artistRows, artistCount) {
   const observed = artistRows.filter(row => finite(row.affinity));
   const coverage = artistCount ? observed.length / artistCount : 0;
-  const meanAffinity = observed.length ? observed.reduce((sum, row) => sum + clamp(row.affinity), 0) / observed.length : 0;
-  return { coverage: round(coverage), meanAffinity: observed.length ? round(meanAffinity) : null, marketScore: round(70 * meanAffinity + 30 * coverage) };
+  // Heatmap affinities are percentiles within the response that returned them.
+  // Separate market requests therefore do not share a comparable scale.
+  return { coverage: round(coverage), meanAffinity: null, marketScore: round(100 * coverage), scoreBasis: 'evidence_coverage_only' };
 }
 
 function sharedNames(env) {
@@ -186,8 +190,8 @@ export async function buildCulturalIntelligence(snapshot, rawInput, run) {
     artists: artists.map(item => ({ id: item.id, name: item.name })), markets: marketRows, route, cohesion, audienceProfile, venueScouting,
     receipts: run.receipts,
     chartData: {
-      marketBars: marketRows.map(row => ({ market: row.name, policyScore: row.marketScore, evidenceCoveragePercent: round(row.coverage * 100), meanObservedAffinity: row.meanAffinity })),
-      artistMarketMatrix: marketRows.flatMap(row => row.artists.map(artist => ({ market: row.name, artist: artist.artistName, affinity: artist.affinity, receiptId: artist.receiptId }))),
+      marketBars: marketRows.map(row => ({ market: row.name, policyScore: row.marketScore, scoreBasis: row.scoreBasis, evidenceCoveragePercent: round(row.coverage * 100), meanObservedAffinity: null })),
+      artistMarketMatrix: marketRows.flatMap(row => row.artists.map(artist => ({ market: row.name, artist: artist.artistName, affinity: artist.affinity, affinityScale: 'within_receipt_only', receiptId: artist.receiptId }))),
       cohesionEdges: cohesionPairs.map(pair => ({ source: pair.names[0], target: pair.names[1], sharedTasteCount: pair.sharedTasteCount, supported: pair.comparisonAvailable, receiptId: pair.receiptId })),
       profileCounts: audienceProfile.enabled ? [
         { category: 'tags', count: audienceProfile.tags.length },
@@ -196,7 +200,7 @@ export async function buildCulturalIntelligence(snapshot, rawInput, run) {
       ] : []
     },
     limitations: [
-      'Market scores compare only the requested markets and selected artists under the declared 70% affinity / 30% evidence-coverage policy.',
+      'Market route scores use comparable evidence coverage only. Heatmap affinity values from separate market queries remain visible per receipt but are never averaged or ranked across markets.',
       'Qloo cultural affinity is not ticket demand. Coordinates are user-supplied routing inputs, not Qloo evidence.',
       'Venue candidates are cultural-context leads; capacity, availability, offer and contact details remain unverified.',
       'Audience tags, demographics and cross-domain results are aggregate cultural context; they do not identify individuals or predict campaign performance.'

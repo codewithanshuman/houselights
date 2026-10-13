@@ -23,14 +23,31 @@ test('geographic inputs are strict and distance uses great-circle kilometers', (
   assert.equal(intelligenceWorkflowCount(input, 2), 15);
 });
 
-test('route search checks every ordered route and maximizes declared taste utility before distance', () => {
+test('route search checks every ordered route and maximizes declared comparable evidence utility before distance', () => {
   const scored = input.markets.map((market, index) => ({ ...market, marketScore: [92, 80, 20][index] }));
   const result = optimizeMarketRoute(scored, input);
   assert.equal(result.feasible, true);
   assert.equal(result.checkedCount, 6);
   assert.deepEqual(new Set(result.stops.map(stop => stop.name)), new Set(['London', 'Paris']));
   assert.equal(result.tasteUtility, 172);
+  assert.equal(result.evidenceCoverageUtility, 172);
+  assert.equal(result.objective, 'evidence_coverage');
   assert.ok(result.stops.every(stop => /^2026-11-\d{2}$/.test(stop.showDate)));
+  if (result.stops[1].fromKm <= input.rules.maxDriveKmPerDay) {
+    const days = (new Date(result.stops[1].showDate) - new Date(result.stops[0].showDate)) / 86400000;
+    assert.equal(days, 1, 'a one-day transfer can play the following day');
+  }
+});
+
+test('routes longer than five shows materialize the declared day-off rule', () => {
+  const markets = Array.from({ length: 6 }, (_, index) => ({ name: `Market ${index + 1}`, lat: 40 + index * 2, lon: -75, marketScore: 100 - index }));
+  const longInput = normalizeIntelligenceInput({ origin: markets[0], markets, stopCount: 6, startDate: '2026-11-01', includeAudienceProfile: false });
+  const result = optimizeMarketRoute(markets, longInput);
+  assert.equal(result.feasible, true);
+  assert.equal(result.checkedCount, 720);
+  assert.equal(result.stops[5].dayOffBefore, true);
+  const gap = (new Date(result.stops[5].showDate) - new Date(result.stops[4].showDate)) / 86400000;
+  assert.equal(gap, 2);
 });
 
 test('cultural intelligence produces receipt-backed market, cohesion, route and venue modules', async () => {

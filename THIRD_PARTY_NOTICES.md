@@ -2,7 +2,7 @@
 
 ## Routed
 
-`server/operations.mjs` implements standards-compliant iCalendar line folding and an evidence-number guard adapted from the approach in the supplied `routed-main` reference archive. The implementation was rewritten for Houselights' data model. Routed is distributed under the MIT License:
+`server/intelligence.mjs`, `server/activation.mjs`, `server/venues.mjs` and `server/operations.mjs` implement route scheduling, local activation, room-fit, standards-compliant iCalendar line folding and an evidence-number guard adapted from the product approaches in the supplied `routed-main` reference archive. The implementation was rewritten for Houselights' saved-evidence model and official Qloo harness integration. Routed is distributed under the MIT License:
 
 MIT License
 

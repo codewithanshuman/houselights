@@ -137,6 +137,37 @@ export function bookingCalendar(snapshot, event) {
   return lines.flatMap(foldIcs).join('\r\n') + '\r\n';
 }
 
+export function tourCalendar(snapshot) {
+  if (!snapshot?.intelligence?.route?.feasible) throw new Error('A saved feasible intelligence route is required to build a tour calendar.');
+  const selected = new Set(snapshot.memo?.slate?.selectedIds || []);
+  const lineup = (snapshot.memo?.items || []).filter(item => selected.has(item.id)).map(item => item.name).join(', ');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const events = [];
+  for (const stop of snapshot.intelligence.route.stops) {
+    const venue = snapshot.venuePlan?.stops?.find(item => item.market === stop.name)?.selectedVenue;
+    if (stop.dayOffBefore) {
+      const offDate = addDays(stop.showDate, -Math.max(1, stop.travelDays));
+      events.push(...calendarEvent(`${snapshot.id}-${offDate}-off`, offDate, addDays(offDate, 1), `Day off before ${stop.name}`,
+        'Scheduled by the declared consecutive-show rule.', stop.name, stamp, true));
+    }
+    if (stop.fromKm > 0) for (let day = 1; day <= stop.travelDays; day++) {
+      const travelDate = addDays(stop.showDate, day - stop.travelDays);
+      events.push(...calendarEvent(`${snapshot.id}-${travelDate}-travel-${stop.sequence}-${day}`, travelDate, addDays(travelDate, 1),
+        `Travel${stop.travelDays > 1 ? ` day ${day}/${stop.travelDays}` : ''}: ${stop.from} to ${stop.name}`,
+        `${stop.fromKm} km great-circle planning distance across ${stop.travelDays} declared travel day${stop.travelDays === 1 ? '' : 's'}. Verify road mileage and timings.`,
+        stop.name, stamp, true));
+    }
+    events.push(...calendarEvent(`${snapshot.id}-${stop.showDate}-show-${stop.sequence}`, stop.showDate, addDays(stop.showDate, 1),
+      `Show: ${lineup} — ${stop.name}`, `Route stop ${stop.sequence}. Venue status: ${venue ? 'qualified from buyer-supplied facts' : 'TBC'}. No booking is represented as confirmed.`,
+      [venue?.venueName, stop.name].filter(Boolean).join(', '), stamp));
+  }
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Houselights//Tour route//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:Houselights tour route', ...events, 'END:VCALENDAR'
+  ];
+  return lines.flatMap(foldIcs).join('\r\n') + '\r\n';
+}
+
 export function buildBookingPacket(snapshot, rawEvent) {
   if (!snapshot?.memo?.slate?.feasible) throw new Error('A feasible saved slate is required to build a booking packet.');
   const event = normalizeEvent(rawEvent, snapshot.input?.city || snapshot.memo.input?.city || '');

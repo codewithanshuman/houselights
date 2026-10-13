@@ -169,6 +169,18 @@ test('receipts bound evidence and retain public provenance without raw requests'
   assert.match(receipt.digest, /^sha256:[a-f0-9]{64}$/);
 });
 
+test('compact heatmap and place evidence preserves bounded public coordinates', async () => {
+  const run = makeRun({ execute: () => ({ ...ok(), results: [{ name: 'Tile', location: { latitude: 51.5, longitude: -.12 },
+    query: { affinity: .7, affinity_rank: .9, popularity: .6 } }] }) });
+  const { receipt } = await run.call('where_popular', { entity: 'artist-1', within: 'London' }, 'Locate a hotspot');
+  assert.deepEqual(receipt.evidence.rows[0], { name: 'Tile', affinity: .7, affinityRank: .9, popularity: .6, lat: 51.5, lon: -.12 });
+});
+
+test('receipt offsets prevent collisions when a workflow extends a child snapshot', async () => {
+  const run = makeRun({ receiptPrefix: 'i', receiptOffset: 21 });
+  assert.equal((await call(run)).receipt.id, 'i22');
+});
+
 test('mock identity choices are artists and resolve by stable ID on retry', () => {
   const ambiguous = normalizeEnvelope(mockCall('describe', { entity: 'Phoenix', type: 'artist' }), 'describe');
   assert.equal(ambiguous.status, 'needs_input');

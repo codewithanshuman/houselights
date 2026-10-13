@@ -6,12 +6,13 @@ import { optimizeSlate } from './optimizer.mjs';
 import { analyzeSlate } from './analysis.mjs';
 import { evaluateGauntlet } from './gauntlet.mjs';
 import { buildContingencyPlan } from './contingency.mjs';
-import { buildBookingPacket } from './operations.mjs';
+import { buildBookingPacket, tourCalendar } from './operations.mjs';
 import { buildDossier, answerDossierQuestion, dossierHtml } from './dossier.mjs';
 import { createPipeline, applyPipelineEvent } from './pipeline.mjs';
 import { normalizeIntelligenceInput, buildCulturalIntelligence, intelligenceWorkflowCount } from './intelligence.mjs';
 import { buildCampaign } from './campaign.mjs';
 import { buildVenuePlan } from './venues.mjs';
+import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput } from './activation.mjs';
 import { hasLLM } from './llm.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
@@ -20,6 +21,10 @@ const pub = fileURLToPath(new URL('../public', import.meta.url));
 const list = (value, max) => [...new Set((Array.isArray(value) ? value : String(value || '').split(',')).map(s => String(s).trim().slice(0, 100)).filter(Boolean))].slice(0, max);
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 const positiveInteger = (value, fallback) => Number.isInteger(Number(value)) && Number(value) > 0 ? Number(value) : fallback;
+const receiptOffset = (snapshot, prefix) => (snapshot?.receipts || []).reduce((max, receipt) => {
+  const match = String(receipt?.id || '').match(new RegExp(`^${prefix}(\\d+)$`));
+  return match ? Math.max(max, Number(match[1])) : max;
+}, 0);
 
 function bookingInput(body) {
   const b = object(body) ? body : {};
@@ -53,9 +58,9 @@ function trustedScenarioInput(source, body, label) {
 }
 
 export function createApp() {
-  const app = express(), hits = new Map(), scenarioHits = new Map(), intelligenceHits = new Map(), venueHits = new Map();
-  let day = { date: '', count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0 };
-  const resetDay = () => { const date = new Date().toISOString().slice(0, 10); if (day.date !== date) day = { date, count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0 }; };
+  const app = express(), hits = new Map(), scenarioHits = new Map(), intelligenceHits = new Map(), venueHits = new Map(), activationHits = new Map();
+  let day = { date: '', count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0, activationCount: 0 };
+  const resetDay = () => { const date = new Date().toISOString().slice(0, 10); if (day.date !== date) day = { date, count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0, activationCount: 0 }; };
   const dailyCap = positiveInteger(process.env.DAILY_MEMO_CAP, 150);
   const budget = Math.min(60, positiveInteger(process.env.CALL_BUDGET, 30));
   const intelligenceBudget = Math.min(60, positiveInteger(process.env.INTELLIGENCE_CALL_BUDGET, 60));
@@ -64,7 +69,7 @@ export function createApp() {
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '0.9.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.0.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -98,6 +103,15 @@ export function createApp() {
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
     try { return res.json(buildBookingPacket(snapshot, req.body?.event)); }
     catch (error) { return res.status(400).json({ error: error.message }); }
+  });
+  app.get('/api/tour-calendar/:id', (req, res) => {
+    const snapshot = store.load(req.params.id);
+    if (!snapshot) return res.status(404).type('text/plain').send('Saved run not found.');
+    try {
+      res.set('Cache-Control', 'no-store');
+      res.set('Content-Disposition', `attachment; filename="houselights-${req.params.id.replace(/[^a-z0-9_-]/gi, '')}-tour.ics"`);
+      return res.type('text/calendar').send(tourCalendar(snapshot));
+    } catch (error) { return res.status(400).type('text/plain').send(error.message); }
   });
   app.get('/api/pipeline/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -143,7 +157,7 @@ export function createApp() {
     if (recent.length >= 3 || day.intelligenceCount >= 50) return res.status(429).json({ error: 'Cultural-intelligence run limit reached. Existing intelligence remains available from its saved snapshot.' });
     intelligenceHits.set(req.ip, [...recent, now]); day.intelligenceCount++;
     try {
-      const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'i' });
+      const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'i', receiptOffset: receiptOffset(source, 'i') });
       const intelligence = await buildCulturalIntelligence(source, input, run);
       const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, intelligence, receipts: [...(source.receipts || []), ...run.receipts] };
       const id = store.save(snapshot);
@@ -165,6 +179,29 @@ export function createApp() {
     const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, venuePlan };
     const id = store.save(snapshot);
     return res.status(201).json({ id, snapshot: store.load(id) });
+  });
+  app.post('/api/activation/:id', async (req, res) => {
+    const source = store.load(req.params.id);
+    if (!source) return res.status(404).json({ error: 'Saved run not found.' });
+    if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Set QLOO_API_KEY before running local activation, or use synthetic development mode.' });
+    let input, expectedCalls;
+    try { input = normalizeActivationInput(source, req.body); expectedCalls = activationWorkflowCount(source, input); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+    if (expectedCalls > intelligenceBudget) return res.status(400).json({ error: `This activation requires up to ${expectedCalls} workflows; reduce markets or opener candidates to the ${intelligenceBudget}-workflow limit.`, expectedCalls, callBudget: intelligenceBudget });
+    resetDay();
+    const now = Date.now();
+    for (const [ip, times] of activationHits) if (times.every(time => now - time >= 60000)) activationHits.delete(ip);
+    const recent = (activationHits.get(req.ip) || []).filter(time => now - time < 60000);
+    if (recent.length >= 3 || day.activationCount >= 50) return res.status(429).json({ error: 'Local-activation run limit reached. Existing activation plans remain available from saved snapshots.' });
+    activationHits.set(req.ip, [...recent, now]); day.activationCount++;
+    try {
+      const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'l', receiptOffset: receiptOffset(source, 'l') });
+      const localActivation = await buildLocalActivation(source, input, run);
+      const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, localActivation,
+        receipts: [...(source.receipts || []), ...run.receipts] };
+      const id = store.save(snapshot);
+      return res.status(201).json({ id, expectedCalls, workflowsUsed: run.used, snapshot: store.load(id) });
+    } catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.post('/api/optimize', (req, res) => {
     if (!Array.isArray(req.body?.items) || req.body.items.length > 10) return res.status(400).json({ error: 'Provide at most 10 candidates.' });

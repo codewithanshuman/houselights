@@ -74,3 +74,17 @@ test('linked market intelligence is carried into dossier answers and exports', (
   assert.match(html, /Aggregate audience activation/);
   assert.match(html, /&lt;indie&gt;/);
 });
+
+test('local activation survives into markdown and printable dossier', () => {
+  const activated = structuredClone(snapshot);
+  activated.localActivation = {
+    generatedAt: '2026-10-13T00:00:00Z', headliner: { id: 'a', name: 'A' }, markets: [],
+    summary: { marketCount: 2, openerCandidates: 6, openerCandidatesPassingSizeRule: 3, posterLeadsWithinRadius: 4, aftershowLeadsWithinRadius: 2 },
+    limitations: ['Coordinate fixture only.']
+  };
+  const dossier = buildDossier(activated);
+  assert.equal(dossier.localActivation.summary.openerCandidates, 6);
+  assert.match(dossier.markdown, /Local activation/);
+  assert.match(dossierHtml(dossier), /poster leads within 2.5 km 4/);
+  assert.ok(dossier.limitations.includes('Coordinate fixture only.'));
+});

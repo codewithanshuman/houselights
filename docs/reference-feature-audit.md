@@ -11,8 +11,8 @@ The four supplied archives were inspected as reference implementations. Their do
 
 | Reference | Core mechanism retained | Houselights implementation | Deliberate boundary |
 |---|---|---|---|
-| Routed | Route constraints, exhaustive itinerary selection, sourced room sizing, evidence-only hold drafts, unsupported-number guard and operational calendar export | `server/intelligence.mjs`, `server/venues.mjs`, `server/operations.mjs`; intelligence, venue and packet APIs | Exact bounded routing plus buyer-sourced room facts; Qloo place leads never become unsupported capacity or availability claims |
-| Scaena | Research → human approval → outreach → response/negotiation → follow-up/logistics, with Day 3/7/14 checkpoints and outcome feedback | `server/pipeline.mjs`, `server/pipeline-store.mjs`, `server/campaign.mjs`; pipeline and campaign APIs | Original implementation because no project-level license was present; derives ceilings and fallbacks but sends no email and fabricates no response |
+| Routed | Route constraints, exhaustive itinerary selection, sourced room sizing, local-support discovery, neighborhood activation, evidence-only hold drafts, unsupported-number guard and whole-tour calendar export | `server/intelligence.mjs`, `server/venues.mjs`, `server/activation.mjs`, `server/operations.mjs`; intelligence, venue, activation, packet and tour-calendar APIs | Exact bounded routing plus buyer-sourced room facts; Qloo place leads never become unsupported capacity, permission or availability claims |
+| Scaena | Research → human approval → outreach → response/negotiation → follow-up/logistics, with pitch/venue segmentation, counteroffer history, Day 3/7/14 checkpoints and outcome feedback | `server/pipeline.mjs`, `server/pipeline-store.mjs`, `server/campaign.mjs`; pipeline and campaign APIs | Original implementation because no project-level license was present; derives descriptive outcomes, ceilings and fallbacks but sends no email and fabricates no response |
 | Alloy | Executive diligence modules, risk/opportunity register, report-aware analyst and shareable report artifact | `server/dossier.mjs`; dossier JSON, analyst, CLI and standalone HTML | Deterministic saved-evidence answers; no invented “cultural compatibility score” and no live-web claims |
 | GeoTaste | Multi-market geographic comparison, per-artist matrix and visible market ranking | `server/intelligence.mjs`; saved intelligence snapshot and dossier integration | Qloo observations use explicit user coordinates only for routing; simulated ratings, trends, density and seasonality were rejected |
 
@@ -37,6 +37,8 @@ The four supplied archives were inspected as reference implementations. Their do
 - Tracks accepted, negotiating, objection, declined, informational and no-response outcomes.
 - Moves a secured booking to `logistics_pending` only after date, rate and contact are confirmed, and to `show_scheduled` only after set length, load-in and payment are also confirmed.
 - Derives response rate, acceptance rate, objections, committed fees and next actions from the stored deals.
+- Retains the approved pitch angle and venue segment, recorded outreach channel, categorized objection and every received or proposed counteroffer.
+- Computes descriptive response/acceptance rows by pitch angle and venue segment; it makes no causal claim from those observations.
 
 ### Decision dossier
 
@@ -50,9 +52,10 @@ The four supplied archives were inspected as reference implementations. Their do
 ### Market intelligence and routing
 
 - Calls Qloo once per selected artist and requested market, preserving missing results rather than imputing them.
-- Uses an explicit 70% mean-affinity / 30% evidence-coverage policy and exposes the full artist-market matrix.
+- Exposes the full artist-market matrix while marking each heatmap affinity as valid only within its own response.
+- Routes on comparable evidence coverage and uses distance as the tie-breaker; it never averages or ranks percentile values from separate market queries.
 - Compares every selected-artist pair and reports shared cultural labels only when the aggregate comparison supplies them.
-- Searches every ordered route within the bounded input, reports checked/rejected route counts and uses distance only after taste utility.
+- Searches every ordered route within the bounded input, reports checked/rejected route counts and uses distance only after evidence coverage.
 - Enforces the declared market-separation, leg-distance, travel-day and day-off rules.
 - Discovers cultural place leads at chosen stops and labels capacity, availability and commercial terms unverified.
 - Saves the complete output and namespaced receipts as a linked child snapshot.
@@ -65,6 +68,7 @@ The four supplied archives were inspected as reference implementations. Their do
 - Preserves human approval before recorded outreach.
 - Derives outcome analytics solely from stored pipeline events.
 - Calculates each act's maximum slate-preserving rate from the saved budget and other selected fees.
+- Recalculates those ceilings from current agreed rates where present and flags a recorded counteroffer above the resulting ceiling.
 - Attaches the exact frozen-survivor cancellation fallback and one next action to every deal.
 
 ### Venue qualification and economics
@@ -75,6 +79,15 @@ The four supplied archives were inspected as reference implementations. Their do
 - Requires the buyer to declare whether artist fees apply per stop or to the whole route.
 - Reconciles whole-route fee allocations to the cent and computes break-even from only entered prices and costs.
 - Caps arithmetic attendance scenarios by sourced capacity and explicitly refuses to call them forecasts.
+
+### Local activation and tour delivery
+
+- Runs a separate neighborhood heatmap for each chosen route stop and selects a hotspot only inside that response's scale.
+- Discovers possible support artists around the selected headliner, removes the same entity and name-overlap cases, compares aggregate shared themes and passes the smaller-act rule only when both returned popularity fields support it.
+- Keeps missing popularity as `size_evidence_required` instead of silently accepting an opener.
+- Finds poster and aftershow place leads through Qloo tag filters and applies the 2.5 km rule only when both result and hotspot coordinates exist.
+- Measures a qualified venue's hotspot distance only when the saved lead includes coordinates.
+- Exports a whole-route RFC 5545 calendar containing every show, transfer and rule-inserted day off with 75-octet line folding.
 
 ## Licensing
 

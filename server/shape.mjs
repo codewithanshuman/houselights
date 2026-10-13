@@ -3,6 +3,12 @@
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.trim() ? value : undefined;
 const finite = value => typeof value === 'number' && Number.isFinite(value);
+const coordinate = (row, ...keys) => {
+  for (const key of keys) {
+    const value = key.split('.').reduce((current, part) => current?.[part], row);
+    if (finite(value)) return value;
+  }
+};
 export const nameOf = r => typeof r === 'string' ? r : text(r?.name) ?? text(r?.title) ?? text(r?.entity?.name) ?? text(r?.label);
 export const idOf = r => record(r) ? text(r.entity_id) ?? text(r.entityId) ?? text(r.id) ?? text(r.entity?.entity_id) ?? text(r.entity?.entityId) ?? text(r.entity?.id) : undefined;
 export const tagsOf = env => (Array.isArray(env?.results) ? env.results : []).map(nameOf).filter(Boolean);
@@ -70,6 +76,14 @@ export function compactEvidence(tool, env) {
     if (id) out.id = id.slice(0, 180);
     for (const key of ['affinity', 'popularity', 'change']) if (finite(row?.[key])) out[key] = row[key];
     if (finite(row?.query?.affinity)) out.affinity = row.query.affinity;
+    if (finite(row?.query?.affinity_rank)) out.affinityRank = row.query.affinity_rank;
+    if (finite(row?.query?.popularity)) out.popularity = row.query.popularity;
+    const lat = coordinate(row, 'location.latitude', 'location.lat', 'properties.location.latitude', 'properties.location.lat', 'latitude', 'lat');
+    const lon = coordinate(row, 'location.longitude', 'location.lon', 'properties.location.longitude', 'properties.location.lon', 'longitude', 'lon', 'lng');
+    if (finite(lat) && lat >= -90 && lat <= 90 && finite(lon) && lon >= -180 && lon <= 180) {
+      out.lat = lat;
+      out.lon = lon;
+    }
     if (Array.isArray(row?.points)) {
       out.pointCount = row.points.length;
       out.direction = trendOf(row).direction;

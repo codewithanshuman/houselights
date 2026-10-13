@@ -45,7 +45,7 @@ Content-Type: application/json
 }
 ```
 
-The request accepts two to eight uniquely named candidate markets. Coordinates and the start date are explicit routing inputs supplied by the caller; they are not Qloo observations. `stopCount` is an integer from two to five and cannot exceed the market count.
+The request accepts two to eight uniquely named candidate markets. Coordinates and the start date are explicit routing inputs supplied by the caller; they are not Qloo observations. `stopCount` is an integer from two to eight and cannot exceed the market count; the default remains at most five.
 
 For each selected artist in each requested market, the server records one `where_popular` receipt. It compares every selected-artist pair with `compare_audiences`, then requests cultural place candidates in every chosen stop. The market policy score is `70 × mean observed affinity + 30 × evidence coverage`; missing affinity lowers coverage and is never replaced with a guessed value. Shared comparison labels are reported as cultural themes, not unique-audience overlap or cannibalization.
 
@@ -111,6 +111,8 @@ Content-Type: application/json
 
 `date` is required and must be a real `YYYY-MM-DD` date. Milestones are optional and use the same format. The response contains one unsent evidence-bound hold draft per selected artist, an initial logistics checklist and `calendarIcs`. No communication is transmitted by this route.
 
+For a saved feasible route, `GET /api/tour-calendar/:savedRunId` downloads an RFC 5545 calendar containing every routed show, transfer and rule-inserted day off. Qualified venue names are included where available. Great-circle distance is explicitly labeled as planning distance.
+
 ## Booking pipeline
 
 ```http
@@ -134,14 +136,15 @@ Content-Type: application/json
 
 | Event type | Required fields | Valid effect |
 |---|---|---|
-| `approve_pitch` | `artistId` | `research_complete` → `pitch_approved` |
-| `send_outreach` | `artistId` | `pitch_approved` → `sent`; schedules Day 3/7/14 follow-ups |
+| `approve_pitch` | `artistId`; optional `pitchAngle`, `venueSegment`, `draft` | `research_complete` → `pitch_approved` and stores the approved strategy |
+| `send_outreach` | `artistId`; optional `channel`, `recipient`, `externalMessageId` | `pitch_approved` → `sent`; records external-send metadata and schedules Day 3/7/14 follow-ups |
 | `complete_follow_up` | `artistId`, `day` (`3`, `7` or `14`) | Marks one scheduled follow-up complete |
-| `record_response` | `artistId`, `responseType` | Records `accepted`, `negotiating`, `objection`, `declined`, `information` or `no_response` |
+| `record_response` | `artistId`, `responseType` | Records `accepted`, `negotiating`, `objection`, `declined`, `information` or `no_response`; negotiating/objection responses may include `counterofferRate` |
+| `record_counteroffer` | `artistId`, `direction`, `amount` | Appends a received or proposed counteroffer while the deal is negotiating |
 | `update_logistics` | `artistId`, `checklist` | Updates allowlisted checklist booleans and derives the secured/logistics/show stage |
 | `add_note` | `artistId`, `note` | Adds a server-timestamped planning note |
 
-An accepted response may include `agreedRate`. An objection may include `objection` and any response may include a bounded `note`. A real response cancels pending follow-ups. Pipeline analytics are recomputed after every accepted event.
+An accepted response may include `agreedRate`. An objection may include `objection`, `objectionCategory` and `counterofferRate`; any response may include a bounded `note`. A real response cancels pending follow-ups. Pipeline analytics are recomputed after every accepted event, including descriptive outcome rows by approved pitch angle and venue segment.
 
 The logistics checklist accepts only:
 
@@ -171,3 +174,22 @@ Returns a deterministic four-stage control report over the saved evidence and cu
 - `followup` combines Day 3/7/14 due work with an artist-specific maximum rate that keeps the current slate inside its declared budget.
 
 Every deal also includes its current stage, next action, evidence gaps, negotiation headroom, checklist and the exact contingency replacement produced when that artist is canceled and all other selected artists stay fixed. A ceiling is a budget-preservation calculation, not an estimate of artist market value. This route derives a report; it does not send outreach, accept an offer or book a venue.
+
+## Local activation
+
+```http
+POST /api/activation/:savedIntelligenceRunId
+Content-Type: application/json
+
+{
+  "headlinerId": "selected-provider-id",
+  "marketNames": ["London", "Paris"],
+  "maxOpeners": 3,
+  "posterTags": ["record store", "bookshop", "cafe"],
+  "aftershowTags": ["bar"]
+}
+```
+
+This route requires a feasible saved intelligence route. It runs a market-local headliner heatmap, discovers possible support artists, checks shared aggregate themes, and searches tagged poster and aftershow place leads. Same-entity and name-overlap acts are excluded. The smaller-act rule passes only when both headliner and candidate have returned popularity values and the candidate is lower; missing values yield `size_evidence_required`.
+
+The response stores a linked child snapshot under `localActivation`. Its 2.5 km checks run only when both hotspot and place coordinates exist. `coordinates_unavailable` never counts as nearby. All Qloo calls receive collision-free `l…` receipt IDs even when activation is rerun from an earlier activation child.
