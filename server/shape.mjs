@@ -67,6 +67,20 @@ export function comparisonOf(env) {
     : 'No usable audience comparison returned.' };
 }
 
+export function comparisonThemes(env) {
+  if (!comparisonOf(env).available) return { interpretable: false, sharedNames: [] };
+  if (Array.isArray(env.comparison?.shared)) return { interpretable: true,
+    sharedNames: env.comparison.shared.map(nameOf).filter(Boolean).slice(0, 12) };
+  // Live analysis/compare returns tags with explicit membership on both sides.
+  // A tag name alone is insufficient; never interpret opaque scores as overlap.
+  const tags = env.comparison?.tags;
+  const memberships = row => Array.isArray(row?.query?.['a.signal.interests.entities']) && Array.isArray(row?.query?.['b.signal.interests.entities']);
+  if (!Array.isArray(tags) || tags.some(row => !memberships(row))) return { interpretable: false, sharedNames: [] };
+  return { interpretable: true, sharedNames: [...new Set(tags.filter(row =>
+    row.query['a.signal.interests.entities'].length > 0 && row.query['b.signal.interests.entities'].length > 0)
+    .map(nameOf).filter(Boolean))].slice(0, 12) };
+}
+
 // Only public entity labels and documented scalar evidence enter the ledger.
 export function compactEvidence(tool, env) {
   const rows = env.results.slice(0, tool === 'recommend' || tool === 'where_popular' ? 50 : 12).map(row => {
@@ -102,7 +116,7 @@ export function compactEvidence(tool, env) {
     ...(tool === 'compare_audiences' ? { interpretation: comparisonOf(env).summary,
       comparisonAvailable: comparisonOf(env).available,
       ...(record(env.comparison) ? { returnedFields: Object.keys(env.comparison).slice(0, 20) } : {}),
-      ...(Array.isArray(env.comparison?.shared) ? { sharedNames: env.comparison.shared.map(nameOf).filter(Boolean).slice(0, 12) } : {}),
+      ...comparisonThemes(env),
     } : {}),
     ...(env.error ? { error: env.error.code } : {}),
   };

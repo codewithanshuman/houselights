@@ -14,7 +14,7 @@ const { optimizeSlate } = await import('../server/optimizer.mjs');
 const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
-after(async () => { await new Promise(resolve => server.close(resolve)); rmSync(directory, { recursive: true, force: true }); });
+after(async () => { await new Promise(resolve => server.close(resolve)); (await import('../server/database.mjs')).db.close(); rmSync(directory, { recursive: true, force: true }); });
 const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 
 test('festival research → dossier → benchmark → season → revision works through saved APIs', async () => {

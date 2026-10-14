@@ -6,7 +6,7 @@ The buyer supplies the city, artists representing the room's audience, offers, f
 
 ## Run locally
 
-Requires **Node.js 22.19 or newer** and npm. The live integration starts the official Qloo harness as a local stdio child process, so use a normal Node server or container.
+Requires **Node.js 24 or newer** and npm. The live integration starts the official Qloo harness as a local stdio child process, so use a normal Node server or container. Snapshots, pipeline updates, quotas and blind-review ballots use built-in SQLite.
 
 ```powershell
 npm ci
@@ -27,10 +27,14 @@ npm start
 | Setting | Purpose |
 |---|---|
 | `QLOO_API_KEY` | Required for live Qloo calls |
+| `QLOO_BASE_URL`, `QLOO_TRUSTED_BASE_URL` | Explicit event endpoint; this key was verified on `https://hackathon.api.qloo.com` |
 | `ANTHROPIC_API_KEY`, `LLM_MODEL` | Optional model features; both are required |
 | `PORT` | HTTP port; defaults to `8080` |
 | `HOST` | Bind address; defaults to `127.0.0.1` locally; hosted Node needs `0.0.0.0` |
-| `DATA_DIR` | Dedicated snapshot directory; defaults to `./data` |
+| `DATA_DIR` | Persistent SQLite directory; defaults to `./data` |
+| `ORGANIZER_TOKEN` | At least 32 characters; required for production writes and private reports |
+| `PUBLIC_DEMO` | Set to `1` to require organizer access locally too |
+| `GM_CALL_BUDGET` | Festival research attempt ceiling; defaults to `60`, maximum `120` |
 | `CALL_BUDGET` | Workflow attempts per memo; defaults to `30` |
 | `INTELLIGENCE_CALL_BUDGET` | Workflow attempts per multi-market intelligence run; defaults to and is capped at `60` |
 | `DAILY_MEMO_CAP` | Per-process daily memo cap; defaults to `150` |
@@ -39,7 +43,11 @@ npm start
 
 ## What the product does
 
-The Theme Night GM backend integration adds five-domain Market DNA, fixed-pool regional and audience rankings, five-part Taste Fit with uncertainty, a verified GM decision pipeline, an identical-brief LLM-only control, natural-language slate revisions and evidence-linked themed-date planning. Use the API or `npm run gm`; see the [integration map, commands and remaining source differences](docs/theme-night-integration.md). UI work remains deferred.
+Build a slate, then open **Festival GM** for city research, audience evidence, whole-lineup cultural connections, Ask the GM, and cancellation recovery. Its bounded evidence agent retries incomplete primary-market rankings once and re-optimizes after comparing every bookable pair. Every decision remains linked to receipts and an unchanged source snapshot. See the [demo walkthrough](docs/judge-demo.md) and [source integration map](docs/theme-night-integration.md).
+
+The original Houselights festival policy adds cultural cohesion, theme breadth, missing-pair penalties and feasible cancellation coverage to the booking objective. The imported five-part reference Taste Fit remains separate and attributed. LLM comparisons are explicitly **in-sample objective diagnostics**; a separate blinded-review workflow collects actual human preferences across distinct briefs, without fabricating judgments or claiming statistical superiority.
+
+Run `npm run validate:live` after configuring your Qloo key. It performs a bounded provider smoke test and writes a credential-free summary to ignored `artifacts/live-validation.json`. A configured key or passing synthetic tests does not establish a successful live integration. Deployment files are prepared; a hosting target and actual public deployment remain outstanding.
 
 - Resolves artist names and offers a choice when the provider reports ambiguity.
 - Discovers artists outside the initial shortlist and ranks candidates against the room's anchors and city.

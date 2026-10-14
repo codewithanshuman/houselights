@@ -1,7 +1,7 @@
 import * as store from './store.mjs';
 import { Run, isMock } from './qloo.mjs';
 import { normalizeFestivalResearch, festivalWorkflowCount } from './festival-research.mjs';
-import { runFestivalGM, reviseFestival, benchmarkFestival } from './gm.mjs';
+import { runFestivalGM, reviseFestival, benchmarkFestival, cancelFestival } from './gm.mjs';
 import { planDates, buildThemeSeason } from './theme-season.mjs';
 
 export function registerGMRoutes(app) {
@@ -20,7 +20,7 @@ export function registerGMRoutes(app) {
   });
   app.post('/api/gm/:id/:action', limit, async (req, res) => {
     const source = store.load(req.params.id), action = req.params.action;
-    if (!['run', 'benchmark', 'revise', 'season'].includes(action)) return res.status(404).json({ error: 'Unknown GM action.' });
+    if (!['run', 'benchmark', 'revise', 'season', 'cancel'].includes(action)) return res.status(404).json({ error: 'Unknown GM action.' });
     if (!source) return res.status(404).json({ error: 'Saved run not found.' });
     try {
       let snapshot;
@@ -34,8 +34,8 @@ export function registerGMRoutes(app) {
         const offset = (source.receipts ?? []).reduce((max, receipt) => Math.max(max, Number(/^g(\d+)$/.exec(receipt.id)?.[1] ?? 0)), 0);
         const run = new Run({ budget, deadlineMs: 120000, receiptPrefix: 'g', receiptOffset: offset });
         snapshot = await runFestivalGM(source, input, run);
-      } else if (action === 'revise') {
-        const result = await reviseFestival(source, req.body);
+      } else if (action === 'revise' || action === 'cancel') {
+        const result = await (action === 'cancel' ? cancelFestival : reviseFestival)(source, req.body);
         if (!result.snapshot) return res.status(result.status === 'rejected' ? 422 : 409).json(result);
         snapshot = result.snapshot;
       } else if (action === 'benchmark') {

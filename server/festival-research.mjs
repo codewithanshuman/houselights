@@ -2,7 +2,7 @@ import { compareMarkets, DNA_KINDS, DNA_DEPTH } from './theme-night/market-dna.m
 import { computeScore, SCORE_WEIGHTS } from './theme-night/scoring.mjs';
 import { optimizeSlate } from './optimizer.mjs';
 import { distanceKm } from './intelligence.mjs';
-import { idOf, nameOf, compactEvidence, comparisonOf } from './shape.mjs';
+import { idOf, nameOf, compactEvidence, comparisonThemes } from './shape.mjs';
 
 const usable = receipt => ['ok', 'partial', 'degraded'].includes(receipt.status);
 const finite = Number.isFinite;
@@ -25,7 +25,7 @@ export function normalizeFestivalResearch(snapshot, raw = {}) {
   if (!Array.isArray(existingFanIds) || existingFanIds.length > 3 || existingFanIds.some(id => typeof id !== 'string' || !id.trim() || id.length > 180)) throw new Error('Existing fan proxies must be 0–3 entity IDs.');
   const venue = raw.venue ?? null;
   if (venue && (!finite(venue.lat) || Math.abs(venue.lat) > 90 || !finite(venue.lon) || Math.abs(venue.lon) > 180)) throw new Error('Venue requires valid numeric lat/lon.');
-  const constraints = snapshot.memo.constraints;
+  const constraints = { ...snapshot.memo.constraints, festivalPolicy: true };
   const validation = optimizeSlate(items, constraints);
   if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
   return { markets: cities, city, demographic, existingFanIds: uniq(existingFanIds), venue,
@@ -33,9 +33,9 @@ export function normalizeFestivalResearch(snapshot, raw = {}) {
 }
 
 export function festivalWorkflowCount(snapshot, input) {
-  const slots = Math.min(snapshot.memo.items.length, input.constraints.slots);
-  return input.markets.length * (DNA_KINDS.length + 2) + snapshot.memo.items.length * 2 + 1
-    + (input.existingFanIds.length ? 1 : 0) + slots * (slots - 1) / 2 + (input.includeExperience ? 4 : 0);
+  const count = snapshot.memo.items.filter(item => item.terms?.available === true && Number.isFinite(item.terms?.fee) && !input.constraints.excludedIds.includes(item.id)).length;
+  return input.markets.length * (DNA_KINDS.length + 2) + snapshot.memo.items.length * 2 + Math.ceil(snapshot.memo.items.length / 5)
+    + (input.existingFanIds.length ? 1 : 0) + count * (count - 1) / 2 + (input.includeExperience ? 4 : 0) + 3;
 }
 
 // Every city ranks the exact same pool. A partial list is inspectable but is not
@@ -90,7 +90,7 @@ function catchmentMeasurement(call, venue) {
   if (!venue || !usable(call.receipt)) return null;
   const points = compactEvidence('where_popular', call.env).rows.filter(row => finite(row.lat) && finite(row.lon) && finite(row.affinity));
   // Harness results are capped; don't present a top-cell sample as all metro cells.
-  if (points.length < 10 || points.length >= 50 || points.length !== call.env.result_count) return null;
+  if (points.length < 10 || points.length >= 20 || points.length !== call.env.result_count) return null;
   const near = point => distanceKm(point, venue) <= 16;
   const nearCount = points.filter(near).length;
   const hot = [...points].sort((a, b) => b.affinity - a.affinity).slice(0, Math.max(1, Math.round(points.length * .2)));
@@ -108,7 +108,7 @@ export async function buildFestivalResearch(snapshot, input, run) {
     run.emit({ type: 'stage', text: `Market DNA · ${city}` });
     const domains = [], unavailable = [];
     for (const kind of DNA_KINDS) {
-      const call = await run.call('recommend', { target_type: kind, signal_location: city, limit: DNA_DEPTH }, `Scan ${kind} taste in ${city}; compare membership and rank only`);
+      const call = await run.call('recommend', { target_type: kind, signal_location: city, limit: Math.min(20, DNA_DEPTH) }, `Scan ${kind} taste in ${city}; compare membership and rank only`);
       const entities = usable(call.receipt) ? call.receipt.evidence.rows.filter(row => row.id && row.name).map((row, i) => ({ ...row, kind, localRank: i + 1 })) : [];
       if (entities.length) domains.push({ kind, entities, evidence: call.receipt.id, status: call.receipt.status });
       else unavailable.push({ kind, status: call.receipt.status, receiptId: call.receipt.id });
@@ -123,13 +123,31 @@ export async function buildFestivalResearch(snapshot, input, run) {
     overlap.push({ a: markets[i].city, b: markets[j].city, domains: compareMarkets(markets[i], markets[j]) });
   }
   const primary = markets.find(market => market.city === input.city);
+  const adaptiveResearch = [];
+  for (const kind of ['audience', 'local']) {
+    if (primary[kind].complete || !['partial', 'empty', 'degraded'].includes(primary[kind].status) || run.used >= run.budget) continue;
+    const previous = primary[kind];
+    const retry = await run.call('rank', { options: ids, option_type: 'artist', signal_location: input.city,
+      ...(kind === 'audience' ? { signals: anchors, ...(input.demographic ? { demographic: demographicQuery[input.demographic] } : {}) } : {}) },
+    `Adaptive evidence repair: ${kind} ranked ${previous.returned}/${previous.requested} artists; retry the same pool without cached partial data`, { refresh: true });
+    const repaired = rankPool(retry, items);
+    primary[kind] = repaired.complete || repaired.returned >= previous.returned ? repaired : previous;
+    adaptiveResearch.push({ question: `Incomplete ${kind} rank`, previousReceiptId: previous.receiptId, receiptId: retry.receipt.id, resolved: repaired.complete,
+      decision: repaired.complete ? 'Use refreshed full-pool evidence' : 'Retain uncertainty; do not invent ranks' });
+  }
   const fanRank = input.existingFanIds.length ? rankPool(await run.call('rank', { options: ids, option_type: 'artist', signals: input.existingFanIds, signal_location: input.city }, 'Existing-fan proxy taste; inverse rank is a novelty heuristic, not new ticket buyers'), items) : null;
   const end = new Date(), start = new Date(end.getTime() - 16 * 7 * 864e5);
-  const trendCall = await run.call('trends', { entities: ids, entity_type: 'artist', start_date: start.toISOString().slice(0, 10), end_date: end.toISOString().slice(0, 10) }, 'Inspect 16-week percentile trends; unsupported point shapes remain missing');
+  const trendCalls = new Map();
+  for (let offset = 0; offset < ids.length; offset += 5) {
+    const batch = ids.slice(offset, offset + 5);
+    const call = await run.call('trends', { entities: batch, entity_type: 'artist', start_date: start.toISOString().slice(0, 10), end_date: end.toISOString().slice(0, 10) }, 'Inspect 16-week percentile trends in a supported batch; unsupported point shapes remain missing');
+    batch.forEach(id => trendCalls.set(id, call));
+  }
   const profiles = [], researched = [];
   for (const item of items) {
+    const trendCall = trendCalls.get(item.id);
     const demo = await run.call('audience_demographics', { entity: item.id, entity_type: 'artist', limit: 12 }, `Available aggregate demographic evidence for ${item.name}`);
-    const heat = await run.call('where_popular', { entity: item.id, entity_type: 'artist', within: input.city, limit: 50 }, `Geographic context for ${item.name} in ${input.city}`);
+    const heat = await run.call('where_popular', { entity: item.id, entity_type: 'artist', within: input.city, limit: 20 }, `Geographic context for ${item.name} in ${input.city}`);
     const trend = usable(trendCall.receipt) ? trendMeasurement(trendCall.env, item.id) : null;
     const catchment = catchmentMeasurement(heat, input.venue);
     const local = primary.local.rows.find(row => row.id === item.id), audience = primary.audience.rows.find(row => row.id === item.id);
@@ -145,22 +163,27 @@ export async function buildFestivalResearch(snapshot, input, run) {
     const claims = [{ id: `${item.id}:festival-fit`, text: rankSupported
       ? `${item.name} ranks ${audience.rank} of ${items.length} in the fixed audience pool for ${input.city} [${audience.receiptId}].`
       : `Comparable full-pool audience rank unavailable for ${item.name} in ${input.city} [${audience.receiptId}].` }];
-    researched.push({ ...item, fit: audience.utility, rank: audience.rank, of: primary.audience.returned,
+    researched.push({ ...item, culturalLinks: [], fit: audience.utility, rank: audience.rank, of: primary.audience.returned,
       local: localSupported ? 'yes' : 'no data', momentum: trend?.direction ?? 'unknown',
       evidence: { rank: rankSupported, local: localSupported, trends: !!trend, comparison: false },
       receipts: uniq([...(item.identityReceipt ? [item.identityReceipt] : []), ...receipts]), claims, note: claims[0].text });
   }
   const provisional = optimizeSlate(researched, input.constraints);
   const crossGenre = [];
-  const selected = researched.filter(item => provisional.selectedIds.includes(item.id));
-  for (let i = 0; i < selected.length; i++) for (let j = i + 1; j < selected.length; j++) {
-    const a = selected[i], b = selected[j];
+  const eligible = researched.filter(item => item.terms.available && Number.isFinite(item.terms.fee) && !input.constraints.excludedIds.includes(item.id));
+  for (let i = 0; i < eligible.length; i++) for (let j = i + 1; j < eligible.length; j++) {
+    const a = eligible[i], b = eligible[j];
     const call = await run.call('compare_audiences', { group_a: [a.id], group_b: [b.id], target_type: 'artist', limit: 10 }, `Cross-genre context: ${a.name} × ${b.name}`);
-    crossGenre.push({ a: a.id, b: b.id, genres: [a.terms.genre, b.terms.genre], available: comparisonOf(call.env).available,
+    crossGenre.push({ a: a.id, b: b.id, genres: [a.terms.genre, b.terms.genre], available: comparisonThemes(call.env).interpretable,
       sharedTastes: call.receipt.evidence.sharedNames ?? [], receiptId: call.receipt.id, status: call.receipt.status });
   }
-  // Pair coverage is reported separately: adding evidence only to a provisional
-  // winner would bias the optimizer toward whichever slate was checked first.
+  for (const item of researched) item.culturalLinks = crossGenre.filter(pair => pair.a === item.id || pair.b === item.id).map(pair => ({
+    otherId: pair.a === item.id ? pair.b : pair.a, available: pair.available, sharedTastes: pair.sharedTastes, receiptId: pair.receiptId }));
+  const finalSlate = optimizeSlate(researched, input.constraints);
+  adaptiveResearch.push({ question: 'Does full-pool pair evidence change the preferred lineup?',
+    previousIds: provisional.selectedIds, selectedIds: finalSlate.selectedIds,
+    decision: 'Re-enumerate all feasible slates using cultural relationships and cancellation readiness; preserve every hard constraint' });
+  const selected = researched.filter(item => finalSlate.selectedIds.includes(item.id));
   const experience = [];
   if (input.includeExperience && selected.length) for (const target of ['brand', 'artist', 'place', 'podcast']) {
     const call = await run.call('recommend', { target_type: target, signals: selected.map(item => item.id),
@@ -169,7 +192,7 @@ export async function buildFestivalResearch(snapshot, input, run) {
       state: 'research_leads', note: 'Uncontacted prospects; availability, suitability and rights require organizer review.' });
   }
   return { version: '1.0', sourceId: snapshot.id, input, markets, overlap, profiles, crossGenre, experience,
-    items: researched, slate: provisional, receipts: run.receipts, mode: run.mode,
+    items: researched, slate: finalSlate, adaptiveResearch, receipts: run.receipts, mode: run.mode,
     limitations: ['Cross-city comparison uses membership and fixed-pool ordinal ranks, never cross-query affinity values.',
       'Age-bucket ranks are aggregate audience signals. Missing demographics are not inferred from music taste.',
       'Five-part Taste Fit preserves the source weights but remains separate from the existing booking objective; neutral estimates do not become optimizer evidence.',

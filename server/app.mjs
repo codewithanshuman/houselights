@@ -16,6 +16,8 @@ import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput
 import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived } from './gm.mjs';
+import { accessMiddleware, canEdit, protectedMode } from './access.mjs';
+import { registerReviewRoutes } from './reviews.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -70,9 +72,17 @@ export function createApp() {
   if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
+  app.use(accessMiddleware);
+  app.get('/api/access', (req, res) => res.json({ protected: protectedMode(), editable: canEdit(req) }));
+  app.get('/api/examples', (_req, res) => res.json(store.examples()));
+  app.post('/api/examples/:id/pin', (req, res) => {
+    try { res.json(store.pin(req.params.id, req.body?.pinned !== false)); }
+    catch (error) { res.status(404).json({ error: error.message }); }
+  });
   registerGMRoutes(app);
+  registerReviewRoutes(app);
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.1.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -129,8 +139,7 @@ export function createApp() {
     const snapshot = store.load(req.params.id);
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
     try {
-      const pipeline = pipelineStore.load(req.params.id) || createPipeline(snapshot);
-      return res.json(pipelineStore.save(req.params.id, applyPipelineEvent(pipeline, req.body)));
+      return res.json(pipelineStore.update(req.params.id, current => applyPipelineEvent(current || createPipeline(snapshot), req.body)));
     } catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.get('/api/campaign/:id', (req, res) => {

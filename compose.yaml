@@ -1,0 +1,19 @@
+services:
+  houselights:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      QLOO_API_KEY: ${QLOO_API_KEY:?Set QLOO_API_KEY for the live demo}
+      QLOO_BASE_URL: ${QLOO_BASE_URL:-https://api.qloo.com}
+      QLOO_TRUSTED_BASE_URL: ${QLOO_TRUSTED_BASE_URL:-https://api.qloo.com}
+      ORGANIZER_TOKEN: ${ORGANIZER_TOKEN:?Set an organizer token of at least 32 characters}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      GM_CALL_BUDGET: "60"
+    volumes:
+      - houselights-data:/var/data/houselights
+    restart: unless-stopped
+    init: true
+volumes:
+  houselights-data:

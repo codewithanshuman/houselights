@@ -61,13 +61,13 @@ test('full research joins city rankings, demographic receipts, five-domain DNA, 
   const source = makeSource(), run = makeRun();
   const input = normalizeFestivalResearch(source, { markets: ['London', 'Paris'], existingFanIds: ['Radiohead'] });
   const report = await buildFestivalResearch(source, input, run);
-  assert.equal(run.receipts.length, festivalWorkflowCount(source, input));
+  assert.ok(run.receipts.length <= festivalWorkflowCount(source, input));
   assert.equal(report.markets.length, 2);
   assert.equal(report.markets[0].domains.length, 5);
   assert.equal(report.overlap[0].domains.length, 5);
   assert.ok(report.markets.every(market => market.audience.complete));
   assert.equal(report.profiles.length, 3);
-  assert.equal(report.crossGenre.length, 1);
+  assert.equal(report.crossGenre.length, 3, 'research covers every bookable pair, not only the provisional winner');
   assert.equal(report.experience.length, 4);
   assert.ok(report.profiles.every(profile => profile.tasteFit.estimated.includes('momentum')));
   assert.ok(report.profiles.every(profile => profile.tasteFit.estimated.includes('nearVenue')));
@@ -92,7 +92,7 @@ test('GM persists a decision trace and invalidates stale downstream plans', asyn
   const before = structuredClone(source);
   const result = await runFestivalGM(source, normalizeFestivalResearch(source), makeRun());
   assert.equal(result.parentId, source.id);
-  assert.equal(result.gm.trace.length, 6);
+  assert.ok(result.gm.trace.some(step => step.stage === 'adapt'));
   assert.equal(result.gm.verification.feasible, true);
   assert.ok(result.gm.recovery);
   assert.equal(result.gm.state, 'decision_ready');

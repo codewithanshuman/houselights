@@ -30,8 +30,9 @@ export async function benchmarkFestival(snapshot, { propose = festivalBaseline }
   const fingerprint = createHash('sha256').update(JSON.stringify(brief)).digest('hex');
   const proposal = await propose(structuredClone(brief));
   const base = { version: '1.0', sourceId: snapshot.id, brief, briefDigest: `sha256:${fingerprint}`, qloo,
-    methodology: 'One general-knowledge LLM proposal without Qloo access. Both selections checked on the identical pool and hard constraints, then evaluated using the same held-out evidence and policy. No automatic repair of the control.',
-    limitations: ['A single control run is not statistical evidence of model superiority.', 'Policy-score improvement is not attendance or revenue uplift.'],
+    methodology: 'Objective diagnostic only: the optimizer is expected to win its own Qloo-weighted objective. This is not an independent or held-out evaluation. Both selections obey the same booking brief; an invalid control is not repaired. Collect separate blinded promoter preferences for independent evidence.',
+    evaluationKind: 'in_sample_objective_diagnostic', independentEvidence: false,
+    limitations: ['Optimizing the scoring objective makes its score advantage tautological; it does not prove better festival choices.', 'No independent promoter judgments have been collected by this comparison.', 'Policy-score improvement is not attendance or revenue uplift.'],
     evidenceMode: snapshot.memo.mode ?? (snapshot.mock ? 'mock' : 'unknown'), generatedAt: new Date().toISOString() };
   if (!proposal) return { ...base, status: 'unavailable', control: null, comparison: null, reason: 'No LLM response. Configure ANTHROPIC_API_KEY and LLM_MODEL; no synthetic lineup is labeled LLM-only.' };
   let control;
@@ -48,8 +49,9 @@ export async function benchmarkFestival(snapshot, { propose = festivalBaseline }
 export async function runFestivalGM(snapshot, input, run) {
   const trace = [];
   const stage = (name, detail) => { const event = { sequence: trace.length + 1, stage: name, detail, at: new Date().toISOString() }; trace.push(event); run.emit({ type: 'gm_stage', ...event }); };
-  stage('research', 'Scan city taste, rank the fixed pool, profile candidates, compare selected audiences and research experience leads.');
+  stage('research', 'Scan city taste, rank the fixed pool, profile candidates, compare every bookable pair and research experience leads.');
   const research = await buildFestivalResearch(snapshot, input, run);
+  for (const decision of research.adaptiveResearch ?? []) stage('adapt', `${decision.question}: ${decision.decision}`);
   stage('select', `${research.items.length} candidates keep their buyer-entered fees and availability.`);
   const slate = optimizeSlate(research.items, input.constraints);
   stage('optimize', `Enumerated ${slate.checkedCount} combinations; ${slate.feasibleCount} satisfy all constraints.`);
@@ -69,8 +71,22 @@ export async function runFestivalGM(snapshot, input, run) {
       base: null, eval: null, summary: trace.at(-1).detail, caveats: research.limitations,
       quality: { resolved: research.items.length, ranked: research.items.filter(item => item.evidence.rank).length, deepChecked: research.profiles.length, receipts: (snapshot.receipts?.length ?? 0) + run.receipts.length, liveCalls: run.used } },
     festivalResearch: research, receipts: [...(snapshot.receipts ?? []), ...run.receipts],
-    gm: { state, mode: 'deterministic-tool-agent', trace, verification, analysis, recovery, generatedAt: new Date().toISOString() } };
+    gm: { state, mode: 'bounded-evidence-agent', trace, verification, analysis, recovery, generatedAt: new Date().toISOString() } };
   return next;
+}
+
+export async function cancelFestival(snapshot, raw) {
+  const canceledId = raw?.artistId;
+  if (!snapshot.memo.slate.selectedIds.includes(canceledId)) throw new Error('Choose a currently selected artist to cancel.');
+  const canceledSource = structuredClone(snapshot);
+  canceledSource.memo.constraints.lockedIds = unique([...(snapshot.memo.constraints.lockedIds ?? []).filter(id => id !== canceledId), ...snapshot.memo.slate.selectedIds.filter(id => id !== canceledId)]);
+  const result = await reviseFestival(canceledSource, { request: `Exclude ${canceledId}` });
+  if (result.snapshot) {
+    result.snapshot.cancellations = [...(snapshot.cancellations ?? []), { artistId: canceledId, at: new Date().toISOString(),
+      replacementIds: result.revision.addedIds, retainedIds: snapshot.memo.slate.selectedIds.filter(id => id !== canceledId) }];
+    result.snapshot.gm.state = 'recovered';
+  }
+  return result;
 }
 
 function constrainedInterpretation(snapshot, request, headlinerId) {
