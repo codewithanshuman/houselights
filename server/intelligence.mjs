@@ -1,4 +1,4 @@
-import { nameOf } from './shape.mjs';
+import { nameOf, comparisonThemes } from './shape.mjs';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const round = value => Math.round((value + Number.EPSILON) * 1e6) / 1e6;
@@ -123,8 +123,7 @@ function marketScore(artistRows, artistCount) {
 }
 
 function sharedNames(env) {
-  const rows = Array.isArray(env?.comparison?.shared) ? env.comparison.shared : [];
-  return [...new Set(rows.map(nameOf).filter(Boolean))].slice(0, 12);
+  return comparisonThemes(env).sharedNames;
 }
 
 export async function buildCulturalIntelligence(snapshot, rawInput, run) {

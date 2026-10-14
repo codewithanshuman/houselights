@@ -48,6 +48,7 @@ function normalizeConstraints(raw, count) {
     riskTolerance: raw.riskTolerance ?? 50,
     lockedIds: raw.lockedIds ?? [],
     excludedIds: raw.excludedIds ?? [],
+    ...(raw.festivalPolicy === true ? { festivalPolicy: true } : {}),
     ...(raw.minimumAverageFit != null ? { minimumAverageFit: raw.minimumAverageFit } : {}),
   };
   if (!isMoney(constraints.budget)) errors.push('Budget must be a finite, non-negative monetary amount.');
@@ -93,11 +94,12 @@ function normalizeCandidate(candidate, excludedIds) {
       comparison: candidate.evidence?.comparison === true,
     },
     receipts: Array.isArray(candidate.receipts) ? unique(candidate.receipts.filter(id => typeof id === 'string' && id.trim())) : [],
+    culturalLinks: Array.isArray(candidate.culturalLinks) ? candidate.culturalLinks : [],
     exclusionReasons,
   };
 }
 
-function evaluate(selected, constraints) {
+function evaluate(selected, constraints, pool = []) {
   const ids = selected.map(item => item.id);
   const idSet = new Set(ids);
   const count = selected.length;
@@ -134,6 +136,33 @@ function evaluate(selected, constraints) {
     concentrationPenalty: allPairs ? -WEIGHTS.concentration * repeatedPairs / allPairs : 0,
     riskPenalty: -WEIGHTS.missingEvidence * (1 - constraints.riskTolerance / 100) * uncertainty,
   };
+  let festival = null;
+  if (constraints.festivalPolicy) {
+    const pairs = [], themes = new Set();
+    for (let i = 0; i < selected.length; i++) for (let j = i + 1; j < selected.length; j++) {
+      const edge = selected[i].culturalLinks.find(link => link.otherId === selected[j].id);
+      const supported = edge?.available === true && typeof edge.receiptId === 'string' && Array.isArray(edge.sharedTastes);
+      const shared = supported ? unique(edge.sharedTastes.filter(tag => typeof tag === 'string' && tag.trim()).map(tag => tag.trim().toLowerCase())) : [];
+      shared.forEach(theme => themes.add(theme));
+      pairs.push({ a: selected[i].id, b: selected[j].id, supported, sharedTastes: shared, receiptId: edge?.receiptId ?? null });
+    }
+    const supported = pairs.filter(pair => pair.supported).length;
+    const bridged = pairs.filter(pair => pair.supported && pair.sharedTastes.length).length;
+    const recovery = pool.length ? selected.map(canceled => {
+      const survivors = selected.filter(item => item.id !== canceled.id);
+      const recoveryConstraints = { ...constraints, festivalPolicy: false,
+        lockedIds: unique([...constraints.lockedIds.filter(id => id !== canceled.id), ...survivors.map(item => item.id)]),
+        excludedIds: unique([...constraints.excludedIds, canceled.id]) };
+      const replacements = pool.filter(item => !ids.includes(item.id) && evaluate([...survivors, item], recoveryConstraints).feasible).map(item => item.id);
+      return { canceledId: canceled.id, replacementIds: replacements };
+    }) : [];
+    festival = { pairCount: pairs.length, supportedPairs: supported, sharedThemePairs: bridged, themes: [...themes].sort(), pairs, recovery,
+      interpretation: 'Shared themes are cultural connections, not measured ticket-buyer overlap. Replacement coverage assumes buyer-entered terms remain valid.' };
+    breakdown.culturalCohesion = pairs.length ? 8 * bridged / pairs.length : 0;
+    breakdown.culturalBreadth = 4 * Math.min(1, themes.size / Math.max(1, Math.min(12, count * 2)));
+    breakdown.pairEvidencePenalty = pairs.length ? -6 * (1 - supported / pairs.length) : 0;
+    breakdown.cancellationReadiness = recovery.length ? 6 * recovery.filter(item => item.replacementIds.length).length / recovery.length : 0;
+  }
   const rawScore = Object.values(breakdown).reduce((sum, value) => sum + value, 0);
   const supportedFitCount = selected.filter(item => item.fit != null).length;
   if (constraints.minimumAverageFit != null && (supportedFitCount !== count || selected.reduce((sum, item) => sum + (item.fit ?? 0), 0) / divisor + EPSILON < constraints.minimumAverageFit)) addViolation('fitFloor', 'The slate lacks complete rank evidence or falls below the required average fit.');
@@ -144,6 +173,7 @@ function evaluate(selected, constraints) {
     remainingBudget: feeCents == null ? null : money(budgetCents - feeCents),
     score: round(rawScore),
     rawScore,
+    festival,
     objectiveBreakdown: { ...Object.fromEntries(Object.entries(breakdown).map(([key, value]) => [key, round(value)])), total: round(rawScore) },
     discoveredCount,
     genreCount: genres.size,
@@ -167,6 +197,7 @@ function publicSlate(result) {
     knownFeeSubtotal: result.knownFeeSubtotal,
     remainingBudget: result.remainingBudget,
     score: result.score,
+    ...(result.festival ? { festival: result.festival } : {}),
     objectiveBreakdown: result.objectiveBreakdown,
     discoveredCount: result.discoveredCount,
     genreCount: result.genreCount,
@@ -182,7 +213,8 @@ export function evaluateSelection(candidates, rawConstraints, selectedIds) {
   const validation = optimizeSlate(candidates, rawConstraints);
   if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
   if (!Array.isArray(selectedIds) || unique(selectedIds).length !== selectedIds.length || selectedIds.some(id => !candidates.some(item => item.id === id))) throw new Error('Selection must contain unique known candidate IDs.');
-  return publicSlate(evaluate(candidates.filter(item => selectedIds.includes(item.id)).map(item => normalizeCandidate(item, validation.constraints.excludedIds)), validation.constraints));
+  const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds));
+  return publicSlate(evaluate(pool.filter(item => selectedIds.includes(item.id)), validation.constraints, pool));
 }
 
 export function optimizeSlate(candidates, rawConstraints = {}) {
@@ -207,6 +239,12 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     frontier: [], alternatives: [], baseline: null, candidateAssessments: [], receiptIds: [],
   };
   if (errors.length) return base;
+  if (constraints.festivalPolicy) base.policy.festival = { version: 'houselights-festival-v1',
+    culturalCohesion: '8 × fraction of selected pairs with at least one returned shared theme',
+    culturalBreadth: '4 × distinct shared themes / min(12, twice the slot count), capped at 4',
+    pairEvidencePenalty: '−6 × fraction of selected pairs without interpretable comparison evidence',
+    cancellationReadiness: '6 × fraction of selected acts with at least one feasible one-act replacement; survivors stay locked',
+    missingEvidence: 'No fabricated neutral similarities. Unknown pairs are missing; theme counts are a policy proxy, not audience size.' };
 
   const normalized = input.map(item => normalizeCandidate(item, constraints.excludedIds));
   base.candidateAssessments = normalized.map(item => ({
@@ -221,7 +259,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   const evaluated = [];
   for (let mask = 0; mask < 2 ** normalized.length; mask++) {
     const selected = normalized.filter((_, index) => mask & (1 << index));
-    if (selected.length === constraints.slots) evaluated.push(evaluate(selected, constraints));
+    if (selected.length === constraints.slots) evaluated.push(evaluate(selected, constraints, normalized));
   }
   base.checkedCount = evaluated.length;
   const feasible = evaluated.filter(result => result.feasible).sort(compareResults);
@@ -242,7 +280,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     ...constraints.lockedIds,
     ...normalized.filter(item => item.exclusionReasons.length === 0).map(item => item.id),
   ]).slice(0, constraints.slots);
-  const baseline = evaluate(baselineIds.map(id => normalized.find(item => item.id === id)), constraints);
+  const baseline = evaluate(baselineIds.map(id => normalized.find(item => item.id === id)), constraints, normalized);
   base.baseline = { label: 'First eligible input-order slate, with locks; not a popularity ranking', ...publicSlate(baseline), scoreDelta: null };
 
   if (!feasible.length) {
@@ -289,7 +327,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   const alternatives = [];
   for (const removed of selected) for (const added of normalized.filter(item => !winner.selectedIds.includes(item.id))) {
     const swapped = normalized.filter(item => (winner.selectedIds.includes(item.id) && item.id !== removed.id) || item.id === added.id);
-    const result = evaluate(swapped, constraints);
+    const result = evaluate(swapped, constraints, normalized);
     const scoreDelta = round(result.rawScore - winner.rawScore);
     const costDelta = result.totalFee == null ? null : money(toCents(result.totalFee) - toCents(winner.totalFee));
     alternatives.push({
@@ -307,6 +345,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     selectedIds: winner.selectedIds, totalFee: winner.totalFee,
     remainingBudget: winner.remainingBudget, score: winner.score,
     objectiveBreakdown: winner.objectiveBreakdown, confidence,
+    ...(winner.festival ? { festival: winner.festival } : {}),
     reasons: [
       `Checked all ${base.checkedCount} exact-size combinations; ${base.feasibleCount} satisfy every booking constraint.`,
       missingFitIds.length ? 'This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.' : 'This slate has the highest declared policy score among all feasible combinations.',
@@ -314,6 +353,6 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     ],
     frontier: frontier.map(publicSlate), alternatives,
     baseline: { ...base.baseline, scoreDelta: baseline.feasible ? round(winner.rawScore - baseline.rawScore) : null },
-    receiptIds: unique(selected.flatMap(item => item.receipts)),
+    receiptIds: unique([...selected.flatMap(item => item.receipts), ...(winner.festival?.pairs.flatMap(pair => pair.receiptId ? [pair.receiptId] : []) ?? [])]),
   };
 }

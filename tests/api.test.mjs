@@ -13,7 +13,7 @@ const apiStore = await import('../server/store.mjs');
 const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
 const url = `http://127.0.0.1:${server.address().port}`;
-after(async () => { await new Promise(resolve => server.close(resolve)); rmSync(testDirectory, { recursive: true, force: true }); });
+after(async () => { await new Promise(resolve => server.close(resolve)); (await import('../server/database.mjs')).db.close(); rmSync(testDirectory, { recursive: true, force: true }); });
 const post = (path, body) => fetch(url + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 
 test('health and asset endpoints expose mode without credentials', async () => {

@@ -1,6 +1,24 @@
 # Operational API
 
-All routes use a saved run ID from the `saved` server-sent event produced by `POST /api/memo`. Saved-run and pipeline endpoints are bearer resources: possession of an ID grants access to its planning data. Responses use JSON except the iCalendar text embedded in a booking-packet response.
+Most routes use a saved run ID from the `saved` server-sent event produced by `POST /api/memo`. Saved decision reports are bearer resources: possession of an ID grants read access to planning data. In production/public-demo mode, all mutations and pipeline/campaign/study reads require `Authorization: Bearer <ORGANIZER_TOKEN>`. Reviewer ballots instead require `x-review-token`. Responses use JSON except the iCalendar text embedded in a booking-packet response.
+
+## Festival GM and independent review
+
+See [the GM contract](theme-night-integration.md#api-contract) for research, revisions, benchmark, cancellation and season endpoints. All successful decisions save an immutable child snapshot; failed revisions leave the original intact.
+
+| Endpoint | Contract |
+|---|---|
+| `GET /api/access` | Returns `protected` and `editable`; never returns credentials |
+| `GET /api/examples` | Public list of pinned example IDs, city and evidence mode |
+| `POST /api/examples/:id/pin` | Organizer pins an example; `{pinned:false}` unpins it |
+| `POST /api/studies` | Organizer supplies `{sourceIds:[...],reviewers:["label",...]}`; returns private invitation links |
+| `GET /api/studies/:id` | Organizer-only descriptive preferences and evaluation limitations |
+| `GET /api/reviews/:id` | Invitation token header returns randomized A/B lineups without source labels or scores |
+| `POST /api/reviews/:id/ballot` | Invitation token plus `{judgments:[{caseId,preference:"a",reason:"..."}]}`; one complete ballot per invitation |
+
+Studies accept 1–20 distinct benchmark briefs with feasible controls and 1–30 reviewer labels. Preference values are `a`, `b`, `tie`, `abstain`; reasons require 12–2000 characters. Invitations carry tokens in URL fragments, which the review page forwards in headers. They are private bearer credentials. Study reports contain no invented votes; automated tests use isolated fixture data.
+
+Global SQLite quotas are additional to the route-specific process-local caps below: 180 requests/IP/minute, six paid research requests/IP/minute and 100 globally/day. These limits persist across restarts with the data volume and count requests rather than individual provider calls.
 
 ## Decision dossier
 

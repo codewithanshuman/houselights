@@ -23,12 +23,12 @@ async function conn() {
   const entry = { scope };
   connection = entry;
   entry.promise = (async () => {
-    // Use the installed entry point and this Node executable, avoiding npx and
-    // Windows shell shims. No dependency downloads occur at request time.
-    const bin = fileURLToPath(new URL('./bin.js', import.meta.resolve('@qloo/qloo-harness')));
-    const transport = new StdioClientTransport({ command: process.execPath, args: [bin, 'mcp'], env: process.env, stderr: 'pipe' });
+    // Load the official MCP adapter directly; the interactive CLI router can
+    // stall startup while loading unrelated terminal-agent dependencies.
+    const worker = fileURLToPath(new URL('./qloo-worker.mjs', import.meta.url));
+    const transport = new StdioClientTransport({ command: process.execPath, args: [worker], env: process.env, stderr: 'pipe' });
     transport.stderr?.on('data', () => {});
-    const client = new Client({ name: 'houselights', version: '1.1.0' });
+    const client = new Client({ name: 'houselights', version: '1.2.0' });
     entry.client = client;
     client.onclose = () => { if (connection === entry) connection = undefined; };
     try { await client.connect(transport); return client; }
@@ -102,14 +102,14 @@ export class Run {
     this.scope = `${mode}:${credentialScope()}`;
   }
 
-  async call(tool, args, why) {
+  async call(tool, args, why, { refresh = false } = {}) {
     const key = hash(this.scope + tool + stable(args));
     const t0 = this.now(), hit = this.cache.get(key);
     let env, cached = false, fetchedAt, attempts = 0;
     if (t0 >= this.deadlineAt) {
       env = failure('DEADLINE', 'The research deadline has elapsed. Remaining evidence is unavailable.');
       fetchedAt = t0;
-    } else if (hit && t0 - hit.at < this.ttl) {
+    } else if (!refresh && hit && t0 - hit.at < this.ttl) {
       env = structuredClone(hit.env); cached = true; fetchedAt = hit.at;
     } else {
       if (hit) this.cache.delete(key);

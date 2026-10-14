@@ -1,12 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Run, decodeToolResult } from '../server/qloo.mjs';
-import { compactEvidence, comparisonOf, idOf, nameOf, normalizeEnvelope, trendOf } from '../server/shape.mjs';
+import { compactEvidence, comparisonOf, comparisonThemes, idOf, nameOf, normalizeEnvelope, trendOf } from '../server/shape.mjs';
 import { mockCall } from '../server/mock.mjs';
 
 const ok = (name = 'Artist') => ({ status: 'ok', summary: 'Returned an artist.', results: [{ name, entity_id: 'artist-1' }] });
 const call = run => run.call('describe', { entity: 'Artist', type: 'artist' }, 'Confirm identity');
 const makeRun = options => new Run({ mode: 'live', cacheStore: new Map(), execute: () => ok(), ...options });
+
+test('live comparison tags require explicit association with both sides, never an opaque similarity score', () => {
+  const tag = (name, a, b) => ({ name, query: { 'a.signal.interests.entities': a, 'b.signal.interests.entities': b } });
+  const env = normalizeEnvelope({ status: 'ok', results: { tags: [tag('Electronic', ['a'], ['b']), tag('Solo', ['a'], [])], a: {}, b: {} } }, 'compare_audiences');
+  assert.deepEqual(comparisonThemes(env), { interpretable: true, sharedNames: ['Electronic'] });
+  assert.deepEqual(compactEvidence('compare_audiences', env).sharedNames, ['Electronic']);
+  assert.equal(comparisonThemes({ ...env, comparison: { tags: [{ name: 'Unknown', score: 1 }] } }).interpretable, false);
+  assert.equal(comparisonThemes({ ...env, status: 'error' }).interpretable, false);
+});
 
 test('decodes canonical MCP structured content and JSON text fallback', () => {
   assert.equal(decodeToolResult({ structuredContent: ok() }, 'describe').result_count, 1);

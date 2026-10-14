@@ -130,7 +130,7 @@ Synthetic data is identified separately. Live mode means the live connector was 
 
 The Qloo-off baseline asks an LLM to order the original offers without tools. Agreement, directional agreement and rank correlation describe how its answer differs from the grounded workflow. Digit counts in baseline prose flag unsupported numeric content for review; they are not a factual correctness test. No performance uplift, attendance uplift or preference accuracy is established by these metrics.
 
-Snapshots persist in `DATA_DIR`, with retention bounded to 500 snapshots. Share IDs grant read access to the full snapshot and have no user authentication. Use a dedicated persistent directory and treat links as bearer access to buyer-entered data. Cache and rate-limit state are process-local. A public production service would need account access controls, shared quota enforcement and a deliberate retention policy.
+Snapshots, pipeline updates, global request quotas, studies and ballots persist in SQLite under `DATA_DIR`. Retention prunes unpinned snapshots beyond 500; pinned examples and study sources remain. Legacy JSON snapshots migrate on read. Share IDs grant read access to the full snapshot, so treat links as bearer access to buyer-entered data. Production mutations and pipeline/campaign/study reads require a 32-character minimum organizer token; reviewer ballots use private invitation tokens. This is single-organizer access rather than multi-tenant accounts. Cache and additional route-specific limits remain process-local, while the global request and research caps survive restarts. Use one instance with a local persistent disk and the backup procedure in the deployment runbook.
 
 ## Presentation assets
 

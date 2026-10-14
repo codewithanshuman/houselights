@@ -30,7 +30,8 @@ function setView(view) {
     node.classList.toggle('active', active);
     if (active) node.setAttribute('aria-current', 'page'); else node.removeAttribute('aria-current');
   }
-  $('breadcrumb').textContent = { slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy' }[view];
+  $('breadcrumb').textContent = { slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy', gm: 'Festival GM' }[view];
+  if (view === 'gm') window.houselightsGM?.refresh();
   window.scrollTo(0, 0);
 }
 
@@ -108,7 +109,7 @@ function loadExample() {
 function updateCurrency() { document.querySelectorAll('.currency-label').forEach(node => { node.textContent = $('currency').value; }); }
 function updateRisk() { $('risk-value').textContent = `${$('risk').value} / 100`; }
 function constraints() {
-  return { budget: Number($('budget').value), slots: Number($('slots').value), discoveryMin: Number($('discovery-min').value), maxPerGenre: Number($('max-per-genre').value), riskTolerance: Number($('risk').value), lockedIds: [...state.lockedIds], excludedIds: [...state.excludedIds] };
+  return { ...state.memo?.constraints, budget: Number($('budget').value), slots: Number($('slots').value), discoveryMin: Number($('discovery-min').value), maxPerGenre: Number($('max-per-genre').value), riskTolerance: Number($('risk').value), lockedIds: [...state.lockedIds], excludedIds: [...state.excludedIds] };
 }
 function putConstraints(value = {}) {
   for (const [key, id] of Object.entries({ budget: 'budget', slots: 'slots', discoveryMin: 'discovery-min', maxPerGenre: 'max-per-genre', riskTolerance: 'risk' })) if (value[key] != null) $(id).value = value[key];
@@ -136,6 +137,7 @@ function setBusy(busy, kind = 'build') {
   $('rescore-gauntlet').disabled = busy || !state.memo || !state.savedId;
   $('enter-gauntlet').disabled = busy || !state.memo;
   updateSaveControls();
+  window.houselightsGM?.buttons();
 }
 
 function receiptLinks(ids = []) {
@@ -338,6 +340,7 @@ async function loadSaved(id) {
     if (!response.ok) throw new Error(response.status === 404 ? 'This saved run could not be found. You can build a new brief below.' : 'The saved run could not be loaded.');
     const saved = await response.json();
     if (!saved.memo?.slate) throw new Error('This saved run predates the slate optimizer. Build a new brief below.');
+    state.snapshot = saved;
     state.memo = saved.memo; state.receipts = saved.receipts || []; state.savedId = id; state.runMock = saved.mock === true || saved.memo.mode === 'mock'; state.gauntlet = null;
     state.currency = saved.memo.currency || saved.input?.currency || 'USD';
     const input = saved.memo.input || saved.input;
@@ -353,10 +356,13 @@ async function loadSaved(id) {
       return { name, fee: terms?.fee ?? null, genre: terms?.genre || '', available: terms?.available === true };
     });
     if (!state.offers.length) state.offers = [{ name: '', fee: null, genre: '', available: false }];
+    state.dirty = false; state.briefDirty = false;
     putConstraints(saved.memo.slate.constraints || saved.memo.constraints); renderOffers(); renderReceipts(); renderMemo(); updateMode(state.runMock, true);
+    window.houselightsGM?.render();
     $('briefing').open = false; $('share-link').href = `/m/${encodeURIComponent(id)}`; $('share-link').hidden = false;
     if (saved.scenario) { $('scenario-name').value = saved.scenarioName || 'Alternative slate'; state.scenarioHistory.push({ id, name: saved.scenarioName || 'Saved scenario', parentId: saved.parentId }); renderScenarioHistory(); }
-  } catch (failure) { error(failure.message); }
+    return true;
+  } catch (failure) { error(failure.message); return false; }
   finally { setBusy(false); $('run-progress').hidden = true; }
 }
 

@@ -2,26 +2,29 @@
 
 ## Runtime contract
 
-Deploy as a long-running **Node.js 22.19+ server or Docker container** with outbound HTTPS, child-process support and a writable filesystem. The official Qloo harness runs as a local stdio process. An isolate-only runtime such as Cloudflare Workers cannot run this integration as written.
+Deploy as a long-running **Node.js 24+ server or Docker container** with outbound HTTPS, child-process support and a writable filesystem. The official Qloo harness runs as a local stdio process. An isolate-only runtime such as Cloudflare Workers cannot run this integration as written. Hosting selection is deferred; these files are preparation, not a deployed release.
 
 Render, Fly.io or a comparable service can be considered when configured for this runtime contract. This runbook describes the application's requirements; it does not claim that a particular hosting plan or platform configuration has been verified.
 
 ## Prepare
 
 1. Run `npm ci` and `npm test` from a clean checkout.
-2. Set `QLOO_API_KEY` through the hosting provider's secret mechanism. Leave `QLOO_MODE` unset for a live deployment.
+2. Set `QLOO_API_KEY` through the hosting provider's secret mechanism. Leave `QLOO_MODE` unset for a live deployment. For the verified event credential, configure both `QLOO_BASE_URL` and `QLOO_TRUSTED_BASE_URL` as `https://hackathon.api.qloo.com`; the production host rejected that key. Endpoint choice is explicit, never an automatic fallback.
 3. If enabling model features, also set `ANTHROPIC_API_KEY` and `LLM_MODEL`. Without both, the deterministic planner and writer remain available.
-4. Set `DATA_DIR` to a dedicated mounted persistent directory, for example `/var/data/houselights`. The service must be able to create and write files there. This preserves share links across restarts and releases.
+4. Set `DATA_DIR` to a dedicated mounted persistent directory, for example `/var/data/houselights`. The service stores `houselights.sqlite` and its WAL files there. Legacy JSON snapshots migrate on first read. Use a local disk volume, not a network filesystem shared between replicas.
 5. Set `PORT` to the port expected by the host. The default is `8080`; use `/healthz` as the HTTP health-check path. For a hosted Node service, set `HOST=0.0.0.0`; the local default is loopback-only `127.0.0.1`. The Dockerfile already sets `HOST=0.0.0.0`.
 6. Choose explicit `CALL_BUDGET`, `INTELLIGENCE_CALL_BUDGET` and `DAILY_MEMO_CAP` values compatible with the API allowance. Both call budgets count harness workflow attempts, not individual provider HTTP requests; the intelligence budget cannot exceed 60.
 7. Leave proxy trust disabled unless the host has one trusted proxy hop in front of the app; in that configuration set `TRUST_PROXY=1`. Confirm client IP handling matches the actual deployment path before relying on per-IP throttling.
+8. Set `NODE_ENV=production`, `PUBLIC_DEMO=1`, and a randomly generated `ORGANIZER_TOKEN` of at least 32 characters. Startup fails closed without that token. All API mutations and pipeline/campaign/study reads require it, except reviewer ballots authenticated by their invitation token. Shared decision reports remain readable by link. This is single-organizer access, not multi-user account management.
 
 For a plain Node service, install with `npm ci --omit=dev` and start with `npm start`. For a Docker service, build the included `Dockerfile`; inject secrets and mount storage at runtime. Do not bake `.env` or keys into the image. The Docker command starts Node directly and expects injected environment variables.
+
+`compose.yaml` supplies a named persistent volume, non-root Node runtime, init process, health check and restart policy. After choosing a host, `docker compose up --build -d` uses the locally configured secrets. The container build itself still needs verification on a Docker-enabled machine. Terminate TLS at the host's HTTPS ingress. Enter the organizer token in Festival GM only on that trusted origin; it stays in tab memory and clears on reload.
 
 ## Verify the release
 
 - Confirm `/healthz` responds and reports `mock: false`. `keyed: true` means a key is configured; it is not proof that the key works.
-- Run one real, bounded memo and inspect successful Qloo receipts. Check entity resolution, ranking, city scope and unfamiliar shapes with the live probe.
+- Run `npm run validate:live`; retain the ignored `artifacts/live-validation.json` report. Then run one real, bounded memo and the Festival GM workflow, inspecting successful Qloo receipts. The smoke test checks core resolution/ranking and records unsupported auxiliary workflows; it does not certify every feature or real market relevance.
 - Verify selected artists have buyer-entered fees and confirmed availability. Check that unknown fees, unsupported evidence and impossible constraints are visible.
 - Change the budget, lock or exclude an artist, and confirm the displayed slate and diagnostics respond to the constraint.
 - Run budget and fee stress cases. Confirm locked artists remain locked, unknown fees remain ineligible, and the original slate's continued feasibility is distinguished from finding a replacement.
@@ -43,9 +46,9 @@ For a plain Node service, install with `npm ci --omit=dev` and start with `npm s
 
 Share links expose the stored memo and inputs to anyone with the link. Use invented booking terms in a public demonstration; do not load confidential artist offers until suitable account access controls exist. Keep the dedicated snapshot directory out of source control and backups intended for public release.
 
-The cache, per-IP throttling and daily cap are process-local and reset on restart. Multiple replicas do not share quotas. For the first public release, use one instance, establish a provider-level spend/quota limit, and check the application's proxy trust setting against the host's actual proxy path. A larger deployment needs shared quota state and stronger abuse controls.
+Global API quotas persist transactionally in SQLite: 180 requests per IP per minute, plus six paid research requests per IP per minute and 100 globally per UTC day. Existing route-specific caps remain additional process-local limits. These count requests, not provider HTTP calls or currency spent. Workflow budgets also cap each research run. The Qloo cache remains in memory. Use one instance with a persistent volume, establish a provider-level quota, and verify proxy handling. Multiple independent disks do not share quotas.
 
-Receipts retain compact evidence rather than raw provider responses. Back up the persistent snapshot directory if share-link continuity matters; old snapshots are removed when retention is reached. A healthy web server and a configured key are insufficient to certify the Qloo integration: retain evidence of an actual successful end-to-end live run.
+Receipts retain compact evidence rather than raw provider responses. Retention keeps at most 500 unpinned snapshots; pinned judge examples and study sources survive that pruning. Pin intended examples through Festival GM. Back up the database with a SQLite-aware backup tool, or stop the service before copying the entire data directory including WAL files; do not copy only a live main database file. Test a restore before launch. Pipelines, studies and ballots are durable and do not currently have automatic retention. A healthy server and configured key are insufficient to certify live Qloo behavior.
 
 ## Release record
 
