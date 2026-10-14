@@ -84,7 +84,7 @@ The six core festival workflows are implemented, but this is not the entire orig
 - The source Gemini function-calling/retry loop, resumable SSE agent replay, Redis deployment and its Next.js UI are not transplanted. Houselights uses its own server, SQLite storage, bounded rule-based evidence agent and optional Anthropic interpretation.
 - Per-theme age matrices, explicit reference-market ordinal lift, sponsor-category filters and fresh per-theme partner queries are now implemented in `server/theme-research.mjs`. Family life-stage remains unsupported by the installed harness. Trend-window fallback to archived 2025 data is not imported as current momentum.
 - Season editing supports explicit saved-anchor overrides by date and exclusions, with fresh evidence and immutable parent-linked results. Original arbitrary season-night LLM editing remains narrower here: a new artist, city, arbitrary theme text or new economic term needs a supported input/research operation.
-- Full season assembly does not use the source's model submission schema, exact promotional copy, all supporting fandom relationships or sport-specific copy. The original core utility source is retained, and adapted season behavior is described above.
+- Full season assembly does not use the source's model submission schema, exact promotional copy or sport-specific copy. Explicit supporting fandoms now have pairwise Qloo checks before entering partner queries; arbitrary model-generated supporting relationships are not imported. The original core utility source is retained, and adapted season behavior is described above.
 - Festival research, Market DNA, audience evidence, revisions, cancellation recovery, benchmarks, blind review, per-date theme research and theme replacement have browser controls. Candidate limits, exclusions and advanced schedule heuristics are also available through API/CLI.
 
 ## Per-theme research and revision
@@ -115,7 +115,15 @@ Overrides reserve a known theme for a selected date before other nights are assi
 
 Preflight counts domain-local ranks, optional reference ranks, supported age-bucket ranks and four partner workflows per night. Retries share the same attempt budget and deadline. Protected access and persistent paid-research quotas also cover `season-research`. A live source cannot be enriched in synthetic mode or vice versa.
 
-The source archive was not present at its original supplied path during this continuation. This work uses the retained exact utility ports and prior file-level source audit; it does not claim a fresh inspection of the missing ZIP.
+The user reattached the archive at `D:\A - Download\Theme-Night-GM-main.zip`. On 14 October 2026 it was inspected again; SHA-256 `7596EAE65F594D9CFDFF704B4218A60E5B635081DF5A53B204CB70C845BF2F9E` matches the previously audited archive. The renewed inspection covered the agent loop, replay store/hook, assembly, autopilot and targeted crossover/support tools. This does not claim every source workflow has been migrated.
+
+### Supporting fandoms and crossover checks
+
+The source assembly and sponsor tooling accept supporting entity IDs, while its audience comparison exposes shared cultural context. Houselights connects those mechanisms explicitly: `supportingByDate` maps selected dates to up to two distinct eligible saved theme IDs. Nonempty choices require a matching explicit `anchorOverrides` entry. Unknown, excluded, unsuitable, duplicate or self-referential choices fail before provider calls.
+
+Each selected support adds one `compare_audiences` workflow to preflight. Only an interpretable comparison with returned shared context includes that ID in all four partner queries for that night. An empty shared-context result is retained as such; failed or opaque evidence stays unavailable. Each decision records its receipt. Anchor rankings and the anchor Taste Fit remain unchanged: shared tastes are neither buyer overlap nor a measured combined-theme score.
+
+In Festival GM, expand a researched night, choose Supporting fandom 1/2, and use **Check crossover & research partners**. The result is a new child snapshot with the other anchors preserved. The same fields work with `npm run gm -- season-research <saved-id> options.json`. JSON, Markdown and HTML dossiers retain the checks and receipts. Candidate selectors show the tested matrix; API choices may also reference eligible saved market candidates outside that capped matrix.
 
 Live Qloo resolution, ranks, demographics, comparisons, Market DNA and cancellation recovery were verified on 14 October 2026; see the [release validation record](live-validation.md). LLM validation and real promoter judgments remain outstanding. Synthetic and contract tests demonstrate behavior and failure handling, not real market relevance.
 

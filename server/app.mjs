@@ -12,6 +12,7 @@ import { createPipeline, applyPipelineEvent } from './pipeline.mjs';
 import { normalizeIntelligenceInput, buildCulturalIntelligence, intelligenceWorkflowCount } from './intelligence.mjs';
 import { buildCampaign } from './campaign.mjs';
 import { buildVenuePlan } from './venues.mjs';
+import { buildCapacityResearch } from './capacity-evidence.mjs';
 import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput } from './activation.mjs';
 import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
@@ -171,16 +172,18 @@ export function createApp() {
     try {
       const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'i', receiptOffset: receiptOffset(source, 'i') });
       const intelligence = await buildCulturalIntelligence(source, input, run);
-      const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, intelligence, receipts: [...(source.receipts || []), ...run.receipts] };
+      const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, intelligence, capacityResearch: undefined, venuePlan: undefined, localActivation: undefined, receipts: [...(source.receipts || []), ...run.receipts] };
       const id = store.save(snapshot);
       return res.status(201).json({ id, expectedCalls, workflowsUsed: run.used, snapshot: store.load(id) });
     } catch (error) { return res.status(400).json({ error: error.message }); }
   });
-  app.post('/api/venues/:id/qualify', (req, res) => {
+  app.post('/api/venues/:id/:action', (req, res) => {
+    if (!['qualify', 'capacity-review'].includes(req.params.action)) return res.status(404).json({ error: 'Unknown venue action.' });
     const source = store.load(req.params.id);
     if (!source) return res.status(404).json({ error: 'Saved run not found.' });
-    let venuePlan;
-    try { venuePlan = buildVenuePlan(source, req.body); }
+    let result;
+    const reviewing = req.params.action === 'capacity-review';
+    try { result = reviewing ? buildCapacityResearch(source, req.body) : buildVenuePlan(source, req.body); }
     catch (error) { return res.status(400).json({ error: error.message }); }
     resetDay();
     const now = Date.now();
@@ -188,7 +191,8 @@ export function createApp() {
     const recent = (venueHits.get(req.ip) || []).filter(time => now - time < 60000);
     if (recent.length >= 12 || day.venueCount >= 200) return res.status(429).json({ error: 'Venue-plan save limit reached. Existing plans remain available from their saved snapshots.' });
     venueHits.set(req.ip, [...recent, now]); day.venueCount++;
-    const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, venuePlan };
+    const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, localActivation: undefined,
+      ...(reviewing ? { capacityResearch: result, venuePlan: undefined } : { venuePlan: result }) };
     const id = store.save(snapshot);
     return res.status(201).json({ id, snapshot: store.load(id) });
   });

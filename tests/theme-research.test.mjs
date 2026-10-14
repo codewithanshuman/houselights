@@ -12,6 +12,53 @@ const execute = (tool, args) => ({ status: 'ok', results: tool === 'rank'
   : [{ entity_id: `${args.signals[0]}-${args.target_type}`, name: `Theme-specific ${args.target_type}` }] });
 const makeRun = overrides => new Run({ mode: 'mock', execute, budget: 60, receiptPrefix: 'g', receiptOffset: 2, cacheStore: new Map(), ...overrides });
 
+const withSupport = () => ({ ...options, anchorOverrides: { '2027-04-01': 'movie-0' }, supportingByDate: { '2027-04-01': ['artist-1', 'movie-2'] } });
+
+test('supporting fandoms influence only partner signals after receipt-backed shared-context checks', async () => {
+  const source = fixture(), before = structuredClone(source), raw = withSupport();
+  const run = makeRun({ execute: (tool, args) => tool === 'compare_audiences'
+    ? { status: 'ok', results: [], comparison: { shared: args.group_b[0] === 'artist-1' ? [{ name: 'Alternative music' }] : [] } }
+    : execute(tool, args) });
+  assert.equal(prepareThemeResearch(source, raw).expectedCalls, 20);
+  const result = await researchThemeSeason(source, raw, run), night = result.themeSeason.nights[0];
+  assert.deepEqual(source, before);
+  assert.equal(run.receipts.length, 20);
+  assert.deepEqual(night.partnerSignals, ['movie-0', 'artist-1']);
+  assert.deepEqual(night.supporting.map(card => card.id), ['artist-1']);
+  assert.deepEqual(night.crossoverChecks.map(check => check.decision), ['shared_context_found', 'no_shared_context_returned']);
+  for (const check of night.crossoverChecks) {
+    assert.ok(night.evidence.includes(check.receiptId));
+    assert.equal(result.receipts.find(receipt => receipt.id === check.receiptId).tool, 'compare_audiences');
+  }
+  for (const kit of night.experience) assert.deepEqual(run.receipts.find(receipt => receipt.id === kit.receiptId).args.signals, night.partnerSignals);
+  const withoutSupport = (await researchThemeSeason(source, { ...raw, supportingByDate: {} }, makeRun())).themeSeason.nights[0];
+  assert.deepEqual(night.tasteFit, withoutSupport.tasteFit, 'shared context must not inflate the anchor score');
+});
+
+test('opaque or failed audience comparisons remain missing evidence and cannot enter partner signals', async () => {
+  for (const comparison of [{ status: 'error', results: [] }, { status: 'ok', results: [], comparison: { score: .99 } }]) {
+    const run = makeRun({ execute: (tool, args) => tool === 'compare_audiences' ? comparison : execute(tool, args) });
+    const night = (await researchThemeSeason(fixture(), withSupport(), run)).themeSeason.nights[0];
+    assert.deepEqual(night.partnerSignals, ['movie-0']);
+    assert.equal(night.researchStatus, 'partial');
+    assert.ok(night.crossoverChecks.every(check => check.decision === 'comparison_unavailable'));
+  }
+});
+
+test('invalid supporting choices and extra crossover work are rejected before provider spending', async () => {
+  for (const supportingByDate of [null, [], { '2027-04-03': [] }, { '2027-04-01': ['missing'] },
+    { '2027-04-01': ['movie-0'] }, { '2027-04-01': ['artist-1', 'artist-1'] },
+    { '2027-04-01': ['artist-0', 'artist-1', 'artist-2'] }]) {
+    if (supportingByDate === null) continue; // null deliberately means no support, like omitted options.
+    assert.throws(() => prepareThemeResearch(fixture(), { ...withSupport(), supportingByDate }));
+  }
+  assert.throws(() => prepareThemeResearch(fixture(), { ...withSupport(), anchorOverrides: {} }), /explicit anchor/);
+  let calls = 0;
+  const run = makeRun({ budget: 19, execute: () => { calls++; return {}; } });
+  await assert.rejects(researchThemeSeason(fixture(), withSupport(), run), /requires 20 workflows/);
+  assert.equal(calls, 0);
+});
+
 test('season research connects fixed-pool age matrix, reference lift and individually researched partners', async () => {
   const source = fixture(), before = structuredClone(source), run = makeRun();
   const plan = prepareThemeResearch(source, options);

@@ -87,6 +87,7 @@ function markdown(dossier) {
         `- ${night.date}: ${night.title}; anchor ${night.anchor.name}; audience ${night.segment}; ${night.rights.status}.`,
         `  Taste Fit ${night.tasteFit.total}; measured weight ${night.tasteFit.measuredWeight}; missing ${night.tasteFit.estimated.join(', ') || 'none'}. ${night.experienceBasis}`,
         ...(night.experience ?? []).map(kit => `  ${kit.target}: ${kit.candidates.map(card => card.name).join(', ') || 'No supported leads'}; ${kit.status} [${kit.receiptId}].`),
+        ...(night.crossoverChecks ?? []).map(check => `  Supporting fandom ${check.name}: ${check.decision}; shared context ${check.sharedTastes.join(', ') || 'none returned'} [${check.receiptId}].`),
         `  Evidence: ${night.evidence.map(id => `[${id}]`).join(' ')}.`,
       ]), ''] : []),
     '## Selected slate', '',
@@ -105,7 +106,14 @@ function markdown(dossier) {
     ...(dossier.venuePlan ? ['## Venue qualification and economics', '',
       `- Qualified stops: ${dossier.venuePlan.routeEconomics.qualifiedStops}; out-of-band fallbacks: ${dossier.venuePlan.routeEconomics.fallbackStops}; unqualified: ${dossier.venuePlan.routeEconomics.unqualifiedStops}`,
       `- Total declared fixed cost: ${dossier.venuePlan.routeEconomics.totalDeclaredFixedCost} ${dossier.venuePlan.routeEconomics.currency}`,
-      ...dossier.venuePlan.stops.map(item => `- ${item.market}: ${item.qualificationStatus}; ${item.venueName || 'no qualified venue'}; break-even ${item.breakEvenTickets} tickets`), ''] : []),
+      ...dossier.venuePlan.stops.flatMap(item => [
+        `- ${item.market}: ${item.qualificationStatus}; ${item.venueName || 'no qualified venue'}; capacity ${item.capacity ?? 'unknown'}; break-even ${item.breakEvenTickets} tickets`,
+        ...(item.capacityEvidence ? [`  Capacity decision: ${item.capacityEvidence.decisionReason || 'Single consistent extracted value explicitly accepted'}; review ${item.capacityEvidence.reviewSourceId}; source text is not independently verified.`] : []),
+      ]), ''] : []),
+    ...(dossier.capacityResearch ? ['## Venue capacity evidence', '', ...dossier.capacityResearch.venues.flatMap(venue => [
+      `- ${venue.market} / ${venue.venueName}: ${venue.status}; proposed capacity ${venue.proposedCapacity ?? 'unresolved'}. Source text was supplied by the organizer.`,
+      ...venue.candidates.flatMap(candidate => candidate.claims.map(claim => `  ${candidate.capacity}: ${claim.quote} — ${claim.source} [${claim.documentId}]`)),
+    ]), ''] : []),
     ...(dossier.localActivation ? ['## Local activation', '',
       `- Markets: ${dossier.localActivation.summary.marketCount}; opener candidates: ${dossier.localActivation.summary.openerCandidates}; passing returned-popularity rule: ${dossier.localActivation.summary.openerCandidatesPassingSizeRule}`,
       `- Coordinate-confirmed poster leads within 2.5 km: ${dossier.localActivation.summary.posterLeadsWithinRadius}; aftershow leads: ${dossier.localActivation.summary.aftershowLeadsWithinRadius}`, ''] : []),
@@ -167,6 +175,7 @@ export function buildDossier(snapshot) {
       summary: snapshot.localActivation.summary, markets: snapshot.localActivation.markets,
       limitations: snapshot.localActivation.limitations
     } : null,
+    capacityResearch: snapshot.capacityResearch ?? null,
     venuePlan: snapshot.venuePlan ? {
       generatedAt: snapshot.venuePlan.generatedAt,
       rules: snapshot.venuePlan.rules,
@@ -176,6 +185,7 @@ export function buildDossier(snapshot) {
         market: stop.market, showDate: stop.showDate, qualificationStatus: stop.qualificationStatus,
         venueId: stop.selectedVenue?.venueId || null, venueName: stop.selectedVenue?.venueName || null,
         capacity: stop.selectedVenue?.capacity ?? null, capacitySource: stop.selectedVenue?.capacitySource || null,
+        capacityEvidence: stop.selectedVenue?.capacityEvidence ?? null,
         breakEvenTickets: stop.economics.breakEvenTickets, breakEvenWithinCapacity: stop.economics.breakEvenWithinCapacity,
         declaredFixedCost: stop.economics.declaredFixedCost, scenarios: stop.economics.scenarios, action: stop.action
       })),
@@ -196,6 +206,7 @@ export function buildDossier(snapshot) {
       'Compatibility rows are planning comparisons, not pairwise affinity scores.',
       'Synthetic mode is product-development evidence and must not be represented as a live Qloo result.',
       ...(snapshot.venuePlan?.limitations || []),
+      ...(snapshot.capacityResearch?.limitations || []),
       ...(snapshot.localActivation?.limitations || []),
       ...(snapshot.festivalResearch?.limitations || []),
       ...(snapshot.themeSeason?.limitations || [])
@@ -278,10 +289,22 @@ export function dossierHtml(dossier) {
     `<strong>Slate tags</strong> — ${escapeHtml(dossier.audienceProfile.tags.map(item => item.name).filter(Boolean).join(', ') || 'none returned')}`,
     ...dossier.audienceProfile.crossDomain.map(item => `<strong>${escapeHtml(item.targetType)}</strong> — ${escapeHtml(item.rows.map(row => row.name).filter(Boolean).join(', ') || 'none returned')}`)
   ] : [];
-  const venues = dossier.venuePlan?.stops.map(item => `<strong>${escapeHtml(item.market)}</strong> — ${escapeHtml(item.qualificationStatus)}; ${escapeHtml(item.venueName || 'no qualified venue')}; break-even ${escapeHtml(item.breakEvenTickets)} tickets`) || [];
+  const venues = dossier.venuePlan?.stops.flatMap(item => [
+    `<strong>${escapeHtml(item.market)}</strong> — ${escapeHtml(item.qualificationStatus)}; ${escapeHtml(item.venueName || 'no qualified venue')}; capacity ${escapeHtml(item.capacity ?? 'unknown')}; break-even ${escapeHtml(item.breakEvenTickets)} tickets`,
+    ...(item.capacityEvidence ? [`Capacity decision: ${escapeHtml(item.capacityEvidence.decisionReason || 'Single consistent extracted value explicitly accepted')}; review ${escapeHtml(item.capacityEvidence.reviewSourceId)}; source text is not independently verified.`] : []),
+  ]) || [];
+  const capacityEvidence = dossier.capacityResearch?.venues.flatMap(venue => [
+    `<strong>${escapeHtml(venue.market)} / ${escapeHtml(venue.venueName)}</strong> — ${escapeHtml(venue.status)}; organizer-supplied text, not independently verified.`,
+    ...venue.candidates.flatMap(candidate => candidate.claims.map(claim => `${escapeHtml(candidate.capacity)}: ${escapeHtml(claim.quote)} — ${escapeHtml(claim.source)} [${escapeHtml(claim.documentId)}]`)),
+  ]) || [];
+  const themes = dossier.themeSeason?.nights.flatMap(night => [
+    `<strong>${escapeHtml(night.date)} · ${escapeHtml(night.title)}</strong> — ${escapeHtml(night.anchor.name)}; ${escapeHtml(night.researchStatus ?? 'saved evidence only')}`,
+    ...((night.crossoverChecks ?? []).map(check => `${escapeHtml(check.name)}: ${escapeHtml(check.decision)}; shared context ${escapeHtml(check.sharedTastes.join(', ') || 'none returned')} [${escapeHtml(check.receiptId)}]`)),
+    ...((night.experience ?? []).map(kit => `${escapeHtml(kit.target)}: ${escapeHtml(kit.candidates.map(card => card.name).join(', ') || 'No supported leads')} [${escapeHtml(kit.receiptId)}]`)),
+  ]) || [];
   const activation = dossier.localActivation ? [
     `Markets ${escapeHtml(dossier.localActivation.summary.marketCount)}; opener candidates ${escapeHtml(dossier.localActivation.summary.openerCandidates)}; passing returned-popularity rule ${escapeHtml(dossier.localActivation.summary.openerCandidatesPassingSizeRule)}`,
     `Coordinate-confirmed poster leads within 2.5 km ${escapeHtml(dossier.localActivation.summary.posterLeadsWithinRadius)}; aftershow leads ${escapeHtml(dossier.localActivation.summary.aftershowLeadsWithinRadius)}`
   ] : [];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.audienceProfile?.enabled ? `<section><h2>Aggregate audience activation</h2>${listHtml(profile)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}${dossier.localActivation ? `<section><h2>Local activation</h2>${listHtml(activation)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.audienceProfile?.enabled ? `<section><h2>Aggregate audience activation</h2>${listHtml(profile)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}${dossier.localActivation ? `<section><h2>Local activation</h2>${listHtml(activation)}</section>` : ''}${dossier.capacityResearch ? `<section><h2>Venue capacity evidence</h2>${listHtml(capacityEvidence)}</section>` : ''}${dossier.themeSeason ? `<section><h2>Themed nights and crossover research</h2>${listHtml(themes)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
 }

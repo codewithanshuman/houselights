@@ -13,7 +13,7 @@ const averageFit = (items, ids) => {
 };
 export function withoutDerived(snapshot) {
   const copy = { ...snapshot };
-  for (const key of ['intelligence', 'venuePlan', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'themeSeason']) delete copy[key];
+  for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'themeSeason']) delete copy[key];
   return copy;
 }
 

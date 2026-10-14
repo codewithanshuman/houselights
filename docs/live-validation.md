@@ -36,3 +36,18 @@ On 14 October 2026, the new `season-research` workflow was checked against the l
 - Final regression: **131/131 tests passed** using `node --test --test-concurrency=2`, including canonical harness schema validation, category ambiguity, incomplete rankings, overrides, budget preflight, organizer access and durable research quotas. One earlier concurrent worker startup timed out; isolation and both subsequent full runs passed.
 
 `Complete` describes coverage of requested research, not commercial suitability. Only the local and segment components of theme Taste Fit are measured (55% of the original weights); near-venue concentration, momentum and new-fan reach remain estimated. Family life-stage is still unsupported. Partner leads are uncontacted, and no availability, sponsorship agreement, content rights or ticket demand is established by these tests.
+
+## Supporting fandoms and capacity evidence continuation
+
+On 14 October 2026, the reattached Routed and Theme Night GM ZIPs were inspected at their new paths; their hashes matched the previous audit. The Routed capacity parser was ported with its MIT license. Capacity review, conflict selection, qualification and escaped HTML export were exercised end to end with explicitly synthetic supplied venue text. No independently retrieved venue capacity is claimed.
+
+Live crossover research was exercised through the Festival GM browser controls:
+
+- `UtwpOKiSMg` → `idnkUXMoDQ`: Free Guy plus proposed supporting fandom Monument Valley. **34/34 new receipts were `ok`**, all freshly fetched. The comparison returned no shared context; the support was excluded from partner signals.
+- `idnkUXMoDQ` → `Panf8DVVUA`: retained Monument Valley and added Little Women as a second proposed support. **35/35 new receipts were `ok`**, 30 cached and five fresh. Receipt `g217` returned shared labels **Romance** and **Relatable** for Little Women. Four partner queries (`g218`–`g221`) used Free Guy plus Little Women. Monument Valley stayed excluded (`g216`).
+- Both anchors and their Taste Fit values remained unchanged; all receipt IDs in the saved chain are unique. These labels establish returned cultural context only, not ticket-buyer overlap or combined-theme demand.
+- The browser displayed both decisions and their receipts with no captured JavaScript errors. Local proof: `artifacts/crossover-browser.png`; validation summary: `artifacts/crossover-validation.json`.
+
+Tests include multilingual extraction, conflicting capacities, source attribution limits, content hashes, explicit capacity opt-in, availability independence, snapshot invalidation, organizer protection, HTML escaping, crossover exclusions, unchanged anchor scores and canonical harness schemas. The first full run hit a worker startup timeout; the same canonical worker test passed in isolation. Test fixture issues found during added invalidation checks were corrected without changing production validation or quotas.
+
+Final full regression: **140/140 tests passed** with `node --test --test-concurrency=2`. This includes the official worker/schema test. The local test transcript is `artifacts/crossover-capacity-tests.txt`.

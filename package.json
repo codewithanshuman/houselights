@@ -11,6 +11,7 @@
     "contingency": "node --env-file-if-exists=.env scripts/contingency.mjs",
     "dossier": "node --env-file-if-exists=.env scripts/dossier.mjs",
     "gm": "node --env-file-if-exists=.env scripts/gm.mjs",
+    "venues": "node --env-file-if-exists=.env scripts/venues.mjs",
     "validate:live": "node --env-file-if-exists=.env scripts/validate-live.mjs",
     "validate:festival": "node --env-file-if-exists=.env scripts/validate-festival.mjs"
   },
