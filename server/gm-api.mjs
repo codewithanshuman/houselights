@@ -3,6 +3,7 @@ import { Run, isMock } from './qloo.mjs';
 import { normalizeFestivalResearch, festivalWorkflowCount } from './festival-research.mjs';
 import { runFestivalGM, reviseFestival, benchmarkFestival, cancelFestival } from './gm.mjs';
 import { planDates, buildThemeSeason } from './theme-season.mjs';
+import { prepareThemeResearch, researchThemeSeason } from './theme-research.mjs';
 
 export function registerGMRoutes(app) {
   const hits = new Map();
@@ -20,20 +21,21 @@ export function registerGMRoutes(app) {
   });
   app.post('/api/gm/:id/:action', limit, async (req, res) => {
     const source = store.load(req.params.id), action = req.params.action;
-    if (!['run', 'benchmark', 'revise', 'season', 'cancel'].includes(action)) return res.status(404).json({ error: 'Unknown GM action.' });
+    if (!['run', 'benchmark', 'revise', 'season', 'season-research', 'cancel'].includes(action)) return res.status(404).json({ error: 'Unknown GM action.' });
     if (!source) return res.status(404).json({ error: 'Saved run not found.' });
     try {
       let snapshot;
-      if (action === 'run') {
+      if (action === 'run' || action === 'season-research') {
         if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Configure QLOO_API_KEY or use synthetic development mode.' });
-        const input = normalizeFestivalResearch(source, req.body);
+        if (action === 'season-research' && !!source.mock !== isMock()) return res.status(409).json({ error: 'Season research must use the same live or synthetic mode as its saved source.' });
+        const input = action === 'run' ? normalizeFestivalResearch(source, req.body) : prepareThemeResearch(source, req.body);
         const requestedBudget = Number(process.env.GM_CALL_BUDGET ?? 60);
         const budget = Number.isInteger(requestedBudget) && requestedBudget > 0 ? Math.min(120, requestedBudget) : 60;
-        const expectedCalls = festivalWorkflowCount(source, input);
+        const expectedCalls = action === 'run' ? festivalWorkflowCount(source, input) : input.expectedCalls;
         if (expectedCalls > budget) return res.status(400).json({ error: `Research requires up to ${expectedCalls} workflows; configured budget is ${budget}. Reduce markets or slate size.`, expectedCalls });
         const offset = (source.receipts ?? []).reduce((max, receipt) => Math.max(max, Number(/^g(\d+)$/.exec(receipt.id)?.[1] ?? 0)), 0);
         const run = new Run({ budget, deadlineMs: 120000, receiptPrefix: 'g', receiptOffset: offset });
-        snapshot = await runFestivalGM(source, input, run);
+        snapshot = action === 'run' ? await runFestivalGM(source, input, run) : await researchThemeSeason(source, req.body, run);
       } else if (action === 'revise' || action === 'cancel') {
         const result = await (action === 'cancel' ? cancelFestival : reviseFestival)(source, req.body);
         if (!result.snapshot) return res.status(result.status === 'rejected' ? 422 : 409).json(result);

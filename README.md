@@ -47,6 +47,8 @@ Build a slate, then open **Festival GM** for city research, audience evidence, w
 
 The original Houselights festival policy adds cultural cohesion, theme breadth, missing-pair penalties and feasible cancellation coverage to the booking objective. The imported five-part reference Taste Fit remains separate and attributed. LLM comparisons are explicitly **in-sample objective diagnostics**; a separate blinded-review workflow collects actual human preferences across distinct briefs, without fabricating judgments or claiming statistical superiority.
 
+**Themed nights now have their own research.** Festival GM ranks up to ten saved anchors in each of five domains for the requested age groups, compares an optional reference market, and queries sponsors, music, places and podcasts separately for each theme. Resolve ambiguous sponsor categories explicitly and replace one night's anchor while retaining the others. Missing evidence remains unmeasured. Use the browser controls or `npm run gm -- season-research <saved-id> options.json`; see the [options and evidence rules](docs/theme-night-integration.md#per-theme-research-and-revision).
+
 Run `npm run validate:live` after configuring your Qloo key. It performs a bounded provider smoke test and writes a credential-free summary to ignored `artifacts/live-validation.json`. A configured key or passing synthetic tests does not establish a successful live integration. Deployment files are prepared; a hosting target and actual public deployment remain outstanding.
 
 - Resolves artist names and offers a choice when the provider reports ambiguity.

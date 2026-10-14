@@ -43,6 +43,12 @@ test('festival research → dossier → benchmark → season → revision works 
   assert.equal(seasonResponse.status, 201);
   const season = await seasonResponse.json();
   assert.equal(season.snapshot.themeSeason.nights.length, 3);
+  const enrichedResponse = await post(`/api/gm/${season.id}/season-research`, { dates: [{ date: '2027-04-01', time: 'night', segment: 'gen_z' }], count: 1 });
+  assert.equal(enrichedResponse.status, 201);
+  const enriched = await enrichedResponse.json();
+  assert.ok(enriched.snapshot.themeSeason.research.matrix.length > 0);
+  assert.ok(enriched.snapshot.receipts.length > season.snapshot.receipts.length);
+  assert.equal(new Set(enriched.snapshot.receipts.map(receipt => receipt.id)).size, enriched.snapshot.receipts.length);
   const selected = run.snapshot.memo.items.find(item => run.snapshot.memo.slate.selectedIds.includes(item.id));
   const reviseResponse = await post(`/api/gm/${season.id}/revise`, { request: `Replace ${selected.name}, keep the budget` });
   assert.equal(reviseResponse.status, 201);
