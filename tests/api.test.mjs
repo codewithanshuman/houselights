@@ -1,4 +1,4 @@
-import test, { after } from 'node:test';
+import test, { after, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -10,6 +10,9 @@ const testDirectory = mkdtempSync(join(tmpdir(), 'houselights-api-'));
 process.env.DATA_DIR = testDirectory;
 const { createApp } = await import('../server/app.mjs');
 const apiStore = await import('../server/store.mjs');
+const { db } = await import('../server/database.mjs');
+// Cases use independent request budgets; quota enforcement has dedicated production tests.
+beforeEach(() => db.prepare('DELETE FROM quotas').run());
 const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
 const url = `http://127.0.0.1:${server.address().port}`;
@@ -143,23 +146,54 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.equal(intelligenceSaved.snapshot.intelligence.audienceProfile.crossDomain.length, 3);
   assert.equal(intelligenceSaved.snapshot.intelligence.venueScouting.length, 2);
   assert.ok(intelligenceSaved.snapshot.intelligence.receipts.every(receipt => receipt.id.startsWith('i')));
+  const capacityResponse = await post('/api/venues/' + intelligenceSaved.id + '/capacity-review', {
+    venues: intelligenceSaved.snapshot.intelligence.venueScouting.map(group => ({
+      market: group.market, venueId: group.candidates[0].id,
+      pages: [{ url: 'https://fixture.example/technical', text: `<script>fixture</script> ${group.candidates[0].name}. Capacity: 500.` }]
+    }))
+  });
+  assert.equal(capacityResponse.status, 201);
+  const capacitySaved = await capacityResponse.json();
+  assert.equal(capacitySaved.snapshot.capacityResearch.summary.consistent, 2);
   const qualifications = intelligenceSaved.snapshot.intelligence.venueScouting.map(group => ({
-    market: group.market, venueId: group.candidates[0].id, capacity: 500,
-    capacitySource: 'Synthetic API fixture', available: true, venueCost: 1000, otherFixedCost: 250
+    market: group.market, venueId: group.candidates[0].id, useCapacityEvidence: true,
+    available: true, venueCost: 1000, otherFixedCost: 250
   }));
-  const venueResponse = await post('/api/venues/' + intelligenceSaved.id + '/qualify', {
+  const venueResponse = await post('/api/venues/' + capacitySaved.id + '/qualify', {
     expectedCrowd: 400, ticketPrice: 45, variableCostPerAttendee: 5, travelCostPerKm: .5,
     artistFeeMode: 'whole_route', qualifications
   });
   assert.equal(venueResponse.status, 201);
   const venueSaved = await venueResponse.json();
-  assert.equal(venueSaved.snapshot.parentId, intelligenceSaved.id);
+  assert.equal(venueSaved.snapshot.parentId, capacitySaved.id);
   assert.equal(venueSaved.snapshot.venuePlan.routeEconomics.qualifiedStops, 2);
   const routedCampaign = await (await fetch(url + '/api/campaign/' + venueSaved.id)).json();
   assert.equal(routedCampaign.loop.research.marketBrief.routeStops.length, 2);
   assert.equal(routedCampaign.loop.research.marketBrief.venuePlan.routeEconomics.qualifiedStops, 2);
   const routedDossier = await (await fetch(url + '/api/dossier/' + venueSaved.id)).json();
   assert.equal(routedDossier.venuePlan.stops.length, 2);
+  assert.ok(routedDossier.venuePlan.stops.every(stop => stop.capacityEvidence.claims.length));
+  assert.match(routedDossier.markdown, /Venue capacity evidence/);
+  const capacityExportResponse = await fetch(url + '/api/dossier/' + venueSaved.id + '/report');
+  assert.equal(capacityExportResponse.status, 200);
+  const capacityExport = await capacityExportResponse.text();
+  assert.match(capacityExport, /Venue capacity evidence/);
+  assert.match(capacityExport, /&lt;script&gt;fixture&lt;\/script&gt;/);
+  assert.ok(!capacityExport.includes('<script>fixture</script>'));
+  const priorWithActivation = apiStore.save({ ...venueSaved.snapshot, localActivation: { sourceId: venueSaved.id, fixture: true } });
+  const revisedVenueResponse = await post('/api/venues/' + priorWithActivation + '/qualify', {
+    expectedCrowd: 400, ticketPrice: 45, artistFeeMode: 'whole_route', qualifications
+  });
+  assert.equal(revisedVenueResponse.status, 201);
+  assert.equal((await revisedVenueResponse.json()).snapshot.localActivation, undefined, 'a changed venue invalidates venue-linked activation');
+  const refreshedResponse = await post('/api/intelligence/' + priorWithActivation, {
+    origin: { name: 'London', lat: 51.5074, lon: -0.1278 },
+    markets: [{ name: 'London', lat: 51.5074, lon: -0.1278 }, { name: 'Paris', lat: 48.8566, lon: 2.3522 }], stopCount: 2, startDate: '2026-11-20'
+  });
+  assert.equal(refreshedResponse.status, 201);
+  const refreshed = (await refreshedResponse.json()).snapshot;
+  for (const field of ['capacityResearch', 'venuePlan', 'localActivation']) assert.equal(refreshed[field], undefined, `${field} must not survive replaced route evidence`);
+  assert.ok(apiStore.load(priorWithActivation).capacityResearch, 'the unchanged parent keeps its review');
   assert.equal((await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: 'unknown' })).status, 400);
 });
 

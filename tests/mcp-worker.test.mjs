@@ -24,7 +24,10 @@ test('official MCP worker initializes and exposes canonical tools without loadin
     const run = new Run({ mode: 'mock', budget: 60, cacheStore: new Map() });
     const festivalResearch = await buildFestivalResearch(source, normalizeFestivalResearch(source), run);
     const themeRun = new Run({ mode: 'mock', budget: 60, cacheStore: new Map() });
-    await researchThemeSeason({ ...source, festivalResearch }, { dates: [{ date: '2027-04-01', time: 'night', segment: 'young_pros' }], count: 1, sponsorTags: ['technology'] }, themeRun);
+    const themes = festivalResearch.markets[0].domains.flatMap(domain => domain.entities);
+    await researchThemeSeason({ ...source, festivalResearch }, { dates: [{ date: '2027-04-01', time: 'night', segment: 'young_pros' }], count: 1, sponsorTags: ['technology'],
+      anchorOverrides: { '2027-04-01': themes[0].id }, supportingByDate: { '2027-04-01': [themes[1].id] } }, themeRun);
+    assert.equal(themeRun.receipts.filter(receipt => receipt.tool === 'compare_audiences').length, 1);
     for (const receipt of [...run.receipts, ...themeRun.receipts]) {
       const schema = tools.find(tool => tool.name === `qloo_${receipt.tool}`).inputSchema;
       for (const [key, value] of Object.entries(receipt.args)) {

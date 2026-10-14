@@ -43,9 +43,17 @@
       const choices = season.research?.matrix.flatMap(domain => domain.rows.map(row =>
         `<option value="${e(row.id)}" ${row.id === night.anchor.id ? 'selected' : ''}>${e(row.name)} (${e(label(domain.kind))})</option>`)).join('');
       const replace = season.research ? `<label>Choose another saved theme<select id="gm-theme-choice-${i}">${choices}</select></label><button class="button subtle" data-gm-write data-theme-replace="${i}">Research this replacement</button>` : '';
+      const crossover = (night.crossoverChecks ?? []).length ? table(['Supporting fandom', 'Shared context', 'Decision', 'Receipt'], night.crossoverChecks.map(check => td([
+        e(check.name), e(check.sharedTastes.join(', ') || 'None returned'), e(label(check.decision)), receiptLinks([check.receiptId]),
+      ]))) : '';
+      const support = season.research ? `<p>Add up to two supporting fandoms. Shared context is checked before they influence partner suggestions; the anchor score stays separate.</p>${[0, 1].map(slot => {
+        const selected = season.research.options.supportingByDate?.[night.date]?.[slot];
+        const options = season.research.matrix.flatMap(domain => domain.rows.filter(row => row.id !== night.anchor.id).map(row => `<option value="${e(row.id)}" ${row.id === selected ? 'selected' : ''}>${e(row.name)} (${e(label(domain.kind))})</option>`)).join('');
+        return `<label>Supporting fandom ${slot + 1}<select id="gm-theme-support-${i}-${slot}"><option value="">None</option>${options}</select></label>`;
+      }).join('')}<button class="button subtle" data-gm-write data-theme-support="${i}">Check crossover & research partners</button>` : '';
       return `<details><summary>${e(night.date)} · ${e(night.title)} · ${e(night.researchStatus ?? 'not researched separately')}</summary>
         <p>Anchor: ${e(night.anchor.name)}. Audience: ${e(label(night.segment))}. Taste Fit ${night.tasteFit.total}; measured weight ${number(night.tasteFit.measuredWeight)}. Missing: ${e(night.tasteFit.estimated.join(', '))}.</p>
-        <p>${e(night.experienceBasis)}</p>${leads}${receiptLinks(night.evidence)}${replace}</details>`;
+        <p>${e(night.experienceBasis)}</p>${leads}${receiptLinks(night.evidence)}${crossover}${support}${replace}</details>`;
     }).join('');
     const domains = season.research?.matrix.map(domain => {
       const rows = domain.rows.map(row => td([e(row.name), e(row.local.rank ?? 'Missing'),
@@ -99,6 +107,13 @@
       const i = Number(button.dataset.themeReplace), anchorOverrides = Object.fromEntries(season.nights.map(night => [night.date, night.anchor.id]));
       anchorOverrides[season.nights[i].date] = $(`gm-theme-choice-${i}`).value;
       operation('season-research', { ...season.research.options, anchorOverrides });
+    }; });
+    document.querySelectorAll('[data-theme-support]').forEach(button => { button.onclick = () => {
+      const i = Number(button.dataset.themeSupport), ids = [0, 1].map(slot => $(`gm-theme-support-${i}-${slot}`).value).filter(Boolean);
+      if (new Set(ids).size !== ids.length) return status('Choose two different supporting fandoms, or leave one empty.', true);
+      operation('season-research', { ...season.research.options,
+        anchorOverrides: Object.fromEntries(season.nights.map(night => [night.date, night.anchor.id])),
+        supportingByDate: { ...season.research.options.supportingByDate, [season.nights[i].date]: ids } });
     }; });
     const recoveries = saved?.gm?.recovery?.cancellations ?? [];
     $('gm-recovery').innerHTML = `${(saved?.cancellations ?? []).map(event => `<div class="gm-status">Cancellation recorded: ${e(byId(event.artistId)?.name ?? event.artistId)}. Replacement: ${e(names(event.replacementIds))}. Survivors retained: ${e(names(event.retainedIds))}.</div>`).join('')}${recoveries.length ? `<details><summary>Saved cancellation rehearsals</summary><pre>${json(recoveries)}</pre></details>` : ''}`;

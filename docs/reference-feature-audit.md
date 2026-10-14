@@ -74,6 +74,7 @@ The four supplied archives were inspected as reference implementations. Their do
 ### Venue qualification and economics
 
 - Accepts capacity and commercial facts only against a place candidate saved from the Qloo scouting pass.
+- Retains Routed's exact capacity extraction algorithm in `server/routed/capacity.mjs`, including multilingual phrases and source quotes. The wrapper saves document hashes, exposes conflicts, and requires a documented organizer choice before a conflicting capacity enters economics. See [capacity evidence workflow](venue-capacity-evidence.md).
 - Requires a capacity source and keeps it attached to the selected room.
 - Applies the reference 60%–250% room-fit band, then labels the closest available sourced fallback when no in-band room exists.
 - Requires the buyer to declare whether artist fees apply per stop or to the whole route.

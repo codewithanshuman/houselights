@@ -1,3 +1,4 @@
+import { capacityFromReview } from './capacity-evidence.mjs';
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const money = value => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 const ROOM_RULES = Object.freeze({ minimumCapacityRatio: 0.6, maximumCapacityRatio: 2.5 });
@@ -35,13 +36,14 @@ function normalizeInput(snapshot, raw) {
     if (!lead) throw new Error(`Qualification ${index + 1} must reference a Qloo place candidate from the saved route.`);
     if (seen.has(key)) throw new Error('Each routed venue candidate can be qualified only once.');
     seen.add(key);
-    const capacity = Number(row.capacity);
+    const reviewed = row.useCapacityEvidence === true ? capacityFromReview(snapshot, row) : null;
+    const capacity = Number(reviewed?.capacity ?? row.capacity);
     if (!Number.isInteger(capacity) || capacity < 1 || capacity > 1000000) throw new Error(`Qualification ${index + 1} needs an integer capacity from 1 to 1000000.`);
-    const capacitySource = String(row.capacitySource || '').trim().slice(0, 500);
+    const capacitySource = String(reviewed?.capacitySource ?? row.capacitySource ?? '').trim().slice(0, 500);
     if (!capacitySource) throw new Error(`Qualification ${index + 1} needs a capacitySource.`);
     return {
       market, venueId, venueName: lead.name, qlooReceiptId: lead.receiptId,
-      capacity, capacitySource, available: row.available === true,
+      capacity, capacitySource, ...(reviewed ? { capacityEvidence: reviewed.capacityEvidence } : {}), available: row.available === true,
       venueCost: positiveMoney(row.venueCost ?? 0, `Qualification ${index + 1} venueCost`),
       otherFixedCost: positiveMoney(row.otherFixedCost ?? 0, `Qualification ${index + 1} otherFixedCost`)
     };

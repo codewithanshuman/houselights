@@ -6,6 +6,8 @@ The supplied `Theme-Night-GM-main.zip` declares MIT, copyright (c) 2026 ZNLong22
 
 ## Routed
 
+`server/routed/capacity.mjs` retains Routed's `lib/agent/capacity.ts` algorithm with TypeScript types removed. Its full MIT notice is also retained in `server/routed/LICENSE`. The Houselights wrapper `server/capacity-evidence.mjs` preserves source quotes and content digests, but requires an explicit documented choice when capacities conflict instead of applying the original majority/larger-value tie-break.
+
 `server/intelligence.mjs`, `server/activation.mjs`, `server/venues.mjs` and `server/operations.mjs` implement route scheduling, local activation, room-fit, standards-compliant iCalendar line folding and an evidence-number guard adapted from the product approaches in the supplied `routed-main` reference archive. The implementation was rewritten for Houselights' saved-evidence model and official Qloo harness integration. Routed is distributed under the MIT License:
 
 MIT License

@@ -4,6 +4,7 @@ import { buildThemeSeason } from './theme-season.mjs';
 import { rankPool } from './festival-research.mjs';
 import { DNA_KINDS } from './theme-night/market-dna.mjs';
 import { sensitiveTopic, isYoungCrowd, isAlcoholBrand, isDrinkingSpot } from './theme-night/sensitivity.mjs';
+import { comparisonThemes } from './shape.mjs';
 
 const SEGMENT_QUERIES = { gen_z: ['0-24'], young_pros: ['25-29', '30-34'], boomers: ['over 55'], families: [] };
 const TARGETS = ['brand', 'artist', 'place', 'podcast'];
@@ -45,8 +46,17 @@ export function prepareThemeResearch(snapshot, raw = {}) {
   const sponsorTags = raw.sponsorTags ?? [];
   if (!Array.isArray(sponsorTags) || sponsorTags.length > 5 || sponsorTags.some(tag => typeof tag !== 'string' || !tag.trim() || tag.length > 180)) throw new Error('Sponsor categories must be 0–5 Qloo tags or category names.');
   const segments = unique(initial.dates.selected.map(date => date.segment));
-  const expectedCalls = domains.length * (1 + Number(!!referenceLocation) + segments.reduce((n, segment) => n + SEGMENT_QUERIES[segment].length, 0)) + initial.nights.length * TARGETS.length;
+  const supportingByDate = raw.supportingByDate ?? {};
+  if (!supportingByDate || typeof supportingByDate !== 'object' || Array.isArray(supportingByDate)) throw new Error('Supporting fandoms must map selected dates to arrays of up to two saved IDs.');
+  const supportCards = new Map(market.domains.flatMap(domain => domain.entities).filter(card => DNA_KINDS.includes(card.kind) && !sensitiveTopic(card) && !excludedIds.includes(card.id)).map(card => [card.id, card]));
+  for (const [date, ids] of Object.entries(supportingByDate)) {
+    if (!selectedDates.has(date) || !Array.isArray(ids) || ids.length > 2 || new Set(ids).size !== ids.length || ids.some(id => typeof id !== 'string' || !supportCards.has(id))) throw new Error('Supporting fandoms need a selected date and up to two distinct eligible saved theme IDs.');
+    if (ids.length && (!anchorOverrides[date] || ids.includes(anchorOverrides[date]))) throw new Error('Supporting fandoms require an explicit anchor override for that date and cannot include the anchor itself.');
+  }
+  const supportCount = Object.values(supportingByDate).reduce((sum, ids) => sum + ids.length, 0);
+  const expectedCalls = domains.length * (1 + Number(!!referenceLocation) + segments.reduce((n, segment) => n + SEGMENT_QUERIES[segment].length, 0)) + initial.nights.length * TARGETS.length + supportCount;
   return { raw: structuredClone(raw), city: initial.city, domains, segments, referenceLocation, candidateLimit,
+    supportingByDate: structuredClone(supportingByDate), supportCards,
     sponsorTags: unique(sponsorTags.map(tag => tag.trim())), anchorOverrides: { ...anchorOverrides }, expectedCalls,
     dates: initial.dates, sourceId: snapshot.id };
 }
@@ -97,10 +107,24 @@ export async function researchThemeSeason(snapshot, raw, run) {
   const season = buildThemeSeason(snapshot, raw, { domains: plan.domains, matrix, anchorOverrides: plan.anchorOverrides });
   const usedBrands = new Set();
   for (const night of season.nights) {
+    night.crossoverChecks = [];
+    for (const id of plan.supportingByDate[night.date] ?? []) {
+      const card = plan.supportCards.get(id);
+      const call = await run.call('compare_audiences', { group_a: [night.anchor.id], group_b: [id], target_type: 'artist', limit: 10 },
+        `Check crossover context for ${night.anchor.name} and supporting fandom ${card.name}`);
+      const comparison = comparisonThemes(call.env);
+      const supported = comparison.interpretable && comparison.sharedNames.length > 0;
+      const check = { id, name: card.name, kind: card.kind, receiptId: call.receipt.id, status: call.receipt.status,
+        interpretable: comparison.interpretable, sharedTastes: comparison.sharedNames, includedInPartnerSignals: supported,
+        decision: supported ? 'shared_context_found' : comparison.interpretable ? 'no_shared_context_returned' : 'comparison_unavailable' };
+      night.crossoverChecks.push(check);
+      if (supported) night.supporting.push(check);
+    }
+    const partnerSignals = [night.anchor.id, ...night.supporting.map(card => card.id)];
     run.emit({ type: 'stage', text: `Theme-specific partners · ${night.anchor.name} · ${night.date}` });
     const kits = [];
     for (const target of TARGETS) {
-      const call = await run.call('recommend', { target_type: target, signals: [night.anchor.id], signal_location: plan.city,
+      const call = await run.call('recommend', { target_type: target, signals: partnerSignals, signal_location: plan.city,
         ...(target === 'place' ? { filter_location: plan.city } : {}),
         ...(target === 'brand' && plan.sponsorTags.length ? { include_tags: plan.sponsorTags, include_tags_operator: 'union' } : {}), limit: 8 },
       `Research ${target} leads for ${night.anchor.name} on ${night.date}; no availability inferred`);
@@ -123,9 +147,10 @@ export async function researchThemeSeason(snapshot, raw, run) {
     night.localPartners = kit('place').candidates.slice(0, 2);
     night.mediaPartner = kit('podcast').candidates[0] ?? null;
     night.experience = kits;
-    night.experienceBasis = 'Separate Qloo queries for this theme anchor and city. Date is a planning label, not a date-specific availability signal. Segment suitability uses label/tag filtering, not a demographic partner ranking.';
-    night.evidence = unique([night.anchor.receiptId, ...(night.anchor.scoreReceipts ?? []), ...(night.anchor.referenceLift?.receiptIds ?? []), ...kits.map(kit => kit.receiptId)].filter(Boolean));
-    night.researchStatus = night.anchor.localEvidence?.utility != null && night.anchor.audienceEvidence?.complete && kits.every(kit => kit.status === 'ok' && kit.candidates.length) ? 'complete' : 'partial';
+    night.partnerSignals = partnerSignals;
+    night.experienceBasis = 'Separate Qloo queries for this theme anchor, any supporting fandoms with returned shared context, and the city. Date is a planning label, not a date-specific availability signal. Segment suitability uses label/tag filtering, not a demographic partner ranking.';
+    night.evidence = unique([night.anchor.receiptId, ...(night.anchor.scoreReceipts ?? []), ...(night.anchor.referenceLift?.receiptIds ?? []), ...night.crossoverChecks.map(check => check.receiptId), ...kits.map(kit => kit.receiptId)].filter(Boolean));
+    night.researchStatus = night.anchor.localEvidence?.utility != null && night.anchor.audienceEvidence?.complete && night.crossoverChecks.every(check => check.interpretable) && kits.every(kit => kit.status === 'ok' && kit.candidates.length) ? 'complete' : 'partial';
   }
   season.research = { version: '1.0', mode: run.mode, expectedCalls: plan.expectedCalls, usedAttempts: run.used,
     candidateLimit: plan.candidateLimit, referenceLocation: plan.referenceLocation, sponsorTags: plan.sponsorTags, matrix,
@@ -136,7 +161,8 @@ export async function researchThemeSeason(snapshot, raw, run) {
     'Audience and local fit use complete ordinal rankings of the same capped pool in each domain. Cross-domain scores are a programming policy, not comparable demand measurements.',
     'Young-professional fit equally weights two age-bucket ranks. Family life-stage is unavailable through this harness and stays unmeasured.',
     'Near-venue concentration, momentum and new-fan reach remain estimated for themes. Missing-input bounds are not confidence intervals.',
-    'Partner queries use the individual theme anchor; availability, suitability, sponsorship interest, category resolution and rights still require organizer review.',
+    'Partner queries use the theme anchor and supported crossover signals; availability, suitability, sponsorship interest, category resolution and rights still require organizer review.',
+    'Supporting fandoms enter partner signals only when their pair comparison returns shared context. Shared tastes do not establish ticket-buyer overlap, and the anchor score does not become a combined-theme score.',
     'Reference-market lift is ordinal position change within the identical pool, never a raw-affinity subtraction.',
     'This programs themed nights around a saved festival; it does not book artists for multiple dates.'
   ];
