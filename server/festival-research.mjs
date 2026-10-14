@@ -196,6 +196,6 @@ export async function buildFestivalResearch(snapshot, input, run) {
     limitations: ['Cross-city comparison uses membership and fixed-pool ordinal ranks, never cross-query affinity values.',
       'Age-bucket ranks are aggregate audience signals. Missing demographics are not inferred from music taste.',
       'Five-part Taste Fit preserves the source weights but remains separate from the existing booking objective; neutral estimates do not become optimizer evidence.',
-      'The harness does not expose the original family life-stage audience selector or category-tag sponsor searches here; those source workflows are not reproduced by age proxies.',
+      'The harness does not expose the original family life-stage audience selector. Category-filtered, per-theme sponsor research is available through the separate season-research workflow.',
       'Incomplete ranking responses have no comparable utility. Geographic and trend measurements report their actual available scope.'] };
 }

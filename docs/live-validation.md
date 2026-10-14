@@ -21,3 +21,18 @@ Live contract validation also corrected Market DNA and heatmap requests to the 2
 Start `npm start` with the configured key and endpoint. Run `npm run validate:live`, then `npm run validate:festival`. Set `HOUSELIGHTS_URL` if the server uses another address, and supply `ORGANIZER_TOKEN` when protected mode is enabled. These commands use bounded real provider calls and save compact reports under ignored `artifacts/`.
 
 The successful example demonstrates integration and constraint handling, not accurate ticket forecasts, real artist quotes, confirmed availability, independent promoter preference or superiority over an LLM. LLM control remains unavailable without model credentials. No real review ballots have been collected. Public hosting is deferred, and Docker is not installed on the validation machine, so the container build and hosted backup/restore procedure remain unverified.
+
+## Theme-specific research continuation
+
+On 14 October 2026, the new `season-research` workflow was checked against the live event endpoint and exercised through Festival GM in the in-app browser.
+
+- London, two illustrative dates (1 and 15 April 2027), under-25 and 25–34 planning groups, and an explicit United Kingdom reference market.
+- Five domains × ten candidates, with local/reference ranks and three age-bucket calls per domain: **25 complete fixed-pool ranking receipts**.
+- Four partner queries per night: eight distinct theme-specific research workflows.
+- Initial input `technology` produced two provider candidates (industry and keyword). Sponsor leads stayed empty and research status stayed `partial`; no category was selected automatically. Saved initial example: `Y0S9GS2hgQ`; browser ambiguity example: `irtxBkpgdQ`.
+- The browser rejected continuing with no category selection. Choosing `urn:tag:industry:qloo:technology` saved `hsiOa7WcGw`: **33/33 new receipts `ok`**, with 31 cache hits and two fresh sponsor workflows. All eight partner queries returned leads.
+- Replacing only the first night's theme with **Free Guy** saved `UtwpOKiSMg`, preserved **RuPaul's Drag Race UK** on the second date and retained the unchanged parent. The replacement added 33 successful receipts (29 cached, four fresh partner workflows). The exported dossier contained the replacement theme and its receipt references.
+- Browser checks found no JavaScript errors. Local proof: `artifacts/theme-research-browser.png`; machine-readable summary: `artifacts/theme-validation.json`.
+- Final regression: **131/131 tests passed** using `node --test --test-concurrency=2`, including canonical harness schema validation, category ambiguity, incomplete rankings, overrides, budget preflight, organizer access and durable research quotas. One earlier concurrent worker startup timed out; isolation and both subsequent full runs passed.
+
+`Complete` describes coverage of requested research, not commercial suitability. Only the local and segment components of theme Taste Fit are measured (55% of the original weights); near-venue concentration, momentum and new-fan reach remain estimated. Family life-stage is still unsupported. Partner leads are uncontacted, and no availability, sponsorship agreement, content rights or ticket demand is established by these tests.

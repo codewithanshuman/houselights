@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 
 const [action, id, optionsFile] = process.argv.slice(2);
-if (!['run', 'benchmark', 'revise', 'cancel', 'season', 'schedule'].includes(action) || (action !== 'schedule' && !id)) {
-  console.error('Usage: npm run gm -- <run|benchmark|revise|cancel|season> <saved-id> [options.json]\n       npm run gm -- schedule <options.json>');
+if (!['run', 'benchmark', 'revise', 'cancel', 'season', 'season-research', 'schedule'].includes(action) || (action !== 'schedule' && !id)) {
+  console.error('Usage: npm run gm -- <run|benchmark|revise|cancel|season|season-research> <saved-id> [options.json]\n       npm run gm -- schedule <options.json>');
   process.exit(2);
 }
 try {

@@ -17,7 +17,7 @@ This is the file-level traceability record for the four user-supplied ZIP archiv
 
 ## Remaining gaps that require external facts
 
-- Live calibration needs the event-issued Qloo credential. Synthetic fixtures exercise contracts but do not validate live response shapes or market conclusions.
+- Live festival calibration completed with the event-issued Qloo credential on 14 October 2026; see `live-validation.md`. Automated and live contract checks do not establish commercial market conclusions.
 - Place capacity, poster permission, opening hours, contact details, road mileage, availability and final terms need sourced buyer or venue input.
 - Automated email sending remains outside the current product boundary; the pipeline records a send only after it occurred through an external channel.
 - Real booking outcomes are required before pitch-angle or venue-segment history can support any decision beyond a descriptive review.

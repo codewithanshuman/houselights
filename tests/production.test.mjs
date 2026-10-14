@@ -26,6 +26,9 @@ test('shared reports are readable, every mutation and private pipeline read requ
   assert.equal((await fetch(`${base}/api/memo/${id}`)).status, 200);
   assert.equal((await fetch(`${base}/api/pipeline/${id}`)).status, 401);
   assert.equal((await post(`/api/gm/${id}/run`, {})).status, 401);
+  assert.equal((await post(`/api/gm/${id}/season-research`, {})).status, 401);
+  assert.equal((await post(`/api/gm/${id}/season-research`, {}, true)).status, 400);
+  assert.equal(db.prepare('SELECT count FROM quotas WHERE key=?').get(`research:${Math.floor(Date.now() / 864e5)}`).count, 1);
   assert.equal((await post('/api/memo', {})).status, 401);
   assert.equal((await post(`/api/examples/${id}/pin`, {}, true)).status, 200);
   assert.ok((await (await fetch(base + '/api/examples')).json()).some(example => example.id === id));

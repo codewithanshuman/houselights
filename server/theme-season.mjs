@@ -30,14 +30,14 @@ export function planDates(raw = {}) {
       'Weakness is a programming heuristic, not observed attendance. Audience segments are organizer planning categories.'] };
 }
 
-export function buildThemeSeason(snapshot, raw = {}) {
+export function buildThemeSeason(snapshot, raw = {}, researchContext = null) {
   const research = snapshot.festivalResearch;
   if (!research) throw new Error('Run festival GM research before building themed nights.');
   const dates = planDates(raw), market = research.markets.find(item => item.city === (raw.city ?? research.input.city));
   if (!market) throw new Error('Choose a city from this saved Market DNA report.');
   const ipPolicy = raw.ipPolicy ?? 'ip_light';
   if (!['ip_light', 'licensed_ok'].includes(ipPolicy)) throw new Error('Unsupported IP planning policy.');
-  const candidates = market.domains.flatMap(domain => domain.entities.filter(card => !sensitiveTopic(card)).map((card, index) => ({
+  const candidates = (researchContext?.domains ?? market.domains).flatMap(domain => domain.entities.filter(card => !sensitiveTopic(card)).map((card, index) => ({
     ...card, receiptId: domain.evidence,
     score: scoreWithUncertainty({ localAffinity: domain.entities.length > 1 ? 1 - index / (domain.entities.length - 1) : .5 })
   }))).sort((a, b) => b.score.total - a.score.total || a.id.localeCompare(b.id));
@@ -45,7 +45,17 @@ export function buildThemeSeason(snapshot, raw = {}) {
   const used = new Set(), usedBrands = new Set(), warnings = [...dates.warnings];
   const kits = Object.fromEntries(research.experience.map(kit => [kit.target, kit]));
   const nights = [...dates.selected].sort((a, b) => a.date.localeCompare(b.date)).map((date, index) => {
-    const anchor = candidates.find(card => !used.has(card.id)) ?? candidates[0];
+    const scored = candidates.map(card => {
+      const row = researchContext?.matrix?.find(domain => domain.kind === card.kind)?.rows.find(row => row.id === card.id);
+      if (!row) return card;
+      return { ...card, score: scoreWithUncertainty({ localAffinity: row.local.utility, segmentFit: row.segments[date.segment]?.utility }),
+        audienceEvidence: row.segments[date.segment], localEvidence: row.local, referenceLift: row.referenceLift,
+        scoreReceipts: [row.local.receiptId, ...(row.segments[date.segment]?.receiptIds ?? [])].filter(Boolean) };
+    }).sort((a, b) => b.score.total - a.score.total || a.id.localeCompare(b.id));
+    const overrideId = researchContext?.anchorOverrides?.[date.date];
+    const reserved = new Set(Object.entries(researchContext?.anchorOverrides ?? {}).filter(([key]) => key !== date.date).map(([, id]) => id));
+    const available = scored.filter(card => !used.has(card.id) && !reserved.has(card.id));
+    const anchor = overrideId ? scored.find(card => card.id === overrideId) : available[0] ?? scored[0];
     if (used.has(anchor.id)) warnings.push(`Repeated theme anchor ${anchor.name} on ${date.date}.`);
     used.add(anchor.id);
     const label = { movie: 'Movie Buffs', tv_show: 'Binge-Watchers', artist: 'Music', videogame: 'Gamers', book: 'Book Club' }[anchor.kind];
@@ -56,13 +66,15 @@ export function buildThemeSeason(snapshot, raw = {}) {
     const brands = partner('brand'), sponsors = [...brands.filter(card => !usedBrands.has(card.id)), ...brands.filter(card => usedBrands.has(card.id))].slice(0, 2);
     sponsors.forEach(card => usedBrands.add(card.id));
     return { ...date, title, anchor, tasteFit: anchor.score,
+      selection: { method: overrideId ? 'organizer_override' : 'highest_policy_score_without_repetition',
+        alternatives: available.filter(card => card.id !== anchor.id).slice(0, 5).map(card => ({ id: card.id, name: card.name, kind: card.kind, score: card.score })) },
       supporting: [], sponsors, playlist: partner('artist').slice(0, 6), localPartners: partner('place').slice(0, 2), mediaPartner: partner('podcast')[0] ?? null,
       experienceBasis: 'Shared festival-slate audience research; these leads were not researched separately for this theme anchor.',
       giveaway: { movie: 'Poster-style keepsake', tv_show: 'Collectible trading cards', artist: 'LED wristbands', videogame: 'Scavenger-hunt passport', book: 'Reading-challenge bookmark' }[anchor.kind],
       activations: ['Fandom trivia', 'Organizer-reviewed themed concessions', 'Opt-in audience challenge'],
       promo: { headline: `${title} · ${date.date}`, social: `Explore ${title} with your festival community.`, emailSubject: `Save the date: ${title}` },
       rights: { status: 'review_required', policy: ipPolicy, note: 'No permission is inferred from Qloo metadata or from inspired-by wording.' },
-      evidence: [...new Set([anchor.receiptId, ...Object.values(kits).map(kit => kit.receiptId)])] };
+      evidence: [...new Set([anchor.receiptId, ...(anchor.scoreReceipts ?? []), ...Object.values(kits).map(kit => kit.receiptId)])] };
   });
   return { sourceId: snapshot.id, city: market.city, dates, nights, warnings,
     limitations: ['Theme scores use within-domain scan ranks. Segment-specific theme ranking has not been run, and the four remaining score components are marked estimated.',

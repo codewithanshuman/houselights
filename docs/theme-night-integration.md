@@ -1,6 +1,6 @@
 # Theme Night GM integration
 
-This is a backend integration into Houselights' saved-evidence and booking model. No UI or styling was changed. All new features are callable through the API and `npm run gm`.
+This integrates Theme Night GM workflows into Houselights' saved-evidence and booking model. Festival GM browser controls expose the principal workflows; the API and `npm run gm` also support advanced options. Existing visual styling is reused.
 
 ## Source provenance and exact ports
 
@@ -60,6 +60,7 @@ If that is infeasible, the API returns 422 with diagnostics and creates no snaps
 | `POST /api/gm/:id/cancel` | `artistId` of a selected act | 201 recovery snapshot with survivors locked, or 422 if no feasible replacement |
 | `POST /api/gm/schedule` | `sport` or `dates:[{date,time,segment?}]`, `count` 1–8, `gapDays` 0–365 | Date-selection report; generated fixture dates clearly labeled synthetic |
 | `POST /api/gm/:id/season` | Schedule input plus optional researched `city`, `ipPolicy` (`ip_light` or `licensed_ok`) | 201 child with evidence-linked theme nights |
+| `POST /api/gm/:id/season-research` | Season input plus `candidateLimit` (2–10/domain), optional `referenceLocation`, `sponsorTags` (0–5), `excludedAnchorIds`, `anchorOverrides:{date:entityId}` | 201 child with fixed-pool audience matrix, individual theme partner queries, receipt-linked alternatives and explicit complete/partial status |
 
 Supported demographic buckets: `24_and_younger`, `25_to_29`, `30_to_34`, `35_to_44`, `45_to_54`, `55_and_older`. They are translated to the natural-language forms accepted by the installed Qloo harness.
 
@@ -81,10 +82,40 @@ Scenario and GM revisions clear dependent route, venue, activation, benchmark an
 The six core festival workflows are implemented, but this is not the entire original application copied verbatim. The following differences remain explicit:
 
 - The source Gemini function-calling/retry loop, resumable SSE agent replay, Redis deployment and its Next.js UI are not transplanted. Houselights uses its own server, SQLite storage, bounded rule-based evidence agent and optional Anthropic interpretation.
-- The source per-theme candidate age/life-stage matrix, national-popularity rank lift, category-specific sponsor lookup, per-theme fresh sponsor/experience research, and trend-window fallback to archived 2025 data are not reproduced. Theme seasons label shared festival-audience leads and missing score components instead of claiming those measurements.
-- Original arbitrary season-night LLM editing is narrower here: Ask the GM edits the artist slate through validated operations. A new artist, city, arbitrary theme text or new economic term needs a separate supported input/research operation.
+- Per-theme age matrices, explicit reference-market ordinal lift, sponsor-category filters and fresh per-theme partner queries are now implemented in `server/theme-research.mjs`. Family life-stage remains unsupported by the installed harness. Trend-window fallback to archived 2025 data is not imported as current momentum.
+- Season editing supports explicit saved-anchor overrides by date and exclusions, with fresh evidence and immutable parent-linked results. Original arbitrary season-night LLM editing remains narrower here: a new artist, city, arbitrary theme text or new economic term needs a supported input/research operation.
 - Full season assembly does not use the source's model submission schema, exact promotional copy, all supporting fandom relationships or sport-specific copy. The original core utility source is retained, and adapted season behavior is described above.
-- Festival research, Market DNA, audience evidence, revisions, cancellation recovery, benchmarks and blind review now have browser controls. Advanced theme-season configuration remains API/CLI based.
+- Festival research, Market DNA, audience evidence, revisions, cancellation recovery, benchmarks, blind review, per-date theme research and theme replacement have browser controls. Candidate limits, exclusions and advanced schedule heuristics are also available through API/CLI.
+
+## Per-theme research and revision
+
+`season` retains the inexpensive saved-evidence preview. `season-research` performs new Qloo workflows. Example options:
+
+```json
+{
+  "dates": [
+    {"date":"2027-04-01","time":"night","segment":"gen_z"},
+    {"date":"2027-04-15","time":"night","segment":"young_pros"}
+  ],
+  "count": 2,
+  "referenceLocation": "United Kingdom",
+  "sponsorTags": ["technology"]
+}
+```
+
+These are illustrative organizer dates, not confirmed fixtures. Run `npm run gm -- season-research <gm-snapshot-id> options.json`, or use Festival GM → Research themed nights.
+
+Each available domain tests up to ten saved anchors, the official harness's rank batch limit. The identical pool is ranked locally, for each requested supported age bucket, and optionally in the explicit reference market. Any incomplete pool has no comparable utility. Young-professional fit equally weights complete 25–29 and 30–34 rankings; this is a declared programming policy, not a measured demographic mixture. Family life-stage is unmeasured rather than replaced by a guessed parental age range.
+
+Local and age ranks feed the original 30% and 25% score components. The remaining components stay estimated. Positive reference lift means a higher local ordinal position in the same pool; it does not enter the score or imply popularity growth. The matrix discloses scanned versus tested candidates.
+
+Every selected theme receives four separate queries: brand, artist, place and podcast. Brand queries apply explicit category tags; unresolved tags remain visible as missing evidence. Ambiguous category names expose bounded provider-returned choices in the GM browser controls, with no automatic selection; the organizer can rerun using an explicit tag while preserving all chosen themes. Place queries constrain the city. Suitability filtering uses returned labels/tags and does not assert demographic partner fit. Missing individual results never fall back silently to festival-wide partners. Every displayed lead links to its own receipt, and the exported dossier carries those receipts.
+
+Overrides reserve a known theme for a selected date before other nights are assigned. Unknown, duplicate, excluded or unsuitable overrides are rejected before paid work. Replacements preserve the other selected theme IDs; the UI makes a fresh child snapshot. No date-specific booking availability is inferred.
+
+Preflight counts domain-local ranks, optional reference ranks, supported age-bucket ranks and four partner workflows per night. Retries share the same attempt budget and deadline. Protected access and persistent paid-research quotas also cover `season-research`. A live source cannot be enriched in synthetic mode or vice versa.
+
+The source archive was not present at its original supplied path during this continuation. This work uses the retained exact utility ports and prior file-level source audit; it does not claim a fresh inspection of the missing ZIP.
 
 Live Qloo resolution, ranks, demographics, comparisons, Market DNA and cancellation recovery were verified on 14 October 2026; see the [release validation record](live-validation.md). LLM validation and real promoter judgments remain outstanding. Synthetic and contract tests demonstrate behavior and failure handling, not real market relevance.
 
