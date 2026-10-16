@@ -166,6 +166,7 @@ export async function buildFestivalResearch(snapshot, input, run) {
     researched.push({ ...item, culturalLinks: [], fit: audience.utility, rank: audience.rank, of: primary.audience.returned,
       local: localSupported ? 'yes' : 'no data', momentum: trend?.direction ?? 'unknown',
       evidence: { rank: rankSupported, local: localSupported, trends: !!trend, comparison: false },
+      evidenceReceipts: { rank: [audience.receiptId], local: [heat.receipt.id], trends: [trendCall.receipt.id], comparison: [] },
       receipts: uniq([...(item.identityReceipt ? [item.identityReceipt] : []), ...receipts]), claims, note: claims[0].text });
   }
   const provisional = optimizeSlate(researched, input.constraints);

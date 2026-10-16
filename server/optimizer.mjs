@@ -173,6 +173,7 @@ function evaluate(selected, constraints, pool = []) {
     remainingBudget: feeCents == null ? null : money(budgetCents - feeCents),
     score: round(rawScore),
     rawScore,
+    rawBreakdown: breakdown,
     festival,
     objectiveBreakdown: { ...Object.fromEntries(Object.entries(breakdown).map(([key, value]) => [key, round(value)])), total: round(rawScore) },
     discoveredCount,
@@ -215,6 +216,21 @@ export function evaluateSelection(candidates, rawConstraints, selectedIds) {
   if (!Array.isArray(selectedIds) || unique(selectedIds).length !== selectedIds.length || selectedIds.some(id => !candidates.some(item => item.id === id))) throw new Error('Selection must contain unique known candidate IDs.');
   const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds));
   return publicSlate(evaluate(pool.filter(item => selectedIds.includes(item.id)), validation.constraints, pool));
+}
+
+// Shared evaluator for proofs: enumerate the same exact-size subsets and retain
+// violation codes. No alternate feasibility model is introduced by diagnostics.
+export function enumerateSlates(candidates, rawConstraints) {
+  const validation = optimizeSlate(candidates, rawConstraints);
+  if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
+  const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds)), rows = [];
+  for (let mask = 0; mask < 2 ** pool.length; mask++) {
+    const selected = pool.filter((_, index) => mask & (1 << index));
+    if (selected.length !== validation.constraints.slots) continue;
+    const result = evaluate(selected, validation.constraints, pool);
+    rows.push({ ...publicSlate(result), rawScore: result.rawScore, rawBreakdown: result.rawBreakdown, violationCodes: unique(result.violations.map(item => item.code)) });
+  }
+  return rows;
 }
 
 export function optimizeSlate(candidates, rawConstraints = {}) {

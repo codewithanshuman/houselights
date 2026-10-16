@@ -30,8 +30,9 @@ function setView(view) {
     node.classList.toggle('active', active);
     if (active) node.setAttribute('aria-current', 'page'); else node.removeAttribute('aria-current');
   }
-  $('breadcrumb').textContent = { slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy', gm: 'Festival GM' }[view];
+  $('breadcrumb').textContent = { room: 'Decision Room', slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy', gm: 'Festival GM' }[view];
   if (view === 'gm') window.houselightsGM?.refresh();
+  if (view === 'room') window.houselightsDecision?.refresh();
   window.scrollTo(0, 0);
 }
 
@@ -359,6 +360,7 @@ async function loadSaved(id) {
     state.dirty = false; state.briefDirty = false;
     putConstraints(saved.memo.slate.constraints || saved.memo.constraints); renderOffers(); renderReceipts(); renderMemo(); updateMode(state.runMock, true);
     window.houselightsGM?.render();
+    window.houselightsDecision?.refresh();
     $('briefing').open = false; $('share-link').href = `/m/${encodeURIComponent(id)}`; $('share-link').hidden = false;
     if (saved.scenario) { $('scenario-name').value = saved.scenarioName || 'Alternative slate'; state.scenarioHistory.push({ id, name: saved.scenarioName || 'Saved scenario', parentId: saved.parentId }); renderScenarioHistory(); }
     return true;
@@ -421,7 +423,9 @@ $('print-brief').addEventListener('click', () => { setView('slate'); if (state.d
 state.offers = [{ name: '', fee: null, genre: '', available: true }, { name: '', fee: null, genre: '', available: true }, { name: '', fee: null, genre: '', available: true }];
 renderOffers(); updateRisk(); checkHealth();
 const savedMatch = window.location.pathname.match(/^\/m\/([^/]+)\/?$/);
-if (savedMatch) loadSaved(decodeURIComponent(savedMatch[1]));
+if (savedMatch) loadSaved(decodeURIComponent(savedMatch[1])).then(() => {
+  if (location.hash === '#room' || state.snapshot?.decisionProof) setView('room');
+});
 
 function renderGauntlet() {
   const result = state.gauntlet;
