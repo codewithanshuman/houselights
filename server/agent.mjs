@@ -71,6 +71,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     const candidate = candidates.get(ref), position = order.indexOf(ref), hasRank = position >= 0;
     const receipts = [candidate.identityReceipt, ranking.receipt.id];
     let local = 'no data', momentum = 'unknown', comparison = false, localEvidence = false, trendEvidence = false;
+    const evidenceReceipts = { rank: [ranking.receipt.id], local: [], comparison: [], trends: [] };
     if (deep.includes(ref)) {
       say(`Verify · local and audience context for ${candidate.name}`);
       const where = await run.call('where_popular', { entity: ref, entity_type: 'artist', within: city, limit: 10 }, `Geographic popularity evidence for ${candidate.name} within ${city}`);
@@ -85,6 +86,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
         trendEvidence = momentum !== 'unknown';
       }
       receipts.push(where.receipt.id, compare.receipt.id, ...(trendCall ? [trendCall.receipt.id] : []));
+      evidenceReceipts.local = [where.receipt.id]; evidenceReceipts.comparison = [compare.receipt.id];
+      evidenceReceipts.trends = trendCall ? [trendCall.receipt.id] : [];
     }
     // Relative rank utility is not Qloo affinity, market share, or a forecast.
     const fit = hasRank ? order.length > 1 ? 1 - position / (order.length - 1) : 1 : null;
@@ -97,7 +100,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     }
     items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: order.length, fit, local, momentum, verdict,
       receipts: [...new Set(receipts)], tags: candidate.terms.genre ? [candidate.terms.genre] : [],
-      evidence: { rank: hasRank, local: localEvidence, comparison, trends: trendEvidence }, claims: claimList, note: claimList.map(claim => claim.text).join(' ') });
+      evidence: { rank: hasRank, local: localEvidence, comparison, trends: trendEvidence }, evidenceReceipts, claims: claimList, note: claimList.map(claim => claim.text).join(' ') });
   }
   say('Optimize · checking every possible slate against your constraints');
   const slate = optimizeSlate(items, constraints);

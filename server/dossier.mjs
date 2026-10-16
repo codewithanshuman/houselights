@@ -81,6 +81,10 @@ function markdown(dossier) {
       ...dossier.festivalResearch.markets.map(market => `- ${market.city}: ${market.domains.length} domains; audience pool ${market.audience.returned}/${market.audience.requested}; comparable: ${market.audience.complete} [${market.audience.receiptId}]`),
       ...dossier.festivalResearch.profiles.map(profile => `- ${profile.name}: Taste Fit ${profile.tasteFit.total}; measured weight ${profile.tasteFit.measuredWeight}; missing ${profile.tasteFit.estimated.join(', ') || 'none'}; sensitivity bounds ${profile.tasteFit.uncertaintyBounds.lower}–${profile.tasteFit.uncertaintyBounds.upper}.`), ''] : []),
     ...(dossier.llmBenchmark ? ['## LLM-only control', '', `Status: ${dossier.llmBenchmark.status}. ${dossier.llmBenchmark.methodology}`, ''] : []),
+    ...(dossier.decisionProof ? ['## Decision proof', '',
+      `Status: ${dossier.decisionProof.status}. ${dossier.decisionProof.ablations.length} evidence withdrawals tested.`,
+      ...dossier.decisionProof.findings.map(f => `- ${f.severity}: ${f.assumption} ${f.correction}`),
+      `Proof digest: ${dossier.decisionProof.proofDigest}`, ''] : []),
     ...(dossier.themeSeason ? ['## Themed dates', '',
       `Research: ${dossier.themeSeason.research?.status ?? 'Shared festival evidence only'}.`, '',
       ...dossier.themeSeason.nights.flatMap(night => [
@@ -169,6 +173,7 @@ export function buildDossier(snapshot) {
     gmDecision: snapshot.gm || null,
     llmBenchmark: snapshot.benchmark || null,
     themeSeason: snapshot.themeSeason || null,
+    decisionProof: snapshot.decisionProof || null,
     audienceProfile: snapshot.intelligence?.audienceProfile || null,
     localActivation: snapshot.localActivation ? {
       generatedAt: snapshot.localActivation.generatedAt, headliner: snapshot.localActivation.headliner,
@@ -209,7 +214,8 @@ export function buildDossier(snapshot) {
       ...(snapshot.capacityResearch?.limitations || []),
       ...(snapshot.localActivation?.limitations || []),
       ...(snapshot.festivalResearch?.limitations || []),
-      ...(snapshot.themeSeason?.limitations || [])
+      ...(snapshot.themeSeason?.limitations || []),
+      ...(snapshot.decisionProof?.limitations || [])
     ]
   };
   dossier.riskRegister = risks(snapshot, selected, contingency);
@@ -279,6 +285,7 @@ const listHtml = rows => rows.length ? `<ul>${rows.map(row => `<li>${row}</li>`)
 
 export function dossierHtml(dossier) {
   if (!dossier?.sourceId) throw new Error('A built dossier is required.');
+  const decisionProof = dossier.decisionProof ? '<section><h2>Decision proof</h2><p>' + escapeHtml(dossier.decisionProof.status) + '</p>' + listHtml(dossier.decisionProof.findings.map(f => '<strong>' + escapeHtml(f.severity) + '</strong>: ' + escapeHtml(f.assumption) + ' ' + escapeHtml(f.correction))) + '<p>' + escapeHtml(dossier.decisionProof.proofDigest) + '</p></section>' : '';
   const artists = dossier.selectedArtists.map(item => `<strong>${escapeHtml(item.name)}</strong> — fee ${escapeHtml(item.fee ?? 'unknown')}; relative rank ${escapeHtml(item.rank ?? 'unsupported')}; evidence ${escapeHtml(item.evidenceCoverage.percent)}%`);
   const risks = dossier.riskRegister.map(item => `<strong>${escapeHtml(item.severity.toUpperCase())} · ${escapeHtml(item.type)}</strong>: ${escapeHtml(item.text)}`);
   const opportunities = dossier.opportunities.map(item => `<strong>${escapeHtml(item.type)}</strong>: ${escapeHtml(item.text)}`);
@@ -306,5 +313,5 @@ export function dossierHtml(dossier) {
     `Markets ${escapeHtml(dossier.localActivation.summary.marketCount)}; opener candidates ${escapeHtml(dossier.localActivation.summary.openerCandidates)}; passing returned-popularity rule ${escapeHtml(dossier.localActivation.summary.openerCandidatesPassingSizeRule)}`,
     `Coordinate-confirmed poster leads within 2.5 km ${escapeHtml(dossier.localActivation.summary.posterLeadsWithinRadius)}; aftershow leads ${escapeHtml(dossier.localActivation.summary.aftershowLeadsWithinRadius)}`
   ] : [];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section><section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.audienceProfile?.enabled ? `<section><h2>Aggregate audience activation</h2>${listHtml(profile)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}${dossier.localActivation ? `<section><h2>Local activation</h2>${listHtml(activation)}</section>` : ''}${dossier.capacityResearch ? `<section><h2>Venue capacity evidence</h2>${listHtml(capacityEvidence)}</section>` : ''}${dossier.themeSeason ? `<section><h2>Themed nights and crossover research</h2>${listHtml(themes)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Houselights decision dossier</title><style>body{font:16px/1.55 system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 24px;color:#15233d}h1,h2{line-height:1.2}code{overflow-wrap:anywhere}.meta{color:#526078}section{break-inside:avoid;margin:28px 0}@media print{body{margin:0;max-width:none}a{color:inherit}}</style></head><body><header><h1>Houselights decision dossier</h1><p class="meta">Source ${escapeHtml(dossier.sourceId)} · ${escapeHtml(dossier.mode)} · generated ${escapeHtml(dossier.generatedAt)}</p></header><section><h2>Executive decision</h2><p>${escapeHtml(dossier.executiveSummary)}</p></section>${decisionProof}<section><h2>Selected slate</h2>${listHtml(artists)}</section>${dossier.culturalIntelligence ? `<section><h2>Multi-market intelligence</h2>${listHtml(markets)}<h3>Exact route</h3>${listHtml(route)}</section>` : ''}${dossier.audienceProfile?.enabled ? `<section><h2>Aggregate audience activation</h2>${listHtml(profile)}</section>` : ''}${dossier.venuePlan ? `<section><h2>Venue qualification and economics</h2>${listHtml(venues)}</section>` : ''}${dossier.localActivation ? `<section><h2>Local activation</h2>${listHtml(activation)}</section>` : ''}${dossier.capacityResearch ? `<section><h2>Venue capacity evidence</h2>${listHtml(capacityEvidence)}</section>` : ''}${dossier.themeSeason ? `<section><h2>Themed nights and crossover research</h2>${listHtml(themes)}</section>` : ''}<section><h2>Risk register</h2>${listHtml(risks)}</section><section><h2>Opportunities</h2>${listHtml(opportunities)}</section><section><h2>Receipt index</h2>${listHtml(receipts)}</section><section><h2>Evidence limits</h2>${listHtml(dossier.limitations.map(escapeHtml))}</section></body></html>`;
 }

@@ -1,6 +1,6 @@
 # Houselights
 
-**The slate optimizer with receipts.** Houselights helps independent venues and promoters turn a shortlist of artists into a booking slate: resolve identities, discover adjacent artists through Qloo, compare feasible combinations, and inspect the evidence behind the result.
+**The AI decision room for live entertainment.** Houselights turns cultural intelligence into a defensible event decision: research the audience, optimize the slate, test which observations matter, challenge weak assumptions, and record the organizer's next step. Its exact slate optimizer and auditable Qloo receipts remain the core.
 
 The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
 
@@ -42,6 +42,8 @@ npm start
 | `TRUST_PROXY` | Set to `1` only when the deployment has one trusted proxy hop |
 
 ## What the product does
+
+Open **Decision Room** on a saved slate to build a decision proof. Compare a cost-first constraint-only baseline, a real saved LLM-only control (when configured), and Houselights under the same booking assumptions. Withdraw evidence by class or receipt, inspect the resulting lineup changes, test budget and preference sensitivity, and follow an artist to the consequential evidence. Structured challenge findings feed a persisted review → planning approval → unsent draft workflow. Blockers cannot be overridden by a model, and stale revisions cannot reuse approval. See [Decision OS implementation and limits](docs/decision-os.md).
 
 Build a slate, then open **Festival GM** for city research, audience evidence, whole-lineup cultural connections, Ask the GM, and cancellation recovery. Its bounded evidence agent retries incomplete primary-market rankings once and re-optimizes after comparing every bookable pair. Every decision remains linked to receipts and an unchanged source snapshot. See the [demo walkthrough](docs/judge-demo.md) and [source integration map](docs/theme-night-integration.md).
 

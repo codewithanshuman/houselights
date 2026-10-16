@@ -1,4 +1,4 @@
-# Live validation — 14 October 2026
+# Live validation — updated 16 October 2026
 
 Local release candidate: Houselights 1.2.0, Node 24, Qloo harness 0.1.26. Credentials were supplied through ignored `.env` and are not present in this report or source control.
 
@@ -51,3 +51,16 @@ Live crossover research was exercised through the Festival GM browser controls:
 Tests include multilingual extraction, conflicting capacities, source attribution limits, content hashes, explicit capacity opt-in, availability independence, snapshot invalidation, organizer protection, HTML escaping, crossover exclusions, unchanged anchor scores and canonical harness schemas. The first full run hit a worker startup timeout; the same canonical worker test passed in isolation. Test fixture issues found during added invalidation checks were corrected without changing production validation or quotas.
 
 Final full regression: **140/140 tests passed** with `node --test --test-concurrency=2`. This includes the official worker/schema test. The local test transcript is `artifacts/crossover-capacity-tests.txt`.
+
+## Decision Room proof and organizer review
+
+On 16 October 2026, the Decision Room was exercised against the existing saved London Qloo evidence. Proof generation made **zero new provider calls**. This validates saved-evidence analysis, not a new live retrieval or a commercial forecast.
+
+- The grounded decision remains **The xx + Caribou (£12,000)**; the constraint-only minimum-cost selection is **Caribou + Wolf Alice (£10,000)**. Both use the same pool and buyer-entered assumptions.
+- Five evidence-class ablations and twelve individual receipt ablations were evaluated. Withdrawing the shared audience ranking `g7` or the selected-pair observation `g22` changes the slate. Both become explicit organizer review findings. All six discrete preference profiles preserve this example's selection; both single-act cancellations have feasible survivor-preserving recoveries.
+- Browser checks verified immutable proof creation, a £10,000 unsaved budget preview, artist evidence cards, and navigation to the expanded original `g7` receipt. An attempted approval with unacknowledged findings was rejected, preserved the entered rationale, and left draft generation disabled. The saved decision remains awaiting review with no approval transitions or sent messages.
+- Final local proof: `LgjVq_hwWw`. Narrow and desktop layout checks showed no horizontal document overflow or captured JavaScript errors. Screenshots and the machine-readable proof are stored locally under `artifacts/`; the HTML dossier also includes its decision proof.
+- **155/155 automated tests passed** with `node --test --test-concurrency=2`, including the official MCP worker handshake. The initial unrestricted-concurrency run timed out during that worker's initialization; bounded runs passed without relaxing production validation or the worker timeout. Final transcript: `artifacts/decision-os-tests-final.txt`.
+- New regression coverage includes shared-receipt withdrawal, both directions of pair evidence, exact cent-valued budget boundaries, missing evidence and fit floors, optimizer tie precision, lock-preserving recovery, legacy provenance invalidation, stale approvals, organizer access, revision conflicts, unsent drafts, public redaction and escaped dossier export.
+
+The LLM-only column remains explicitly unavailable because no real control was generated. No external reviewer outcomes are invented. Partdrop is still awaiting upload; no source reuse from it is claimed. Multi-event portfolio optimization, a model-driven critic and a unified gate across legacy commitment APIs remain later stages, as described in `docs/decision-os.md`. Public hosting remains deferred.
