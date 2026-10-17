@@ -135,9 +135,14 @@
     if (busy || state.busy || unsaved() || !state.savedId) return;
     busy = true; setBusy(true, 'gm'); buttons(); status(action === 'run' ? 'Researching markets, checking evidence gaps, and enumerating feasible lineups…' : 'Checking this decision…');
     try {
-      const response = await fetch(`/api/gm/${encodeURIComponent(state.savedId)}/${action}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(150000) });
-      const result = await response.json();
-      if (!response.ok) throw new Error([result.error || result.reason || 'Operation failed', ...(result.slate?.reasons ?? [])].join(' '));
+      let result;
+      if (['run','season-research'].includes(action)) {
+        result = await window.houselightsResearch.launch(action==='run'?'festival':'season',body);
+      } else {
+        const response = await fetch(`/api/gm/${encodeURIComponent(state.savedId)}/${action}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(150000) });
+        result = await response.json();
+        if (!response.ok) throw new Error([result.error || result.reason || 'Operation failed', ...(result.slate?.reasons ?? [])].join(' '));
+      }
       if (!await loadSaved(result.id)) throw new Error(`Decision ${result.id} was saved, but could not be loaded. Open /m/${result.id} to retry.`);
       history.replaceState(null, '', `/m/${encodeURIComponent(result.id)}`);
       status(`Saved ${result.id}. ${action === 'cancel' ? 'Cancellation recovery verified; surviving acts remain locked.' : 'The source decision remains unchanged.'}`); render();

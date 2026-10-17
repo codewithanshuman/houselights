@@ -2,12 +2,13 @@ import { readFileSync } from 'node:fs';
 import { randomBytes } from 'node:crypto';
 import { join } from 'node:path';
 import { db, dataRoot, transaction } from './database.mjs';
-export function save(snap) {
+export function save(snap, { withinTransaction = false } = {}) {
   const id = randomBytes(7).toString('base64url'), createdAt = new Date().toISOString();
-  transaction(() => {
+  const persist = () => {
     db.prepare('INSERT INTO snapshots(id,body,created_at) VALUES(?,?,?)').run(id, JSON.stringify({ ...snap, id, createdAt }), createdAt);
     db.exec('DELETE FROM snapshots WHERE pinned=0 AND id NOT IN (SELECT id FROM snapshots WHERE pinned=0 ORDER BY created_at DESC, rowid DESC LIMIT 500)');
-  });
+  };
+  if (withinTransaction) persist(); else transaction(persist);
   return id;
 }
 export function load(id) {
