@@ -22,6 +22,7 @@ import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes } from './decision-room.mjs';
 import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
+import { registerResearchRoutes } from './research-api.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -77,6 +78,7 @@ export function createApp() {
   app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
+  registerResearchRoutes(app);
   app.get('/api/access', (req, res) => res.json({ protected: protectedMode(), editable: canEdit(req) }));
   app.get('/api/examples', (_req, res) => res.json(store.examples()));
   app.post('/api/examples/:id/pin', (req, res) => {
