@@ -41,7 +41,7 @@ export function registerGMRoutes(app) {
         if (!result.snapshot) return res.status(result.status === 'rejected' ? 422 : 409).json(result);
         snapshot = result.snapshot;
       } else if (action === 'benchmark') {
-        snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, benchmark: await benchmarkFestival(source) };
+        snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, benchmarkTrial: undefined, benchmark: await benchmarkFestival(source) };
       } else {
         snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, themeSeason: buildThemeSeason(source, req.body) };
       }

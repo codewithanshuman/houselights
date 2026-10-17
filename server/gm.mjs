@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { optimizeSlate, evaluateSelection } from './optimizer.mjs';
 import { analyzeSlate } from './analysis.mjs';
 import { buildContingencyPlan } from './contingency.mjs';
-import { festivalBaseline, interpretRevision } from './llm.mjs';
+import { festivalBaselineAttempt, interpretRevision } from './llm.mjs';
 import { buildFestivalResearch } from './festival-research.mjs';
 
 const unique = values => [...new Set(values)];
@@ -13,28 +13,38 @@ const averageFit = (items, ids) => {
 };
 export function withoutDerived(snapshot) {
   const copy = { ...snapshot };
-  for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'themeSeason', 'decisionProof']) delete copy[key];
+  for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'benchmarkTrial', 'themeSeason', 'decisionProof']) delete copy[key];
   return copy;
 }
 
-export async function benchmarkFestival(snapshot, { propose = festivalBaseline } = {}) {
+export function benchmarkBrief(snapshot, constraints) {
+  const { items } = snapshot.memo;
+  // Explicit allowlist: no fit, rank, receipts, notes, tags, trends or research
+  // enters the control prompt. Discovery membership remains a booking constraint.
+  return { city: snapshot.memo.input?.city ?? snapshot.input?.city,
+    audiencePreferences: snapshot.memo.input?.anchors ?? snapshot.input?.anchors ?? [],
+    currency: snapshot.memo.currency, constraints: structuredClone(constraints),
+    candidates: items.map(item => ({ id: item.id, name: item.name, discovered: item.found === true,
+      terms: { fee: item.terms?.fee ?? null, genre: item.terms?.genre ?? '', available: item.terms?.available === true } })) };
+}
+export async function benchmarkFestival(snapshot, { propose } = {}) {
   const { items, constraints } = snapshot.memo;
   const qloo = optimizeSlate(items, constraints);
   if (qloo.status === 'invalid') throw new Error(qloo.reasons.join(' '));
-  // Explicit allowlist: no fit, rank, receipts, notes, tags, trends or research
-  // enters the control prompt. Discovery membership remains a booking constraint.
-  const brief = { city: snapshot.memo.input?.city ?? snapshot.input?.city,
-    audiencePreferences: snapshot.memo.input?.anchors ?? snapshot.input?.anchors ?? [],
-    currency: snapshot.memo.currency, constraints: structuredClone(qloo.constraints),
-    candidates: items.map(item => ({ id: item.id, name: item.name, discovered: item.found === true, terms: structuredClone(item.terms) })) };
+  const brief = benchmarkBrief(snapshot, qloo.constraints);
   const fingerprint = createHash('sha256').update(JSON.stringify(brief)).digest('hex');
-  const proposal = await propose(structuredClone(brief));
+  const attempt = qloo.constraints.minimumAverageFit != null ? null : propose
+    ? { proposal: await propose(structuredClone(brief)), receipt: { mode: 'injected', status: 'test_adapter' } }
+    : await festivalBaselineAttempt(structuredClone(brief));
+  const proposal = attempt?.proposal;
   const base = { version: '1.0', sourceId: snapshot.id, brief, briefDigest: `sha256:${fingerprint}`, qloo,
     methodology: 'Objective diagnostic only: the optimizer is expected to win its own Qloo-weighted objective. This is not an independent or held-out evaluation. Both selections obey the same booking brief; an invalid control is not repaired. Collect separate blinded promoter preferences for independent evidence.',
     evaluationKind: 'in_sample_objective_diagnostic', independentEvidence: false,
     limitations: ['Optimizing the scoring objective makes its score advantage tautological; it does not prove better festival choices.', 'No independent promoter judgments have been collected by this comparison.', 'Policy-score improvement is not attendance or revenue uplift.'],
+    generation: attempt?.receipt ?? { mode: 'not_called', status: 'evidence_dependent_constraint' },
     evidenceMode: snapshot.memo.mode ?? (snapshot.mock ? 'mock' : 'unknown'), generatedAt: new Date().toISOString() };
-  if (!proposal) return { ...base, status: 'unavailable', control: null, comparison: null, reason: 'No LLM response. Configure ANTHROPIC_API_KEY and LLM_MODEL; no synthetic lineup is labeled LLM-only.' };
+  if (!attempt) return { ...base, status: 'not_comparable', control: null, comparison: null, reason: 'The Qloo-derived minimum fit constraint cannot be used by an evidence-free control. No model call was made.' };
+  if (!proposal) return { ...base, status: 'unavailable', control: null, comparison: null, reason: attempt.reason ?? 'No LLM response; no synthetic lineup is labeled LLM-only.' };
   let control;
   try { control = evaluateSelection(items, qloo.constraints, proposal.selectedIds); }
   catch (error) { return { ...base, status: 'invalid_control', control: { valid: false, error: error.message }, comparison: null }; }
