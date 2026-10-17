@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { optimizeSlate, enumerateSlates, evaluateSelection } from './optimizer.mjs';
+import { benchmarkBrief } from './gm.mjs';
 
 const unique = values => [...new Set(values)];
 const key = ids => [...ids].sort().join('\0');
@@ -21,7 +22,7 @@ export function decisionFingerprint(snapshot) {
     legacyRankProvenance: snapshot.festivalResearch?.profiles?.map(profile => ({ id: profile.id, receiptId: profile.audience?.receiptId })) ?? [] });
 }
 
-function dependencies(snapshot, item) {
+export function evidenceDependencies(snapshot, item) {
   const receipts = snapshot.receipts ?? [], profile = snapshot.festivalResearch?.profiles?.find(row => row.id === item.id);
   const candidates = receipts.filter(receipt => item.receipts?.includes(receipt.id));
   return Object.fromEntries(classes.map(kind => {
@@ -63,9 +64,7 @@ function recovery(items, constraints, slate) {
 function controlComparison(snapshot, constraints) {
   const benchmark = snapshot.benchmark;
   if (!benchmark?.control) return { status: 'unavailable', selectedIds: [], reason: benchmark?.reason ?? 'Run the LLM-only benchmark in Festival GM. No model-generated control has been saved.' };
-  const brief = { city: snapshot.memo.input?.city ?? snapshot.input?.city,
-    audiencePreferences: snapshot.memo.input?.anchors ?? snapshot.input?.anchors ?? [], currency: snapshot.memo.currency, constraints,
-    candidates: snapshot.memo.items.map(item => ({ id: item.id, name: item.name, discovered: item.found === true, terms: structuredClone(item.terms) })) };
+  const brief = benchmarkBrief(snapshot, constraints);
   if (digest(brief) !== benchmark.briefDigest) return { status: 'stale', selectedIds: [], reason: 'The saved control used different booking assumptions. Run the benchmark again.' };
   if (constraints.minimumAverageFit != null) return { status: 'not_comparable', selectedIds: [], reason: 'A Qloo-derived fit floor cannot be evaluated by a genuinely evidence-free control.' };
   try { return { ...concise(evaluateSelection(snapshot.memo.items, constraints, benchmark.control.selectedIds)), status: benchmark.status,
@@ -77,7 +76,7 @@ export function buildDecisionProof(snapshot) {
   if (!snapshot?.memo?.items) throw new Error('A saved decision with a candidate pool is required.');
   const { items } = snapshot.memo, baseline = optimizeSlate(items, snapshot.memo.constraints);
   if (baseline.status === 'invalid') throw new Error(baseline.reasons.join(' '));
-  const constraints = baseline.constraints, links = new Map(items.map(item => [item.id, dependencies(snapshot, item)]));
+  const constraints = baseline.constraints, links = new Map(items.map(item => [item.id, evidenceDependencies(snapshot, item)]));
   const rows = enumerateSlates(items, constraints), feasible = rows.filter(row => row.feasible);
   const operational = constraints.minimumAverageFit != null ? null : [...feasible].sort((a, b) => a.totalFee - b.totalFee || compareKeys(a.selectedIds, b.selectedIds))[0];
   const constraintOnly = operational ? { ...concise(operational), status: 'compared', selectionRule: 'Minimum cost among all operationally feasible slates; lexicographic ID tie-break. No cultural score enters selection.' }

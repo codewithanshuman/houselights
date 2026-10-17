@@ -47,6 +47,6 @@ Approval authorizes planning only. A valid event date is required to generate un
 
 ## Remaining proposal stages
 
-Multi-event portfolio optimization is the stretch system after this single-decision workflow is validated. Continuous weight-region analysis, a model-driven critic that proposes bounded experiments, independently verified commercial terms, and a unified commitment gate across legacy APIs are not implemented in this increment. Partdrop has not yet been supplied, so no claim is made to copying or testing its source. The new proof/approval implementation is independent; existing archive attribution remains in the integration audits.
+Multi-event portfolio optimization is now implemented in the Event portfolio workspace; see the [PartDrop integration audit](partdrop-integration.md). Repeated provider-audited controls and role-aware review collection are documented in the [evaluation protocol](evaluation-protocol.md). Continuous weight-region analysis, a model-driven critic that proposes bounded experiments, independently verified commercial terms, and a unified commitment gate across legacy APIs remain unimplemented. The original proof/approval engine was independently implemented before PartDrop was supplied; the audit identifies the later adaptation precisely.
 
 Policy utility, evidence coverage, resilience and ablation changes are not ticket-sales forecasts, profit estimates, causal uplift or a probability of success. Real blind reviewer judgments and a configured LLM benchmark remain separate evidence requirements.

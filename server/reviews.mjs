@@ -1,6 +1,8 @@
 import { randomBytes, randomInt, createHash } from 'node:crypto';
 import { db, transaction } from './database.mjs';
 import * as store from './store.mjs';
+import { benchmarkBrief } from './gm.mjs';
+import { optimizeSlate, evaluateSelection } from './optimizer.mjs';
 const id = () => randomBytes(18).toString('base64url');
 const digest = text => createHash('sha256').update(text).digest('hex');
 const read = studyId => { const row = db.prepare('SELECT body FROM studies WHERE id=?').get(studyId); return row ? JSON.parse(row.body) : null; };
@@ -12,7 +14,12 @@ export function createStudy(raw) {
   const cases = [], fingerprints = new Set();
   for (const sourceId of raw.sourceIds) {
     const snapshot = store.load(sourceId), benchmark = snapshot?.benchmark;
+    if(snapshot?.benchmarkTrial && snapshot.benchmarkTrial.index!==snapshot.benchmarkTrial.reviewTrial)throw new Error('This batch predeclared its first trial for external review. Later trials cannot be substituted.');
     if (benchmark?.status !== 'compared') throw new Error('Each source needs a feasible Qloo/LLM comparison. Unavailable or invalid controls cannot enter a study.');
+    const current = optimizeSlate(snapshot.memo.items,snapshot.memo.constraints);
+    if (benchmark.briefDigest !== 'sha256:' + digest(JSON.stringify(benchmarkBrief(snapshot,current.constraints))) || current.constraints.minimumAverageFit != null) throw new Error('The benchmark assumptions changed or depend on Qloo evidence. Run a comparable benchmark again.');
+    if(!current.feasible || !evaluateSelection(snapshot.memo.items,current.constraints,benchmark.control.selectedIds).feasible || [...current.selectedIds].sort().join('|')!==[...benchmark.qloo.selectedIds].sort().join('|'))throw new Error('Both saved selections must pass current constraints.');
+    if(benchmark.evidenceMode==='live' && (benchmark.generation?.mode!=='live'||benchmark.generation?.status!=='ok'))throw new Error('Live studies require an auditable real model response.');
     if (fingerprints.has(benchmark.briefDigest)) throw new Error('Repeated versions of the same brief are not independent cases.');
     fingerprints.add(benchmark.briefDigest);
     const names = ids => ids.map(artistId => {
@@ -25,9 +32,12 @@ export function createStudy(raw) {
       qloo: names(benchmark.qloo.selectedIds), control: names(benchmark.control.selectedIds), synthetic: benchmark.evidenceMode !== 'live',
       identical: [...benchmark.qloo.selectedIds].sort().join('|') === [...benchmark.control.selectedIds].sort().join('|') });
   }
-  const studyId = id(), invitations = raw.reviewers.map(label => ({ label, token: id(), assignments: Object.fromEntries(cases.map(item => [item.caseId, randomInt(2) === 0 ? 'qloo' : 'control'])) }));
+  const roles=['venue_programmer','festival_organizer','artist_booker','audience_member','other','unspecified'];
+  const reviewerRoles=raw.reviewerRoles??{};
+  if(Object.values(reviewerRoles).some(role=>!roles.includes(role)))throw new Error('Choose a supported reviewer role.');
+  const studyId = id(), invitations = raw.reviewers.map(label => ({ label, role:reviewerRoles[label]??'unspecified', token: id(), assignments: Object.fromEntries(cases.map(item => [item.caseId, randomInt(2) === 0 ? 'qloo' : 'control'])) }));
   const study = { id: studyId, createdAt: new Date().toISOString(), cases,
-    reviewers: invitations.map(({ label, token, assignments }) => ({ label, tokenHash: digest(token), assignments })),
+    reviewers: invitations.map(({ label, role, token, assignments }) => ({ label, role, tokenHash: digest(token), assignments })),
     protocol: 'Prefer the lineup you would book for this brief, independently of Qloo scores. Compare cultural fit, program breadth and booking practicality. No optimizer scores or source labels are shown. Roles are organizer-supplied, not verified.' };
   db.prepare('INSERT INTO studies(id,body) VALUES(?,?)').run(studyId, JSON.stringify(study));
   cases.forEach(item => store.retain(item.sourceId));
@@ -50,7 +60,15 @@ export function submitBallot(studyId, token, raw) {
   if (!Array.isArray(raw?.judgments) || raw.judgments.length !== study.cases.length || new Set(raw.judgments.map(item => item.caseId)).size !== study.cases.length) throw new Error('Provide one judgment for each brief.');
   const judgments = raw.judgments.map(item => {
     if (!study.cases.some(entry => entry.caseId === item.caseId) || !['a', 'b', 'tie', 'abstain'].includes(item.preference) || typeof item.reason !== 'string' || item.reason.trim().length < 12 || item.reason.length > 2000) throw new Error('Choose A, B, tie or abstain and give a reason of 12–2000 characters for each brief.');
-    return { caseId: item.caseId, preference: item.preference, reason: item.reason.trim() };
+    let ratings=null;
+    if(item.ratings!=null){
+      ratings={};
+      for(const side of ['a','b']){ratings[side]={};for(const criterion of ['culturalFit','programBreadth','bookingPracticality']){
+        const value=item.ratings?.[side]?.[criterion];
+        if(value!==null&&(!Number.isInteger(value)||value<1||value>5))throw new Error('Each rubric score must be 1–5 or null for insufficient evidence.');ratings[side][criterion]=value;
+      }}
+    }
+    return { caseId: item.caseId, preference: item.preference, reason: item.reason.trim(), ratings };
   });
   transaction(() => {
     if (db.prepare('SELECT 1 FROM ballots WHERE study_id=? AND reviewer_hash=?').get(studyId, reviewer.tokenHash)) throw new Error('This invitation has already submitted a ballot.');
@@ -69,10 +87,12 @@ export function studyReport(studyId) {
     for (const vote of JSON.parse(row.body).judgments) {
       const result = cases.find(item => item.caseId === vote.caseId);
       const outcome = ['tie', 'abstain'].includes(vote.preference) ? vote.preference : vote.preference === 'a' ? reviewer.assignments[vote.caseId] : reviewer.assignments[vote.caseId] === 'qloo' ? 'control' : 'qloo';
-      result[outcome]++; result.reasons.push({ preference: outcome, reason: vote.reason });
+      result[outcome]++; result.reasons.push({ preference: outcome, reason: vote.reason, role:reviewer.role??'unspecified',
+        ratings:vote.ratings?{[reviewer.assignments[vote.caseId]]:vote.ratings.a,[reviewer.assignments[vote.caseId]==='qloo'?'control':'qloo']:vote.ratings.b}:null });
     }
   }
-  return { id: studyId, invitedReviewers: study.reviewers.length, completedReviewers: ballots.length, distinctBriefs: cases.length, cases,
+  const roleCoverage=[...new Set(study.reviewers.map(r=>r.role??'unspecified'))].map(role=>({role,invited:study.reviewers.filter(r=>(r.role??'unspecified')===role).length,completed:ballots.filter(b=>(study.reviewers.find(r=>r.tokenHash===b.reviewer_hash)?.role??'unspecified')===role).length}));
+  return { id: studyId, invitedReviewers: study.reviewers.length, completedReviewers: ballots.length, distinctBriefs: cases.length, cases, roleCoverage,
     conclusion: ballots.length ? 'Descriptive, blinded preference judgments; not a causal or statistically established benefit.' : 'No independent judgments collected yet.',
     limitations: ['Reviewers may evaluate multiple cases; votes are not independent samples.', 'Organizer supplies reviewer identity and role; neither is independently verified.', 'Identical lineups provide no evidence of system preference.', 'Synthetic briefs do not validate actual market relevance.'] };
 }

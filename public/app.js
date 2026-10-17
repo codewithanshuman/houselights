@@ -30,9 +30,10 @@ function setView(view) {
     node.classList.toggle('active', active);
     if (active) node.setAttribute('aria-current', 'page'); else node.removeAttribute('aria-current');
   }
-  $('breadcrumb').textContent = { room: 'Decision Room', slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy', gm: 'Festival GM' }[view];
+  $('breadcrumb').textContent = { portfolio:'Event portfolio', evaluation:'Independent evaluation', room: 'Decision Room', slate: 'Slate studio', gauntlet: 'Decision Gauntlet', evidence: 'Evidence ledger', method: 'Decision policy', gm: 'Festival GM' }[view];
   if (view === 'gm') window.houselightsGM?.refresh();
   if (view === 'room') window.houselightsDecision?.refresh();
+  if (view === 'evaluation') window.houselightsAdvanced?.configuration();
   window.scrollTo(0, 0);
 }
 
@@ -424,7 +425,8 @@ state.offers = [{ name: '', fee: null, genre: '', available: true }, { name: '',
 renderOffers(); updateRisk(); checkHealth();
 const savedMatch = window.location.pathname.match(/^\/m\/([^/]+)\/?$/);
 if (savedMatch) loadSaved(decodeURIComponent(savedMatch[1])).then(() => {
-  if (location.hash === '#room' || state.snapshot?.decisionProof) setView('room');
+  if (location.hash.startsWith('#portfolio=')) window.houselightsAdvanced?.openPortfolio(location.hash.slice(11));
+  else if (location.hash === '#room' || state.snapshot?.decisionProof) setView('room');
 });
 
 function renderGauntlet() {

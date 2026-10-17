@@ -20,6 +20,8 @@ import { withoutDerived } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode } from './access.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes } from './decision-room.mjs';
+import { registerPortfolioRoutes } from './portfolio-api.mjs';
+import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -84,6 +86,8 @@ export function createApp() {
   registerGMRoutes(app);
   registerReviewRoutes(app);
   registerDecisionRoutes(app);
+  registerPortfolioRoutes(app);
+  registerBenchmarkRoutes(app);
   app.use(express.static(pub));
   app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));

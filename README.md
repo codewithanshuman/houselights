@@ -22,13 +22,13 @@ For live Qloo, follow the [key request guide](docs/key-request.md), put your key
 npm start
 ```
 
-`npm start` loads `.env`. Never commit credentials or place them in browser code. The app works without an LLM. To enable the optional planner, claim selector and Qloo-off comparison, set **both** `ANTHROPIC_API_KEY` and `LLM_MODEL` to values supported by your account. `LLM_MODE=off` disables them.
+`npm start` loads `.env`. Never commit credentials or place them in browser code. The app works without an LLM. For Groq, set `LLM_PROVIDER=groq`, `GROQ_API_KEY`, and `LLM_MODEL=openai/gpt-oss-120b`. Anthropic remains available with `LLM_PROVIDER=anthropic`, `ANTHROPIC_API_KEY` and a supported `LLM_MODEL`. `LLM_MODE=off` disables model features. Restart after changing configuration. See the [evaluation protocol](docs/evaluation-protocol.md) for limits and honest benchmark interpretation.
 
 | Setting | Purpose |
 |---|---|
 | `QLOO_API_KEY` | Required for live Qloo calls |
 | `QLOO_BASE_URL`, `QLOO_TRUSTED_BASE_URL` | Explicit event endpoint; this key was verified on `https://hackathon.api.qloo.com` |
-| `ANTHROPIC_API_KEY`, `LLM_MODEL` | Optional model features; both are required |
+| `LLM_PROVIDER`, `LLM_MODEL`, provider key | Optional model features; Groq uses `GROQ_API_KEY`, Anthropic uses `ANTHROPIC_API_KEY` |
 | `PORT` | HTTP port; defaults to `8080` |
 | `HOST` | Bind address; defaults to `127.0.0.1` locally; hosted Node needs `0.0.0.0` |
 | `DATA_DIR` | Persistent SQLite directory; defaults to `./data` |
@@ -44,6 +44,10 @@ npm start
 ## What the product does
 
 Open **Decision Room** on a saved slate to build a decision proof. Compare a cost-first constraint-only baseline, a real saved LLM-only control (when configured), and Houselights under the same booking assumptions. Withdraw evidence by class or receipt, inspect the resulting lineup changes, test budget and preference sensitivity, and follow an artist to the consequential evidence. Structured challenge findings feed a persisted review → planning approval → unsent draft workflow. Blockers cannot be overridden by a model, and stale revisions cannot reuse approval. See [Decision OS implementation and limits](docs/decision-os.md).
+
+**Event portfolio** jointly optimizes 2–6 events under shared budgets, artist reuse/rest limits, venue conflicts and cash checkpoints. It compares independent event choices, certifies optimality only after a completed search, produces a cent-reconciled planning timeline and rehearses cancellations while preserving surviving bookings. The [PartDrop audit](docs/partdrop-integration.md) identifies the source adaptation and limits.
+
+**Independent evaluation** runs repeated real-model controls with recorded generation provenance, preserves failed attempts, and declares the first trial for blind review. Real reviewers can submit anonymous A/B preferences and structured ratings across venue, festival, artist-booking and audience roles. The software collects judgments; it does not invent them. See the [evaluation protocol](docs/evaluation-protocol.md).
 
 Build a slate, then open **Festival GM** for city research, audience evidence, whole-lineup cultural connections, Ask the GM, and cancellation recovery. Its bounded evidence agent retries incomplete primary-market rankings once and re-optimizes after comparing every bookable pair. Every decision remains linked to receipts and an unchanged source snapshot. See the [demo walkthrough](docs/judge-demo.md) and [source integration map](docs/theme-night-integration.md).
 

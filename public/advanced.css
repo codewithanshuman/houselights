@@ -1,0 +1,8 @@
+#view-portfolio .panel,#view-evaluation .panel{padding:24px;margin:20px 0;min-width:0}
+#view-portfolio fieldset{border:1px solid #cbd0d9;padding:16px;margin:20px 0;min-width:0}
+#view-portfolio input,#view-evaluation input,#view-portfolio textarea,#view-evaluation textarea,#view-portfolio select{max-width:100%;padding:10px;border:1px solid #b4b9c5;border-radius:5px;font:inherit}
+#view-portfolio pre,#view-evaluation pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font-size:12px}
+#view-portfolio p,#view-evaluation p{line-height:1.65}
+#view-portfolio details,#view-evaluation details{margin:18px 0}
+#view-portfolio .gm-table,#view-evaluation .gm-table{min-width:500px}
+#portfolio-status,#evaluation-status{overflow-wrap:anywhere}
