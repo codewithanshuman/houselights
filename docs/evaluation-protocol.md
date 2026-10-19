@@ -30,7 +30,9 @@ The first trial is declared in advance as the external-review candidate. Later b
 
 Run `npm run evaluate:campaign -- manifest.json` against the running server. The manifest contains `sourceIds` (2–20 distinct saved sources) and `trials` (1–5). The command computes each permitted benchmark brief's digest and rejects duplicate briefs before model calls. It records the manifest locally before execution, then saves every returned batch or failed request under ignored `artifacts/`. `HOUSELIGHTS_URL` selects the server, and protected deployments use `ORGANIZER_TOKEN` from the environment.
 
-The command runs sequentially with spacing between batches. Missing model configuration produces a saved blocked report; it never generates a substitute control. A completed campaign means its requested batches returned, not that every trial was feasible or that one method was better. Distinct brief digests also do not establish statistical independence: related markets, shared artists and repeated reviewer judgments must still be disclosed.
+The command runs sequentially with spacing between batches; provider token headers also pace trials within a batch. Missing model configuration produces a saved blocked report; it never generates a substitute control. A completed campaign means every requested trial was attempted, not that every trial was feasible or that one method was better. Unattempted trials remain visible in partial reports. The plan records candidate-pool digests and pairwise overlaps: changing only the city does not count as a distinct pool. Distinct briefs still do not establish statistical independence.
+
+Incomplete rank coverage makes a source non-comparable, retaining the case without calling the LLM. `evaluate:prepare` researches the declared cases in `evals/diverse-briefs.json`; `evaluate:offered` can apply a uniform offered-only pool restriction before generating controls. Every original source and the amendment declaration are retained. Such a campaign tests selection among offered candidates, not discovery performance. Fees, availability and genre labels in the supplied manifest are illustrative assumptions.
 
 ## Human review
 

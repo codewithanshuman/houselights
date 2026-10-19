@@ -102,6 +102,11 @@ test('infeasible slates and unlinked or ambiguous rank provenance block planning
   assert.equal(proof.status,'blocked');
 });
 
+test('legacy partial-rank scores cannot pass the proof merely because their receipt status is ok',()=>{
+  const s=source();s.receipts[0].evidence={rows:[{id:'a'},{id:'c'}]};
+  assert.ok(buildDecisionProof(s).findings.some(f=>f.id==='rank-completeness'&&f.severity==='blocker'));
+});
+
 test('pair ablation removes both directed dependencies while leaving unrelated evidence intact',()=>{
   const s=source({festivalPolicy:true});s.receipts.push({id:'pair1',tool:'compare_audiences',status:'ok'});
   s.memo.items[0].culturalLinks=[{otherId:'c',available:true,sharedTastes:['ambient'],receiptId:'pair1'}];

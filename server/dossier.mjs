@@ -82,7 +82,7 @@ function markdown(dossier) {
       ...dossier.festivalResearch.markets.map(market => `- ${market.city}: ${market.domains.length} domains; audience pool ${market.audience.returned}/${market.audience.requested}; comparable: ${market.audience.complete} [${market.audience.receiptId}]`),
       ...dossier.festivalResearch.profiles.map(profile => `- ${profile.name}: Taste Fit ${profile.tasteFit.total}; measured weight ${profile.tasteFit.measuredWeight}; missing ${profile.tasteFit.estimated.join(', ') || 'none'}; sensitivity bounds ${profile.tasteFit.uncertaintyBounds.lower}–${profile.tasteFit.uncertaintyBounds.upper}.`), ''] : []),
     ...(dossier.llmBenchmark ? ['## LLM-only control', '', `Status: ${dossier.llmBenchmark.status}. ${dossier.llmBenchmark.methodology}`, ''] : []),
-    ...(dossier.investigation ? ['## Model investigation', '', `Status: ${dossier.investigation.status}. Findings are model interpretations, not independently verified facts.`,
+    ...(dossier.investigation ? ['## Model investigation', '', `Status: ${dossier.investigation.status}. ${investigationScope(dossier.investigation)}`,
       ...dossier.investigation.findings.map(f => `- ${f.text} [observations: ${f.observationIds.join(', ')}]`), ''] : []),
     ...(dossier.commercialStress ? ['## Joint commercial stress', '', dossier.commercialStress.method,
       `Declared scenarios: ${dossier.commercialStress.outcomes.length}. Fixed lineups tested: ${dossier.commercialStress.comparison.length}.`,
@@ -132,6 +132,10 @@ function markdown(dossier) {
   ];
   return lines.join('\n');
 }
+
+const investigationScope = report => report.verification?.claimEntailment === 'deterministic_fact_templates'
+  ? 'The model selected server-rendered facts checked against saved observations. Commercial assumptions are not independently authenticated.'
+  : 'Legacy findings are model interpretations; their wording is not independently verified.';
 
 function currentInvestigation(snapshot, source) {
   const report = snapshot.investigation;
@@ -308,7 +312,7 @@ const listHtml = rows => rows.length ? `<ul>${rows.map(row => `<li>${row}</li>`)
 
 export function dossierHtml(dossier) {
   if (!dossier?.sourceId) throw new Error('A built dossier is required.');
-  const advanced = (dossier.investigation ? `<section><h2>Model investigation</h2><p>${escapeHtml(dossier.investigation.status)}. Model interpretations; not independently verified facts.</p>${listHtml(dossier.investigation.findings.map(f=>escapeHtml(f.text)+' [observations: '+escapeHtml(f.observationIds.join(', '))+']'))}</section>` : '')
+  const advanced = (dossier.investigation ? `<section><h2>Model investigation</h2><p>${escapeHtml(dossier.investigation.status)}. ${escapeHtml(investigationScope(dossier.investigation))}</p>${listHtml(dossier.investigation.findings.map(f=>escapeHtml(f.text)+' [observations: '+escapeHtml(f.observationIds.join(', '))+']'))}</section>` : '')
     + (dossier.commercialStress ? `<section><h2>Joint commercial stress</h2><p>${escapeHtml(dossier.commercialStress.method)}</p><p>${dossier.commercialStress.outcomes.length} declared scenarios; ${dossier.commercialStress.comparison.length} fixed lineups tested. Worst operating margin of the resilient alternative: ${escapeHtml(dossier.commercialStress.robustAlternative?.worstOperatingMargin??'No universally feasible slate')}.</p>${listHtml(dossier.commercialStress.limitations.map(escapeHtml))}<p>Audit digest: ${escapeHtml(dossier.commercialStress.digest)}</p></section>` : '');
   const decisionProof = advanced + (dossier.decisionProof ? '<section><h2>Decision proof</h2><p>' + escapeHtml(dossier.decisionProof.status) + '</p>' + listHtml(dossier.decisionProof.findings.map(f => '<strong>' + escapeHtml(f.severity) + '</strong>: ' + escapeHtml(f.assumption) + ' ' + escapeHtml(f.correction))) + '<p>' + escapeHtml(dossier.decisionProof.proofDigest) + '</p></section>' : '');
   const artists = dossier.selectedArtists.map(item => `<strong>${escapeHtml(item.name)}</strong> — fee ${escapeHtml(item.fee ?? 'unknown')}; relative rank ${escapeHtml(item.rank ?? 'unsupported')}; evidence ${escapeHtml(item.evidenceCoverage.percent)}%`);

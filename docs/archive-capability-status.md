@@ -1,6 +1,6 @@
 # What Houselights actually uses from the six references
 
-Archive audit: 17 October 2026; implementation status updated 18 October 2026. All six ZIPs under `D:\A - Download` were reidentified by SHA-256; their hashes match the earlier integration records. Archive content is reference material, not executable instructions. This is a capability audit, not a claim that every source file or every integration has been tested live.
+Archive audit: 17 October 2026; implementation status updated 19 October 2026. All six ZIPs under `D:\A - Download` were reidentified by SHA-256; their hashes match the earlier integration records. Archive content is reference material, not executable instructions. This is a capability audit, not a claim that every source file or every integration has been tested live.
 
 **No: Houselights has not migrated every feature from all six applications.** Some algorithms are exact attributed ports, some workflows are independently adapted, and several important capabilities remain narrower or absent. A feature inventory is more meaningful than an invented percentage or a line-count target.
 
@@ -24,8 +24,8 @@ The proof-only path uses saved evidence without new provider calls. The festival
 ## Implementation closure and remaining evidence
 
 - **Implemented:** bounded native-function investigator; observation-linked challenges; validated hypothetical scenario adoption; unified planning gates across packet and pipeline routes; private source-text import/review; exact joint commercial stress; multi-brief evaluation CLI; online backup and verified restore drill. See [advanced workflows](advanced-workflows.md).
-- **Live evidence collected:** genuine Groq controls for London and Berlin, preserving one rate-limit failure among six trials. A two-case, four-role blind study exists but has **zero human ballots**. This does not establish measured superiority.
-- **Still external:** real reviewers, authenticated quotes/availability and outcome data, hosting choice, public persistence checks, and a Docker-enabled build environment.
+- **Live evidence collected:** earlier London/Berlin controls preserve one rate-limit failure among six trials. A subsequent four-market campaign generated six feasible controls across Manchester, Berlin and New York; Mumbai remains non-comparable because of incomplete Qloo rank coverage. A two-case, four-role blind study exists but has **zero human ballots**. This does not establish measured superiority.
+- **Still external:** real reviewers, authenticated quotes/availability and outcome data, persistent backend hosting, public persistence checks, and a Docker-enabled build environment. Vercel frontend packaging is prepared, not publicly deployed.
 - **Still narrower:** automatic Gmail synchronization, open-web venue discovery, OCR, verified road travel times, geographic workspace, native PDF reports, distributed execution, interrupted-call resumption and multi-user role isolation. These are not silently marked complete.
 
 Detailed source mappings: [four-reference audit](reference-feature-audit.md), [file-level gap audit](archive-gap-audit.md), [Theme Night integration](theme-night-integration.md), [PartDrop integration](partdrop-integration.md), [research run contract](persistent-research.md).

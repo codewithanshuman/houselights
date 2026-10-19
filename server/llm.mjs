@@ -10,6 +10,12 @@ export function llmConfiguration() {
     missing: !supported ? ['Supported LLM_PROVIDER: groq or anthropic'] : [!model && 'LLM_MODEL', !process.env[provider === 'groq' ? 'GROQ_API_KEY' : 'ANTHROPIC_API_KEY'] && (provider === 'groq' ? 'GROQ_API_KEY' : 'ANTHROPIC_API_KEY'), process.env.LLM_MODE === 'off' && 'LLM_MODE is off'].filter(Boolean) };
 }
 export const hasLLM = () => llmConfiguration().enabled;
+export function providerPacing(receipt) {
+  if(!Number.isFinite(receipt?.remainingTokens)||!Number.isFinite(receipt?.usage?.prompt_tokens)||receipt.remainingTokens>=receipt.usage.prompt_tokens+4096)return 0;
+  const value=receipt.tokenResetAfter;if(typeof value!=='string'||!/^(?:\d+(?:\.\d+)?[hms])+$/.test(value))return 0;
+  const seconds=[...value.matchAll(/(\d+(?:\.\d+)?)([hms])/g)].reduce((sum,m)=>sum+Number(m[1])*({h:3600,m:60,s:1})[m[2]],0);
+  return Math.min(60000,Math.ceil(seconds*1000)+1000);
+}
 export async function askJson(system, user, max = 1200, { fetcher = fetch, actionSchema } = {}) {
   const config = llmConfiguration(), started = Date.now();
   const receipt = { provider: config.provider, model: config.model, mode: 'live', startedAt: new Date().toISOString(), promptDigest: hash(JSON.stringify({system,user})), toolsAllowed: !!actionSchema };

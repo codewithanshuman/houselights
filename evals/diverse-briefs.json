@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "declaration": "Predeclared integration cases. All artist fees, availability and genre labels are illustrative planning assumptions. No ticket demand, reviewer preference or market superiority is presumed.",
+  "trials": 2,
+  "workflowBudgetPerBrief": 24,
+  "briefs": [
+    {"label":"Manchester jazz club","city":"Manchester","anchors":["Ezra Collective"],"offers":["Nubya Garcia","Yussef Dayes","Kokoroko","Alfa Mist","Makaya McCraven"],"currency":"GBP","fees":[2800,3200,3000,1800,2600],"genre":"jazz","budget":6000,"slots":2},
+    {"label":"Berlin electronic night","city":"Berlin","anchors":["Bonobo"],"offers":["Bicep","Four Tet","Jon Hopkins","Floating Points","Moderat"],"currency":"EUR","fees":[6000,7500,5500,4500,6500],"genre":"electronic","budget":12500,"slots":2},
+    {"label":"Mumbai independent music","city":"Mumbai","anchors":["Prateek Kuhad"],"offers":["Anuv Jain","Ritviz","The Local Train","When Chai Met Toast","Ankur Tewari"],"currency":"INR","fees":[500000,600000,450000,300000,250000],"genre":"independent","budget":1050000,"slots":2},
+    {"label":"New York alternative soul","city":"New York","anchors":["Leon Bridges"],"offers":["Khruangbin","Hiatus Kaiyote","Jordan Rakei","SAULT","Michael Kiwanuka"],"currency":"USD","fees":[9000,5500,3500,7000,6500],"genre":"alternative soul","budget":14500,"slots":2}
+  ]
+}

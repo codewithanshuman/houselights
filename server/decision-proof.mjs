@@ -148,6 +148,13 @@ export function buildDecisionProof(snapshot) {
   if (baseline.confidence.missingFitIds.length) finding('missing-rank', 'blocker', 'Every selected act needs supported audience rank.', baseline.confidence.missingFitIds, [], null, 'Research a complete fixed-pool audience ranking or defer the decision.');
   const unlinked = graph.filter(card => card.selected && (card.evidence.rank.mapping !== 'linked' || !card.evidence.rank.receiptIds.every(id => usable(snapshot.receipts?.find(r => r.id === id)))));
   if (unlinked.length) finding('rank-provenance', 'blocker', 'Supported ranks need an unambiguous usable receipt.', unlinked.map(card => card.id), [], null, 'Refresh audience evidence; legacy or missing provenance cannot support approval.');
+  const incomplete = graph.filter(card => card.selected && card.evidence.rank.receiptIds.some(id => {
+    const receipt=snapshot.receipts?.find(row=>row.id===id),options=receipt?.args?.options,rows=receipt?.evidence?.rows;
+    if(!Array.isArray(options)||!Array.isArray(rows))return false;
+    const returned=new Set(rows.flatMap(row=>[row.id,row.name].filter(Boolean).map(value=>String(value).toLowerCase())));
+    return options.some(option=>!returned.has(String(option).toLowerCase()));
+  }));
+  if(incomplete.length)finding('rank-completeness','blocker','A partial ranking cannot establish full-pool audience fit.',incomplete.map(card=>card.id),[],null,'Refresh the identical candidate pool or explicitly declare and re-rank a revised pool before approval.');
   for (const row of ablations.filter(row => row.kind === 'receipt' && row.changed)) finding(row.id, 'review', 'Withdrawing this observation changes the decision.', row.affectedIds, row.receiptIds, row, 'Inspect the query scope and receipt. Acknowledge this evidence dependency or defer for further research.');
   for (const row of cancellations.filter(row => !row.feasible)) finding('cancel:' + row.canceledId, 'review', 'A selected artist can become unavailable.', [row.canceledId], [], row, 'Source another eligible backup or acknowledge that no survivor-preserving replacement exists.');
   if (sensitivity.some(row => row.changed)) finding('preference-sensitive', 'review', 'Organizer weights express preferences, not measured probabilities.', baseline.selectedIds, [], sensitivity.filter(row => row.changed), 'Confirm the declared trade-off preferences before approval.');

@@ -4,7 +4,7 @@
 
 The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
 
-The [advanced workflows](docs/advanced-workflows.md) now include a bounded model-directed investigator with native function calls, private source-document review, approval enforcement across planning APIs, joint commercial stress, multi-brief evaluation tooling, and verified SQLite backup/restore. Real Groq controls have been collected for London and Berlin; external human judgments and public hosting remain pending.
+The [advanced workflows](docs/advanced-workflows.md) include a bounded model-directed investigator with native function calls and server-rendered facts, private source-document review, approval enforcement across planning APIs, joint commercial stress, diverse-brief evaluation, and verified SQLite backup/restore. Real Groq controls cover London, Manchester, Berlin and New York; an incomplete Mumbai ranking remains explicitly non-comparable. External human judgments and public hosting remain pending.
 
 ## Run locally
 
@@ -157,7 +157,7 @@ The probe uses live quota unless mock mode is set. Inspect its returned shapes b
 
 Deployment needs a Node runtime supporting child processes, outbound HTTPS and a writable, persistent `DATA_DIR`. Cloudflare Workers and other isolate-only runtimes do not run this stdio harness. See the [deployment runbook](docs/deployment.md) and [submission checklist and demo script](docs/submission.md).
 
-Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live Qloo checks and browser verification are recorded in [release validation](docs/live-validation.md). Public hosting, genuine LLM results and independent human judgments remain pending. No judged outcome is claimed by synthetic tests.
+Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live Qloo/Groq checks and browser verification are recorded in [release validation](docs/live-validation.md). Vercel frontend packaging is available in the [deployment runbook](docs/deployment.md); a persistent backend and actual public deployment remain outstanding. Independent human judgments remain pending. No judged outcome is claimed by synthetic tests.
 
 Festival GM research now runs in a persisted server queue with idempotent requests, receipt journals, reconnection, cancellation and automatic decision proof generation. See the [research run contract](docs/persistent-research.md). The [six-archive capability status](docs/archive-capability-status.md) distinguishes exact ports, adapted workflows and remaining gaps; it does not claim every feature was migrated.
 

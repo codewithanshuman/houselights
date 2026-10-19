@@ -57,6 +57,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const ranking = await run.call('rank', { options: [...candidates.keys()], option_type: 'artist', signals: anchorRefs, signal_location: city }, 'Relative audience fit for this candidate pool and city');
   const order = usable(ranking.env) ? [...new Set(rows(ranking.env).map(row => lookup.get(low(idOf(row))) || lookup.get(low(nameOf(row)))).filter(ref => candidates.has(ref)))] : [];
   const ordered = [...order, ...[...candidates.keys()].filter(ref => !order.includes(ref))];
+  const rankComplete = order.length === candidates.size;
   say('Plan · allocating the remaining evidence budget');
   const deepLimit = Math.max(0, Math.min(4, Math.floor((run.budget - run.used - 1) / 2)));
   const proposal = await llm.plan({ city, callsLeft: run.budget - run.used, candidates: ordered.map(ref => ({ name: candidates.get(ref).name, rank: order.includes(ref) ? order.indexOf(ref) + 1 : null, foundForYou: candidates.get(ref).found })) });
@@ -68,7 +69,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const trendCall = deep.length ? await run.call('trends', { entities: deep, entity_type: 'artist', start_date: ago(180), end_date: ago(0) }, 'Observed trend direction over the last six months') : null;
   const items = [];
   for (const ref of ordered) {
-    const candidate = candidates.get(ref), position = order.indexOf(ref), hasRank = position >= 0;
+    const candidate = candidates.get(ref), position = order.indexOf(ref), hasRank = rankComplete && position >= 0;
     const receipts = [candidate.identityReceipt, ranking.receipt.id];
     let local = 'no data', momentum = 'unknown', comparison = false, localEvidence = false, trendEvidence = false;
     const evidenceReceipts = { rank: [ranking.receipt.id], local: [], comparison: [], trends: [] };
@@ -90,7 +91,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       evidenceReceipts.trends = trendCall ? [trendCall.receipt.id] : [];
     }
     // Relative rank utility is not Qloo affinity, market share, or a forecast.
-    const fit = hasRank ? order.length > 1 ? 1 - position / (order.length - 1) : 1 : null;
+    const fit = hasRank ? order.length > 1 ? 1 - position / (order.length - 1) : .5 : null;
     let verdict = !hasRank ? 'hold' : fit >= .6 ? 'lean yes' : candidate.found && fit >= .3 ? 'growth bet' : fit < .3 ? 'lean pass' : 'hold';
     if (momentum === 'cooling' && verdict === 'lean yes') verdict = 'hold';
     const claimList = [{ id: `${ref}:rank`, text: hasRank ? `Ranks ${position + 1} of ${order.length} returned artists for these anchors [${ranking.receipt.id}].` : `No supported audience rank is available [${ranking.receipt.id}].` }];
@@ -98,7 +99,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       claimList.push({ id: `${ref}:local`, text: `${localEvidence ? 'Geographic popularity results are available' : 'Geographic popularity is unverified'} for ${city} [${receipts[2]}].` });
       claimList.push({ id: `${ref}:trend`, text: `Observed trend direction: ${momentum}${trendCall ? ` [${trendCall.receipt.id}]` : ''}.` });
     }
-    items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: order.length, fit, local, momentum, verdict,
+    items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: candidates.size, fit, local, momentum, verdict,
+      rankCoverage: { complete: rankComplete, returned: order.length, requested: candidates.size },
       receipts: [...new Set(receipts)], tags: candidate.terms.genre ? [candidate.terms.genre] : [],
       evidence: { rank: hasRank, local: localEvidence, comparison, trends: trendEvidence }, evidenceReceipts, claims: claimList, note: claimList.map(claim => claim.text).join(' ') });
   }
@@ -111,6 +113,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     'Audience comparison is contextual evidence; it does not establish net-new audience share or pairwise cannibalization.'
   ];
   if (pending.length) caveats.push(`Unresolved or unavailable artists: ${pending.join(', ')}.`);
+  if (!rankComplete) caveats.push(`Ranking returned ${order.length}/${candidates.size} candidates. Comparable full-pool fit is unknown for every artist; the returned order remains in its receipt.`);
   if (order.length < candidates.size) caveats.push(`${candidates.size - order.length} candidates have no supported Qloo rank; no input-order rank was substituted.`);
   for (const receipt of run.receipts) if (['partial', 'degraded', 'error'].includes(receipt.status)) caveats.push(`${receipt.id} ${receipt.tool}: ${receipt.status}. ${receipt.summary || ''}`);
   say('Write · assembling the booking brief from verified claim IDs');

@@ -2,9 +2,23 @@
 
 ## Runtime contract
 
-Deploy as a long-running **Node.js 24+ server or Docker container** with outbound HTTPS, child-process support and a writable filesystem. The official Qloo harness runs as a local stdio process. An isolate-only runtime such as Cloudflare Workers cannot run this integration as written. Hosting selection is deferred; these files are preparation, not a deployed release.
+Deploy the backend as a long-running **Node.js 24+ server or Docker container** with outbound HTTPS, child-process support and a writable filesystem. The official Qloo harness runs as a local stdio process. An isolate-only runtime such as Cloudflare Workers cannot run this integration as written. Vercel frontend preparation is available below; no public deployment has been verified.
 
 Render, Fly.io or a comparable service can be considered when configured for this runtime contract. This runbook describes the application's requirements; it does not claim that a particular hosting plan or platform configuration has been verified.
+
+## Optional Vercel frontend
+
+The existing SQLite database and background research worker need a persistent backend. Vercel's [SQLite guidance](https://vercel.com/kb/guide/is-sqlite-supported-in-vercel) explains why local SQLite storage cannot serve this role in Functions. Host the backend under the runtime contract above, then run:
+
+```sh
+npm run deploy:prepare-vercel -- https://your-backend.example.com artifacts/vercel-release
+```
+
+This creates a **new** directory containing `public/` and `vercel.json`; it never uploads anything. It copies only public assets, rejects hidden files and symbolic links, and refuses an existing output directory. Deploy that generated directory as a Vercel project, with the framework set to Other. The root repository is not an all-in-one Vercel deployment.
+
+The generated [external rewrites](https://vercel.com/docs/project-configuration/vercel-json#rewrites) proxy `/api/*` and `/healthz` to the configured backend and serve `/m/:id` through `index.html`. Reviewer links continue using `review.html`. No provider keys or organizer token belong in Vercel frontend configuration. Confirm API responses remain uncached and organizer Authorization headers pass through on the actual deployment. Long research work should use the durable research API and polling; synchronous benchmark batches remain vulnerable to ingress timeouts and should be run through the backend CLI when necessary.
+
+Proxy trust must match the backend's real ingress chain; do not automatically increase it because Vercel was added. Start with trust disabled, verify forwarded addresses on the chosen host, and retain global quotas regardless of IP handling. Test both the direct backend and Vercel URLs for protected mutations, reviewer access, saved-report persistence and a real research run. Generating this package does not verify hosted storage, artwork rights or public accessibility.
 
 ## Prepare
 

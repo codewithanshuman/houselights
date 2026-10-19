@@ -45,7 +45,9 @@ export async function benchmarkFestival(snapshot, { propose } = {}) {
   if (qloo.status === 'invalid') throw new Error(qloo.reasons.join(' '));
   const brief = benchmarkBrief(snapshot, qloo.constraints);
   const fingerprint = createHash('sha256').update(JSON.stringify(brief)).digest('hex');
-  const attempt = qloo.constraints.minimumAverageFit != null ? null : propose
+  const incompleteRank=items.some(item=>item.evidence?.rank!==true||!Number.isFinite(item.fit)||item.rankCoverage?.complete===false);
+  const notComparable=qloo.constraints.minimumAverageFit!=null ? 'evidence_dependent_constraint' : incompleteRank ? 'incomplete_rank' : null;
+  const attempt = notComparable ? null : propose
     ? { proposal: await propose(structuredClone(brief)), receipt: { mode: 'injected', status: 'test_adapter' } }
     : await festivalBaselineAttempt(structuredClone(brief));
   const proposal = attempt?.proposal;
@@ -53,9 +55,9 @@ export async function benchmarkFestival(snapshot, { propose } = {}) {
     methodology: 'Objective diagnostic only: the optimizer is expected to win its own Qloo-weighted objective. This is not an independent or held-out evaluation. Both selections obey the same booking brief; an invalid control is not repaired. Collect separate blinded promoter preferences for independent evidence.',
     evaluationKind: 'in_sample_objective_diagnostic', independentEvidence: false,
     limitations: ['Optimizing the scoring objective makes its score advantage tautological; it does not prove better festival choices.', 'No independent promoter judgments have been collected by this comparison.', 'Policy-score improvement is not attendance or revenue uplift.'],
-    generation: attempt?.receipt ?? { mode: 'not_called', status: 'evidence_dependent_constraint' },
+    generation: attempt?.receipt ?? { mode: 'not_called', status: notComparable },
     evidenceMode: snapshot.memo.mode ?? (snapshot.mock ? 'mock' : 'unknown'), generatedAt: new Date().toISOString() };
-  if (!attempt) return { ...base, status: 'not_comparable', control: null, comparison: null, reason: 'The Qloo-derived minimum fit constraint cannot be used by an evidence-free control. No model call was made.' };
+  if (!attempt) return { ...base, status: 'not_comparable', control: null, comparison: null, reason: incompleteRank ? 'The full candidate pool lacks comparable Qloo ranks. This case is retained, but no model call or score comparison was made.' : 'The Qloo-derived minimum fit constraint cannot be used by an evidence-free control. No model call was made.' };
   if (!proposal) return { ...base, status: 'unavailable', control: null, comparison: null, reason: attempt.reason ?? 'No LLM response; no synthetic lineup is labeled LLM-only.' };
   let control;
   try { control = evaluateSelection(items, qloo.constraints, proposal.selectedIds); }

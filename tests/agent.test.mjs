@@ -30,3 +30,15 @@ test('a failed rank cannot become an input-order positive recommendation', async
   assert.equal(memo.slate.status, 'provisional');
   assert.equal(memo.slate.confidence.level, 'insufficient');
 });
+
+test('partial successful rankings cannot inflate fit by dropping unreturned candidates',async()=>{
+  const {mockCall}=await import('../server/mock.mjs');
+  const run=new Run({budget:30,cacheStore:new Map(),execute:(tool,args)=>{
+    const result=mockCall(tool,args);
+    return tool==='rank'?{...result,results:result.results.slice(0,1)}:result;
+  }});
+  const memo=await buildMemo({city:'Pune',anchors:['Alpha'],offers:['Beta','Gamma'],terms:{Beta:{fee:100,available:true},Gamma:{fee:100,available:true}},constraints:{budget:200,slots:1}},run);
+  assert.ok(memo.items.length>1);
+  assert.ok(memo.items.every(item=>item.fit===null&&!item.evidence.rank&&item.verdict==='hold'));
+  assert.match(memo.caveats.join(' '),/full-pool fit is unknown/);
+});

@@ -44,12 +44,13 @@ Allow roughly five minutes. Open saved live-Qloo examples to avoid spending the 
 - [x] Verify that the MIT `LICENSE` file is visible in the public repository and recognized in its About/license area.
 - [ ] Add the verified public demo link to this document and the README.
 - [ ] Capture final screenshots and label the data mode honestly.
-- [ ] Check current official eligibility, deadline, submission fields and API requirements before submitting.
+- [x] Check current official deadline, submission fields and API requirements (19 October 2026).
+- [ ] Confirm the entrant's eligibility and asset permissions against the official rules.
 
-The **user-supplied hackathon brief** lists **31 October 2026 at 9:15 a.m. India time (GMT+5:30)** as the deadline, requires a working externally hosted application, a public code repository, a text description and an open-source license, and says a video is not required. These requirements and the deadline have not been independently verified in this document. The supplied brief lists a $15,000 first prize; no placing or award can be promised.
+The [official challenge page](https://qloo.devpost.com/), checked on 19 October 2026, lists **30 October 2026 at 11:45 p.m. EDT**, equivalent to **31 October at 9:15 a.m. India time**, as the deadline. It requires a functional externally hosted demo, public source and setup instructions, a description and an open-source license. A video is optional. Local/private-only access does not satisfy the demo requirement. The [official rules](https://qloo.devpost.com/rules) also require entrant eligibility and permission for third-party material; those personal and artwork facts are still unconfirmed. No award or placing is promised.
 
 Public demo: pending. Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live Qloo and Groq integration validation: recorded in docs/live-validation.md. Real-booker outcome evidence: pending.
 
-## Current evidence status — 18 October 2026
+## Current evidence status — 19 October 2026
 
-Real Qloo research and Groq controls exist for London and Berlin. Five of six control attempts produced feasible lineups; one rate-limit failure is retained. The prepared blind study has no human ballots yet. Native tool investigation, joint stress analysis, source review, universal planning gates, portfolio recovery and backup/restore are described in [advanced workflows](advanced-workflows.md). Public demo hosting, final external walkthrough, artwork distribution rights and current official eligibility requirements still need confirmation. This document makes no winning, demand, causal uplift or commercial-outcome claim.
+Earlier London/Berlin controls produced five feasible lineups and one retained rate-limit failure. The new four-market evaluation produced six feasible controls across Manchester, Berlin and New York; incomplete Mumbai rankings prevented a comparable control. Both failed and unattempted cases remain visible. The prepared blind study has no human ballots. Native tool investigation, joint stress analysis, source review, planning gates, portfolio recovery and backup/restore are described in [advanced workflows](advanced-workflows.md). Public hosting, an external walkthrough, artwork rights and personal eligibility remain unverified. This document makes no winning, demand, causal uplift or commercial-outcome claim.

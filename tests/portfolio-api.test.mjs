@@ -53,3 +53,11 @@ test('benchmark batches retain every provider attempt and predeclare first-trial
   const changed=store.load(batch.reviewSourceId);changed.memo.items[0].terms.fee=61;
   assert.throws(()=>createStudy({sourceIds:[store.save(changed)],reviewers:['test']}),/assumptions changed/);
 });
+
+test('provider rate limiting leaves a partial batch with unattempted trials recorded',async()=>{
+  let calls=0;globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({error:{code:'rate_limit_exceeded'}}),{status:429});};
+  const response=await post('/api/benchmarks',{sourceId:source(),trials:3});
+  assert.equal(response.status,201);const batch=await response.json();
+  assert.equal(calls,1);assert.equal(batch.status,'partial');assert.equal(batch.summary.notAttempted,2);
+  assert.equal(batch.reviewSourceId,null);assert.equal(batch.trials[0].benchmark.generation.httpStatus,429);
+});

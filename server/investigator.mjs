@@ -1,17 +1,13 @@
-import { askJson } from './llm.mjs';
+import { askJson, providerPacing } from './llm.mjs';
 import { buildDecisionProof, decisionFingerprint } from './decision-proof.mjs';
 import { optimizeSlate } from './optimizer.mjs';
 import { rankPool } from './festival-research.mjs';
+import { investigationFacts, selectInvestigationFacts } from './investigation-facts.mjs';
 
 const fail = message => { throw new Error(message); };
 const plain = value => value && typeof value === 'object' && !Array.isArray(value);
 const summary = slate => ({ feasible: slate.feasible, selectedIds: slate.selectedIds, totalFee: slate.totalFee, score: slate.score, reasons: slate.reasons });
-export function investigatorPacing(receipt) {
-  if(!Number.isFinite(receipt?.remainingTokens)||!Number.isFinite(receipt?.usage?.prompt_tokens)||receipt.remainingTokens>=receipt.usage.prompt_tokens+3000)return 0;
-  const value=receipt.tokenResetAfter;if(typeof value!=='string'||!/^(?:\d+(?:\.\d+)?[hms])+$/.test(value))return 0;
-  const seconds=[...value.matchAll(/(\d+(?:\.\d+)?)([hms])/g)].reduce((sum,m)=>sum+Number(m[1])*({h:3600,m:60,s:1})[m[2]],0);
-  return Math.min(60000,Math.ceil(seconds*1000)+1000);
-}
+export const investigatorPacing=providerPacing;
 export function investigatorOptions(snapshot, raw = {}) {
   if (!plain(raw)) fail('Investigation options must be an object.');
   if (!snapshot?.memo?.items?.length || snapshot.memo.items.length > 10) fail('Investigation needs a saved pool of 1–10 candidates.');
@@ -31,15 +27,15 @@ const instructions = `You investigate live entertainment decisions using the nat
 {"tool":"test_scenario","args":{"budget":number,"excludedIds":["candidate ID"],"lockedIds":["candidate ID"]}}
 {"tool":"market_rank","args":{"city":"permitted market"}}
 {"tool":"artist_context","args":{"artistId":"candidate ID","kind":"geography|demographics","city":"permitted market"}}
-{"tool":"finish","args":{"findings":[{"text":"interpretation, not a verified fact","observationIds":["o1"]}],"preferredScenarioId":"o2 or null"}}
-Use actual returned observations to decide your next query. Before finish, inspect evidence with inspect_receipt, decision_proof, market_rank or artist_context, and test at least one meaningful scenario using test_scenario. The initial proof does not satisfy either requirement. Budget changes are hypothetical, never authorized. Unknown evidence stays unknown. Only complete fixed-pool rankings are comparable. Scores are policy utilities, never ticket demand or probabilities. Do not infer revenue uplift. Finish findings must cite observation IDs that actually exist, including a test_scenario observation. Any preferred scenario must be a feasible test_scenario observation. Stop when the evidence is sufficient or limits approach. Do not repeat tools already answered.`;
+{"tool":"finish","args":{"claimIds":["o2:selection"],"preferredScenarioId":"o2 or null"}}
+Use actual returned observations to decide your next query. Before finish, inspect evidence with inspect_receipt, decision_proof, market_rank or artist_context, and test at least one meaningful scenario using test_scenario. The initial proof does not satisfy either requirement. Budget changes are hypothetical, never authorized. Unknown evidence stays unknown. Only complete fixed-pool rankings are comparable. Scores are policy utilities, never ticket demand or probabilities. Do not infer revenue uplift. Finish must choose 1–8 exact claimIds from verifiedFacts, including a fact from test_scenario. Never write findings, commentary or factual prose: the server renders checked facts. Any preferred scenario must be a feasible test_scenario observation. Stop when the evidence is sufficient or limits approach. Do not repeat tools already answered.`;
 const actionSchema={type:'object',properties:{
   tool:{type:'string',enum:['inspect_receipt','decision_proof','test_scenario','market_rank','artist_context','finish']},
   args:{type:'object',description:'Supply only the arguments belonging to the chosen tool.',properties:{
     receiptId:{type:'string'},budget:{type:'number',minimum:0,maximum:1e9},
     excludedIds:{type:'array',items:{type:'string'},maxItems:10},lockedIds:{type:'array',items:{type:'string'},maxItems:10},
     city:{type:'string'},artistId:{type:'string'},kind:{type:'string',enum:['geography','demographics']},
-    findings:{type:'array',minItems:1,maxItems:8,items:{type:'object',properties:{text:{type:'string',maxLength:1000},observationIds:{type:'array',minItems:1,items:{type:'string'}}},required:['text','observationIds'],additionalProperties:false}},
+    claimIds:{type:'array',minItems:1,maxItems:8,uniqueItems:true,items:{type:'string'}},
     preferredScenarioId:{type:['string','null']}
   },additionalProperties:false}
 },required:['tool','args'],additionalProperties:false};
@@ -65,9 +61,10 @@ export async function investigateDecision(source, raw, run, { propose = askJson,
     const availableActions=actionSchema.properties.tool.enum.filter(tool=>
       (tool!=='finish'||ready)&&(!['market_rank','artist_context'].includes(tool)||queries<options.maxQueries));
     const allowed=step===options.maxSteps&&ready?['finish']:availableActions;
-    const stepSchema={...actionSchema,properties:{...actionSchema.properties,tool:{type:'string',enum:allowed}}};
+    const verifiedFacts=investigationFacts(source,observations);
+    const stepSchema={...actionSchema,properties:{...actionSchema.properties,tool:{type:'string',enum:allowed},args:{...actionSchema.properties.args,properties:{...actionSchema.properties.args.properties,claimIds:{...actionSchema.properties.args.properties.claimIds,items:{type:'string',enum:verifiedFacts.map(fact=>fact.id)}}}}}};
     const attempt = await propose(instructions, JSON.stringify({ question: options.question, permittedMarkets: options.markets,
-      availableActions:allowed,completionProgress:{scenarioTested,evidenceInspected},
+      availableActions:allowed,verifiedFacts,completionProgress:{scenarioTested,evidenceInspected},
       remainingSteps: options.maxSteps - step, remainingQueries: options.maxQueries - queries,
       source: { currency: source.memo.currency, constraints: source.memo.constraints, candidates: items.map(({ id, name, terms, evidence, receipts }) => ({ id, name, terms, evidence, receipts })),
         receipts: (source.receipts ?? []).filter(r=>relevantReceipts.has(r.id)).map(({ id, tool, status }) => ({ id, tool, status })) }, observations }), 1600, {actionSchema:stepSchema});
@@ -87,7 +84,7 @@ export async function investigateDecision(source, raw, run, { propose = askJson,
     const proposal = attempt.proposal, tool = proposal?.tool, args = proposal?.args;
     try {
       if (!plain(args) || Object.keys(proposal).some(k => !['tool', 'args'].includes(k))) fail('Return only tool and args.');
-      const keys = { inspect_receipt: ['receiptId'], decision_proof: [], test_scenario: ['budget', 'excludedIds', 'lockedIds'], market_rank: ['city'], artist_context: ['artistId', 'kind', 'city'], finish: ['findings', 'preferredScenarioId'] };
+      const keys = { inspect_receipt: ['receiptId'], decision_proof: [], test_scenario: ['budget', 'excludedIds', 'lockedIds'], market_rank: ['city'], artist_context: ['artistId', 'kind', 'city'], finish: ['claimIds', 'preferredScenarioId'] };
       if (!keys[tool] || Object.keys(args).some(k => !keys[tool].includes(k))) fail('Unknown tool or unsupported arguments.');
       const identity = JSON.stringify([tool, Object.entries(args).sort(([a], [b]) => a.localeCompare(b))]);
       if (tool !== 'finish' && seen.has(identity)) fail('Duplicate action; use existing observations.');
@@ -96,13 +93,8 @@ export async function investigateDecision(source, raw, run, { propose = askJson,
         const scenarios = observations.filter(o => o.tool === 'test_scenario' && o.status === 'ok');
         if (!scenarios.length) fail('Execute test_scenario with a changed constraint before finishing. Initial proof alternatives do not satisfy this requirement.');
         if (!observations.some(o => ['inspect_receipt','decision_proof','market_rank','artist_context'].includes(o.tool) && o.status === 'ok')) fail('Inspect a receipt, decision proof or Qloo evidence before finishing.');
-        if (!Array.isArray(args.findings) || !args.findings.length || args.findings.length > 8) fail('Finish needs 1–8 cited interpretations.');
-        for (const f of args.findings) {
-          if (!plain(f) || typeof f.text !== 'string' || !f.text.trim() || f.text.length > 1000 || !Array.isArray(f.observationIds) || !f.observationIds.length || f.observationIds.some(id => !observations.some(o => o.id === id && o.status === 'ok'))) fail('Every interpretation needs valid successful observation citations.');
-        }
-        if (!args.findings.some(f => f.observationIds.some(id => scenarios.some(o => o.id === id)))) fail('Cite a tested scenario observation in the final findings.');
         if (args.preferredScenarioId != null && !observations.some(o => o.id === args.preferredScenarioId && o.tool === 'test_scenario' && o.result.feasible)) fail('Preferred alternative must be a feasible tested scenario.');
-        findings = args.findings.map(f => ({ text: f.text.trim(), observationIds: [...new Set(f.observationIds)], kind: 'model_interpretation', independentlyVerified: false }));
+        findings = selectInvestigationFacts(source, observations, args.claimIds);
         preferredScenarioId = args.preferredScenarioId ?? null; status = 'completed'; break;
       }
       if (tool === 'inspect_receipt') {
@@ -137,8 +129,8 @@ export async function investigateDecision(source, raw, run, { propose = askJson,
     }
   }
   check();
-  return { version: '1.0', status, sourceDigest: decisionFingerprint(source), options, queries, attempts, observations, findings, preferredScenarioId,
-    verification: { toolResults:'server_executed', citations:'existing_successful_observations', claimEntailment:'not_checked', findingsRequireReview:true },
+  return { version: '2.0', status, sourceDigest: decisionFingerprint(source), options, queries, attempts, observations, findings, preferredScenarioId,
+    verification: { toolResults:'server_executed', citations:'existing_successful_observations', claimEntailment:'deterministic_fact_templates', findingsRequireReview:true, realWorldAuthentication:false },
     proposedScenario: observations.find(o => o.id === preferredScenarioId)?.result ?? null,
-    scope: 'Model-directed investigation with server-executed tools. Findings are attributed interpretations. Alternatives need organizer review; source booking terms and selection were not changed.' };
+    scope: 'Model-directed investigation with server-executed tools and server-rendered factual conclusions. Consistency with saved evidence is verified; commercial authenticity is not. Alternatives need organizer review; source booking terms and selection were not changed.' };
 }

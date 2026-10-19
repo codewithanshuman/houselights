@@ -135,6 +135,13 @@ test('maintained fit is an actual optimizer constraint including missing rank ev
   assert.equal(optimizeSlate(source.memo.items, { ...constraints, minimumAverageFit: 2 }).status, 'invalid');
 });
 
+test('incomplete full-pool rankings retain a non-comparable benchmark without spending a model call',async()=>{
+  const snapshot=makeSource();snapshot.memo.items[0].rankCoverage={complete:false};let called=false;
+  const report=await benchmarkFestival(snapshot,{propose:async()=>{called=true;return {selectedIds:[]};}});
+  assert.equal(called,false);assert.equal(report.status,'not_comparable');assert.equal(report.generation.mode,'not_called');
+  assert.equal(report.generation.status,'incomplete_rank');assert.equal(report.comparison,null);
+});
+
 test('Ask GM requires a declared headliner, preserves budget and rejects unmaintainable fit', async () => {
   const source = makeSource(), before = structuredClone(source);
   const request = 'Replace the headliner, keep the budget and maintain audience fit';

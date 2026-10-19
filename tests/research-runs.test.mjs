@@ -73,7 +73,7 @@ test('durable investigation persists observations; adoption and manual scenarios
   const id=store.save(legacy),before=store.load(id);
   const created=jobs.createResearchRun({sourceId:id,kind:'investigation',options:{maxSteps:3,maxQueries:0}},'investigation-test-key-1');
   let step=0;
-  const result=await jobs.executeNextResearchRun({propose:async()=>({status:'responded',receipt:{mode:'injected',status:'test_adapter'},proposal:++step===1?{tool:'test_scenario',args:{excludedIds:['artist-0']}}:step===2?{tool:'inspect_receipt',args:{receiptId:'r1'}}:{tool:'finish',args:{findings:[{text:'A feasible synthetic alternative was checked.',observationIds:['o2']}],preferredScenarioId:'o2'}}})});
+  const result=await jobs.executeNextResearchRun({propose:async()=>({status:'responded',receipt:{mode:'injected',status:'test_adapter'},proposal:++step===1?{tool:'test_scenario',args:{excludedIds:['artist-0']}}:step===2?{tool:'inspect_receipt',args:{receiptId:'r1'}}:{tool:'finish',args:{claimIds:['o2:selection'],preferredScenarioId:'o2'}}})});
   assert.equal(result.status,'completed');const saved=store.load(result.resultId);assert.equal(saved.investigation.status,'completed');
   assert.equal(saved.investigation.resultDigest,decisionFingerprint(saved));
   assert.ok(jobs.researchEvents(created.run.id).events.some(e=>e.type==='investigation_model'));

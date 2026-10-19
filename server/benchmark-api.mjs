@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { db, consumeQuota } from './database.mjs';
 import * as store from './store.mjs';
 import { benchmarkFestival } from './gm.mjs';
-import { llmConfiguration } from './llm.mjs';
+import { llmConfiguration, providerPacing } from './llm.mjs';
 import { canEdit } from './access.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS benchmark_batches(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
@@ -21,14 +21,16 @@ export function registerBenchmarkRoutes(app){
     save();store.retain(source.id);
     try{
       for(let index=0;index<trials;index++){
+        const waitMs=providerPacing(batch.trials.at(-1)?.benchmark.generation);
+        if(waitMs){batch.waitUntil=new Date(Date.now()+waitMs).toISOString();save();await new Promise(resolve=>setTimeout(resolve,waitMs));delete batch.waitUntil;}
         const benchmark=await benchmarkFestival(source),snapshotId=store.save({...source,id:undefined,createdAt:undefined,parentId:source.id,decisionProof:undefined,benchmark,benchmarkTrial:{batchId:id,index:index+1,reviewTrial:1}});store.retain(snapshotId);
         batch.trials.push({index:index+1,snapshotId,status:benchmark.status,benchmark});save();
         if(benchmark.generation?.httpStatus===429||benchmark.status==='not_comparable'){batch.stopReason=benchmark.reason;break;}
       }
-      batch.status='complete';
+      batch.status=batch.trials.length===trials?'complete':'partial';
     }catch(error){batch.status='interrupted';batch.stopReason='The batch stopped unexpectedly; completed attempts remain available.';}
     batch.finishedAt=new Date().toISOString();batch.reviewSourceId=batch.trials[0]?.status==='compared'?batch.trials[0].snapshotId:null;
-    batch.summary={attempted:batch.trials.length,feasible:batch.trials.filter(t=>t.status==='compared').length,unavailable:batch.trials.filter(t=>t.status==='unavailable').length,invalid:batch.trials.filter(t=>['invalid_control','constraint_failure'].includes(t.status)).length,
+    batch.summary={planned:trials,notAttempted:trials-batch.trials.length,attempted:batch.trials.length,feasible:batch.trials.filter(t=>t.status==='compared').length,unavailable:batch.trials.filter(t=>t.status==='unavailable').length,invalid:batch.trials.filter(t=>['invalid_control','constraint_failure'].includes(t.status)).length,
       uniqueControls:new Set(batch.trials.filter(t=>t.status==='compared').map(t=>[...t.benchmark.control.selectedIds].sort().join('|'))).size};save();
     res.status(201).json(batch);
   });

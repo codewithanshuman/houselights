@@ -19,7 +19,10 @@
     "validate:live": "node --env-file-if-exists=.env scripts/validate-live.mjs",
     "validate:festival": "node --env-file-if-exists=.env scripts/validate-festival.mjs",
     "backup": "node --env-file-if-exists=.env scripts/backup.mjs",
-    "evaluate:campaign": "node --env-file-if-exists=.env scripts/evaluate-campaign.mjs"
+    "evaluate:campaign": "node --env-file-if-exists=.env scripts/evaluate-campaign.mjs",
+    "evaluate:prepare": "node --env-file-if-exists=.env scripts/prepare-evaluation.mjs",
+    "evaluate:offered": "node --env-file-if-exists=.env scripts/prepare-offered-evaluation.mjs",
+    "deploy:prepare-vercel": "node scripts/prepare-vercel.mjs"
   },
   "keywords": [],
   "author": "",
