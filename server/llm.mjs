@@ -10,24 +10,38 @@ export function llmConfiguration() {
     missing: !supported ? ['Supported LLM_PROVIDER: groq or anthropic'] : [!model && 'LLM_MODEL', !process.env[provider === 'groq' ? 'GROQ_API_KEY' : 'ANTHROPIC_API_KEY'] && (provider === 'groq' ? 'GROQ_API_KEY' : 'ANTHROPIC_API_KEY'), process.env.LLM_MODE === 'off' && 'LLM_MODE is off'].filter(Boolean) };
 }
 export const hasLLM = () => llmConfiguration().enabled;
-export async function askJson(system, user, max = 1200, { fetcher = fetch } = {}) {
+export async function askJson(system, user, max = 1200, { fetcher = fetch, actionSchema } = {}) {
   const config = llmConfiguration(), started = Date.now();
-  const receipt = { provider: config.provider, model: config.model, mode: 'live', startedAt: new Date().toISOString(), promptDigest: hash(JSON.stringify({system,user})), toolsAllowed: false };
+  const receipt = { provider: config.provider, model: config.model, mode: 'live', startedAt: new Date().toISOString(), promptDigest: hash(JSON.stringify({system,user})), toolsAllowed: !!actionSchema };
   if (!config.enabled) return { status: 'unavailable', proposal: null, receipt: { ...receipt, mode: 'not_called', status: 'not_configured' }, reason: 'Configure ' + config.missing.join(', ') + ' in the server environment.' };
   const groq = config.provider === 'groq';
   const body = groq ? { model: config.model, messages: [{role:'system',content:system},{role:'user',content:user}], temperature: 0,
-    max_completion_tokens: Math.max(max, 4096), response_format: {type:'json_object'},
+    max_completion_tokens: actionSchema ? Math.max(max,2048) : Math.max(max, 4096),
+    ...(actionSchema ? {tools:[{type:'function',function:{name:'submit_investigation_action',description:'Propose one bounded local investigation action; the server validates and executes it.',parameters:actionSchema}}],tool_choice:{type:'function',function:{name:'submit_investigation_action'}},parallel_tool_calls:false} : {response_format:{type:'json_object'}}),
     ...(config.model.startsWith('openai/gpt-oss-') ? { reasoning_effort:'low' } : {}) }
-    : { model: config.model, max_tokens:max, temperature:0, system, messages:[{role:'user',content:user}] };
+    : { model: config.model, max_tokens:max, temperature:0, system, messages:[{role:'user',content:user}],
+      ...(actionSchema?{tools:[{name:'submit_investigation_action',description:'Propose one validated local investigation action.',input_schema:actionSchema}],tool_choice:{type:'tool',name:'submit_investigation_action'}}:{}) };
   receipt.requestDigest = hash(JSON.stringify(body));
   try {
     const response = await fetcher(groq ? 'https://api.groq.com/openai/v1/chat/completions' : 'https://api.anthropic.com/v1/messages', {
       method:'POST', signal:AbortSignal.timeout(60000), headers: groq ? {'authorization':`Bearer ${process.env.GROQ_API_KEY}`,'content-type':'application/json'} : {'x-api-key':process.env.ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','content-type':'application/json'}, body:JSON.stringify(body) });
     receipt.httpStatus=response.status; receipt.requestId=response.headers.get('x-request-id') || response.headers.get('request-id');
     receipt.retryAfter=response.headers.get('retry-after');
-    if(!response.ok) return {status:'unavailable',proposal:null,reason:response.status===429?'Provider rate limit reached; this failed attempt is retained.':'Provider returned HTTP '+response.status+'. Check model access and credentials.',receipt:{...receipt,status:'provider_error',latencyMs:Date.now()-started}};
+    const remaining=response.headers.get('x-ratelimit-remaining-tokens'), reset=response.headers.get('x-ratelimit-reset-tokens');
+    if(remaining!==null&&Number.isFinite(Number(remaining)))receipt.remainingTokens=Number(remaining);
+    if(reset && /^(?:\d+(?:\.\d+)?[hms])+$/.test(reset))receipt.tokenResetAfter=reset;
+    if(!response.ok) {
+      const failure=await response.json().catch(()=>null);
+      for(const [field,value] of Object.entries({providerErrorCode:failure?.error?.code,providerErrorType:failure?.error?.type})) if(typeof value==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(value))receipt[field]=value;
+      return {status:'unavailable',proposal:null,reason:response.status===429?'Provider rate limit reached; this failed attempt is retained.':receipt.providerErrorCode==='tool_use_failed'?'Provider could not validate the model tool call; this failed attempt is retained.':'Provider returned HTTP '+response.status+'. Check model access and credentials.',receipt:{...receipt,status:'provider_error',latencyMs:Date.now()-started}};
+    }
     const result=await response.json();
-    const content=groq ? result.choices?.[0]?.message?.content : result.content?.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const calls=groq?result.choices?.[0]?.message?.tool_calls:result.content?.filter(c=>c.type==='tool_use');
+    const action=actionSchema&&calls?.length===1?calls[0]:null;
+    const actionName=groq?action?.function?.name:action?.name;
+    const content=actionSchema?(actionName==='submit_investigation_action'?(groq?action.function.arguments:JSON.stringify(action.input)):null)
+      :groq ? result.choices?.[0]?.message?.content : result.content?.filter(c=>c.type==='text').map(c=>c.text).join('');
+    if(actionSchema)receipt.actionProtocol='validated_local_function';
     receipt.responseId=result.id; receipt.returnedModel=result.model; receipt.usage=result.usage; receipt.responseDigest=hash(JSON.stringify(result));
     receipt.finishReason=groq ? result.choices?.[0]?.finish_reason : result.stop_reason;
     if(['length','max_tokens'].includes(receipt.finishReason)) throw Object.assign(new Error(),{kind:'truncated_output'});

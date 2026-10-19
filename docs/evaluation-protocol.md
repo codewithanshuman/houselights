@@ -26,6 +26,12 @@ The first trial is declared in advance as the external-review candidate. Later b
 
 `GET /api/benchmarks/:id` retrieves an organizer-private batch. Persisted `running` records after an interrupted server process must be treated as unfinished, not completed trials. The single-control Festival GM action remains available and records the same provider provenance.
 
+## Predeclared multi-brief campaigns
+
+Run `npm run evaluate:campaign -- manifest.json` against the running server. The manifest contains `sourceIds` (2–20 distinct saved sources) and `trials` (1–5). The command computes each permitted benchmark brief's digest and rejects duplicate briefs before model calls. It records the manifest locally before execution, then saves every returned batch or failed request under ignored `artifacts/`. `HOUSELIGHTS_URL` selects the server, and protected deployments use `ORGANIZER_TOKEN` from the environment.
+
+The command runs sequentially with spacing between batches. Missing model configuration produces a saved blocked report; it never generates a substitute control. A completed campaign means its requested batches returned, not that every trial was feasible or that one method was better. Distinct brief digests also do not establish statistical independence: related markets, shared artists and repeated reviewer judgments must still be disclosed.
+
 ## Human review
 
 Use actual people in any combination of `venue_programmer`, `festival_organizer`, `artist_booker`, `audience_member`, or `other`. Roles and identities are organizer-supplied, not independently verified. Four roles do not imply four judgments until those people submit them.
@@ -35,3 +41,9 @@ Each reviewer receives a private invitation with randomized A/B source assignmen
 Study creation rechecks the current brief digest, both selections' feasibility, current optimizer choice and genuine model provenance for live evidence. Stale, missing, incomparable or invalid controls cannot enter a live study. Synthetic test studies remain explicitly labeled. Sources are retained without publishing them in the featured examples list.
 
 Reports show actual submitted counts, per-brief outcomes, role coverage and the submitted rubric scores after unblinding for the organizer. No fabricated reviewers, AI personas, significance claims, causal improvement, ticket forecasts or guaranteed win rate are substituted for human evidence. Repeated judgments from one reviewer are not independent samples. Review links on localhost require access to the local machine; public hosting remains a separate decision.
+
+## Observed validation — 18 October 2026
+
+Real Groq `openai/gpt-oss-120b` batches produced two feasible controls from three London attempts (one retained HTTP 429) and three feasible controls from three Berlin attempts. All feasible trials within each batch selected the same control. Both briefs shared a six-artist pool and illustrative fees/availability. These checks demonstrate working real-model transport, constraint validation and failure retention; they do not establish generalization, commercial outcomes or superiority over the control.
+
+A two-case study uses each batch's first trial, with four invitation roles: venue programmer, festival organizer, artist booker and audience member. There are **zero submitted human ballots**, and no invitation has been sent externally. Private invitations are retained locally, not included in source control or this report. See [live validation](live-validation.md) for source IDs, batch IDs and the retained validation artifacts.

@@ -252,7 +252,7 @@ function handleEvent(event) {
       state.runMock = memo.mode === 'mock' || state.runMock === true;
       updateMode(state.runMock); $('dirty-banner').hidden = true; renderMemo(); break;
     }
-    case 'saved': state.savedId = event.id; $('share-link').href = `/m/${encodeURIComponent(event.id)}`; $('share-link').hidden = false; updateSaveControls(); break;
+    case 'saved': state.savedId = event.id; document.dispatchEvent(new CustomEvent('houselights:decision-loaded',{detail:{id:event.id}})); $('share-link').href = `/m/${encodeURIComponent(event.id)}`; $('share-link').hidden = false; updateSaveControls(); break;
     case 'error': throw new Error(event.text || 'The run could not complete.');
   }
 }
@@ -344,6 +344,7 @@ async function loadSaved(id) {
     if (!saved.memo?.slate) throw new Error('This saved run predates the slate optimizer. Build a new brief below.');
     state.snapshot = saved;
     state.memo = saved.memo; state.receipts = saved.receipts || []; state.savedId = id; state.runMock = saved.mock === true || saved.memo.mode === 'mock'; state.gauntlet = null;
+    document.dispatchEvent(new CustomEvent('houselights:decision-loaded',{detail:{id}}));
     state.currency = saved.memo.currency || saved.input?.currency || 'USD';
     const input = saved.memo.input || saved.input;
     state.picks = { ...saved.input?.picks, ...Object.fromEntries(saved.memo.items.filter(item => item.originalName).map(item => [item.originalName, { id: item.id, name: item.name }])) };
@@ -426,6 +427,7 @@ renderOffers(); updateRisk(); checkHealth();
 const savedMatch = window.location.pathname.match(/^\/m\/([^/]+)\/?$/);
 if (savedMatch) loadSaved(decodeURIComponent(savedMatch[1])).then(() => {
   if (location.hash.startsWith('#portfolio=')) window.houselightsAdvanced?.openPortfolio(location.hash.slice(11));
+  else if (location.hash === '#gm') setView('gm');
   else if (location.hash === '#room' || state.snapshot?.decisionProof) setView('room');
 });
 
@@ -533,6 +535,7 @@ async function saveScenario() {
     const response = await fetch('/api/scenario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sourceId: state.savedId, name: scenarioName, currency: state.currency, constraints: state.memo.constraints, terms: Object.fromEntries(state.memo.items.map(item => [item.id, item.terms])) }), signal: AbortSignal.timeout(30000) });
     const result = await response.json(); if (!response.ok) throw new Error(result.error || 'The scenario could not be saved.');
     state.savedId = result.id; state.memo = result.snapshot.memo;
+    document.dispatchEvent(new CustomEvent('houselights:decision-loaded',{detail:{id:result.id}}));
     state.scenarioHistory.push({ id: result.id, name: scenarioName, parentId: result.snapshot.parentId });
     $('share-link').href = `/m/${encodeURIComponent(result.id)}`; $('share-link').hidden = false;
     renderMemo(); renderScenarioHistory(); toast('Scenario saved with the original evidence and a link to its source.');

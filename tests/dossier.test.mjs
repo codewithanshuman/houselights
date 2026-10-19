@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildDossier, answerDossierQuestion, dossierHtml } from '../server/dossier.mjs';
+import { decisionFingerprint } from '../server/decision-proof.mjs';
+import { commercialStress } from '../server/commercial-stress.mjs';
 
 const candidate = (id, fee, fit, genre, evidence = {}) => ({
   id, name: id.toUpperCase(), fit, rank: Math.round((1 - fit) * 4) + 1, of: 5, found: id === 'd',
@@ -46,6 +48,33 @@ test('printable dossier is a standalone escaped HTML report', () => {
   assert.match(html, /&lt;Alpha &amp; Co&gt;/);
   assert.ok(!html.includes('<Alpha & Co>'));
   assert.match(html, /Receipt index/);
+});
+test('advanced reports export with their evidence limits and disappear when decision inputs change',()=>{
+  const edited=structuredClone(snapshot),sourceDigest=decisionFingerprint(edited);
+  edited.investigation={status:'completed',sourceDigest,findings:[{text:'<script>untrusted interpretation</script>',observationIds:['o2']}]};
+  edited.commercialStress=commercialStress(edited,{scenarios:[{label:'Declared fixture',attendance:10,capacity:20,ticketPrice:10}]});
+  edited.privateDocuments=[{text:'Private document must never appear'}];
+  const dossier=buildDossier(edited),html=dossierHtml(dossier);
+  assert.ok(dossier.commercialStress.digest);assert.match(dossier.markdown,/Model investigation/);
+  assert.match(html,/&lt;script&gt;/);assert.ok(!html.includes('<script>'));assert.ok(!JSON.stringify(dossier).includes('Private document must never appear'));
+  assert.match(html,/not calibrated forecasts/);
+  edited.memo.constraints.budget=99;
+  const stale=buildDossier(edited);assert.equal(stale.investigation,null);assert.equal(stale.commercialStress,null);
+});
+
+test('fresh research receipts do not hide an investigation, but changed evidence or terms invalidate it',()=>{
+  const parent=structuredClone(snapshot),child={...structuredClone(parent),id:'child123',parentId:parent.id};
+  child.receipts.push({id:'new-rank',tool:'rank',status:'ok',source:'synthetic'});
+  child.investigation={status:'completed',sourceDigest:decisionFingerprint(parent),findings:[]};
+  assert.equal(buildDossier(child).investigation,null);
+  assert.equal(buildDossier(child,{investigationSource:parent}).investigation.status,'completed');
+  child.receipts[0].status='failed';
+  assert.equal(buildDossier(child,{investigationSource:parent}).investigation,null);
+  child.receipts[0]=structuredClone(parent.receipts[0]);
+  child.investigation.resultDigest=decisionFingerprint(child);
+  assert.equal(buildDossier(child).investigation.status,'completed');
+  child.memo.items[0].terms.fee++;
+  assert.equal(buildDossier(child,{investigationSource:parent}).investigation,null);
 });
 
 test('linked market intelligence is carried into dossier answers and exports', () => {

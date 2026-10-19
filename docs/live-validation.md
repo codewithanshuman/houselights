@@ -1,6 +1,8 @@
-# Live validation — updated 16 October 2026
+# Live validation — updated 18 October 2026
 
 Local release candidate: Houselights 1.2.0, Node 24, Qloo harness 0.1.26. Credentials were supplied through ignored `.env` and are not present in this report or source control.
+
+This is a dated validation log. Earlier entries describe the configuration and features at the time of each check; the 18 October entry records the current live benchmark, review and backup status. Dates use the project's Asia/Calcutta timezone; retained machine timestamps are UTC.
 
 ## Verified
 
@@ -81,3 +83,44 @@ The LLM-only column remains explicitly unavailable because no real control was g
 - Browser proof-only run `2489960d-882c-4cb0-84ae-13d010f13e5d` reused saved live source `LgjVq_hwWw`, made zero provider calls, and saved proof snapshot `2mRcSf7rVQ` with four recorded events.
 - Browser festival run `53da8d5a-12cd-41fc-a67a-f01f95e2089b` started against the same saved London pool. The page was reloaded while the run was active; **Reconnect last request** restored the same run, without a second job. It completed with **28 successful Qloo workflow receipts**, 68 journal events and result `m-hbzMKa4w`, including a new decision proof. The source snapshot remained unchanged. This verifies execution and provenance, not commercial performance.
 - Queue interruption and cancellation were tested with isolated synthetic transport. No live provider call was intentionally canceled, no organizer decision was approved, and no external message or payment was sent.
+
+## Real controls, investigation and operational safeguards — 18 October 2026
+
+Groq credentials are now configured server-side. The real provider is `groq`, with requested and returned model `openai/gpt-oss-120b`; these results replace the earlier missing-credential status. No paid plan was enabled by this work.
+
+| Brief | Local source | Benchmark batch | Attempted | Feasible controls | Retained failures |
+| --- | --- | --- | ---: | ---: | --- |
+| London | `LgjVq_hwWw` | `x-3rYZczTjDprEUq` | 3 | 2 | One HTTP 429 |
+| Berlin | `uXhLhA-gOg` | `wBdLd7ohRkG8R7ks` | 3 | 3 | None |
+
+- All six model attempts remain recorded, including the rate-limit failure. Each city's feasible trials produced one distinct control selection. Repeated agreement is not independent evidence of quality.
+- Both briefs use the same six-artist pool and illustrative booking assumptions. This verifies two-city execution under the same declared constraints, not generalization across event types, genuine booking quotes, ticket demand or Qloo superiority. The model control received no Qloo scoring evidence and had no tools enabled; the shared pool itself may have been discovered with Qloo.
+- The Berlin source came from durable festival job `b872c301-a7c0-4d35-8915-b441fe33cb74`, which emitted **24 successful new Qloo receipt events** and preserved its London parent. Totals in the saved snapshot also include inherited receipts; they are not the count of new calls. Machine-readable evidence is retained locally in `artifacts/gap-live-validation.json`.
+- The first trial from each batch was used to prepare a two-case blind-review study for four declared roles: venue programmer, festival organizer, artist booker and audience member. **Zero human ballots have been collected.** Roles are invitation labels, not authenticated reviewers. Invitation tokens remain in private local artifacts; no invitation was sent externally.
+
+### Model-directed investigation validation
+
+The native tool loop has made real model calls, inspected saved evidence, corrected a rejected argument and performed a fresh Qloo fixed-pool ranking and an exact hypothetical scenario. Earlier failures are retained: the initial JSON response attempt returned HTTP 400; a native run encountered HTTP 429; and paced run `bbf6ef41-4b17-4ff2-b222-d99d473e023c` saved `DAwBESo41A` with four HTTP 200 tool proposals followed by a final HTTP 400 `tool_use_failed`. Its persisted investigation status is `model_unavailable`, even though the durable job completed saving partial evidence. No findings were invented to turn this into a completed investigation. See `artifacts/native-investigation-validation.json`.
+
+The function-call instructions and argument schema were corrected. Additional trials exposed premature completion and repeated attempts to reuse a failed query. These led to enforced evidence inspection, a changed scenario with a final citation, removal of exhausted query actions from the schema, and a final-step finish constraint. The repeated-query run `8ff2553c-8e89-4efd-8524-d76c2d2462b6` is retained as `d-Z9dM147w` with investigation status `step_limit`; its durable job completed saving partial evidence.
+
+The final native run `81fece01-b8a2-4bcc-8740-44069507973f` completed and saved `hglWvCgjgA`. All four Groq calls returned HTTP 200: `test_scenario`, `inspect_receipt`, `market_rank`, then `finish`. The fresh London ranking returned the complete pool. The exact £10,000 scenario selected Caribou + Wolf Alice while preserving existing locks and booking assumptions. The source remained unchanged. Machine-readable evidence: `artifacts/native-investigation-release.json`.
+
+Execution success does not establish prose accuracy: the final model commentary incorrectly called the £14,000 budget the current slate cost, which is £12,000. Citation existence is checked; claim entailment is not. The app therefore leads with server-executed results and puts model commentary in a separate review-required disclosure, with original observations available. No model statement is used to alter fees, availability, policy weights or commercial approval.
+
+### Regression and backup evidence
+
+- The final regression transcript records **198/198 tests passed** with `node --test --test-concurrency=1` in 60.56 seconds, including the official MCP worker check. An earlier 195/196 run hit that worker's existing startup timeout; its standalone rerun passed in 2.71 seconds without relaxing the timeout. Two saved-client tests exposed missing event APIs in the minimal DOM test fixture after adding decision-change cleanup; the fixture now supplies and checks that event. Transcript: `artifacts/gap-closure-tests-final-verified.txt`.
+- Added coverage exercises native Groq/Anthropic action parsing, bounded investigator tools and citations, cancellation and provider pacing, immutable scenario adoption, private source review, stale-approval rejection, legacy packet/pipeline gates, joint commercial stress, and content-preserving backup/restore. Provider stubs and synthetic commercial sources in these tests are not live provider or commercial evidence.
+- The actual local SQLite database was backed up with the online backup API to `artifacts/release-backup-2026-10-18`, then restored separately to `artifacts/restore-drill-2026-10-18`. Both copies passed integrity checks and matched the manifest's schema/content digests for all **11 tables**. At backup time there were 30 snapshots, two benchmark batches, four research runs, 138 research events and three portfolios. The review study was created afterward and is not in that backup.
+- The backup contained no operational evidence, decision sessions, pipelines or ballots at that point. Their behavior has automated test coverage; this drill does not claim real populated operational workflows were restored. Backups and review artifacts remain private and ignored by Git.
+
+Public hosting remains deferred and Docker is unavailable on this machine. Genuine human judgments, authenticated artist terms and hosted persistence are unverified. The bounded investigator is not a general web or email agent, and the six reference archives have not been ported in full; [capability status](archive-capability-status.md) lists the implemented adaptations and remaining scope.
+
+## Scenario adoption and release verification — 19 October 2026
+
+- Browser adoption of the completed investigator exposed a legacy provenance loss: removing derived festival research also removed the exact rank dependency, leaving two possible rank receipts. Derived candidates now retain explicit legacy bindings across investigator adoption, manual scenarios and GM revisions. Existing empty bindings and genuinely ambiguous evidence are not guessed or overridden. The new browser-saved scenario `1TX5p7k8vA` selects Caribou + Wolf Alice at £10,000, retains rank receipt `g7`, and requires a new organizer decision. No approval or booking was performed. Screenshot: `artifacts/scenario-review-2026-10-19.png`.
+- Dossier freshness checks now distinguish the original investigation input from the result with additional research receipts. New runs bind a result digest; legacy reports require the unchanged parent inputs and original receipt prefix. The live dossier for `hglWvCgjgA` includes its three attributed interpretations. Changed terms or original evidence invalidate the report.
+- The first full check passed 199/200 tests; the official MCP startup exceeded 20 seconds. A standalone check reproduced it, and importing the official adapter alone took 39.57 seconds. Bundling the installed adapter with esbuild reduced the standalone MCP test to 0.72 seconds without raising its timeout or replacing official tools. The final full suite passed **200/200 in 30.05 seconds**: `artifacts/gap-closure-tests-release-2026-10-19.txt`. Missing or lockfile-stale bundles fall back to the installed adapter; deployment now includes an explicit build step.
+- A fresh bundled-adapter Qloo `describe` request returned `ok`, one artist result, in 2.59 seconds: `artifacts/bundled-qloo-live-confirmed-2026-10-19.json`. The first manual probe used the wrong argument name and was rejected locally by the official schema; its error receipt is retained separately. Neither timing is a production latency guarantee.
+- The final backup and isolated restore in `artifacts/release-backup-2026-10-19-final` and `artifacts/restore-drill-2026-10-19-final` matched integrity and content digests for all 11 tables: 40 snapshots, 10 research runs, 240 research events, two benchmark batches, three portfolios and one review study. Ballots, operational evidence, pipelines and decision sessions remain empty in the real database; their populated behavior has isolated automated coverage only.

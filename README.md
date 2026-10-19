@@ -4,6 +4,8 @@
 
 The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
 
+The [advanced workflows](docs/advanced-workflows.md) now include a bounded model-directed investigator with native function calls, private source-document review, approval enforcement across planning APIs, joint commercial stress, multi-brief evaluation tooling, and verified SQLite backup/restore. Real Groq controls have been collected for London and Berlin; external human judgments and public hosting remain pending.
+
 ## Run locally
 
 Requires **Node.js 24 or newer** and npm. The live integration starts the official Qloo harness as a local stdio child process, so use a normal Node server or container. Snapshots, pipeline updates, quotas and blind-review ballots use built-in SQLite.

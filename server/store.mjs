@@ -2,10 +2,19 @@ import { readFileSync } from 'node:fs';
 import { randomBytes } from 'node:crypto';
 import { join } from 'node:path';
 import { db, dataRoot, transaction } from './database.mjs';
+import { mergedCommercialFacts } from './commercial-facts.mjs';
 export function save(snap, { withinTransaction = false } = {}) {
   const id = randomBytes(7).toString('base64url'), createdAt = new Date().toISOString();
   const persist = () => {
     db.prepare('INSERT INTO snapshots(id,body,created_at) VALUES(?,?,?)').run(id, JSON.stringify({ ...snap, id, createdAt }), createdAt);
+    // Private source evidence follows immutable child decisions without entering
+    // the public snapshot JSON. Each child has independent review history.
+    if (snap.parentId && db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='operational_evidence'").get()) {
+      const parent = db.prepare('SELECT body FROM operational_evidence WHERE source_id=?').get(snap.parentId);
+      const evidence = parent ? JSON.parse(parent.body) : { revision: 0, documents: [], reviews: [] };
+      const commercialFacts = mergedCommercialFacts(snap.parentId, evidence.commercialFacts ?? []);
+      if (parent || commercialFacts.length) db.prepare('INSERT INTO operational_evidence(source_id,body) VALUES(?,?)').run(id, JSON.stringify({ ...evidence, commercialFacts, sourceId:id, inheritedFrom:snap.parentId }));
+    }
     db.exec('DELETE FROM snapshots WHERE pinned=0 AND id NOT IN (SELECT id FROM snapshots WHERE pinned=0 ORDER BY created_at DESC, rowid DESC LIMIT 500)');
   };
   if (withinTransaction) persist(); else transaction(persist);

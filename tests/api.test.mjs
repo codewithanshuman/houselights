@@ -117,19 +117,24 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.equal(reportResponse.status, 200);
   assert.match(reportResponse.headers.get('content-type'), /text\/html/);
   assert.match(await reportResponse.text(), /Houselights decision dossier/);
-  const packetResponse = await post('/api/packet/' + saved.id, { event: { name: 'Test Night', date: '2026-11-20', venue: 'Test Room', contactEmail: 'buyer@example.com' } });
+  assert.equal((await post('/api/packet/' + saved.id, {event:{date:'2026-11-20'}})).status,409);
+  const operational = await (await post(`/api/decision/${saved.id}/proof`, {})).json();
+  const review = await (await fetch(url + '/api/decision/' + operational.id)).json();
+  const approved = await post(`/api/decision/${operational.id}/transition`, {action:'approve',expectedRevision:0,expectedScopeDigest:review.reviewScopeDigest,reason:'Reviewed the synthetic planning trade-offs.',acknowledgedFindings:operational.proof.findings.filter(f=>f.severity==='review').map(f=>f.id)});
+  assert.equal(approved.status,200);
+  const packetResponse = await post('/api/packet/' + operational.id, { expectedDecisionRevision:1, event: { name: 'Test Night', date: '2026-11-20', venue: 'Test Room', contactEmail: 'buyer@example.com' } });
   assert.equal(packetResponse.status, 200);
   const packet = await packetResponse.json();
   assert.equal(packet.holdRequests.length, memo.constraints.slots);
   assert.ok(packet.holdRequests.every(item => item.numericGuard.passed && item.status === 'draft_not_sent'));
   assert.match(packet.calendarIcs, /BEGIN:VCALENDAR/);
-  const pipelineResponse = await fetch(url + '/api/pipeline/' + saved.id);
+  const pipelineResponse = await fetch(url + '/api/pipeline/' + operational.id);
   assert.equal(pipelineResponse.status, 200);
   let pipeline = await pipelineResponse.json();
   const pipelineArtist = pipeline.deals[0].artistId;
-  pipeline = await (await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: pipelineArtist })).json();
+  pipeline = await (await post('/api/pipeline/' + operational.id + '/events', { type: 'approve_pitch', artistId: pipelineArtist, expectedRevision:0, expectedDecisionRevision:1 })).json();
   assert.equal(pipeline.deals.find(item => item.artistId === pipelineArtist).stage, 'pitch_approved');
-  const campaignResponse = await fetch(url + '/api/campaign/' + saved.id);
+  const campaignResponse = await fetch(url + '/api/campaign/' + operational.id);
   assert.equal(campaignResponse.status, 200);
   assert.equal((await campaignResponse.json()).pipelineRevision, pipeline.revision);
   const intelligenceResponse = await post('/api/intelligence/' + saved.id, {
@@ -194,7 +199,7 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   const refreshed = (await refreshedResponse.json()).snapshot;
   for (const field of ['capacityResearch', 'venuePlan', 'localActivation']) assert.equal(refreshed[field], undefined, `${field} must not survive replaced route evidence`);
   assert.ok(apiStore.load(priorWithActivation).capacityResearch, 'the unchanged parent keeps its review');
-  assert.equal((await post('/api/pipeline/' + saved.id + '/events', { type: 'approve_pitch', artistId: 'unknown' })).status, 400);
+  assert.equal((await post('/api/pipeline/' + operational.id + '/events', { type: 'approve_pitch', artistId: 'unknown', expectedRevision:1, expectedDecisionRevision:1 })).status, 400);
 });
 
 test('invalid inputs fail early; infeasible optimization is an explained result', async () => {

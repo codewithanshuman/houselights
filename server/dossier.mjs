@@ -1,4 +1,5 @@
 import { buildContingencyPlan } from './contingency.mjs';
+import { decisionFingerprint } from './decision-proof.mjs';
 
 const money = value => Math.round((value + Number.EPSILON) * 100) / 100;
 const unique = values => [...new Set(values.filter(Boolean))];
@@ -81,6 +82,12 @@ function markdown(dossier) {
       ...dossier.festivalResearch.markets.map(market => `- ${market.city}: ${market.domains.length} domains; audience pool ${market.audience.returned}/${market.audience.requested}; comparable: ${market.audience.complete} [${market.audience.receiptId}]`),
       ...dossier.festivalResearch.profiles.map(profile => `- ${profile.name}: Taste Fit ${profile.tasteFit.total}; measured weight ${profile.tasteFit.measuredWeight}; missing ${profile.tasteFit.estimated.join(', ') || 'none'}; sensitivity bounds ${profile.tasteFit.uncertaintyBounds.lower}–${profile.tasteFit.uncertaintyBounds.upper}.`), ''] : []),
     ...(dossier.llmBenchmark ? ['## LLM-only control', '', `Status: ${dossier.llmBenchmark.status}. ${dossier.llmBenchmark.methodology}`, ''] : []),
+    ...(dossier.investigation ? ['## Model investigation', '', `Status: ${dossier.investigation.status}. Findings are model interpretations, not independently verified facts.`,
+      ...dossier.investigation.findings.map(f => `- ${f.text} [observations: ${f.observationIds.join(', ')}]`), ''] : []),
+    ...(dossier.commercialStress ? ['## Joint commercial stress', '', dossier.commercialStress.method,
+      `Declared scenarios: ${dossier.commercialStress.outcomes.length}. Fixed lineups tested: ${dossier.commercialStress.comparison.length}.`,
+      `Worst operating margin of the resilient alternative: ${dossier.commercialStress.robustAlternative?.worstOperatingMargin ?? 'No universally feasible slate'}.`,
+      ...dossier.commercialStress.limitations.map(l => `- ${l}`), `Audit digest: ${dossier.commercialStress.digest}`, ''] : []),
     ...(dossier.decisionProof ? ['## Decision proof', '',
       `Status: ${dossier.decisionProof.status}. ${dossier.decisionProof.ablations.length} evidence withdrawals tested.`,
       ...dossier.decisionProof.findings.map(f => `- ${f.severity}: ${f.assumption} ${f.correction}`),
@@ -126,7 +133,21 @@ function markdown(dossier) {
   return lines.join('\n');
 }
 
-export function buildDossier(snapshot) {
+function currentInvestigation(snapshot, source) {
+  const report = snapshot.investigation;
+  if (!report) return null;
+  const current = decisionFingerprint(snapshot);
+  if (report.resultDigest != null) return report.resultDigest === current ? report : null;
+  if (report.sourceDigest === current) return report;
+  // Legacy runs predate resultDigest. Validate against the immutable parent and
+  // require its receipts to remain an unchanged prefix of the research result.
+  if (!source || source.id !== snapshot.parentId || decisionFingerprint(source) !== report.sourceDigest) return null;
+  const receipts = source.receipts ?? [];
+  if (JSON.stringify((snapshot.receipts ?? []).slice(0, receipts.length)) !== JSON.stringify(receipts)) return null;
+  return decisionFingerprint({ ...snapshot, receipts }) === report.sourceDigest ? report : null;
+}
+
+export function buildDossier(snapshot, { investigationSource = null } = {}) {
   if (!snapshot?.memo?.items || !snapshot.memo.slate) throw new Error('A complete saved run is required.');
   const selectedIds = new Set(snapshot.memo.slate.selectedIds || []);
   const selected = snapshot.memo.items.filter(item => selectedIds.has(item.id));
@@ -174,6 +195,8 @@ export function buildDossier(snapshot) {
     llmBenchmark: snapshot.benchmark || null,
     themeSeason: snapshot.themeSeason || null,
     decisionProof: snapshot.decisionProof || null,
+    investigation: currentInvestigation(snapshot, investigationSource),
+    commercialStress: snapshot.commercialStress?.sourceDigest === decisionFingerprint(snapshot) ? snapshot.commercialStress : null,
     audienceProfile: snapshot.intelligence?.audienceProfile || null,
     localActivation: snapshot.localActivation ? {
       generatedAt: snapshot.localActivation.generatedAt, headliner: snapshot.localActivation.headliner,
@@ -285,7 +308,9 @@ const listHtml = rows => rows.length ? `<ul>${rows.map(row => `<li>${row}</li>`)
 
 export function dossierHtml(dossier) {
   if (!dossier?.sourceId) throw new Error('A built dossier is required.');
-  const decisionProof = dossier.decisionProof ? '<section><h2>Decision proof</h2><p>' + escapeHtml(dossier.decisionProof.status) + '</p>' + listHtml(dossier.decisionProof.findings.map(f => '<strong>' + escapeHtml(f.severity) + '</strong>: ' + escapeHtml(f.assumption) + ' ' + escapeHtml(f.correction))) + '<p>' + escapeHtml(dossier.decisionProof.proofDigest) + '</p></section>' : '';
+  const advanced = (dossier.investigation ? `<section><h2>Model investigation</h2><p>${escapeHtml(dossier.investigation.status)}. Model interpretations; not independently verified facts.</p>${listHtml(dossier.investigation.findings.map(f=>escapeHtml(f.text)+' [observations: '+escapeHtml(f.observationIds.join(', '))+']'))}</section>` : '')
+    + (dossier.commercialStress ? `<section><h2>Joint commercial stress</h2><p>${escapeHtml(dossier.commercialStress.method)}</p><p>${dossier.commercialStress.outcomes.length} declared scenarios; ${dossier.commercialStress.comparison.length} fixed lineups tested. Worst operating margin of the resilient alternative: ${escapeHtml(dossier.commercialStress.robustAlternative?.worstOperatingMargin??'No universally feasible slate')}.</p>${listHtml(dossier.commercialStress.limitations.map(escapeHtml))}<p>Audit digest: ${escapeHtml(dossier.commercialStress.digest)}</p></section>` : '');
+  const decisionProof = advanced + (dossier.decisionProof ? '<section><h2>Decision proof</h2><p>' + escapeHtml(dossier.decisionProof.status) + '</p>' + listHtml(dossier.decisionProof.findings.map(f => '<strong>' + escapeHtml(f.severity) + '</strong>: ' + escapeHtml(f.assumption) + ' ' + escapeHtml(f.correction))) + '<p>' + escapeHtml(dossier.decisionProof.proofDigest) + '</p></section>' : '');
   const artists = dossier.selectedArtists.map(item => `<strong>${escapeHtml(item.name)}</strong> — fee ${escapeHtml(item.fee ?? 'unknown')}; relative rank ${escapeHtml(item.rank ?? 'unsupported')}; evidence ${escapeHtml(item.evidenceCoverage.percent)}%`);
   const risks = dossier.riskRegister.map(item => `<strong>${escapeHtml(item.severity.toUpperCase())} · ${escapeHtml(item.type)}</strong>: ${escapeHtml(item.text)}`);
   const opportunities = dossier.opportunities.map(item => `<strong>${escapeHtml(item.type)}</strong>: ${escapeHtml(item.text)}`);

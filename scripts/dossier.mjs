@@ -11,5 +11,5 @@ if (!snapshot) {
   console.error(`Saved run ${id} was not found.`);
   process.exit(1);
 }
-const dossier = buildDossier(snapshot);
+const dossier = buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) });
 console.log(format === 'json' ? JSON.stringify(dossier, null, 2) : dossier.markdown);

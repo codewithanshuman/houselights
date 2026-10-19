@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildDecisionProof, decisionFingerprint } from '../server/decision-proof.mjs';
 import { optimizeSlate, enumerateSlates } from '../server/optimizer.mjs';
-import { benchmarkFestival, withoutDerived } from '../server/gm.mjs';
+import { benchmarkFestival, withoutDerived, reviseFestival } from '../server/gm.mjs';
 import { buildDossier, dossierHtml } from '../server/dossier.mjs';
 
 function source(overrides = {}) {
@@ -46,6 +46,24 @@ test('legacy rank provenance changes invalidate a proof even when candidate scor
   assert.equal(buildDecisionProof(s).status,'blocked');
   s.festivalResearch={};
   assert.doesNotThrow(()=>buildDecisionProof(s));
+});
+
+test('scenario derivation and GM revisions preserve explicit legacy rank provenance without guessing', async()=>{
+  const original=source();
+  original.receipts.push({...original.receipts[0],id:'rank2'});
+  original.memo.items.forEach(item=>{delete item.evidenceReceipts;item.receipts.push('rank2');});
+  original.festivalResearch={profiles:original.memo.items.map(item=>({id:item.id,audience:{receiptId:'rank1'}}))};
+  const before=structuredClone(original),derived=withoutDerived(original);
+  assert.equal(derived.festivalResearch,undefined);
+  assert.ok(buildDecisionProof(derived).graph.every(card=>card.evidence.rank.mapping==='linked'&&card.evidence.rank.receiptIds.join()==='rank1'));
+  const revised=await reviseFestival(original,{request:'Exclude a'});
+  assert.equal(revised.status,'revised');
+  assert.ok(buildDecisionProof(revised.snapshot).graph.every(card=>card.evidence.rank.receiptIds.join()==='rank1'));
+  assert.deepEqual(original,before);
+  original.memo.items[0].evidenceReceipts={rank:[]};
+  assert.deepEqual(withoutDerived(original).memo.items[0].evidenceReceipts.rank,[]);
+  delete original.festivalResearch;
+  assert.equal(buildDecisionProof(withoutDerived(original)).graph[1].evidence.rank.mapping,'ambiguous');
 });
 
 test('exact budget boundary tests cent-valued fees and every preceding feasible threshold',()=>{

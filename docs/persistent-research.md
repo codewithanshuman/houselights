@@ -4,7 +4,7 @@ The worker runs with `server/index.mjs` (`npm start` or the existing development
 
 ## Workflow and durability
 
-`POST /api/research-runs` takes `{sourceId, kind, options}` and an `Idempotency-Key` header. Kinds are `festival`, `season`, and `proof`. The first two accept the same options as the existing GM research operations. `proof` uses saved evidence only and performs no provider calls.
+`POST /api/research-runs` takes `{sourceId, kind, options}` and an `Idempotency-Key` header. Kinds are `festival`, `season`, `proof`, and `investigation`. The first two accept the same options as the existing GM research operations. `proof` uses saved evidence only and performs no provider calls. `investigation` uses a configured LLM to choose bounded local tools and optional Qloo research; its behavior is described below.
 
 Preflight checks the saved source, live/synthetic mode, scope and research budget before enqueueing. A matching key and identical input return the same run (HTTP 200); different input with that key returns 409. New jobs return 202 immediately. At most four unfinished jobs are accepted, one executes at a time across workers sharing the SQLite database, and persistent quotas cap new jobs at six/minute and 100/day. These limits are separate from the existing direct GM API quotas and are not a universal provider billing cap. The browser now uses durable runs for festival and season research; the older synchronous endpoints remain available.
 
@@ -25,7 +25,17 @@ All run history, events and mutations require organizer access in protected depl
 
 The browser polls with a cursor, so reconnecting does not reissue completed research. Pending request IDs and inputs are held in session storage; organizer credentials remain in memory only. After reloading a protected deployment, unlock organizer access again and use **Reconnect last request** or **Refresh run history**. Exports include every currently recorded event, even when the run failed or was canceled. Old failed runs are not turned into successful results.
 
-**Completed describes execution, not decision quality.** Inspect the saved proof's blockers and review findings before approving a plan. The deterministic tool agent remains identified as such; persistent execution does not turn it into a model-directed agent.
+**Completed describes execution, not decision quality.** Inspect the saved proof's blockers and review findings before approving a plan. Festival and season workflow orchestration remains deterministic; the separate `investigation` kind is model-directed. A completed investigation job may have saved partial evidence with `model_unavailable` or `step_limit`; check its saved investigation status as well as the job status.
+
+## Bounded model-directed jobs
+
+Investigation options include a `question` of 1–2,000 characters, 1–4 permitted `markets`, `maxSteps` of 3–10 (default 8), and `maxQueries` of 0–4 (default 3). The saved pool must contain 1–10 candidates. Model configuration is checked before enqueueing. With new Qloo queries enabled, the source mode and configured Qloo connection must also match. `maxQueries: 0` prevents fresh Qloo research; model calls still occur.
+
+The application records every model attempt, tool rejection, successful observation and provider wait in the same event journal. It validates IDs, arguments and budgets before running an action. Inspecting a receipt or proof and testing hypothetical budgets/locks/exclusions use saved evidence. Market ranking and artist geography/demographics consume the separate Qloo query allowance. The provider cannot directly approve a decision, contact artists or mutate the source.
+
+Native function-call responses select one action per step. Provider token-reset headers can pause the next request for up to 60 seconds. A valid Retry-After permits at most two retained rate-limit retries, each consuming a step; cancellation remains active during waits. The research deadline is ten minutes for investigation instead of the normal two-minute workflow deadline. Provider errors remain visible and are never filled with synthetic findings.
+
+Final interpretations must cite successful observations; citations establish traceability, not correctness of the model's reasoning. A preferred scenario must reference a feasible server-executed scenario. `POST /api/investigation/:id/apply` validates the stored proposal and its source digest, recomputes the scenario, and saves an unapproved child decision with a new proof. It does not accept client-supplied replacement terms as the model's result. See [advanced workflows](advanced-workflows.md) for the organizer controls and [live validation](live-validation.md) for the current live end-to-end status.
 
 ## Reference attribution
 

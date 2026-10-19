@@ -36,17 +36,17 @@ The persisted sequence is `review_required` → `approved_for_planning` → `dra
 
 Each write checks `expectedRevision` in a SQLite transaction. Duplicate or stale actions fail with HTTP 409. Each transition records its previous/new state, timestamp, exact proof digest and rationale. A modified fingerprint makes a proof unusable. Sessions are tied to immutable snapshot IDs, and every new proof starts a new review. Protected deployments require organizer access for writes; public reads hide review notes and draft contents.
 
-Approval authorizes planning only. A valid event date is required to generate unsent offer drafts. Nothing is sent, paid, signed or represented as a confirmed booking. Existing booking-pipeline and packet APIs retain their original behavior; this release does not claim that every legacy operational API is governed by the new review session. Contract-backed commitment and external communications remain outside this stage.
+Approval authorizes planning only. A valid event date is required to generate unsent offer drafts. Nothing is sent, paid or signed. The legacy packet route and pipeline planning actions now require the same current proof approval. Incoming responses and notes remain recordable after revocation so adverse facts are not suppressed. A changed agreed fee must be reflected in a newly optimized scenario before planning continues. Commercial source imports, reviews and proposed offers invalidate the scope of earlier approval. Conflicting accepted terms block renewed approval. See [advanced workflows](advanced-workflows.md).
 
 ## API
 
 - `POST /api/decision/:id/proof` → immutable proof snapshot. Maximum 12 proof computations per minute per running data store.
 - `GET /api/decision/:id` → saved proof and review state; organizer sessions also receive private history and unsent packet.
 - `POST /api/decision/:id/preview` with `{ "budget": 15000 }` → unsaved budget-only slate/frontier.
-- `POST /api/decision/:id/transition` with `action`, `expectedRevision`, and required action fields. Approval uses `reason` and `acknowledgedFindings`; deferral uses `reason`; draft generation uses `event.date`.
+- `POST /api/decision/:id/transition` with `action`, `expectedRevision`, and required action fields. Approval uses the latest `expectedScopeDigest` returned by GET, `reason`, and `acknowledgedFindings`; deferral uses `reason`; draft generation uses `event.date`.
 
 ## Remaining proposal stages
 
-Multi-event portfolio optimization is now implemented in the Event portfolio workspace; see the [PartDrop integration audit](partdrop-integration.md). Repeated provider-audited controls and role-aware review collection are documented in the [evaluation protocol](evaluation-protocol.md). Continuous weight-region analysis, a model-driven critic that proposes bounded experiments, independently verified commercial terms, and a unified commitment gate across legacy APIs remain unimplemented. The original proof/approval engine was independently implemented before PartDrop was supplied; the audit identifies the later adaptation precisely.
+Multi-event portfolio optimization is implemented in the Event portfolio workspace; see the [PartDrop integration audit](partdrop-integration.md). A bounded native-function investigator, source-document review, joint commercial stress, and unified planning gates are now implemented. Continuous weight-region analysis, independently authenticated commercial terms and real contracts remain outside those implementations. The original proof/approval engine was independently implemented before PartDrop was supplied; the audit identifies the later adaptation precisely.
 
-Policy utility, evidence coverage, resilience and ablation changes are not ticket-sales forecasts, profit estimates, causal uplift or a probability of success. Real blind reviewer judgments and a configured LLM benchmark remain separate evidence requirements.
+Policy utility, evidence coverage, resilience and ablation changes are not ticket-sales forecasts, causal uplift or a probability of success. Commercial stress calculates margins only from explicit supplied scenarios. Real controls have now been generated for London and Berlin; real blind reviewer judgments remain outstanding.

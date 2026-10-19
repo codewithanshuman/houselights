@@ -6,6 +6,8 @@ import { normalizeFestivalResearch, festivalWorkflowCount } from './festival-res
 import { prepareThemeResearch, researchThemeSeason } from './theme-research.mjs';
 import { runFestivalGM } from './gm.mjs';
 import { buildDecisionProof, decisionFingerprint } from './decision-proof.mjs';
+import { investigatorOptions, investigateDecision } from './investigator.mjs';
+import { llmConfiguration } from './llm.mjs';
 
 // Theme Night GM's persisted replay and PartDrop's transition ledger informed
 // this implementation. Provider execution is never silently replayed on restart.
@@ -49,8 +51,14 @@ export function listResearchRuns() {
   return db.prepare('SELECT body FROM research_runs ORDER BY rowid DESC LIMIT 20').all().map(row=>publicRun(JSON.parse(row.body)));
 }
 function preflight(source, kind, options) {
-  if(!['festival','season','proof'].includes(kind))throw fault('Choose festival, season or proof research.');
+  if(!['festival','season','proof','investigation'].includes(kind))throw fault('Choose festival, season, proof or investigation research.');
   if(kind==='proof')return {expectedCalls:0,budget:0,input:{}};
+  if(kind==='investigation') {
+    const input=investigatorOptions(source,options);
+    if(!llmConfiguration().enabled)throw fault('Configure the LLM provider key and model before starting an investigation.',503);
+    if(input.maxQueries>0 && (!!source.mock!==isMock() || !isMock()&&!process.env.QLOO_API_KEY))throw fault('Qloo research needs matching source mode and a configured live key.',503);
+    return {expectedCalls:input.maxQueries,budget:input.maxQueries,input};
+  }
   if(!!source.mock!==isMock())throw fault('Research must use the same live or synthetic mode as its saved source.',409);
   if(!isMock()&&!process.env.QLOO_API_KEY)throw fault('Configure QLOO_API_KEY before live research.',503);
   const input=kind==='festival'?normalizeFestivalResearch(source,options):prepareThemeResearch(source,options);
@@ -128,7 +136,7 @@ function checkCancellation(id) {
   if(owned(id).status==='cancel_requested')throw fault('Research canceled at a workflow boundary.',499);
 }
 function record(id,type,data) {return transaction(()=>append(owned(id),type,data));}
-export async function executeNextResearchRun({makeRun=options=>new Run(options)}={}) {
+export async function executeNextResearchRun({makeRun=options=>new Run(options),propose}={}) {
   interruptExpiredRuns();const job=claim();if(!job)return null;
   const heartbeat=setInterval(()=>{
     try{transaction(()=>{const run=owned(job.id);run.leaseUntil=Date.now()+leaseMs;write(run);});}catch{/* A lost lease cannot be reacquired by this worker. */}
@@ -140,11 +148,15 @@ export async function executeNextResearchRun({makeRun=options=>new Run(options)}
     let snapshot=structuredClone(source);
     if(job.kind!=='proof'){
       const offset=(source.receipts??[]).reduce((max,r)=>Math.max(max,Number(/^g(\d+)$/.exec(r.id)?.[1]??0)),0);
-      const run=makeRun({budget:job.budget,mode:job.mode,deadlineMs:120000,receiptPrefix:'g',receiptOffset:offset,
+      const run=makeRun({budget:job.budget,mode:job.mode,deadlineMs:job.kind==='investigation'?600000:120000,receiptPrefix:'g',receiptOffset:offset,
         emit:event=>record(job.id,event.type,event)});
       const call=run.call.bind(run);
       run.call=async(...args)=>{checkCancellation(job.id);record(job.id,'workflow_started',{tool:args[0],why:args[2]});const result=await call(...args);checkCancellation(job.id);return result;};
-      snapshot=job.kind==='festival'?await runFestivalGM(source,plan.input,run):await researchThemeSeason(source,job.options,run);
+      if(job.kind==='investigation') {
+        const investigation=await investigateDecision(source,plan.input,run,{propose,check:()=>checkCancellation(job.id),emit:event=>record(job.id,event.type,event)});
+        snapshot={...source,investigation,receipts:[...(source.receipts??[]),...run.receipts]};
+        investigation.resultDigest=decisionFingerprint(snapshot);
+      } else snapshot=job.kind==='festival'?await runFestivalGM(source,plan.input,run):await researchThemeSeason(source,job.options,run);
     }
     checkCancellation(job.id);
     record(job.id,'verification',{message:'Building exact decision proof, evidence challenges and cancellation checks.'});
@@ -157,7 +169,7 @@ export async function executeNextResearchRun({makeRun=options=>new Run(options)}
       const resultId=store.save(snapshot,{withinTransaction:true});
       db.prepare('UPDATE snapshots SET pinned=1 WHERE id=?').run(resultId);
       run.resultId=resultId;run.status='completed';run.revision++;run.finishedAt=now();run.workerOwner=null;run.leaseUntil=null;
-      append(run,'completed',{resultId,proofStatus:snapshot.decisionProof.status,decisionState:snapshot.gm?.state??null,
+      append(run,'completed',{resultId,proofStatus:snapshot.decisionProof.status,decisionState:snapshot.gm?.state??null,investigationStatus:snapshot.investigation?.status??null,
         message:'Computation complete. Evidence blockers still require resolution; no planning approval was granted.'});
     });
   }catch(error){

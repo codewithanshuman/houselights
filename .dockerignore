@@ -5,4 +5,5 @@ node_modules
 data
 .git
 artifacts
+build
 *.log

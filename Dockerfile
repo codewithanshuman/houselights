@@ -1,8 +1,16 @@
+FROM node:24-slim AS adapter-build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY scripts/build-qloo-worker.mjs ./scripts/build-qloo-worker.mjs
+RUN npm run build:worker
+
 FROM node:24-slim
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
+COPY --from=adapter-build /app/build ./build
 RUN mkdir -p /var/data/houselights && chown -R node:node /app /var/data/houselights
 USER node
 ENV PORT=8080

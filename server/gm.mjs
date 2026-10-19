@@ -13,8 +13,20 @@ const averageFit = (items, ids) => {
 };
 export function withoutDerived(snapshot) {
   const copy = { ...snapshot };
-  for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'benchmarkTrial', 'themeSeason', 'decisionProof']) delete copy[key];
+  if (snapshot.memo) copy.memo = { ...snapshot.memo, items: preserveRankProvenance(snapshot) };
+  for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'benchmarkTrial', 'themeSeason', 'decisionProof', 'investigation', 'commercialStress']) delete copy[key];
   return copy;
+}
+
+// Older research stores the exact rank dependency on its profile. Carry that
+// explicit binding into candidates before discarding derived research reports.
+// Never choose between multiple receipts or replace an existing binding.
+export function preserveRankProvenance(snapshot, items = snapshot.memo?.items) {
+  return items?.map(item => {
+    const receiptId = snapshot.festivalResearch?.profiles?.find(profile => profile.id === item.id)?.audience?.receiptId;
+    if (item.evidenceReceipts?.rank != null || !receiptId) return item;
+    return { ...item, evidenceReceipts: { ...item.evidenceReceipts, rank: [receiptId] } };
+  });
 }
 
 export function benchmarkBrief(snapshot, constraints) {
@@ -118,7 +130,7 @@ function constrainedInterpretation(snapshot, request, headlinerId) {
 export async function reviseFestival(snapshot, raw, { interpret = interpretRevision } = {}) {
   const request = typeof raw?.request === 'string' ? raw.request.trim() : '';
   if (!request || request.length > 2000) throw new Error('Provide a revision request of 1–2000 characters.');
-  const items = snapshot.memo.items;
+  const items = preserveRankProvenance(snapshot);
   const headlinerId = raw.headlinerId ?? snapshot.gm?.headlinerId;
   if (headlinerId && !snapshot.memo.slate.selectedIds.includes(headlinerId)) throw new Error('The headliner must be a selected artist ID.');
   if (/\bheadliner\b/i.test(request) && !headlinerId) return { status: 'needs_input', reason: 'Specify headlinerId. The existing slate has no explicit headliner role.' };
@@ -153,7 +165,7 @@ export async function reviseFestival(snapshot, raw, { interpret = interpretRevis
     previousMeanFit: averageFit(items, snapshot.memo.slate.selectedIds), revisedMeanFit: averageFit(items, slate.selectedIds),
     evidencePolicy: 'Reuses saved fixed-pool evidence. Run GM research again to refresh data or research a different city.' };
   return { status: 'revised', revision, snapshot: { ...withoutDerived(snapshot), id: undefined, createdAt: undefined, parentId: snapshot.id,
-    input: { ...snapshot.input, constraints }, memo: { ...snapshot.memo, slate, constraints,
+    input: { ...snapshot.input, constraints }, memo: { ...snapshot.memo, items, slate, constraints,
       input: { ...snapshot.memo.input, constraints }, base: null, eval: null, summary: 'Organizer revision checked against all booking constraints.' },
     revisions: [...(snapshot.revisions ?? []), revision],
     gm: { state: 'decision_ready', mode: 'validated-revision', headlinerId: slate.selectedIds.includes(headlinerId) ? headlinerId : undefined,

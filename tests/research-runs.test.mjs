@@ -18,7 +18,7 @@ const {createApp}=await import('../server/app.mjs');
 const server=createApp().listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
 const base=`http://127.0.0.1:${server.address().port}`;
 after(async()=>{await new Promise(resolve=>server.close(resolve));db.close();rmSync(dir,{recursive:true,force:true});});
-beforeEach(()=>{db.exec('DELETE FROM research_events; DELETE FROM research_runs; DELETE FROM quotas;');});
+beforeEach(()=>{db.exec('DELETE FROM research_events; DELETE FROM research_runs; DELETE FROM quotas;');process.env.LLM_MODE='off';});
 function source(){
   const items=['Radiohead','Caribou','Wolf Alice'].map((name,i)=>({id:`artist-${i}`,name,fit:1-i*.3,rank:i+1,of:3,evidence:{rank:true},evidenceReceipts:{rank:['r1']},receipts:['r1'],terms:{fee:[60,40,20][i],available:true,genre:'indie'}}));
   const constraints={budget:100,slots:2};
@@ -63,6 +63,33 @@ test('festival jobs record actual workflow receipts and produce a proof-bearing 
   const events=jobs.researchEvents(created.run.id).events;
   assert.ok(events.some(e=>e.type==='workflow_started'));assert.ok(events.some(e=>e.type==='receipt'));
   assert.ok(events.some(e=>e.type==='gm_stage'));assert.equal(saved.mock,true);
+});
+test('durable investigation persists observations; adoption and manual scenarios retain legacy rank links without approval',async()=>{
+  delete process.env.LLM_MODE;process.env.LLM_PROVIDER='groq';process.env.GROQ_API_KEY='test-only-not-a-key';process.env.LLM_MODEL='test-model';
+  const legacy=store.load(source());
+  legacy.receipts.push({...legacy.receipts[0],id:'r2'});
+  legacy.memo.items.forEach(item=>{delete item.evidenceReceipts;item.receipts.push('r2');});
+  legacy.festivalResearch={profiles:legacy.memo.items.map(item=>({id:item.id,audience:{receiptId:'r1'}}))};
+  const id=store.save(legacy),before=store.load(id);
+  const created=jobs.createResearchRun({sourceId:id,kind:'investigation',options:{maxSteps:3,maxQueries:0}},'investigation-test-key-1');
+  let step=0;
+  const result=await jobs.executeNextResearchRun({propose:async()=>({status:'responded',receipt:{mode:'injected',status:'test_adapter'},proposal:++step===1?{tool:'test_scenario',args:{excludedIds:['artist-0']}}:step===2?{tool:'inspect_receipt',args:{receiptId:'r1'}}:{tool:'finish',args:{findings:[{text:'A feasible synthetic alternative was checked.',observationIds:['o2']}],preferredScenarioId:'o2'}}})});
+  assert.equal(result.status,'completed');const saved=store.load(result.resultId);assert.equal(saved.investigation.status,'completed');
+  assert.equal(saved.investigation.resultDigest,decisionFingerprint(saved));
+  assert.ok(jobs.researchEvents(created.run.id).events.some(e=>e.type==='investigation_model'));
+  const response=await post(`/api/investigation/${result.resultId}/apply`,{constraints:{budget:1},selectedIds:['fake']});assert.equal(response.status,201);
+  const child=store.load((await response.json()).id);assert.ok(child.decisionProof);assert.equal(child.investigation,undefined);
+  assert.ok(child.decisionProof.graph.every(card=>card.evidence.rank.mapping==='linked'&&card.evidence.rank.receiptIds.join()==='r1'));
+  assert.equal(child.parentId,result.resultId);assert.deepEqual(child.memo.slate.selectedIds.sort(),['artist-1','artist-2']);assert.equal(child.memo.constraints.budget,100);
+  const room=await(await fetch(base+`/api/decision/${child.id}`)).json();assert.equal(room.session.state,'review_required');
+  assert.deepEqual(store.load(id),before);
+  const scenarioResponse=await post('/api/scenario',{sourceId:id,terms:{},constraints:before.memo.constraints});
+  assert.equal(scenarioResponse.status,201);
+  const scenario=(await scenarioResponse.json()).snapshot;
+  assert.equal(scenario.festivalResearch,undefined);
+  assert.ok(scenario.memo.items.every(item=>item.evidenceReceipts.rank.join()==='r1'));
+  assert.equal((await post(`/api/investigation/${id}/apply`,{})).status,409);
+  assert.equal((await post(`/api/investigation/${result.resultId}/apply`,{},'unused-key',false)).status,401);
 });
 
 test('cancel during a workflow retains its receipt, prevents subsequent calls and cannot save a result',async()=>{

@@ -18,23 +18,13 @@ The [official Qloo hackathon kit](https://github.com/qloo/qloo-hackathon-kit) an
 
 ## Judge walkthrough
 
-Allow roughly five minutes. Use a live-key fixture that has actually been tested before presenting. If showing synthetic mode, state that explicitly and do not describe its output as real Qloo evidence.
+Allow roughly five minutes. Open saved live-Qloo examples to avoid spending the entire presentation waiting for provider rate limits. Illustrative booking fees and availability must stay labeled.
 
-1. **Define the room.** Enter city and anchor artists. Enter offered artists with clearly labeled illustrative fees, availability and genres. Explain who supplies each input.
-2. **Run the workflow.** Show identity resolution, Qloo discovery, ranking and the planned deeper checks. If an identity is ambiguous, choose a confirmed provider candidate.
-3. **Inspect the chosen slate.** Show cost, unused budget, hard constraints, number of combinations checked and objective components. Explain that policy points are not a sales forecast.
-4. **Challenge it.** Lock or exclude an artist, lower the budget, or increase the discovery requirement. Show the new optimum or explain the precise infeasibility. An artist without a fee remains unbookable.
-5. **Show the receipts.** Open the source receipt behind a supported claim. Show timestamps, source mode and compact evidence. Also show a missing-evidence case so a judge can see how uncertainty survives into the result.
-6. **Show the trade-off.** Inspect a feasible swap and a frontier option. Explain which constraints or policy components account for the difference.
-7. **Stress the decision.** Show the 80–120% budget ladder and the 0%, 10%, 20% and 30% fee increases. Explain whether the original slate survives a higher quote, whether a replacement slate exists, and which artists change. Keep locks and availability fixed. These are hypothetical planning cases, not success probabilities.
-8. **Rehearse a cancellation.** Run `npm run contingency -- <saved-run-id>` or call `POST /api/contingency`. Show that the other booked artists stay fixed, name the exact replacement and surface any critical dependency. Compare the optimum with the robust slate and state its visible utility cost. Coverage describes only the declared drills; it is not a probability.
-9. **Build a market route.** Run `POST /api/intelligence/:id` with explicit candidate coordinates. Show the selected-artist × market receipt matrix, every pair comparison, exact route count, travel schedule, aggregate audience activation profile and cultural place leads. Explain that route scoring uses returned-evidence coverage because heatmap percentiles from separate market responses are not comparable. Qualify place leads with sourced capacities through `POST /api/venues/:id/qualify`, show the room-fit rule and break-even call sheet, and state that audience context and attendance rows are evidence inputs and arithmetic rather than conversion or demand forecasts.
-10. **Move from route to local execution.** Run `POST /api/activation/:id`. Show the neighborhood hotspot, an opener that passes the smaller-returned-popularity rule, a lead that still needs size evidence, and poster/aftershow leads inside the 2.5 km radius. Download `GET /api/tour-calendar/:id` and show that each routed show and transfer is present.
-11. **Move from decision to booking operations.** Generate a booking packet for an explicit event. Inspect one hold request's evidence lines and number guard, then move one artist through approval and outreach with a named pitch angle and venue segment. Record an objection and counteroffer. Show the Day 3/7/14 reminders, recalculated campaign ceiling, complete negotiation history, exact cancellation fallback and logistics gate.
-12. **Interrogate the dossier.** Open `GET /api/dossier/:id/report`, then ask the report API about risks, the multi-market comparison or receipts. Ask for a ticket-sales prediction and show the evidence boundary refusing it.
-13. **Save an alternative.** Edit a quote or constraint, save a named scenario and open its share link in a fresh session. Show its parent run and the preserved source receipts. The server recomputes this scenario from saved evidence, rather than trusting scores sent by the browser.
-14. **Play the Decision Gauntlet.** Score the current slate, apply the 90% budget mission and re-optimize. Show how clearing the budget mission can lose the quote-shock mission. This is the core lesson: robust booking is multi-objective, and every badge is derived from the displayed constraints and saved evidence.
-15. **Compare.** If a model is configured, inspect the Qloo-off comparison in the exported memo or its optional UI section as a descriptive contrast. The optimizer's input-order baseline is a separate comparison, not the tool-free LLM answer. End with the specific buyer decision the product supports.
+1. **Decision and proof (60 seconds):** show the optimized lineup, the cost-first alternative, and a real model-only control under the same brief. Withdraw a consequential receipt and explain why the decision changes.
+2. **Agent investigation (60 seconds):** replay an actual native-function investigation, including a rejected action or provider wait. Show the server-validated experiment and cited interpretations; save its proposed scenario for human review.
+3. **Commercial resilience (60 seconds):** apply simultaneous fee/attendance/availability shocks, then show the shared-budget portfolio and survivor-preserving cancellation recovery. Explain that margins use declared assumptions.
+4. **Evidence and approval (60 seconds):** inspect one explicitly synthetic demonstration quote with exact source lines, review it, and show stale approval rejection when a term changes. No external message is sent.
+5. **Independent validation and limits (60 seconds):** show all London/Berlin benchmark attempts, including a failed request, and the real blind-review count. Show that zero ballots is zero independent evidence. Finish with a saved decision link and the specific planning action it supports.
 
 ## Evidence to collect before claiming impact
 
@@ -45,7 +35,7 @@ Allow roughly five minutes. Use a live-key fixture that has actually been tested
 
 ## Must complete before submission
 
-- [ ] Complete the [Qloo key request](key-request.md), including the applicant's personal fields and rule acceptance, then run the complete app with a valid live key. The request has not been submitted by the application.
+- [x] Run the application with the supplied live Qloo credential. See the dated [validation record](live-validation.md); no claim is made about who submitted the original key request.
 - [ ] Calibrate adapters against real Qloo outputs; keep unknown measurements unknown until their semantics are established.
 - [ ] Complete real-booker testing or explicitly disclose that impact validation remains pending.
 - [ ] Publish a working external demo and verify it is accessible end-to-end without private access.
@@ -58,4 +48,8 @@ Allow roughly five minutes. Use a live-key fixture that has actually been tested
 
 The **user-supplied hackathon brief** lists **31 October 2026 at 9:15 a.m. India time (GMT+5:30)** as the deadline, requires a working externally hosted application, a public code repository, a text description and an open-source license, and says a video is not required. These requirements and the deadline have not been independently verified in this document. The supplied brief lists a $15,000 first prize; no placing or award can be promised.
 
-Public demo: pending. Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live integration validation: pending. Real-booker outcome evidence: pending.
+Public demo: pending. Public repository: [github.com/codewithanshuman/houselights](https://github.com/codewithanshuman/houselights). Live Qloo and Groq integration validation: recorded in docs/live-validation.md. Real-booker outcome evidence: pending.
+
+## Current evidence status — 18 October 2026
+
+Real Qloo research and Groq controls exist for London and Berlin. Five of six control attempts produced feasible lineups; one rate-limit failure is retained. The prepared blind study has no human ballots yet. Native tool investigation, joint stress analysis, source review, universal planning gates, portfolio recovery and backup/restore are described in [advanced workflows](advanced-workflows.md). Public demo hosting, final external walkthrough, artwork distribution rights and current official eligibility requirements still need confirmation. This document makes no winning, demand, causal uplift or commercial-outcome claim.

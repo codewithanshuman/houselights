@@ -3,6 +3,10 @@
   "version": "1.2.0",
   "description": "A Qloo-grounded slate optimizer with auditable receipts",
   "scripts": {
+    "build:worker": "node scripts/build-qloo-worker.mjs",
+    "prestart": "npm run build:worker",
+    "predev": "npm run build:worker",
+    "pretest": "npm run build:worker",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
     "test": "node --test",
@@ -13,7 +17,9 @@
     "gm": "node --env-file-if-exists=.env scripts/gm.mjs",
     "venues": "node --env-file-if-exists=.env scripts/venues.mjs",
     "validate:live": "node --env-file-if-exists=.env scripts/validate-live.mjs",
-    "validate:festival": "node --env-file-if-exists=.env scripts/validate-festival.mjs"
+    "validate:festival": "node --env-file-if-exists=.env scripts/validate-festival.mjs",
+    "backup": "node --env-file-if-exists=.env scripts/backup.mjs",
+    "evaluate:campaign": "node --env-file-if-exists=.env scripts/evaluate-campaign.mjs"
   },
   "keywords": [],
   "author": "",
@@ -33,5 +39,8 @@
   "type": "module",
   "engines": {
     "node": ">=24.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

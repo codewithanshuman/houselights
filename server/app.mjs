@@ -16,10 +16,13 @@ import { buildCapacityResearch } from './capacity-evidence.mjs';
 import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput } from './activation.mjs';
 import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
-import { withoutDerived } from './gm.mjs';
+import { withoutDerived, preserveRankProvenance } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode } from './access.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
-import { registerDecisionRoutes } from './decision-room.mjs';
+import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
+import { registerOperationalRoutes } from './operational-evidence.mjs';
+import { commercialStress } from './commercial-stress.mjs';
+import { buildDecisionProof, decisionFingerprint } from './decision-proof.mjs';
 import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
@@ -55,7 +58,7 @@ function trustedScenarioInput(source, body, label) {
   if (!object(body.terms) || Object.keys(body.terms).some(id => !source.memo.items.some(item => item.id === id))) {
     return { error: `${label} terms must refer to artists from the saved run.` };
   }
-  const items = source.memo.items.map(item => {
+  const items = preserveRankProvenance(source).map(item => {
     const edit = body.terms[item.id];
     if (!edit) return item;
     return { ...item, terms: { fee: edit.fee ?? null, genre: String(edit.genre || '').trim().slice(0, 60), available: edit.available === true } };
@@ -79,6 +82,33 @@ export function createApp() {
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
   registerResearchRoutes(app);
+  registerOperationalRoutes(app);
+  app.post('/api/investigation/:id/apply', (req,res) => {
+    const source=store.load(req.params.id), investigation=source?.investigation;
+    if(!source)return res.status(404).json({error:'Saved investigation not found.'});
+    try {
+      const parent=store.load(source.parentId);
+      if(investigation?.status!=='completed'||!investigation.proposedScenario||!parent||investigation.sourceDigest!==decisionFingerprint(parent))return res.status(409).json({error:'A completed investigation with a current feasible proposed scenario is required.'});
+      const constraints=investigation.proposedScenario.constraints;
+      const slate=optimizeSlate(source.memo.items,constraints);
+      if(!slate.feasible)return res.status(409).json({error:'The proposed scenario no longer passes the constraints.'});
+      const snapshot={...withoutDerived(source),id:undefined,createdAt:undefined,parentId:source.id,
+        memo:{...source.memo,items:preserveRankProvenance(source),slate,constraints:slate.constraints,input:{...source.memo.input,constraints:slate.constraints}},
+        input:{...source.input,constraints:slate.constraints},investigationDecision:{sourceId:source.id,observationId:investigation.preferredScenarioId,scope:'Organizer-requested hypothetical scenario. Fresh planning approval required.'}};
+      snapshot.decisionProof=buildDecisionProof(snapshot);
+      const id=store.save(snapshot);store.retain(source.id);
+      return res.status(201).json({id,proofStatus:snapshot.decisionProof.status});
+    }catch(error){return res.status(400).json({error:error.message});}
+  });
+  app.post('/api/commercial-stress/:id', (req,res) => {
+    const source=store.load(req.params.id);
+    if(!source)return res.status(404).json({error:'Saved decision not found.'});
+    try {
+      const report=commercialStress(source,req.body);
+      const id=store.save({...source,id:undefined,createdAt:undefined,parentId:source.id,commercialStress:report});
+      return res.status(201).json({id,report});
+    } catch(error){return res.status(400).json({error:error.message});}
+  });
   app.get('/api/access', (req, res) => res.json({ protected: protectedMode(), editable: canEdit(req) }));
   app.get('/api/examples', (_req, res) => res.json(store.examples()));
   app.post('/api/examples/:id/pin', (req, res) => {
@@ -102,7 +132,7 @@ export function createApp() {
     const snapshot = store.load(req.params.id);
     res.set('Cache-Control', 'no-store');
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
-    try { return res.json(buildDossier(snapshot)); }
+    try { return res.json(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) })); }
     catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.get('/api/dossier/:id/report', (req, res) => {
@@ -111,20 +141,20 @@ export function createApp() {
     try {
       res.set('Cache-Control', 'no-store');
       res.set('Content-Disposition', `attachment; filename="houselights-${req.params.id.replace(/[^a-z0-9_-]/gi, '')}-report.html"`);
-      return res.type('html').send(dossierHtml(buildDossier(snapshot)));
+      return res.type('html').send(dossierHtml(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) })));
     } catch (error) { return res.status(400).type('text/plain').send(error.message); }
   });
   app.post('/api/dossier/:id/ask', (req, res) => {
     const snapshot = store.load(req.params.id);
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
-    try { return res.json(answerDossierQuestion(buildDossier(snapshot), req.body?.question)); }
+    try { return res.json(answerDossierQuestion(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) }), req.body?.question)); }
     catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.post('/api/packet/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
-    try { return res.json(buildBookingPacket(snapshot, req.body?.event)); }
-    catch (error) { return res.status(400).json({ error: error.message }); }
+    try { const approval = requirePlanningApproval(snapshot, req.body?.expectedDecisionRevision); return res.json({ ...buildBookingPacket(snapshot, req.body?.event), approval }); }
+    catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
   });
   app.get('/api/tour-calendar/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -148,8 +178,15 @@ export function createApp() {
     const snapshot = store.load(req.params.id);
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
     try {
-      return res.json(pipelineStore.update(req.params.id, current => applyPipelineEvent(current || createPipeline(snapshot), req.body)));
-    } catch (error) { return res.status(400).json({ error: error.message }); }
+      return res.json(pipelineStore.update(req.params.id, current => {
+        const pipeline = current || createPipeline(snapshot);
+        if (req.body?.expectedRevision !== pipeline.revision) throw Object.assign(new Error('Pipeline revision changed. Reload before acting.'), {status:409});
+        const approval = authorizePipelineEvent(snapshot, req.body);
+        const next = applyPipelineEvent(pipeline, req.body);
+        if (approval) next.events.at(-1).approval = approval;
+        return next;
+      }));
+    } catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
   });
   app.get('/api/campaign/:id', (req, res) => {
     const snapshot = store.load(req.params.id);

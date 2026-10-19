@@ -9,6 +9,8 @@ services:
       QLOO_TRUSTED_BASE_URL: ${QLOO_TRUSTED_BASE_URL:-https://api.qloo.com}
       ORGANIZER_TOKEN: ${ORGANIZER_TOKEN:?Set an organizer token of at least 32 characters}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-groq}
       LLM_MODEL: ${LLM_MODEL:-}
       GM_CALL_BUDGET: "60"
     volumes:

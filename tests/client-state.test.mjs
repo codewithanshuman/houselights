@@ -10,6 +10,7 @@ const clientScript = readFileSync(new URL('../public/app.js', import.meta.url), 
 // browser interaction are checked separately; this guards restored data.
 function client(saved) {
   const elements = new Map();
+  const events = [];
   let exported;
   const element = id => {
     if (!elements.has(id)) elements.set(id, {
@@ -19,14 +20,14 @@ function client(saved) {
     return elements.get(id);
   };
   const context = vm.createContext({
-    document: { head: element('head'), getElementById: element, querySelectorAll: () => [], querySelector: () => element('page-footer'), addEventListener() {}, createElement: () => element('download') },
+    document: { head: element('head'), getElementById: element, querySelectorAll: () => [], querySelector: () => element('page-footer'), addEventListener() {}, dispatchEvent(event) { events.push(event); return true; }, createElement: () => element('download') },
     window: { location: { pathname: '/' } },
     fetch: async path => ({ ok: true, json: async () => path === '/healthz' ? { mock: true, keyed: false } : saved }),
-    AbortSignal, Blob, setTimeout: () => 1, clearTimeout() {},
+    AbortSignal, Blob, CustomEvent, setTimeout: () => 1, clearTimeout() {},
     URL: { createObjectURL(blob) { exported = blob; return 'blob:test'; }, revokeObjectURL() {} }
   });
   vm.runInContext(`${clientScript}\nglobalThis.clientAPI = { state, loadSaved, exportRun };`, context);
-  return { ...context.clientAPI, element, exported: async () => JSON.parse(await exported.text()) };
+  return { ...context.clientAPI, element, events, exported: async () => JSON.parse(await exported.text()) };
 }
 
 function snapshot({ originalName = 'Phoenix', exampleBookingTerms = true } = {}) {
@@ -45,6 +46,8 @@ test('saved-run reload and export preserve current quotes for a resolved alias a
   const saved = snapshot();
   const page = client(saved);
   await page.loadSaved(saved.id);
+  assert.equal(page.events[0].type, 'houselights:decision-loaded');
+  assert.equal(page.events[0].detail.id, saved.id);
   assert.equal(page.state.offers[0].name, 'Phoenix');
   assert.equal(page.state.offers[0].fee, 1500, 'current scenario terms take precedence over original input terms');
   assert.equal(page.state.offers[0].genre, 'alternative');
