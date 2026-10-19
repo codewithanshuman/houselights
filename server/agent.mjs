@@ -135,8 +135,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const memo = { items, slate, constraints, input: { city, anchors, anchorIds: anchorRefs, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
     mode: run.mode === 'mock' || run.receipts.some(receipt => receipt.source === 'synthetic') ? 'mock' : 'live', caveats, crowd,
     writer: written ? 'claim-selector' : 'template', summary: '', removed, base,
-    quality: { resolved: candidates.size, ranked: order.length, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },
-    eval: evaluate({ items, ranked: order.map(ref => candidates.get(ref).name), base, receipts: run.receipts }) };
+    quality: { resolved: candidates.size, ranked: rankComplete ? order.length : 0, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },
+    eval: evaluate({ items, ranked: rankComplete ? order.map(ref => candidates.get(ref).name) : [], base, receipts: run.receipts }) };
   run.emit({ type: 'memo', ...memo });
   return memo;
 }

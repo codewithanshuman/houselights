@@ -40,5 +40,6 @@ test('partial successful rankings cannot inflate fit by dropping unreturned cand
   const memo=await buildMemo({city:'Pune',anchors:['Alpha'],offers:['Beta','Gamma'],terms:{Beta:{fee:100,available:true},Gamma:{fee:100,available:true}},constraints:{budget:200,slots:1}},run);
   assert.ok(memo.items.length>1);
   assert.ok(memo.items.every(item=>item.fit===null&&!item.evidence.rank&&item.verdict==='hold'));
+  assert.equal(memo.quality.ranked,0);
   assert.match(memo.caveats.join(' '),/full-pool fit is unknown/);
 });
