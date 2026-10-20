@@ -1,0 +1,132 @@
+# Free hosting for the current application
+
+The selected cost constraint is **no paid hosting**. No account, VM, public
+service, DNS entry or paid resource has been created by these files.
+
+The existing application needs a continuously running Node process, child
+process support and persistent SQLite storage. An existing free Linux VM is the
+closest fit. Oracle Cloud's
+[Always Free resources](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+include eligible compute and block storage in the account's home region.
+Provisioning requires the owner's account and available capacity. Always Free
+eligibility and remaining allowance must be confirmed in that account; a trial
+credit balance is not evidence that a resource stays free.
+
+Render's free instances cannot attach persistent disks, and Vercel Functions do
+not provide the local persistent storage this version requires. Neither is
+being presented as a complete free backend. The optional Vercel frontend package
+remains available once a backend URL exists.
+
+## Required from the account owner
+
+- A free VM/account with SSH access, enough free capacity for the Docker build,
+  and persistent storage. Do not paste SSH private keys or provider keys in chat.
+- A hostname resolving to the VM's public IP. An existing free subdomain can be
+  used; these files do not buy or register a domain.
+- Network rules allowing HTTP/HTTPS on ports 80 and 443, with SSH restricted to
+  the owner's address. Port 8080 stays internal to Docker.
+- Confirmation of the exact free resources before any provisioning step. The
+  account owner completes signup, identity checks and agreements.
+
+## Launch on the VM
+
+The VM must already have Git, Docker Engine and the Docker Compose plugin from
+their official distributions. Use the tested Git commit from the release CI.
+The Compose file supports the application and HTTPS proxy on one VM.
+
+```sh
+git clone https://github.com/codewithanshuman/houselights.git
+cd houselights
+git checkout FULL_TESTED_COMMIT
+```
+
+Create `/etc/houselights.env` with owner-only permissions, outside the checkout.
+Configure these fields privately:
+
+```dotenv
+PUBLIC_HOSTNAME=your-free-hostname.example
+RELEASE_COMMIT=full-checked-out-git-commit
+QLOO_API_KEY=your-event-key
+GROQ_API_KEY=your-groq-key
+LLM_MODEL=openai/gpt-oss-120b
+ORGANIZER_TOKEN=an-unpredictable-secret-of-at-least-32-characters
+```
+
+The `.example` hostname and descriptive values above are placeholders, not
+working configuration. Never commit the completed file or print its contents
+in a release report. The event Qloo host is explicitly configured in Compose.
+
+```sh
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml up --build -d
+node scripts/verify-release.mjs https://YOUR_HOSTNAME --commit=FULL_TESTED_COMMIT --output=release-http-check.json
+```
+
+The HTTPS proxy is the backend's only exposed ingress, so this profile sets one
+trusted proxy hop. If another proxy is later added, recheck that configuration.
+The public root opens the judge workspace. `/index.html` retains the complete
+organizer interface; provider workflows require the organizer token.
+
+Startup seeds four curated public cases into a separate persistent database.
+No local private database, review invitation or commercial source document is
+transferred. All capabilities remain in the application; UI redesign and the
+five artwork replacements are deferred. **The current organizer artwork is
+still present in this build and must be replaced or explicitly excluded before
+final public publication.** The judge page itself does not use those assets.
+
+## Verify storage, jobs and recovery
+
+The HTTP verifier checks protection, pages, case replay, budget changes,
+evidence withdrawal and unchanged source cases. It does not call providers or
+prove that a remote disk survives restart.
+
+On the chosen VM, complete a bounded authenticated run, note its saved result
+and job ID, then recreate the application container without deleting volumes:
+
+```sh
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml up -d --force-recreate houselights
+```
+
+Confirm the same saved result, job events and idempotent reconnect remain
+available. Never use `down -v` on the real deployment.
+
+Create and verify a private backup:
+
+```sh
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml exec -T houselights node scripts/backup.mjs create /var/data/houselights/backup-RELEASE
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml exec -T houselights node scripts/backup.mjs verify /var/data/houselights/backup-RELEASE /tmp/restore-RELEASE
+```
+
+Copy a verified backup to a separate private location. A backup on the same
+disk does not protect against losing that disk. Real provider checks and an
+external-browser walkthrough are still required after hosting is available.
+
+## CI scope and cost
+
+Run an isolated local process-restart rehearsal without Docker:
+
+```sh
+npm run release:rehearse -- artifacts/new-release-rehearsal
+```
+
+It creates a new directory, strips provider credentials from the child runtime,
+disables model calls, seeds the public cases, tests HTTP access, completes a
+proof job, restarts only its own child process, checks persistence and verifies
+a backup/restore. It never stops the existing development server or touches
+the original database. Reports distinguish a local rehearsal from a hosted test.
+
+The release workflow uses a standard Ubuntu GitHub Actions runner only when
+the repository is public. GitHub documents that
+[standard runners are free for public repositories](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+The workflow uploads no artifacts, creates no package cache, publishes no image
+and deploys no service. It uses synthetic runtime mode with the model disabled
+and no provider credentials.
+
+It builds the actual Linux image, tests protected public routes, completes a
+zero-provider proof job, replaces the container while retaining its volume, and
+checks decisions, events, idempotency and a backup/restore. Passing CI validates
+that environment; it does not establish a live VM, DNS, TLS or public uptime.
+
+Cloudflare Quick Tunnels are not treated as the final host: their URLs are
+temporary, availability depends on the local PC, and
+[they do not support server-sent events](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/),
+which an existing memo workflow uses.

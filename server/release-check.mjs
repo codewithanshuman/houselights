@@ -1,0 +1,77 @@
+const round=n=>Math.round(n*100)/100;
+const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+export function releaseOrigin(value,{allowLocal=false}={}) {
+  let url;try{url=new URL(value);}catch{throw new Error('Provide the deployment origin.');}
+  const loopback=['localhost','127.0.0.1','[::1]'].includes(url.hostname);
+  if(url.username||url.password||url.pathname!=='/'||url.search||url.hash||url.protocol!=='https:'&&!(allowLocal&&loopback&&url.protocol==='http:')||loopback&&!allowLocal)
+    throw new Error('Use a public HTTPS origin, or explicitly allow a local rehearsal.');
+  return url.origin;
+}
+
+// Anonymous checks only. No credentials are transmitted and no paid provider
+// workflow, saved plan, ballot, approval or booking is created.
+export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic=false,expectedCommit,fetcher=fetch}={}) {
+  const origin=releaseOrigin(value,{allowLocal}),checks=[],cases=[];
+  const record=(name,passed,detail)=>checks.push({name,passed:!!passed,...(detail?{detail}: {})});
+  async function request(path,{body,format='json'}={}){
+    const response=await fetcher(origin+path,{redirect:'error',signal:AbortSignal.timeout(20000),
+      ...(body!==undefined?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{})});
+    const text=await response.text();
+    if(text.length>5_000_000)throw new Error('A release response exceeded the inspection limit.');
+    const data=format==='json'?JSON.parse(text):text;
+    return {status:response.status,cache:response.headers.get('cache-control')??'',data};
+  }
+  try{
+    const health=await request('/healthz');
+    record('health',health.status===200&&health.data.ok===true);
+    record('health-not-cached',health.cache.includes('no-store'));
+    record('production-access-mode',health.data.protected===true);
+    record('data-mode',allowSynthetic||health.data.mock===false);
+    record('qloo-key-configured',allowSynthetic||health.data.keyed===true,'Configuration is not a live provider test.');
+    record('llm-configured',allowSynthetic||health.data.llm===true,'Configuration is not a live provider test.');
+    if(expectedCommit)record('deployed-commit',health.data.release===expectedCommit);
+    const access=await request('/api/access');
+    record('anonymous-is-read-only',access.status===200&&access.data.protected===true&&access.data.editable===false);
+    if(!checks.find(c=>c.name==='anonymous-is-read-only').passed)throw new Error('Access protection failed; further checks stopped.');
+    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks']){
+      const response=await request(path,{body:{}});
+      record('protected-write:'+path,response.status===401);
+    }
+    record('protected-private-read',(await request('/api/studies/missing-release-check')).status===401);
+    for(const path of ['/judge.html','/index.html','/review.html']){
+      const page=await request(path,{format:'text'});
+      record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
+    }
+    const catalog=await request('/api/judge/cases');
+    record('catalog-not-cached',catalog.cache.includes('no-store'));
+    record('published-cases',catalog.status===200&&Array.isArray(catalog.data.cases)&&catalog.data.cases.length>0);
+    if(!Array.isArray(catalog.data.cases))throw new Error('No valid public case catalog.');
+    // Three calculations per case, four cases maximum: below the 20/IP/min cap.
+    for(const item of catalog.data.cases.slice(0,4)){
+      const path='/api/judge/cases/'+item.id,baseline=await request(path),b=baseline.data;
+      if(!b.snapshot?.memo)throw new Error('A public case is missing its decision inputs.');
+      const budget=b.snapshot.memo.constraints.budget;
+      const same=await request(path+'/experiment',{body:{budget}});
+      record(item.id+':baseline-replay',same.status===200&&same.data.providerCalls===0&&same.data.persisted===false&&equal(same.data.snapshot?.memo.slate.selectedIds,b.snapshot.memo.slate.selectedIds));
+      const tighter=Math.max(0,Math.floor((b.snapshot.memo.slate.totalFee??budget)*.9));
+      const changed=await request(path+'/experiment',{body:{budget:tighter}});
+      const slate=changed.data.snapshot?.memo.slate,selected=b.snapshot.memo.items.filter(i=>slate?.selectedIds.includes(i.id));
+      record(item.id+':budget-check',changed.status===200&&changed.data.providerCalls===0&&changed.data.persisted===false&&
+        typeof slate?.feasible==='boolean'&&(!slate.feasible||(round(selected.reduce((sum,i)=>sum+i.terms.fee,0))===slate.totalFee&&slate.totalFee<=tighter)));
+      const receipt=b.snapshot.memo.items.flatMap(i=>i.evidenceReceipts?.rank??[]).find(id=>b.snapshot.receipts.some(r=>r.id===id));
+      if(receipt){
+        const withdrawn=await request(path+'/experiment',{body:{withdrawReceiptId:receipt}});
+        record(item.id+':evidence-withdrawal',withdrawn.status===200&&withdrawn.data.providerCalls===0&&withdrawn.data.comparison?.affectedIds.length>0&&withdrawn.data.proof?.status==='blocked');
+      }
+      const after=await request(path);
+      record(item.id+':case-unchanged',equal(after.data,b));
+      cases.push({id:item.id,title:item.title,synthetic:b.snapshot.mock===true,controlStatus:b.methods?.llm.status??'unavailable'});
+    }
+  }catch(error){
+    record('verification-completed',false,error.name==='TimeoutError'?'A request timed out.':error.message);
+  }
+  return {version:'1.0',checkedAt:new Date().toISOString(),origin,scope:allowLocal?'local-rehearsal':'public-http-check',
+    passed:checks.length>0&&checks.every(c=>c.passed),checks,cases,
+    notVerified:['Host restart and persistent volume','Live Qloo/LLM requests','Human outcome validation','Artwork or entrant eligibility'],
+    sideEffects:'Anonymous, temporary judge experiments and request-quota increments only.'};
+}

@@ -1,0 +1,41 @@
+name: houselights
+services:
+  houselights:
+    build:
+      context: ../..
+    environment:
+      QLOO_API_KEY: ${QLOO_API_KEY:?Set the live Qloo key privately}
+      QLOO_BASE_URL: https://hackathon.api.qloo.com
+      QLOO_TRUSTED_BASE_URL: https://hackathon.api.qloo.com
+      GROQ_API_KEY: ${GROQ_API_KEY:?Set the Groq key privately}
+      LLM_PROVIDER: groq
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-oss-120b}
+      ORGANIZER_TOKEN: ${ORGANIZER_TOKEN:?Set a random token of at least 32 characters}
+      RELEASE_COMMIT: ${RELEASE_COMMIT:?Set the checked-out commit}
+      JUDGE_CASES_FILE: /app/deploy/judge-cases.json
+      PUBLIC_LANDING_PAGE: judge
+      TRUST_PROXY: "1"
+      GM_CALL_BUDGET: "60"
+    volumes:
+      - app-data:/var/data/houselights
+    restart: unless-stopped
+    init: true
+  https:
+    image: caddy:2
+    environment:
+      PUBLIC_HOSTNAME: ${PUBLIC_HOSTNAME:?Set a hostname resolving to this VM}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      houselights:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  app-data:
+  caddy-data:
+  caddy-config:

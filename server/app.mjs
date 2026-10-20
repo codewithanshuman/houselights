@@ -122,8 +122,10 @@ export function createApp() {
   registerDecisionRoutes(app);
   registerPortfolioRoutes(app);
   registerBenchmarkRoutes(app);
+  if(process.env.PUBLIC_LANDING_PAGE==='judge')app.get('/',(_req,res)=>res.redirect(302,'/judge.html'));
   app.use(express.static(pub));
-  app.get('/healthz', (_req, res) => res.json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM() }));
+  app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),
+    protected:protectedMode(),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);

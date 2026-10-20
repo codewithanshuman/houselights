@@ -1,5 +1,7 @@
 # Deployment runbook
 
+The current hosting budget is zero. See the [free VM deployment and verification path](free-hosting.md). A paid Render disk has not been authorized. `deploy/free-vm/compose.yaml` prepares the full application and HTTPS proxy for an existing suitable VM; it does not create resources. `JUDGE_CASES_FILE` seeds curated public cases atomically at startup, and `npm run release:verify -- https://host` checks public HTTP behavior without provider calls or organizer credentials.
+
 ## Runtime contract
 
 Deploy the backend as a long-running **Node.js 24+ server or Docker container** with outbound HTTPS, child-process support and a writable filesystem. The official Qloo harness runs as a local stdio process. An isolate-only runtime such as Cloudflare Workers cannot run this integration as written. Vercel frontend preparation is available below; no public deployment has been verified.

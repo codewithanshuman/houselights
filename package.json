@@ -23,6 +23,8 @@
     "evaluate:prepare": "node --env-file-if-exists=.env scripts/prepare-evaluation.mjs",
     "evaluate:offered": "node --env-file-if-exists=.env scripts/prepare-offered-evaluation.mjs",
     "judge:cases": "node --env-file-if-exists=.env scripts/judge-cases.mjs",
+    "release:verify": "node scripts/verify-release.mjs",
+    "release:rehearse": "node scripts/rehearse-release.mjs",
     "deploy:prepare-vercel": "node scripts/prepare-vercel.mjs"
   },
   "keywords": [],
