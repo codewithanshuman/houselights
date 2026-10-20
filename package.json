@@ -22,6 +22,7 @@
     "evaluate:campaign": "node --env-file-if-exists=.env scripts/evaluate-campaign.mjs",
     "evaluate:prepare": "node --env-file-if-exists=.env scripts/prepare-evaluation.mjs",
     "evaluate:offered": "node --env-file-if-exists=.env scripts/prepare-offered-evaluation.mjs",
+    "judge:cases": "node --env-file-if-exists=.env scripts/judge-cases.mjs",
     "deploy:prepare-vercel": "node scripts/prepare-vercel.mjs"
   },
   "keywords": [],

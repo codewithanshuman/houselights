@@ -9,12 +9,14 @@ process.env.LLM_PROVIDER='groq';process.env.GROQ_API_KEY='test-only';process.env
 const {db}=await import('../server/database.mjs');
 const store=await import('../server/store.mjs');
 const {createApp}=await import('../server/app.mjs');
+const {executeNextResearchRun}=await import('../server/research-runs.mjs');
 const {optimizeSlate}=await import('../server/optimizer.mjs');
 const {createStudy,blindReview,submitBallot,studyReport}=await import('../server/reviews.mjs');
 const server=createApp().listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
 const base=`http://127.0.0.1:${server.address().port}`,realFetch=globalThis.fetch;
 after(async()=>{globalThis.fetch=realFetch;await new Promise(resolve=>server.close(resolve));db.close();rmSync(dir,{recursive:true,force:true});});
-const post=(path,body,auth=true)=>realFetch(base+path,{method:'POST',headers:{'content-type':'application/json',...(auth?{authorization:'Bearer '+process.env.ORGANIZER_TOKEN}:{})},body:JSON.stringify(body)});
+const post=(path,body,auth=true)=>realFetch(base+path,{method:'POST',headers:{'content-type':'application/json','idempotency-key':crypto.randomUUID(),...(auth?{authorization:'Bearer '+process.env.ORGANIZER_TOKEN}:{})},body:JSON.stringify(body)});
+const getBatch=async id=>(await realFetch(base+'/api/benchmarks/'+id,{headers:{authorization:'Bearer '+process.env.ORGANIZER_TOKEN}})).json();
 const source=()=>{
   const items=['a','b','c','d'].map((id,i)=>({id,name:id,fit:1-i*.2,evidence:{rank:true},evidenceReceipts:{rank:['r1']},receipts:['r1'],terms:{fee:[60,40,30,20][i],available:true,genre:id}}));
   const memo={items,currency:'GBP',mode:'mock',input:{city:'London',anchors:['anchor']},constraints:{budget:100,slots:1}};memo.slate=optimizeSlate(items,memo.constraints);
@@ -40,7 +42,8 @@ test('benchmark batches retain every provider attempt and predeclare first-trial
     calls++;return new Response(JSON.stringify({id:`stub-${calls}`,model:'fixture-model',choices:[{message:{content:JSON.stringify({selectedIds:calls===1?['b']:['invented'],reason:'Synthetic test response'})},finish_reason:'stop'}]}));
   };
   assert.equal((await post('/api/benchmarks',{sourceId,trials:2},false)).status,401);
-  const r=await post('/api/benchmarks',{sourceId,trials:2});assert.equal(r.status,201);const batch=await r.json();assert.equal(calls,2);assert.equal(batch.summary.feasible,1);assert.equal(batch.summary.invalid,1);assert.equal(batch.reviewSourceId,batch.trials[0].snapshotId);
+  const r=await post('/api/benchmarks',{sourceId,trials:2});assert.equal(r.status,202);const queued=await r.json();assert.equal(calls,0);
+  await executeNextResearchRun();const batch=await getBatch(queued.run.id);assert.equal(calls,2);assert.equal(batch.summary.feasible,1);assert.equal(batch.summary.invalid,1);assert.equal(batch.reviewSourceId,batch.trials[0].snapshotId);
   assert.equal((await realFetch(base+'/api/benchmarks/'+batch.id)).status,401);
   assert.throws(()=>createStudy({sourceIds:[batch.trials[1].snapshotId],reviewers:['test']}),/first trial/);
   const study=createStudy({sourceIds:[batch.reviewSourceId],reviewers:['Fixture reviewer'],reviewerRoles:{'Fixture reviewer':'venue_programmer'}});
@@ -57,7 +60,7 @@ test('benchmark batches retain every provider attempt and predeclare first-trial
 test('provider rate limiting leaves a partial batch with unattempted trials recorded',async()=>{
   let calls=0;globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({error:{code:'rate_limit_exceeded'}}),{status:429});};
   const response=await post('/api/benchmarks',{sourceId:source(),trials:3});
-  assert.equal(response.status,201);const batch=await response.json();
+  assert.equal(response.status,202);const queued=await response.json();await executeNextResearchRun();const batch=await getBatch(queued.run.id);
   assert.equal(calls,1);assert.equal(batch.status,'partial');assert.equal(batch.summary.notAttempted,2);
   assert.equal(batch.reviewSourceId,null);assert.equal(batch.trials[0].benchmark.generation.httpStatus,429);
 });

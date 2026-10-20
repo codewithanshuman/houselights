@@ -15,7 +15,7 @@ const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
 after(async () => { await new Promise(resolve => server.close(resolve)); (await import('../server/database.mjs')).db.close(); rmSync(directory, { recursive: true, force: true }); });
-const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() }, body: JSON.stringify(body) });
 
 test('festival research → dossier → benchmark → season → revision works through saved APIs', async () => {
   const items = ['GM Alpha', 'GM Beta', 'GM Gamma'].map((name, i) => ({ name, id: mockCall('describe', { entity: name }).results[0].entity_id,
@@ -36,10 +36,10 @@ test('festival research → dossier → benchmark → season → revision works 
   assert.equal(dossier.festivalResearch.markets.length, 2);
   assert.match(dossier.markdown, /Market DNA and Taste Fit/);
   const benchResponse = await post(`/api/gm/${run.id}/benchmark`, {});
-  assert.equal(benchResponse.status, 201);
+  assert.equal(benchResponse.status, 503);
   const bench = await benchResponse.json();
-  assert.equal(bench.snapshot.benchmark.status, 'unavailable');
-  const seasonResponse = await post(`/api/gm/${bench.id}/season`, { sport: 'baseball', count: 3 });
+  assert.match(bench.error, /Configure/);
+  const seasonResponse = await post(`/api/gm/${run.id}/season`, { sport: 'baseball', count: 3 });
   assert.equal(seasonResponse.status, 201);
   const season = await seasonResponse.json();
   assert.equal(season.snapshot.themeSeason.nights.length, 3);

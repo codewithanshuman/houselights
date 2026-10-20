@@ -8,6 +8,7 @@ import { runFestivalGM } from './gm.mjs';
 import { buildDecisionProof, decisionFingerprint } from './decision-proof.mjs';
 import { investigatorOptions, investigateDecision } from './investigator.mjs';
 import { llmConfiguration } from './llm.mjs';
+import { initializeBenchmark, executeBenchmark, stopBenchmark } from './benchmark-batches.mjs';
 
 // Theme Night GM's persisted replay and PartDrop's transition ledger informed
 // this implementation. Provider execution is never silently replayed on restart.
@@ -51,8 +52,14 @@ export function listResearchRuns() {
   return db.prepare('SELECT body FROM research_runs ORDER BY rowid DESC LIMIT 20').all().map(row=>publicRun(JSON.parse(row.body)));
 }
 function preflight(source, kind, options) {
-  if(!['festival','season','proof','investigation'].includes(kind))throw fault('Choose festival, season, proof or investigation research.');
+  if(!['festival','season','proof','investigation','benchmark'].includes(kind))throw fault('Choose festival, season, proof, investigation or benchmark research.');
   if(kind==='proof')return {expectedCalls:0,budget:0,input:{}};
+  if(kind==='benchmark') {
+    const trials=options?.trials??3;
+    if(!Number.isInteger(trials)||trials<1||trials>5)throw fault('Choose 1–5 trials.');
+    if(!llmConfiguration().enabled)throw fault('Configure the model and provider key before running a genuine benchmark.',503);
+    return {expectedCalls:trials,budget:trials,input:{trials}};
+  }
   if(kind==='investigation') {
     const input=investigatorOptions(source,options);
     if(!llmConfiguration().enabled)throw fault('Configure the LLM provider key and model before starting an investigation.',503);
@@ -77,7 +84,9 @@ export function createResearchRun(raw, requestKey) {
   const source=store.load(input.sourceId);if(!source)throw fault('Saved source not found.',404);
   const plan=preflight(source,input.kind,input.options);
   const minute=Math.floor(Date.now()/60000),day=Math.floor(Date.now()/864e5);
-  if(!consumeQuota([{key:`research-runs:${minute}`,limit:6,expires:(minute+1)*60000},{key:`research-runs-day:${day}`,limit:100,expires:(day+1)*864e5}]))throw fault('Research run quota reached.',429);
+  const quotas=[{key:`research-runs:${minute}`,limit:6,expires:(minute+1)*60000},{key:`research-runs-day:${day}`,limit:100,expires:(day+1)*864e5}];
+  if(input.kind==='benchmark')quotas.push({key:`benchmark-batch:${minute}`,limit:2,expires:(minute+1)*60000},{key:`benchmark-batch-day:${day}`,limit:20,expires:(day+1)*864e5});
+  if(!consumeQuota(quotas))throw fault('Research or benchmark batch quota reached.',429);
   return transaction(()=>{
     // Recheck inside the write transaction for concurrent server instances.
     const duplicate=db.prepare('SELECT body FROM research_runs WHERE request_key=?').get(requestKey);
@@ -88,6 +97,7 @@ export function createResearchRun(raw, requestKey) {
       mode:source.mock?'mock':'live',expectedCalls:plan.expectedCalls,budget:plan.budget,status:'queued',revision:0,
       eventCount:0,eventHash:null,createdAt:now(),resultId:null,workerOwner:null,leaseUntil:null};
     db.prepare('INSERT INTO research_runs(id,request_key,body) VALUES(?,?,?)').run(run.id,requestKey,JSON.stringify(run));
+    if(run.kind==='benchmark')initializeBenchmark(run);
     append(run,'queued',{kind:run.kind,sourceId:run.sourceId,expectedCalls:run.expectedCalls,budget:run.budget});
     db.prepare('UPDATE snapshots SET pinned=1 WHERE id=?').run(source.id);
     return {run:publicRun(run),reused:false};
@@ -101,6 +111,7 @@ export function cancelResearchRun(id, expectedRevision) {
     if(run.status==='cancel_requested')return publicRun(run);
     run.status=run.status==='queued'?'canceled':'cancel_requested';run.revision++;
     if(run.status==='canceled')run.finishedAt=now();
+    if(run.kind==='benchmark'&&run.status==='canceled')stopBenchmark(run.id,'canceled');
     append(run,run.status,{message:'No further workflow will start. An in-flight provider call may finish and its receipt will be retained.'});
     return publicRun(run);
   });
@@ -112,6 +123,7 @@ export function interruptExpiredRuns(time=Date.now()) {
       const run=JSON.parse(row.body);
       if(['running','cancel_requested'].includes(run.status)&&run.leaseUntil<time){
         run.status='interrupted';run.revision++;run.finishedAt=now();run.workerOwner=null;run.leaseUntil=null;
+        if(run.kind==='benchmark')stopBenchmark(run.id,'interrupted');
         append(run,'interrupted',{message:'Worker lease expired. Saved events remain available. No provider calls were automatically repeated.'});interrupted.push(run.id);
       }
     }
@@ -145,6 +157,16 @@ export async function executeNextResearchRun({makeRun=options=>new Run(options),
     const source=store.load(job.sourceId);
     if(!source||decisionFingerprint(source)!==job.sourceDigest)throw fault('Saved source changed; create a new run.');
     const plan=preflight(source,job.kind,job.options);checkCancellation(job.id);
+    if(job.kind==='benchmark') {
+      const batch=await executeBenchmark(job,source,{propose,check:()=>checkCancellation(job.id),
+        commit:(type,update)=>transaction(()=>{const run=owned(job.id);append(run,type,update());})});
+      transaction(()=>{
+        const run=owned(job.id);checkCancellation(job.id);
+        run.resultId=batch.trials[0]?.snapshotId??null;run.batchId=batch.id;run.status='completed';run.revision++;run.finishedAt=now();run.workerOwner=null;run.leaseUntil=null;
+        append(run,'completed',{resultId:run.resultId,batchId:batch.id,status:batch.status,message:'Benchmark batch finished. Inspect every attempt and any unattempted trials.'});
+      });
+      return publicRun(getResearchRun(job.id));
+    }
     let snapshot=structuredClone(source);
     if(job.kind!=='proof'){
       const offset=(source.receipts??[]).reduce((max,r)=>Math.max(max,Number(/^g(\d+)$/.exec(r.id)?.[1]??0)),0);
@@ -176,6 +198,7 @@ export async function executeNextResearchRun({makeRun=options=>new Run(options),
     transaction(()=>{
       const run=getResearchRun(job.id);if(run?.workerOwner!==owner||terminal.has(run.status))return;
       run.status=run.status==='cancel_requested'||error.status===499?'canceled':'failed';run.revision++;run.finishedAt=now();run.workerOwner=null;run.leaseUntil=null;
+      if(run.kind==='benchmark')stopBenchmark(run.id,run.status);
       // Never persist arbitrary provider errors, credentials, or stack traces.
       append(run,run.status,{message:run.status==='canceled'?'Stopped at a workflow boundary. Partial receipts remain inspectable.':'Execution stopped. Inspect saved events and source assumptions; no result or approval was fabricated.'});
     });

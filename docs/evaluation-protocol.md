@@ -16,7 +16,7 @@ Groq's [model documentation](https://console.groq.com/docs/models) and [free-pla
 
 ## Benchmark procedure
 
-Open **Independent evaluation** and choose a saved source and 1–5 trials. `POST /api/benchmarks` runs them sequentially and retains every completed attempt, including provider errors, invalid selections and constraint failures. The batch is persisted before calls start and after every attempt. A 429 stops remaining trials; there is no silent retry or replacement model. No output is repaired into a feasible lineup.
+Open **Independent evaluation** and choose a saved source and 1–5 trials. `POST /api/benchmarks` requires an `Idempotency-Key` and returns HTTP 202 with a persisted job and batch. The background worker runs trials sequentially and retains every returned attempt, including provider errors, invalid selections and constraint failures. Each trial snapshot and journal event share a transaction. A 429 stops remaining trials; there is no silent retry or replacement model. No output is repaired into a feasible lineup.
 
 The prompt includes an allowlist of city, audience anchors, candidate IDs/names, discovery membership and buyer fee/genre/availability terms. Fit, rank, receipts, trends, comparison edges, research claims and arbitrary extra terms are excluded. Tool use and browsing are not enabled. Qloo-derived minimum-fit constraints make the comparison incomparable, so no model call is made in that case. All methods still share a pool that may itself have been discovered with Qloo.
 
@@ -24,11 +24,13 @@ Each attempted generation records provider, requested/returned model, request/re
 
 The first trial is declared in advance as the external-review candidate. Later batch trials cannot enter a study in its place. Variation across all trials remains visible. An invalid first trial yields no review candidate; it is not replaced with the most favorable later trial. This rule prevents substitution within a batch, not all possible researcher selection across separately initiated studies.
 
-`GET /api/benchmarks/:id` retrieves an organizer-private batch. Persisted `running` records after an interrupted server process must be treated as unfinished, not completed trials. The single-control Festival GM action remains available and records the same provider provenance.
+`GET /api/benchmarks/:id` retrieves an organizer-private batch; research-run endpoints supply progress, replay and cancellation. Expired leases mark active jobs interrupted. An in-flight trial with no retained response has an unknown outcome, separate from unattempted trials, and is never replayed automatically. The Festival GM button submits one trial through this same worker. Legacy batches without a run ID remain readable but have no retroactively invented worker history.
 
 ## Predeclared multi-brief campaigns
 
 Run `npm run evaluate:campaign -- manifest.json` against the running server. The manifest contains `sourceIds` (2–20 distinct saved sources) and `trials` (1–5). The command computes each permitted benchmark brief's digest and rejects duplicate briefs before model calls. It records the manifest locally before execution, then saves every returned batch or failed request under ignored `artifacts/`. `HOUSELIGHTS_URL` selects the server, and protected deployments use `ORGANIZER_TOKEN` from the environment.
+
+The CLI saves each request key before sending it. Reconnect after a connection failure with `npm run evaluate:campaign -- --resume artifacts/evaluation-UUID.json`; changed brief digests and older artifacts without durable keys are rejected. Resuming never replaces an interrupted job with fresh model calls. A deliberately new experiment needs a new campaign and must be reported separately.
 
 The command runs sequentially with spacing between batches; provider token headers also pace trials within a batch. Missing model configuration produces a saved blocked report; it never generates a substitute control. A completed campaign means every requested trial was attempted, not that every trial was feasible or that one method was better. Unattempted trials remain visible in partial reports. The plan records candidate-pool digests and pairwise overlaps: changing only the city does not count as a distinct pool. Distinct briefs still do not establish statistical independence.
 

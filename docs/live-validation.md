@@ -1,8 +1,8 @@
-# Live validation — updated 18 October 2026
+# Live validation — updated 20 October 2026
 
 Local release candidate: Houselights 1.2.0, Node 24, Qloo harness 0.1.26. Credentials were supplied through ignored `.env` and are not present in this report or source control.
 
-This is a dated validation log. Earlier entries describe the configuration and features at the time of each check; the 18 October entry records the current live benchmark, review and backup status. Dates use the project's Asia/Calcutta timezone; retained machine timestamps are UTC.
+This is a dated validation log. Earlier entries describe the configuration and features at the time of each check; the latest dated entry records subsequent verification. Dates use the project's Asia/Calcutta timezone; retained machine timestamps are UTC.
 
 ## Verified
 
@@ -143,3 +143,12 @@ The campaign is explicitly **partial**, with six genuine Groq calls and six feas
 The live version 2 investigation `a0c895f1-b329-4141-9af6-6f6167cb3b12` saved completed result `QWgj_QrB6g`. Three native Groq calls returned HTTP 200: receipt inspection, scenario test and finish. It inspected a trends receipt, made zero new Qloo queries and selected five server-rendered facts. The report distinguishes a £6,000 declared budget from £4,600 in assumed fees for Nubya Garcia + Alfa Mist. Its tested £4,500-budget alternative selects Alfa Mist + Makaya McCraven for £4,400, a £200 planning difference. Free-form factual conclusions are not accepted by this protocol; facts remain conditional on supplied evidence and assumptions. No proposed alternative was automatically adopted or approved. Job record: `artifacts/live-fact-investigation.json`. Browser verification confirmed the rendered facts and disclosure after restarting the preview, with no captured JavaScript errors; screenshot: `artifacts/verified-facts-browser-2026-10-19.png`.
 
 Vercel frontend packaging is implemented and tested locally. It requires an explicit HTTPS backend and exports only public assets plus rewrites, refusing hidden files, symlinks and existing output directories. No Vercel deployment or persistent backend has been provisioned. Public walkthrough, artwork permissions, real reviewer judgments and genuine commercial evidence remain unverified.
+
+## Durable benchmarks and public judge experiments — 20 October 2026
+
+- **222/222 automated tests passed**, zero skips, in 9.72 seconds (`artifacts/release-tests-2026-10-20.txt`). New coverage includes idempotent benchmark submission, first-trial retention, cancellation during provider execution, expired leases without replay, source mutation, shared quotas, private-field exclusion, immutable judge cases, public access boundaries, evidence withdrawal, survivor recovery and invalid input rejection.
+- Two one-trial live Groq checks completed through the new worker with feasible controls. API check `8dd29a4c-2e21-44f2-bff5-19eb33662720` returned HTTP 202 in 1,361 ms, then a retained HTTP 200 provider result and snapshot `6cdukv112w`. Browser check `1ecd4cdf-3401-4233-8b69-cd2868aedf87` saved `WfXy-xOOTw`; reloading and reconnecting displayed that same batch and first trial without another model request. These were transport/lifecycle checks, not additional independent evaluation cases.
+- Four public judge projections were prepared from Manchester, Berlin, New York and Mumbai. Their fields exclude private documents, reviewer credentials, approval records and model conversations. Mumbai still shows unknown ranks and a blocked proof. The export `artifacts/judge-public-cases-2026-10-20.json` can seed the future backend; it is not a public deployment.
+- Browser interactions verified that Manchester's GBP 4,500 budget selects Alfa Mist + Makaya McCraven for GBP 4,400; withdrawing the rank receipt blocks evidence without necessarily changing the lineup; canceling Nubya Garcia retains Alfa Mist and selects Kokoroko at GBP 4,800. Inputs remain explicitly illustrative. No captured JavaScript errors occurred on either the judge page or evaluation page. Screenshot: `artifacts/judge-budget-proof-2026-10-20.png`.
+- Online backup and isolated restore matched all **12 tables**, including four public judge cases, eight benchmark batches, thirteen research runs, 264 events, 58 snapshots, three portfolios and one study (`artifacts/release-backup-2026-10-20`, `artifacts/restore-drill-2026-10-20`). Real ballots, private commercial evidence, pipelines and decision sessions remain empty.
+- External hosting, real host restart/volume tests, organizer-workspace artwork permission and genuine human/commercial evidence remain unverified. Anonymous judge actions use no Qloo or LLM calls and do not create bookings or approvals.

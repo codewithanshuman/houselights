@@ -15,7 +15,7 @@ test('evaluation measures distinct candidate pools and overlap without treating 
 test('evaluation retains failed, unstarted and incomplete cases and never promotes a later trial for review',()=>{
  const plan=evaluationPlan([source('source11','London'),source('source22','Berlin')],2);
  const result=evaluationSummary(plan,[{sourceId:'source11',status:'complete',trials:[{status:'unavailable'},{status:'compared',benchmark:{control:{selectedIds:['x1','x2']},qloo:{selectedIds:['x2','x1']}}}]}]);
- assert.deepEqual(result.totals,{planned:4,attempted:2,providerCalls:0,notComparable:0,feasible:1,failed:1,notAttempted:2,identicalSelections:1});
+ assert.deepEqual(result.totals,{planned:4,attempted:2,providerCalls:0,notComparable:0,feasible:1,failed:1,unknown:0,notAttempted:2,identicalSelections:1});
  assert.equal(result.execution,'partial');assert.equal(result.cases[0].reviewEligible,false);assert.equal(result.independentEvidence,false);
 });
 

@@ -53,12 +53,12 @@ export function evaluationSummary(plan,batches){
     const batch=batches.find(b=>b.sourceId===c.sourceId),trials=batch?.trials??[];
     return {sourceId:c.sourceId,city:c.city,planned:plan.trials,attempted:trials.length,feasible:trials.filter(t=>t.status==='compared').length,
       providerCalls:trials.filter(t=>t.benchmark?.generation?.mode==='live').length,notComparable:trials.filter(t=>t.status==='not_comparable').length,
-      failed:trials.filter(t=>t.status!=='compared').length,notAttempted:Math.max(0,plan.trials-trials.length),
+      failed:trials.filter(t=>t.status!=='compared').length,unknown:batch?.summary?.unknown??0,notAttempted:Math.max(0,plan.trials-trials.length-(batch?.summary?.unknown??0)),
       distinctControls:new Set(trials.filter(t=>t.status==='compared').map(t=>[...t.benchmark.control.selectedIds].sort().join('|'))).size,
       identicalSelections:trials.filter(t=>t.status==='compared'&&[...t.benchmark.control.selectedIds].sort().join('|')===[...t.benchmark.qloo.selectedIds].sort().join('|')).length,
       reviewEligible:trials[0]?.status==='compared',status:batch?.status??'not_started'};
   });
-  const totals=Object.fromEntries(['planned','attempted','providerCalls','notComparable','feasible','failed','notAttempted','identicalSelections'].map(key=>[key,cases.reduce((sum,row)=>sum+row[key],0)]));
-  return {cases,totals,execution:totals.notAttempted?'partial':'complete',independentEvidence:false,
+  const totals=Object.fromEntries(['planned','attempted','providerCalls','notComparable','feasible','failed','unknown','notAttempted','identicalSelections'].map(key=>[key,cases.reduce((sum,row)=>sum+row[key],0)]));
+  return {cases,totals,execution:totals.notAttempted||totals.unknown?'partial':'complete',independentEvidence:false,
     interpretation:'Feasibility and selection agreement describe execution. Qloo-weighted scores do not prove superiority. Real blind judgments and outcomes are separate evidence.'};
 }

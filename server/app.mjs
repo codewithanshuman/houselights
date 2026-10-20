@@ -26,6 +26,7 @@ import { buildDecisionProof, decisionFingerprint } from './decision-proof.mjs';
 import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
+import { registerJudgeRoutes } from './judge.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -82,6 +83,7 @@ export function createApp() {
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
   registerResearchRoutes(app);
+  registerJudgeRoutes(app);
   registerOperationalRoutes(app);
   app.post('/api/investigation/:id/apply', (req,res) => {
     const source=store.load(req.params.id), investigation=source?.investigation;

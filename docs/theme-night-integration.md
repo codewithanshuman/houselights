@@ -36,7 +36,7 @@ npm run gm -- run <saved-id> options.json
 npm run gm -- benchmark <new-gm-id>
 ```
 
-Each operation returns a new ID and complete snapshot. Read it with `GET /api/memo/:id`. `GET /api/dossier/:id` includes the Market DNA, GM, benchmark and theme-season data, and its Markdown export includes the new summaries.
+CLI operations return a new ID and complete snapshot. Read it with `GET /api/memo/:id`. The HTTP benchmark route now requires an `Idempotency-Key` and returns a queued job (202), with polling described in the [durable benchmark contract](persistent-research.md#durable-benchmark-contract). `GET /api/dossier/:id` includes the Market DNA, GM, benchmark and theme-season data, and its Markdown export includes the new summaries.
 
 For a revision, create another JSON file:
 

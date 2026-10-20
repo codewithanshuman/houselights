@@ -1,7 +1,8 @@
 import * as store from './store.mjs';
 import { Run, isMock } from './qloo.mjs';
 import { normalizeFestivalResearch, festivalWorkflowCount } from './festival-research.mjs';
-import { runFestivalGM, reviseFestival, benchmarkFestival, cancelFestival } from './gm.mjs';
+import { runFestivalGM, reviseFestival, cancelFestival } from './gm.mjs';
+import { enqueueBenchmark } from './benchmark-api.mjs';
 import { planDates, buildThemeSeason } from './theme-season.mjs';
 import { prepareThemeResearch, researchThemeSeason } from './theme-research.mjs';
 
@@ -41,7 +42,7 @@ export function registerGMRoutes(app) {
         if (!result.snapshot) return res.status(result.status === 'rejected' ? 422 : 409).json(result);
         snapshot = result.snapshot;
       } else if (action === 'benchmark') {
-        snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, benchmarkTrial: undefined, benchmark: await benchmarkFestival(source) };
+        return enqueueBenchmark(req,res,source.id);
       } else {
         snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, themeSeason: buildThemeSeason(source, req.body) };
       }

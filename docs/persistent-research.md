@@ -4,7 +4,7 @@ The worker runs with `server/index.mjs` (`npm start` or the existing development
 
 ## Workflow and durability
 
-`POST /api/research-runs` takes `{sourceId, kind, options}` and an `Idempotency-Key` header. Kinds are `festival`, `season`, `proof`, and `investigation`. The first two accept the same options as the existing GM research operations. `proof` uses saved evidence only and performs no provider calls. `investigation` uses a configured LLM to choose bounded local tools and optional Qloo research; its behavior is described below.
+`POST /api/research-runs` takes `{sourceId, kind, options}` and an `Idempotency-Key` header. Kinds are `festival`, `season`, `proof`, `investigation`, and `benchmark`. The first two accept the same options as the existing GM research operations. `proof` uses saved evidence only and performs no provider calls. `investigation` uses a configured LLM to choose bounded local tools and optional Qloo research; its behavior is described below. `benchmark` takes `{trials: 1..5}` and records real model-only controls.
 
 Preflight checks the saved source, live/synthetic mode, scope and research budget before enqueueing. A matching key and identical input return the same run (HTTP 200); different input with that key returns 409. New jobs return 202 immediately. At most four unfinished jobs are accepted, one executes at a time across workers sharing the SQLite database, and persistent quotas cap new jobs at six/minute and 100/day. These limits are separate from the existing direct GM API quotas and are not a universal provider billing cap. The browser now uses durable runs for festival and season research; the older synchronous endpoints remain available.
 
@@ -15,6 +15,14 @@ Every transition, workflow start, receipt, GM stage and proof step receives a se
 Workers renew a 90-second lease every ten seconds. If execution dies, another worker marks the expired run interrupted and preserves its recorded evidence. Queued jobs remain eligible for execution after restart. Active calls are never automatically replayed. A fresh run is an explicit new research request and may incur provider usage. Persistent storage must be on a durable local volume; this is not a distributed cloud queue spanning separate databases.
 
 ## Read and reconnect
+
+### Durable benchmark contract
+
+`POST /api/benchmarks` takes `{sourceId,trials}` and an `Idempotency-Key`. It returns HTTP 202 with `{run,batch,reused:false}`; an identical retry returns HTTP 200 and the same IDs. The former GM shortcut, `POST /api/gm/:id/benchmark`, uses this contract too (default three trials); the GM browser button explicitly requests one trial. Neither route waits for model completion. All three enqueue paths share the two-batches/minute and twenty-batches/day limits.
+
+Poll the research run and `GET /api/benchmarks/:id`. Each completed trial, its immutable source snapshot, and its journal event are committed together. `run.status: completed` may accompany a `batch.status: partial` after provider rate limiting or a non-comparable source; inspect the batch summary. Trial one remains the predeclared review source, even if a later result is more favorable. Canceling during a call retains that call's returned trial before stopping. An expired lease during a call records an `unknown` outcome separately from `notAttempted`; no automatic retry can silently add another model sample.
+
+The Independent Evaluation view has reconnect, cancellation and full-batch export controls. Research history also retains benchmark runs. The campaign CLI saves request keys before submission and supports `npm run evaluate:campaign -- --resume artifacts/evaluation-UUID.json`. It rejects changed briefs and cannot resume artifacts created before durable request keys were recorded.
 
 All run history, events and mutations require organizer access in protected deployments. Neither worker ownership nor credentials are returned to the browser.
 

@@ -34,33 +34,35 @@
       $('research-status').insertAdjacentHTML('beforeend',` · <a href="/m/${e(current.resultId)}#room">Open saved decision and proof</a>`);
     }
   }
-  async function watch(id){
+  async function watch(id,onProgress){
     const ticket={id};watching=ticket;cursor=0;entries=[];
     while(watching===ticket){
       const page=await request(`/api/research-runs/${encodeURIComponent(id)}/events?after=${cursor}`);
       if(watching!==ticket)throw new Error('Observation switched to another run. Server research continues.');
       current=page.run;entries.push(...page.events);cursor=page.nextCursor;render();
+      if(onProgress)await onProgress(current);
+      if(watching!==ticket)throw new Error('Observation switched to another run. Server research continues.');
       if(page.hasMore)continue;
       if(current.terminal){
         try{const pending=JSON.parse(sessionStorage.getItem(pendingKey));if(pending?.id===id)sessionStorage.removeItem(pendingKey);}catch{}
         if(current.status!=='completed')throw new Error(`Research ${current.status}. Recorded events remain available. No successful result was substituted.`);
-        return {id:current.resultId};
+        return {id:current.resultId,run:current};
       }
       await new Promise(resolve=>setTimeout(resolve,1500));
     }
     throw new Error('Observation stopped; server research continues.');
   }
-  async function launch(kind,options={},reconnect=false){
+  async function launch(kind,options={},reconnect=false,{sourceId=state.savedId,onProgress}={}){
     if(submitting)throw new Error('A research request is already being submitted.');
     let pending;
     if(reconnect){pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');if(!pending)throw new Error('No pending request in this tab. Refresh run history to find saved runs.');}
-    else{pending={key:crypto.randomUUID(),body:{sourceId:state.savedId,kind,options}};sessionStorage.setItem(pendingKey,JSON.stringify(pending));}
+    else{pending={key:crypto.randomUUID(),body:{sourceId,kind,options}};sessionStorage.setItem(pendingKey,JSON.stringify(pending));}
     say('Submitting a durable research request…');
     submitting=true;
     let result;
     try{result=await request('/api/research-runs',pending.body,pending.key);}finally{submitting=false;}
     pending.id=result.run.id;sessionStorage.setItem(pendingKey,JSON.stringify(pending));
-    return watch(result.run.id);
+    return watch(result.run.id,onProgress);
   }
   async function history(){
     try{const {runs}=await request('/api/research-runs');
@@ -84,5 +86,5 @@
       const link=document.createElement('a');link.href=url;link.download=`research-${id}.json`;link.click();URL.revokeObjectURL(url);
     }catch(error){say(error.message);}
   };
-  window.houselightsResearch={launch,history};
+  window.houselightsResearch={launch,history,watch};
 })();

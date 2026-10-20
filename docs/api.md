@@ -4,7 +4,7 @@ Most routes use a saved run ID from the `saved` server-sent event produced by `P
 
 ## Festival GM and independent review
 
-See [the GM contract](theme-night-integration.md#api-contract) for research, revisions, benchmark, cancellation and season endpoints. All successful decisions save an immutable child snapshot; failed revisions leave the original intact.
+See [the GM contract](theme-night-integration.md#api-contract) for research, revisions, cancellation and season endpoints. Successful decisions save an immutable child snapshot; failed revisions leave the original intact. Benchmark POSTs now return queued jobs (202) and require an `Idempotency-Key`; see the [durable benchmark contract](persistent-research.md#durable-benchmark-contract). Public deterministic experiments use the separate [judge API](judge-workspace.md), which cannot mutate organizer plans or start provider work.
 
 | Endpoint | Contract |
 |---|---|

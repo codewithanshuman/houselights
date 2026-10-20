@@ -20,11 +20,11 @@ The [official Qloo hackathon kit](https://github.com/qloo/qloo-hackathon-kit) an
 
 Allow roughly five minutes. Open saved live-Qloo examples to avoid spending the entire presentation waiting for provider rate limits. Illustrative booking fees and availability must stay labeled.
 
-1. **Decision and proof (60 seconds):** show the optimized lineup, the cost-first alternative, and a real model-only control under the same brief. Withdraw a consequential receipt and explain why the decision changes.
-2. **Agent investigation (60 seconds):** replay an actual native-function investigation, including a rejected action or provider wait. Show the server-validated experiment and cited interpretations; save its proposed scenario for human review.
+1. **Decision and proof (60 seconds):** open `/judge.html` and use Manchester's saved live evidence. Set the budget to £4,500; the feasible alternative costs £4,400. Withdraw the linked ranking receipt and inspect the blocked evidence state. A withdrawal may change confidence without changing the selected artists; report what actually happens.
+2. **Agent investigation (60 seconds):** replay an actual native-function investigation, such as saved result `QWgj_QrB6g`. Show the server-executed experiment and server-rendered facts. This run made three model calls and zero new Qloo queries; it did not select a final alternative for adoption. Other recorded runs may include rejected actions or provider waits.
 3. **Commercial resilience (60 seconds):** apply simultaneous fee/attendance/availability shocks, then show the shared-budget portfolio and survivor-preserving cancellation recovery. Explain that margins use declared assumptions.
 4. **Evidence and approval (60 seconds):** inspect one explicitly synthetic demonstration quote with exact source lines, review it, and show stale approval rejection when a term changes. No external message is sent.
-5. **Independent validation and limits (60 seconds):** show all London/Berlin benchmark attempts, including a failed request, and the real blind-review count. Show that zero ballots is zero independent evidence. Finish with a saved decision link and the specific planning action it supports.
+5. **Independent validation and limits (60 seconds):** show retained benchmark attempts across the London, Manchester, Berlin and New York briefs, including a rate-limit failure. Mumbai is explicitly non-comparable. Demonstrate background-run reconnection and show that zero ballots means zero independent evidence. Finish with a judge-case link and the specific planning question it answers.
 
 ## Evidence to collect before claiming impact
 

@@ -6,6 +6,8 @@ The buyer supplies the city, artists representing the room's audience, offers, f
 
 The [advanced workflows](docs/advanced-workflows.md) include a bounded model-directed investigator with native function calls and server-rendered facts, private source-document review, approval enforcement across planning APIs, joint commercial stress, diverse-brief evaluation, and verified SQLite backup/restore. Real Groq controls cover London, Manchester, Berlin and New York; an incomplete Mumbai ranking remains explicitly non-comparable. External human judgments and public hosting remain pending.
 
+The [judge workspace](docs/judge-workspace.md) at `/judge.html` lets visitors change budgets, lock artists, withdraw evidence and rehearse cancellations against curated public cases, with no organizer token or new provider calls. Benchmark batches now run in the [persistent worker](docs/persistent-research.md#durable-benchmark-contract), with idempotent submission, cancellation, reconnect and explicit unknown outcomes after interruption.
+
 ## Run locally
 
 Requires **Node.js 24 or newer** and npm. The live integration starts the official Qloo harness as a local stdio child process, so use a normal Node server or container. Snapshots, pipeline updates, quotas and blind-review ballots use built-in SQLite.

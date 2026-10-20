@@ -12,8 +12,9 @@ export function accessMiddleware(req, res, next) {
   if (!req.path.startsWith('/api/')) return next();
   res.set('Cache-Control', 'no-store');
   const ballot = /^\/api\/reviews\/[\w-]+\/ballot$/.test(req.path);
+  const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/experiment$/.test(req.path);
   const privateRead = /^\/api\/(pipeline|campaign|studies)(\/|$)/.test(req.path);
-  if ((req.method !== 'GET' && req.method !== 'HEAD' && !ballot || privateRead) && !canEdit(req)) return res.status(401).json({ error: 'Organizer access is required. Shared reports are read-only.' });
+  if ((req.method !== 'GET' && req.method !== 'HEAD' && !ballot && !judgeExperiment || privateRead) && !canEdit(req)) return res.status(401).json({ error: 'Organizer access is required. Shared reports are read-only.' });
   const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 864e5);
   const address = hash(req.ip ?? 'unknown').toString('hex');
   const paid = req.method === 'POST' && (/^\/api\/(memo$|intelligence\/|activation\/)/.test(req.path) || /^\/api\/gm\/[^/]+\/(run|benchmark|season-research)$/.test(req.path));

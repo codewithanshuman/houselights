@@ -57,13 +57,30 @@
   }
   function download(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
   async function configuration(){try{const c=await request('/api/benchmarks/config');$('evaluation-config').textContent=`${c.provider} · ${c.model||'model not selected'} · ${c.enabled?'configured':'needs '+c.missing.join(', ')}. Configuration alone does not establish a successful model response.`;}catch(err){$('evaluation-config').textContent=err.message;}}
-  $('evaluation-run').onclick=()=>action('evaluation-status',async()=>{
-    batch=await request('/api/benchmarks',{sourceId:$('evaluation-source').value.trim()||state.savedId,trials:Number($('evaluation-trials').value)});
+  $('evaluation-run').insertAdjacentHTML('afterend',' <button id="evaluation-reconnect" class="button subtle">Reconnect benchmark</button> <button id="evaluation-cancel" class="button subtle" hidden>Stop after current trial</button>');
+  let benchmarkRun=null;
+  async function benchmarkProgress(run){
+    if(run.kind!=='benchmark')throw new Error('The last request was not a benchmark. Inspect it in research history.');
+    benchmarkRun=run;sessionStorage.setItem('houselights-benchmark-run',run.id);
+    batch=await request('/api/benchmarks/'+encodeURIComponent(run.id));
+    $('evaluation-cancel').hidden=run.terminal;$('evaluation-cancel').disabled=run.status==='cancel_requested';
     $('evaluation-status').textContent=`Batch ${batch.id} · ${batch.status}. Every attempt is saved.`;
     $('evaluation-result').innerHTML=table(['Trial','Status','Saved result','Provider response'],batch.trials.map(row=>[String(row.index),e(label(row.status)),`<a href="/m/${e(row.snapshotId)}#room">${e(row.snapshotId)}</a>`,e(row.benchmark.generation?.status)]))+`<p>${e(batch.selectionRule)}</p><p>${e(batch.stopReason??'')}</p><details><summary>Model receipts and complete results</summary><pre>${json(batch)}</pre></details><button id="evaluation-export" class="button subtle">Export every trial</button>`;
-    if(batch.reviewSourceId)$('evaluation-sources').value=batch.reviewSourceId;
+    $('evaluation-sources').value=batch.reviewSourceId??'';
     $('evaluation-export').onclick=()=>download(batch,`benchmark-${batch.id}.json`);
+  }
+  $('evaluation-run').onclick=()=>action('evaluation-status',async()=>{
+    sessionStorage.removeItem('houselights-benchmark-run');
+    await window.houselightsResearch.launch('benchmark',{trials:Number($('evaluation-trials').value)},false,{sourceId:$('evaluation-source').value.trim()||state.savedId,onProgress:benchmarkProgress});
   });
+  $('evaluation-reconnect').onclick=()=>action('evaluation-status',async()=>{
+    const id=sessionStorage.getItem('houselights-benchmark-run');
+    if(id)await window.houselightsResearch.watch(id,benchmarkProgress);
+    else await window.houselightsResearch.launch(null,{},true,{onProgress:benchmarkProgress});
+  });
+  $('evaluation-cancel').onclick=async()=>{try{
+    if(benchmarkRun){benchmarkRun=await request('/api/research-runs/'+benchmarkRun.id+'/cancel',{expectedRevision:benchmarkRun.revision});await benchmarkProgress(benchmarkRun);}
+  }catch(error){$('evaluation-status').textContent=error.message;}};
   $('evaluation-study').onclick=()=>action('evaluation-status',async()=>{
     const entries=$('evaluation-reviewers').value.split('\n').map(line=>line.split('|').map(s=>s.trim())).filter(([label])=>label);
     const study=await request('/api/studies',{sourceIds:$('evaluation-sources').value.split(',').map(v=>v.trim()).filter(Boolean),reviewers:entries.map(([label])=>label),reviewerRoles:Object.fromEntries(entries.map(([label,role])=>[label,role||'other']))});

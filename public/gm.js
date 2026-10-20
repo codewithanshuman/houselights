@@ -136,8 +136,8 @@
     busy = true; setBusy(true, 'gm'); buttons(); status(action === 'run' ? 'Researching markets, checking evidence gaps, and enumerating feasible lineups…' : 'Checking this decision…');
     try {
       let result;
-      if (['run','season-research'].includes(action)) {
-        result = await window.houselightsResearch.launch(action==='run'?'festival':'season',body);
+      if (['run','season-research','benchmark'].includes(action)) {
+        result = await window.houselightsResearch.launch(action==='run'?'festival':action==='benchmark'?'benchmark':'season',action==='benchmark'?{trials:1}:body);
       } else {
         const response = await fetch(`/api/gm/${encodeURIComponent(state.savedId)}/${action}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(150000) });
         result = await response.json();
