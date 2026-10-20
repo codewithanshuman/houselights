@@ -68,6 +68,21 @@ network and prepare the appropriate route instead of applying this snippet.
 Keep streaming responses unbuffered and preserve Authorization headers. Proxy
 trust is configured for one ingress hop; verify the actual chain.
 
+If ports 80/443 are unused, `shared-public.override.yaml` adds a separate,
+bounded Caddy container without modifying an existing tunnel:
+
+```sh
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/shared-public.override.yaml up --no-build -d
+```
+
+For a demo without an owned domain, [sslip.io/nip.io](https://nip.io/) can resolve
+a hostname containing the server's public IP. Set `PUBLIC_HOSTNAME` to that
+hostname only after confirming its DNS resolution. This relies on a third-party
+DNS service and on the server keeping that IP; it is not domain ownership.
+Certificate issuance needs external reachability and remains subject to the
+CA's limits. Verify both the VM's firewall and OCI security lists/network
+security groups. Do not open the application or database ports to the internet.
+
 Run the release HTTP, saved-job restart and backup/restore checks from the
 free-hosting runbook using `shared.compose.yaml` in every command. Also confirm
 that the bot and livestream still behave normally during a bounded Houselights

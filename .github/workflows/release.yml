@@ -20,11 +20,6 @@ jobs:
         runner: [ubuntu-24.04, ubuntu-24.04-arm]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
-    env:
-      QLOO_API_KEY: ci-only-placeholder-not-a-provider-key
-      GROQ_API_KEY: ci-only-placeholder-not-a-provider-key
-      ORGANIZER_TOKEN: ci-only-non-secret-placeholder-credential
-      RELEASE_COMMIT: ${{ github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -34,6 +29,14 @@ jobs:
           node-version: "24"
       - run: npm ci
       - run: npm test
+      - name: Configure container-only fixtures after unit tests
+        run: |
+          cat >> "$GITHUB_ENV" <<'EOF'
+          QLOO_API_KEY=ci-only-placeholder-not-a-provider-key
+          GROQ_API_KEY=ci-only-placeholder-not-a-provider-key
+          ORGANIZER_TOKEN=ci-only-non-secret-placeholder-credential
+          EOF
+          printf 'RELEASE_COMMIT=%s\n' "$GITHUB_SHA" >> "$GITHUB_ENV"
       - name: Check read-only capacity script
         run: sh scripts/host-capacity.sh
       - name: Build actual Linux container
