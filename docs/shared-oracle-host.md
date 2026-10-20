@@ -1,5 +1,30 @@
 # Sharing an existing Oracle server
 
+## Current deployment — 20 October 2026
+
+[Houselights is publicly available](https://houselights.80-225-218-239.sslip.io)
+from the existing Ubuntu 22.04 ARM A1 VM with 2 OCPUs and 12 GB RAM, at commit
+`30f86d59b7fa640fc73d016258f7ebd5d0cea4ed`. The deployment uses
+`shared.compose.yaml` with `shared-public.override.yaml`: the application is
+limited to 0.5 CPU/1536 MiB and its separate Caddy HTTPS proxy to
+0.1 CPU/128 MiB. The actual Docker build ran in a separately limited
+0.5-CPU/2-GiB builder, which was stopped afterward.
+
+No cloud resources were purchased or provisioned, and no Oracle console or
+firewall changes were needed. The existing bot, livestream and tunnel were not
+stopped or reconfigured. The five original container IDs/start times and the
+existing ffmpeg process ID remained unchanged after deployment. That confirms
+process continuity, not independently measured livestream quality.
+
+Public HTTP and browser checks, bounded live Qloo/Groq requests, saved proof
+data after application-container recreation, and server/off-host
+backup-restores passed. The hostname relies on free third-party DNS and the
+VM retaining its public IP. Account billing/free eligibility, long-term uptime
+and VM-reboot recovery remain unverified; no VM reboot was performed.
+See the [deployment evidence](live-validation.md#oracle-public-deployment--20-october-2026).
+
+## Capacity requirements
+
 Houselights can share a Linux VM with existing workloads if measurements show
 enough spare capacity. A 2-OCPU, 12-GB A1 configuration alone does not establish
 that capacity. Oracle's [current Always Free documentation](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
@@ -75,6 +100,10 @@ bounded Caddy container without modifying an existing tunnel:
 docker compose --env-file /etc/houselights.env -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/shared-public.override.yaml up --no-build -d
 ```
 
+This is the active public profile. Retain both Compose files when maintaining
+the deployment. The Caddy container has separate certificate/config volumes,
+a 0.1 CPU limit, 128 MiB RAM with no extra swap, 64 PIDs and bounded logs.
+
 For a demo without an owned domain, [sslip.io/nip.io](https://nip.io/) can resolve
 a hostname containing the server's public IP. Set `PUBLIC_HOSTNAME` to that
 hostname only after confirming its DNS resolution. This relies on a third-party
@@ -92,8 +121,10 @@ Oracle instance automatically.
 ## ARM verification
 
 The release workflow runs on standard public-repository x86 and native ARM64
-GitHub runners. Both build the image, start this shared profile with isolated
-synthetic configuration, check the actual container limits and loopback binding,
-complete a proof job, recreate the container with its volume and verify
-backup/restore. Inspect the run result for the exact deployment commit.
-CI success does not establish capacity, DNS or TLS on the existing Oracle VM.
+GitHub runners. [Run 39469596796](https://github.com/codewithanshuman/houselights/actions/runs/39469596796)
+passed every step on both architectures for the deployed commit, including
+233 tests, image builds, actual container limits and loopback binding, a
+completed proof job, retained volume contents and backup/restore. Provider
+calls were disabled in CI. Separate Oracle/public checks established DNS,
+HTTPS, provider transport and application-container persistence for this
+deployment; neither set of checks proves long-term host capacity or uptime.
