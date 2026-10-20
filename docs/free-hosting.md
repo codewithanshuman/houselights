@@ -17,6 +17,11 @@ not provide the local persistent storage this version requires. Neither is
 being presented as a complete free backend. The optional Vercel frontend package
 remains available once a backend URL exists.
 
+For a VM already running a bot or livestream, use the
+[shared-host capacity checks and bounded profile](shared-oracle-host.md).
+The standalone profile below binds ports 80/443 and must not conflict with
+another service.
+
 ## Required from the account owner
 
 - A free VM/account with SSH access, enough free capacity for the Docker build,

@@ -1,0 +1,38 @@
+# Private staging or ingress through an existing host proxy/tunnel.
+# Runtime limits do not constrain a Docker build; check host capacity first.
+name: houselights-shared
+services:
+  houselights:
+    image: houselights-shared:local
+    build:
+      context: ../..
+    environment:
+      QLOO_API_KEY: ${QLOO_API_KEY:?Set the live Qloo key privately}
+      QLOO_BASE_URL: https://hackathon.api.qloo.com
+      QLOO_TRUSTED_BASE_URL: https://hackathon.api.qloo.com
+      GROQ_API_KEY: ${GROQ_API_KEY:?Set the Groq key privately}
+      LLM_PROVIDER: groq
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-oss-120b}
+      ORGANIZER_TOKEN: ${ORGANIZER_TOKEN:?Set a random token of at least 32 characters}
+      RELEASE_COMMIT: ${RELEASE_COMMIT:?Set the checked-out commit}
+      JUDGE_CASES_FILE: /app/deploy/judge-cases.json
+      PUBLIC_LANDING_PAGE: judge
+      TRUST_PROXY: "1"
+      GM_CALL_BUDGET: "60"
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - app-data:/var/data/houselights
+    cpus: "0.50"
+    mem_limit: 1536m
+    memswap_limit: 1536m
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+    init: true
+volumes:
+  app-data:

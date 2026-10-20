@@ -1,0 +1,6 @@
+# Only for disposable GitHub CI storage. Never use on a live deployment.
+services:
+  houselights:
+    environment:
+      QLOO_MODE: mock
+      LLM_MODE: off

@@ -14,8 +14,17 @@ jobs:
     # Standard runners are free for this public repository. No paid runners,
     # artifact uploads, package publishing or cloud deployment occur here.
     if: github.event.repository.private == false
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
+    env:
+      QLOO_API_KEY: ci-only-placeholder-not-a-provider-key
+      GROQ_API_KEY: ci-only-placeholder-not-a-provider-key
+      ORGANIZER_TOKEN: ci-only-non-secret-placeholder-credential
+      RELEASE_COMMIT: ${{ github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -25,45 +34,38 @@ jobs:
           node-version: "24"
       - run: npm ci
       - run: npm test
+      - name: Check read-only capacity script
+        run: sh scripts/host-capacity.sh
       - name: Build actual Linux container
-        run: docker build -t houselights-release .
+        run: docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml build
       - name: Start protected container with isolated storage and no provider credentials
         run: |
-          docker volume create houselights-release-data
-          docker run -d --name houselights-release -p 127.0.0.1:8080:8080 \
-            -e QLOO_MODE=mock -e LLM_MODE=off \
-            -e ORGANIZER_TOKEN=ci-only-non-secret-placeholder-credential \
-            -e JUDGE_CASES_FILE=/app/deploy/judge-cases.json \
-            -e PUBLIC_LANDING_PAGE=judge -e RELEASE_COMMIT="$GITHUB_SHA" \
-            -v houselights-release-data:/var/data/houselights houselights-release
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8080/healthz; then exit 0; fi
-            sleep 2
-          done
-          exit 1
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml up --no-build -d --wait --wait-timeout 90
+          id=$(docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml ps -q houselights)
+          docker inspect --format '{{json .HostConfig}}' "$id" | node --input-type=module -e '
+            import assert from "node:assert/strict";
+            import {readFileSync} from "node:fs";
+            const c=JSON.parse(readFileSync(0,"utf8"));
+            assert.equal(c.NanoCpus,500000000);
+            assert.equal(c.Memory,1610612736);
+            assert.equal(c.MemorySwap,c.Memory);
+            assert.equal(c.PidsLimit,256);
+            assert.deepEqual(c.PortBindings,{"8080/tcp":[{HostIp:"127.0.0.1",HostPort:"18080"}]});
+            assert.equal(c.LogConfig.Config["max-size"],"10m");
+            assert.equal(c.LogConfig.Config["max-file"],"3");
+            console.log("Actual runtime limits and private port binding verified.");
+          '
       - name: Verify public routes, protection and experiments
-        run: node scripts/verify-release.mjs http://127.0.0.1:8080 --allow-local --allow-synthetic --commit="$GITHUB_SHA"
+        run: node scripts/verify-release.mjs http://127.0.0.1:18080 --allow-local --allow-synthetic --commit="$GITHUB_SHA"
       - name: Complete a durable proof job and recreate the container
         run: |
-          docker exec houselights-release node scripts/container-drill.mjs prepare
-          docker stop houselights-release
-          docker rm houselights-release
-          docker run -d --name houselights-release -p 127.0.0.1:8080:8080 \
-            -e QLOO_MODE=mock -e LLM_MODE=off \
-            -e ORGANIZER_TOKEN=ci-only-non-secret-placeholder-credential \
-            -e JUDGE_CASES_FILE=/app/deploy/judge-cases.json \
-            -e PUBLIC_LANDING_PAGE=judge -e RELEASE_COMMIT="$GITHUB_SHA" \
-            -v houselights-release-data:/var/data/houselights houselights-release
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8080/healthz; then exit 0; fi
-            sleep 2
-          done
-          exit 1
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml exec -T houselights node scripts/container-drill.mjs prepare
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml up --no-build -d --force-recreate --wait --wait-timeout 90
       - name: Verify retained decisions, job journal, reconnect and backup restore
         run: |
-          docker exec houselights-release node scripts/container-drill.mjs verify
-          docker exec houselights-release node scripts/backup.mjs create /tmp/release-backup
-          docker exec houselights-release node scripts/backup.mjs verify /tmp/release-backup /tmp/release-restore
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml exec -T houselights node scripts/container-drill.mjs verify
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml exec -T houselights node scripts/backup.mjs create /tmp/release-backup
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml exec -T houselights node scripts/backup.mjs verify /tmp/release-backup /tmp/release-restore
       - name: Container logs
         if: always()
-        run: docker logs houselights-release || true
+        run: docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml logs --no-color || true
