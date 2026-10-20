@@ -58,7 +58,7 @@ in a release report. The event Qloo host is explicitly configured in Compose.
 
 ```sh
 docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml up --build -d
-node scripts/verify-release.mjs https://YOUR_HOSTNAME --commit=FULL_TESTED_COMMIT --output=release-http-check.json
+docker compose --env-file /etc/houselights.env -f deploy/free-vm/compose.yaml exec -T houselights node scripts/verify-release.mjs https://YOUR_HOSTNAME --commit=FULL_TESTED_COMMIT --output=/var/data/houselights/release-http-check.json
 ```
 
 The HTTPS proxy is the backend's only exposed ingress, so this profile sets one
@@ -125,6 +125,12 @@ It builds the actual Linux image, tests protected public routes, completes a
 zero-provider proof job, replaces the container while retaining its volume, and
 checks decisions, events, idempotency and a backup/restore. Passing CI validates
 that environment; it does not establish a live VM, DNS, TLS or public uptime.
+
+On 20 October 2026, [release run 39424627841](https://github.com/codewithanshuman/houselights/actions/runs/39424627841)
+passed every step for commit `90458d5b9bb78f84e746da6562f69dc5c829b218`.
+This is the verified application commit for the commands above. The test
+container used isolated storage and disabled provider calls; it is not a
+publicly hosted instance.
 
 Cloudflare Quick Tunnels are not treated as the final host: their URLs are
 temporary, availability depends on the local PC, and
