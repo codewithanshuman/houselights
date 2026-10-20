@@ -4,6 +4,7 @@ import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
 import {preserveRankProvenance} from './gm.mjs';
+import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -40,6 +41,8 @@ export function publicJudgeSnapshot(source) {
     exampleBookingTerms:true,input:{city:text(source.memo.input?.city,100),anchors:strings(source.memo.input?.anchors),anchorIds:strings(source.memo.input?.anchorIds)},items,constraints}};
   snapshot.memo.slate=optimizeSlate(items,constraints);
   if(!sameSelection(original.selectedIds,snapshot.memo.slate.selectedIds)||original.score!==snapshot.memo.slate.score)throw fault('This source uses unsupported decision fields. Its public projection would change the result.');
+  const benchmark=publicBenchmark(source,snapshot);
+  if(benchmark){snapshot.benchmark=benchmark;snapshot.benchmarkTrial={index:1,reviewTrial:1};}
   return snapshot;
 }
 export function publishJudgeCase(source,title) {
@@ -48,6 +51,7 @@ export function publishJudgeCase(source,title) {
   const id=digest(payload).slice(0,24),existing=loadJudgeCase(id);if(existing)return existing;
   const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),
     terms:'Illustrative fees, availability and genres. This is a planning experiment, not a booking or sales prediction.',providerCalls:0};
+  record.methods=judgeMethods(snapshot,record.proof);
   db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));return loadJudgeCase(id);
 }
 export function loadJudgeCase(id) {
@@ -89,8 +93,8 @@ export function judgeExperiment(record,raw={}) {
   }
   snapshot.memo.constraints=constraints;snapshot.memo.slate=optimizeSlate(snapshot.memo.items,constraints);
   if(snapshot.memo.slate.status==='invalid')throw fault(snapshot.memo.slate.reasons.join(' '));
-  const result=snapshot.memo.slate;
-  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,snapshot,proof:buildDecisionProof(snapshot),
+  const result=snapshot.memo.slate,proof=buildDecisionProof(snapshot);
+  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,snapshot,proof,methods:judgeMethods(snapshot,proof,record.snapshot),
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
       feeDelta:result.feasible&&baseline.feasible?Math.round((result.totalFee-baseline.totalFee)*100)/100:null,
       survivorIds:survivors,survivorsPreserved:result.feasible?survivors.every(id=>result.selectedIds.includes(id)):null,affectedIds,

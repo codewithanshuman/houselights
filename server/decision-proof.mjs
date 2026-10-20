@@ -67,6 +67,7 @@ function controlComparison(snapshot, constraints) {
   const brief = benchmarkBrief(snapshot, constraints);
   if (digest(brief) !== benchmark.briefDigest) return { status: 'stale', selectedIds: [], reason: 'The saved control used different booking assumptions. Run the benchmark again.' };
   if (constraints.minimumAverageFit != null) return { status: 'not_comparable', selectedIds: [], reason: 'A Qloo-derived fit floor cannot be evaluated by a genuinely evidence-free control.' };
+  if (snapshot.memo.items.some(item=>item.evidence?.rank!==true||!Number.isFinite(item.fit)||item.rankCoverage?.complete===false)) return { status:'not_comparable',selectedIds:[],reason:'The full candidate pool no longer has comparable ranking evidence. The saved control does not establish a score comparison.' };
   try { return { ...concise(evaluateSelection(snapshot.memo.items, constraints, benchmark.control.selectedIds)), status: benchmark.status,
     reason: benchmark.control.reason ?? benchmark.control.error, scoring: 'Selected without Qloo; evaluated afterward against the shared policy. This is not independent validation.' }; }
   catch { return { status: 'invalid_control', selectedIds: [], reason: benchmark.control.error ?? 'The model returned an invalid selection; it was not repaired.' }; }

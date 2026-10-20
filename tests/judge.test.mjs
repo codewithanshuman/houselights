@@ -10,6 +10,7 @@ const store=await import('../server/store.mjs');
 const {createApp}=await import('../server/app.mjs');
 const judge=await import('../server/judge.mjs');
 const {optimizeSlate}=await import('../server/optimizer.mjs');
+const {benchmarkFestival}=await import('../server/gm.mjs');
 const server=createApp().listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
 const base=`http://127.0.0.1:${server.address().port}`,realFetch=globalThis.fetch;
 globalThis.fetch=()=>assert.fail('Judge experiments must not call any provider.');
@@ -22,6 +23,15 @@ function source(){
   const constraints={budget:100,slots:2};return {mock:true,input:{exampleBookingTerms:true,private:'PRIVATE-SENTINEL'},memo:{items,constraints,currency:'GBP',input:{city:'Fixture',anchors:['Anchor'],secret:'PRIVATE-SENTINEL'},slate:optimizeSlate(items,constraints),private:'PRIVATE-SENTINEL'},
     investigation:{secret:'PRIVATE-SENTINEL'},benchmark:{secret:'PRIVATE-SENTINEL'},decisionSession:{token:'PRIVATE-SENTINEL'},
     receipts:[{id:'r1',tool:'rank',status:'ok',source:'synthetic',args:{options:items.map(i=>i.id),signals:['anchor-id'],secret:'PRIVATE-SENTINEL'},evidence:{rows:items.map(i=>({id:i.id,name:i.name,secret:'PRIVATE-SENTINEL'}))},raw:'PRIVATE-SENTINEL'}]};
+}
+async function benchmarkSource(selectedIds=['a','c']){
+  const s=source();
+  s.benchmark=await benchmarkFestival(s,{propose:async()=>({selectedIds,reason:'PRIVATE-SENTINEL'})});
+  // Fabricated provider metadata belongs only to this synthetic unit fixture.
+  s.benchmark.generation={mode:'live',status:'ok',httpStatus:200,toolsAllowed:false,provider:'groq',model:'fixture-model',
+    promptDigest:'sha256:'+'1'.repeat(64),requestDigest:'sha256:'+'2'.repeat(64),responseDigest:'sha256:'+'3'.repeat(64),requestId:'PRIVATE-SENTINEL',raw:'PRIVATE-SENTINEL'};
+  s.benchmarkTrial={index:1,reviewTrial:1,batchId:'PRIVATE-SENTINEL'};
+  return s;
 }
 test('organizer publishes an immutable projection; private fields stay out and export can be imported without changing its ID',async()=>{
   const id=store.save(source());assert.equal((await post('/api/judge/cases',{sourceId:id,title:'Fixture'})).status,401);
@@ -63,4 +73,93 @@ test('public calculation quota bounds resource use while saved cases remain read
   db.prepare('INSERT INTO quotas(key,count,expires) VALUES(?,?,?)').run(`judge-global:${minute}`,60,(minute+1)*60000);
   assert.equal((await post('/api/judge/cases/'+record.id+'/experiment',{})).status,429);
   assert.equal((await realFetch(base+'/api/judge/cases/'+record.id)).status,200);
+});
+
+test('publishes a reduced first-trial control, recomputes all scores and preserves its export identity',async()=>{
+  const s=await benchmarkSource();s.benchmark.control.score=999999;
+  const record=judge.publishJudgeCase(s,'Three methods');
+  assert.ok(!JSON.stringify(record).includes('PRIVATE-SENTINEL'));
+  assert.deepEqual(record.methods.qloo.selectedIds,['a','b']);
+  assert.deepEqual(record.methods.constraintOnly.selectedIds,['b','c']);
+  assert.deepEqual(record.methods.llm.selectedIds,['a','c']);
+  assert.equal(record.methods.llm.mode,'saved_benchmark');assert.equal(record.methods.llm.comparable,true);
+  assert.notEqual(record.methods.llm.score,999999);assert.equal(record.methods.llm.totalFee,80);
+  assert.equal(record.snapshot.benchmark.evidenceMode,'mock');
+  assert.equal(judge.publishJudgeCase(record.snapshot,record.title).id,record.id);
+  const roundtrip=judge.loadJudgeCase(record.id);assert.deepEqual(roundtrip,record);
+  assert.equal(record.snapshot.benchmark.generation.requestId,undefined);
+  assert.equal(record.snapshot.benchmarkTrial.batchId,undefined);
+});
+
+test('public budget and cancellation replays retain the original LLM choices and expose violations without provider calls',async()=>{
+  const record=judge.publishJudgeCase(await benchmarkSource(),'Three methods');
+  const response=await post('/api/judge/cases/'+record.id+'/experiment',{budget:60});
+  assert.equal(response.status,200);const result=await response.json();
+  assert.deepEqual(result.methods.qloo.selectedIds,['b','c']);assert.deepEqual(result.methods.llm.selectedIds,['a','c']);
+  assert.equal(result.methods.llm.totalFee,80);assert.equal(result.methods.llm.feasible,false);
+  assert.equal(result.methods.llm.status,'infeasible');assert.equal(result.methods.llm.sameBrief,false);
+  assert.equal(result.methods.llm.mode,'fixed_selection_replay');assert.equal(result.methods.llm.comparable,false);
+  assert.equal(result.methods.policyPointDelta,null);assert.equal(result.proof.llmOnly.status,'stale');
+  assert.ok(result.methods.llm.violations.some(v=>v.includes('budget')));assert.equal(result.providerCalls,0);
+  const canceled=judge.judgeExperiment(record,{cancelId:'a'});
+  assert.deepEqual(canceled.methods.llm.selectedIds,['a','c']);
+  assert.ok(canceled.methods.llm.violations.some(v=>v.includes('excluded')));
+  assert.ok(canceled.methods.llm.violations.some(v=>v.includes('Locked')));
+  assert.deepEqual(judge.loadJudgeCase(record.id),record);
+  assert.equal(judge.judgeExperiment(record,{}).methods.llm.mode,'saved_benchmark');
+});
+
+test('receipt withdrawal invalidates score comparison even when booking inputs remain identical',async()=>{
+  const record=judge.publishJudgeCase(await benchmarkSource(),'Three methods');
+  const result=judge.judgeExperiment(record,{withdrawReceiptId:'r1'});
+  assert.equal(result.methods.llm.sameBrief,true);assert.equal(result.methods.llm.evidenceChanged,true);
+  assert.equal(result.methods.llm.mode,'fixed_selection_replay');assert.equal(result.methods.llm.comparable,false);
+  assert.equal(result.methods.policyPointDelta,null);assert.equal(result.proof.llmOnly.status,'not_comparable');
+  assert.equal(result.proof.status,'blocked');
+});
+
+test('rejects stale or altered briefs, later trials and unauditable model controls',async()=>{
+  for(const mutate of [
+    s=>{s.memo.constraints.budget=90;},
+    s=>{s.benchmark.brief.city='Different';},
+    s=>{s.benchmarkTrial.index=2;},
+    s=>{s.benchmarkTrial.reviewTrial=2;s.benchmarkTrial.index=2;},
+    s=>{delete s.benchmarkTrial;},
+    s=>{s.benchmark.generation.mode='injected';},
+    s=>{s.benchmark.generation.status='test_adapter';},
+    s=>{s.benchmark.generation.toolsAllowed=true;},
+    s=>{s.benchmark.generation.httpStatus=429;},
+    s=>{delete s.benchmark.generation.responseDigest;},
+    s=>{s.benchmark.control.selectedIds=['unknown'];},
+    s=>{s.benchmark.control.selectedIds=['a','a'];},
+    s=>{s.benchmark.qloo.selectedIds=['b','c'];},
+    s=>{s.benchmark.evidenceMode='live';},
+  ]){
+    const s=await benchmarkSource();mutate(s);assert.throws(()=>judge.publishJudgeCase(s,'Rejected'));
+  }
+});
+
+test('failed first trials stay visible and constraint failures are not repaired or compared',async()=>{
+  const s=await benchmarkSource(['a']);assert.equal(s.benchmark.status,'constraint_failure');
+  let record=judge.publishJudgeCase(s,'Constraint failure');
+  assert.deepEqual(record.methods.llm.selectedIds,['a']);assert.equal(record.methods.llm.feasible,false);
+  assert.equal(record.methods.policyPointDelta,null);
+  const invalid=await benchmarkSource(['unknown']);record=judge.publishJudgeCase(invalid,'Invalid response');
+  assert.equal(record.methods.llm.status,'invalid_control');assert.equal(record.methods.llm.available,false);
+  const failed=await benchmarkSource();failed.benchmark.status='unavailable';failed.benchmark.control=null;
+  failed.benchmark.generation.status='provider_error';failed.benchmark.generation.httpStatus=429;
+  record=judge.publishJudgeCase(failed,'Provider unavailable');
+  assert.equal(record.methods.llm.status,'unavailable');assert.equal(record.methods.llm.available,false);
+  assert.equal(record.methods.llm.generation.httpStatus,429);
+  assert.equal(judge.publishJudgeCase(record.snapshot,record.title).id,record.id);
+});
+
+test('incomplete ranks retain the non-comparable first trial without a model call or invented control',async()=>{
+  const s=source();s.memo.items[0].evidence.rank=false;s.memo.items[0].fit=null;
+  s.benchmark=await benchmarkFestival(s,{propose:async()=>assert.fail('Incomplete rankings must not call a model.')});
+  s.benchmarkTrial={index:1,reviewTrial:1};
+  const record=judge.publishJudgeCase(s,'Incomplete ranking');
+  assert.equal(record.methods.llm.status,'not_comparable');assert.equal(record.methods.llm.available,false);
+  assert.equal(record.snapshot.benchmark.generation.mode,'not_called');
+  assert.equal(judge.publishJudgeCase(record.snapshot,record.title).id,record.id);
 });
