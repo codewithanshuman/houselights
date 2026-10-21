@@ -7,12 +7,64 @@ const json = value => escapeHTML(JSON.stringify(value ?? null, null, 2));
 const state = { memo: null, receipts: [], offers: [], picks: {}, needsInput: [], busy: false, dirty: false, briefDirty: false, savedId: null, mock: null, runMock: null, currency: 'GBP', example: false, lockedIds: new Set(), excludedIds: new Set() };
 state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.gauntlet = null;
 
+
+// Header previews explain the existing missions; they never score or edit a run.
+const gauntletPreviews = {
+  pressure: { number: '01', title: 'The 90% Room', target: '90%', unit: 'of the original budget', icon: '↘', copy: 'Make the whole slate work with 90% of the original budget.' },
+  discovery: { number: '02', title: 'Open the Side Door', target: '+1', unit: 'discovered act', icon: '✦', copy: 'Bring in a Qloo-discovered act with your quote and availability confirmed, while keeping the slate feasible.' },
+  diversity: { number: '03', title: 'Three Colours', target: '1–3', unit: 'buyer-defined genres', icon: '◒', copy: 'Broaden the mix across up to three planning genres, depending on your slot count, and keep the slate feasible.' },
+  shock: { number: '04', title: 'Rain Check', target: '+10%', unit: 'on every known quote', icon: '↗', copy: 'Keep the exact selected lineup feasible when every known quote rises by 10%.' },
+  evidence: { number: '05', title: 'Receipts, Please', target: 'ALL', unit: 'selected acts supported', icon: '◇', copy: 'Support every selected act with relative-rank evidence, while keeping the slate feasible.' },
+  conviction: { number: '06', title: 'Make the Call', target: '1+', unit: 'lock or exclusion', icon: '◆', copy: 'Lock an act you believe in or exclude one you would pass on. Then keep the slate feasible.' }
+};
+
+function previewGauntletChallenge(id) {
+  const challenge = Object.hasOwn(gauntletPreviews, id) ? gauntletPreviews[id] : null;
+  if (!challenge) return;
+  $('gauntlet-preview-number').textContent = 'CHALLENGE ' + challenge.number + ' / 06';
+  for (const field of ['title', 'target', 'unit', 'icon', 'copy']) $('gauntlet-preview-' + field).textContent = challenge[field];
+  for (const button of document.querySelectorAll('[data-gauntlet-preview]')) button.setAttribute('aria-pressed', String(button.dataset.gauntletPreview === id));
+}
+
 function installGauntletUI() {
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet'; stylesheet.href = '/gauntlet.css';
   document.head.insertBefore(stylesheet, document.querySelector('link[href="/theme.css"]'));
   $('memo-notes').insertAdjacentHTML('beforebegin', '<section class="gauntlet-invite"><div><p class="small-label">THE DECISION GAUNTLET</p><h3>Can your slate survive the room?</h3><p>Six server-verified missions test cost pressure, discovery, diversity, evidence, resilience, and conviction.</p></div><button id="enter-gauntlet" type="button" class="button dark">Enter the Gauntlet ✦</button></section>');
-  document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><div class="gauntlet-hero"><img class="gauntlet-disc" src="/assets/brand/disc.png" width="997" height="1506" alt="" loading="lazy"><div><p class="eyebrow">PLAY THE CONSTRAINTS. LEARN THE TRADE-OFFS.</p><h1>The Decision<br><span>Gauntlet.</span></h1><p class="lede">Earn progress only by making a more defensible booking decision. Every mission is recomputed on the server from the original saved evidence.</p><button id="score-gauntlet" type="button" class="button primary">Score this slate ↗</button></div></div><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio ↗</button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate ↗</button></article></section></section>`);
+  document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><header class="gauntlet-arena" aria-labelledby="gauntlet-heading">
+  <div class="arena-marquee"><span><i aria-hidden="true">✳</i> THE HOUSELIGHTS CHALLENGE SERIES</span><span>06 CHALLENGES · ONE LINEUP</span></div>
+  <div class="arena-layout">
+    <div class="arena-intro">
+      <p class="arena-kicker">GOOD TASTE, UNDER PRESSURE.</p>
+      <h1 id="gauntlet-heading">The Decision<br><em>Gauntlet.</em></h1>
+      <p class="arena-description">The budget tightens. The quotes change.<br>Can your lineup still make the night?</p>
+      <div class="arena-actions"><button id="score-gauntlet" type="button" class="button primary" disabled>Build a slate first</button><span class="arena-score-note">Real constraints.<br>Progress verified from saved evidence.</span></div>
+      <ol class="arena-route" aria-label="The Gauntlet workflow"><li><span>01</span> Explore</li><li><span>02</span> Decide</li><li><span>03</span> Verify</li></ol>
+    </div>
+    <div class="arena-stage">
+      <div class="arena-stage-label"><span>PREVIEW A CHALLENGE</span><span aria-hidden="true">↙ PICK YOUR PRESSURE</span></div>
+      <div class="arena-ticket-stack">
+        <img class="arena-disc" src="/assets/brand/disc.png" alt="" width="997" height="1506" loading="lazy" aria-hidden="true">
+        <article class="arena-ticket" id="gauntlet-preview" aria-labelledby="gauntlet-preview-title" aria-live="polite" aria-atomic="true">
+          <div class="arena-ticket-top"><span id="gauntlet-preview-number">CHALLENGE 01 / 06</span><span class="arena-preview-label">PREVIEW</span></div>
+          <div class="arena-target"><strong id="gauntlet-preview-target">90%</strong><span id="gauntlet-preview-unit">of the original budget</span><span class="arena-target-mark" id="gauntlet-preview-icon" aria-hidden="true">↘</span></div>
+          <h2 id="gauntlet-preview-title">The 90% Room</h2>
+          <p class="arena-challenge-copy" id="gauntlet-preview-copy">Make the whole slate work with 90% of the original budget.</p>
+          <div class="arena-ticket-stub"><span class="arena-barcode" aria-hidden="true"></span><p>Explore freely. Score a saved slate<br>to check the result.</p><span class="arena-stub-mark" aria-hidden="true">✳</span></div>
+        </article>
+      </div>
+      <div class="arena-choices" role="group" aria-label="Preview a Gauntlet challenge">
+        <button type="button" data-gauntlet-preview="pressure" aria-controls="gauntlet-preview" aria-pressed="true"><span>01</span> Budget <i aria-hidden="true">↘</i></button>
+        <button type="button" data-gauntlet-preview="discovery" aria-controls="gauntlet-preview" aria-pressed="false"><span>02</span> Discovery <i aria-hidden="true">✦</i></button>
+        <button type="button" data-gauntlet-preview="diversity" aria-controls="gauntlet-preview" aria-pressed="false"><span>03</span> Genre mix <i aria-hidden="true">◒</i></button>
+        <button type="button" data-gauntlet-preview="shock" aria-controls="gauntlet-preview" aria-pressed="false"><span>04</span> Quote rise <i aria-hidden="true">↗</i></button>
+        <button type="button" data-gauntlet-preview="evidence" aria-controls="gauntlet-preview" aria-pressed="false"><span>05</span> Evidence <i aria-hidden="true">◇</i></button>
+        <button type="button" data-gauntlet-preview="conviction" aria-controls="gauntlet-preview" aria-pressed="false"><span>06</span> Your call <i aria-hidden="true">◆</i></button>
+      </div>
+    </div>
+  </div>
+  <div class="arena-footnote"><span><i aria-hidden="true">◈</i> EVERY POINT HAS TO BE EARNED.</span><p>Six missions. Server-checked results. A more considered decision.</p></div>
+</header><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio ↗</button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate ↗</button></article></section></section>`);
 }
 installGauntletUI();
 const label = value => String(value ?? '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ');
@@ -373,6 +425,7 @@ async function loadSaved(id) {
 }
 
 document.addEventListener('click', event => {
+  const preview = event.target.closest('[data-gauntlet-preview]'); if (preview) { previewGauntletChallenge(preview.dataset.gauntletPreview); return; }
   const view = event.target.closest('[data-view]'); if (view) setView(view.dataset.view);
   const gauntletAction = event.target.closest('[data-gauntlet-action]'); if (gauntletAction) takeGauntletAction(gauntletAction.dataset.gauntletAction);
   const remove = event.target.closest('[data-remove]'); if (remove && !state.busy && state.offers.length > 1) { state.offers.splice(Number(remove.dataset.remove), 1); renderOffers(); markBriefDirty('Your shortlist changed. Build a new slate to retrieve evidence for the revised brief.'); }
