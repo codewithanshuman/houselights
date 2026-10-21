@@ -8,9 +8,11 @@ const state = { memo: null, receipts: [], offers: [], picks: {}, needsInput: [],
 state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.gauntlet = null;
 
 function installGauntletUI() {
-  document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="/gauntlet.css">');
+  const stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet'; stylesheet.href = '/gauntlet.css';
+  document.head.insertBefore(stylesheet, document.querySelector('link[href="/theme.css"]'));
   $('memo-notes').insertAdjacentHTML('beforebegin', '<section class="gauntlet-invite"><div><p class="small-label">THE DECISION GAUNTLET</p><h3>Can your slate survive the room?</h3><p>Six server-verified missions test cost pressure, discovery, diversity, evidence, resilience, and conviction.</p></div><button id="enter-gauntlet" type="button" class="button dark">Enter the Gauntlet ✦</button></section>');
-  document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><div class="gauntlet-hero"><img src="/assets/sparkler.png" width="1200" height="1200" alt="An illustrated sparkler glowing in the dark"><div><p class="eyebrow">PLAY THE CONSTRAINTS. LEARN THE TRADE-OFFS.</p><h1>The Decision<br><span>Gauntlet.</span></h1><p class="lede">Earn progress only by making a more defensible booking decision. Every mission is recomputed on the server from the original saved evidence.</p><button id="score-gauntlet" type="button" class="button primary">Score this slate ↗</button></div></div><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio ↗</button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate ↗</button></article></section></section>`);
+  document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><div class="gauntlet-hero"><img class="gauntlet-disc" src="/assets/brand/disc.png" width="997" height="1506" alt="" loading="lazy"><div><p class="eyebrow">PLAY THE CONSTRAINTS. LEARN THE TRADE-OFFS.</p><h1>The Decision<br><span>Gauntlet.</span></h1><p class="lede">Earn progress only by making a more defensible booking decision. Every mission is recomputed on the server from the original saved evidence.</p><button id="score-gauntlet" type="button" class="button primary">Score this slate ↗</button></div></div><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio ↗</button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate ↗</button></article></section></section>`);
 }
 installGauntletUI();
 const label = value => String(value ?? '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ');
@@ -554,9 +556,29 @@ $('save-scenario').addEventListener('click', saveScenario);
 $('score-gauntlet').addEventListener('click', scoreGauntlet);
 $('rescore-gauntlet').addEventListener('click', scoreGauntlet);
 $('enter-gauntlet').addEventListener('click', scoreGauntlet);
+// Atmosphere is decorative, opt-in, and always respects the system motion preference.
+const atmosphereMotionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+const atmosphereStorageKey = 'houselights:motion';
+let atmosphereEnabled = false;
+try { atmosphereEnabled = localStorage.getItem(atmosphereStorageKey) === 'on'; } catch { /* Storage can be unavailable in private contexts. */ }
+function renderAtmosphereMotion() {
+  const button = $('motion-toggle');
+  const reduced = atmosphereMotionPreference.matches;
+  const playing = atmosphereEnabled && !reduced;
+  $('atmosphere-image').closest('.atmosphere').classList.toggle('is-playing', playing && !document.hidden);
+  button.disabled = reduced;
+  button.setAttribute('aria-pressed', String(playing));
+  button.textContent = reduced ? 'Motion reduced' : playing ? 'Pause atmosphere' : 'Play atmosphere';
+  $('motion-preference').textContent = reduced
+    ? 'Still artwork · follows your reduced-motion preference'
+    : playing ? 'Gentle motion enabled · no sound' : 'A little motion while you plan · off by default';
+}
 $('motion-toggle').addEventListener('click', () => {
-  const button = $('motion-toggle'), playing = button.getAttribute('aria-pressed') !== 'true';
-  button.setAttribute('aria-pressed', String(playing)); button.textContent = playing ? 'Pause atmosphere' : 'Play atmosphere';
-  $('atmosphere-image').src = playing ? '/assets/rain-lantern.gif' : '/assets/lantern.jpg';
-  $('atmosphere-image').alt = playing ? 'A glowing lantern in the rain, animated' : 'An illustrated lantern';
+  if (atmosphereMotionPreference.matches) return;
+  atmosphereEnabled = !atmosphereEnabled;
+  try { localStorage.setItem(atmosphereStorageKey, atmosphereEnabled ? 'on' : 'off'); } catch { /* Keep the control usable without storage. */ }
+  renderAtmosphereMotion();
 });
+atmosphereMotionPreference.addEventListener('change', renderAtmosphereMotion);
+document.addEventListener('visibilitychange', renderAtmosphereMotion);
+renderAtmosphereMotion();

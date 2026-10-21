@@ -1,6 +1,10 @@
 'use strict';
 (() => {
   const $=id=>document.getElementById(id),e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  document.querySelectorAll('[data-judge-scroll]').forEach(link=>link.addEventListener('click',event=>{
+    const target=$(link.getAttribute('href').slice(1));if(!target)return;
+    event.preventDefault();target.focus({preventScroll:true});target.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  }));
   let current=null,result=null,busy=false,loadSequence=0;
   const say=message=>$('judge-status').textContent=message;
   async function request(path,body){const response=await fetch(path,{...(body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw new Error(value.error??'Request failed.');return value;}

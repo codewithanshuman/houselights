@@ -3,7 +3,7 @@
   const e = escapeHTML;
   let report = null, busy = false, selectedArtist = null, requestNumber = 0;
   const unsaved = () => state.dirty || state.briefDirty || state.memo?.modifiedLocally;
-  document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="/decision.css">');
+  document.querySelector('link[href="/theme.css"]').insertAdjacentHTML('beforebegin', '<link rel="stylesheet" href="/decision.css">');
   document.querySelector('.sidebar nav').insertAdjacentHTML('afterbegin', '<button class="nav-item" data-view="room"><span class="nav-icon">◎</span>Decision Room<span class="nav-key">00</span></button>');
   $('results').insertAdjacentHTML('afterbegin', '<div class="decision-entry"><div><strong>What changes because of the evidence?</strong><p>Compare decisions. Challenge assumptions. Approve the next step.</p></div><button class="button dark" data-view="room">Open Decision Room ↗</button></div>');
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section id="view-room" class="view" aria-label="Decision Room" hidden>

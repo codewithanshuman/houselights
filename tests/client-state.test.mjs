@@ -15,13 +15,13 @@ function client(saved) {
   const element = id => {
     if (!elements.has(id)) elements.set(id, {
       value: '', hidden: false, dataset: {}, classList: { toggle() {}, remove() {} },
-      addEventListener() {}, setAttribute() {}, removeAttribute() {}, click() {}, insertAdjacentHTML() {}, style: { setProperty() {} }
+      addEventListener() {}, setAttribute() {}, removeAttribute() {}, click() {}, insertAdjacentHTML() {}, insertBefore() {}, closest: selector => element(selector), style: { setProperty() {} }
     });
     return elements.get(id);
   };
   const context = vm.createContext({
     document: { head: element('head'), getElementById: element, querySelectorAll: () => [], querySelector: () => element('page-footer'), addEventListener() {}, dispatchEvent(event) { events.push(event); return true; }, createElement: () => element('download') },
-    window: { location: { pathname: '/' } },
+    window: { location: { pathname: '/' }, matchMedia: () => ({ matches: false, addEventListener() {} }) },
     fetch: async path => ({ ok: true, json: async () => path === '/healthz' ? { mock: true, keyed: false } : saved }),
     AbortSignal, Blob, CustomEvent, setTimeout: () => 1, clearTimeout() {},
     URL: { createObjectURL(blob) { exported = blob; return 'blob:test'; }, revokeObjectURL() {} }
