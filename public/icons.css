@@ -1,0 +1,31 @@
+/* Houselights line icons: self-hosted SVG, fixed slots, current text color. */
+.ui-icon{display:inline-block;width:1em;height:1em;flex:0 0 auto;vertical-align:-.125em;background-color:currentColor;-webkit-mask:var(--ui-icon) center/contain no-repeat;mask:var(--ui-icon) center/contain no-repeat;pointer-events:none;}
+.ui-icon[data-icon="slate"]{--ui-icon:url('/assets/icons/slate.svg');}
+.ui-icon[data-icon="trophy"]{--ui-icon:url('/assets/icons/trophy.svg');}
+.ui-icon[data-icon="receipt"]{--ui-icon:url('/assets/icons/receipt.svg');}
+.ui-icon[data-icon="sliders"]{--ui-icon:url('/assets/icons/sliders.svg');}
+.ui-icon[data-icon="compass"]{--ui-icon:url('/assets/icons/compass.svg');}
+.ui-icon[data-icon="network"]{--ui-icon:url('/assets/icons/network.svg');}
+.ui-icon[data-icon="layers"]{--ui-icon:url('/assets/icons/layers.svg');}
+.ui-icon[data-icon="compare"]{--ui-icon:url('/assets/icons/compare.svg');}
+.ui-icon[data-icon="arrow-up-right"]{--ui-icon:url('/assets/icons/arrow-up-right.svg');}
+.ui-icon[data-icon="arrow-right"]{--ui-icon:url('/assets/icons/arrow-right.svg');}
+.ui-icon[data-icon="arrow-down-right"]{--ui-icon:url('/assets/icons/arrow-down-right.svg');}
+.ui-icon[data-icon="arrow-down-left"]{--ui-icon:url('/assets/icons/arrow-down-left.svg');}
+.ui-icon[data-icon="refresh"]{--ui-icon:url('/assets/icons/refresh.svg');}
+.ui-icon[data-icon="download"]{--ui-icon:url('/assets/icons/download.svg');}
+.ui-icon[data-icon="folder-open"]{--ui-icon:url('/assets/icons/folder-open.svg');}
+.ui-icon[data-icon="plus"]{--ui-icon:url('/assets/icons/plus.svg');}
+.ui-icon[data-icon="x"]{--ui-icon:url('/assets/icons/x.svg');}
+.ui-icon[data-icon="check"]{--ui-icon:url('/assets/icons/check.svg');}
+.ui-icon[data-icon="circle"]{--ui-icon:url('/assets/icons/circle.svg');}
+.ui-icon[data-icon="sparkles"]{--ui-icon:url('/assets/icons/sparkles.svg');}
+.ui-icon[data-icon="budget"]{--ui-icon:url('/assets/icons/budget.svg');}
+.ui-icon[data-icon="trend-up"]{--ui-icon:url('/assets/icons/trend-up.svg');}
+.ui-icon[data-icon="shield-check"]{--ui-icon:url('/assets/icons/shield-check.svg');}
+.ui-icon[data-icon="pin"]{--ui-icon:url('/assets/icons/pin.svg');}
+.ui-icon[data-icon="save"]{--ui-icon:url('/assets/icons/save.svg');}
+.nav-icon.ui-icon{width:16px;height:16px;}
+.button .ui-icon,.text-button .ui-icon{width:1em;height:1em;}
+.arena-choices .ui-icon,.arena-marquee .ui-icon,.arena-footnote .ui-icon,.arena-target-mark.ui-icon,.arena-stub-mark.ui-icon,.mission-icon.ui-icon{width:1em;height:1em;}
+@media(forced-colors:active){.ui-icon{background-color:currentColor;forced-color-adjust:none;}button:disabled .ui-icon{background-color:GrayText;}}

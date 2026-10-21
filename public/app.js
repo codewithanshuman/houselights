@@ -10,19 +10,20 @@ state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.ga
 
 // Header previews explain the existing missions; they never score or edit a run.
 const gauntletPreviews = {
-  pressure: { number: '01', title: 'The 90% Room', target: '90%', unit: 'of the original budget', icon: '↘', copy: 'Make the whole slate work with 90% of the original budget.' },
-  discovery: { number: '02', title: 'Open the Side Door', target: '+1', unit: 'discovered act', icon: '✦', copy: 'Bring in a Qloo-discovered act with your quote and availability confirmed, while keeping the slate feasible.' },
-  diversity: { number: '03', title: 'Three Colours', target: '1–3', unit: 'buyer-defined genres', icon: '◒', copy: 'Broaden the mix across up to three planning genres, depending on your slot count, and keep the slate feasible.' },
-  shock: { number: '04', title: 'Rain Check', target: '+10%', unit: 'on every known quote', icon: '↗', copy: 'Keep the exact selected lineup feasible when every known quote rises by 10%.' },
-  evidence: { number: '05', title: 'Receipts, Please', target: 'ALL', unit: 'selected acts supported', icon: '◇', copy: 'Support every selected act with relative-rank evidence, while keeping the slate feasible.' },
-  conviction: { number: '06', title: 'Make the Call', target: '1+', unit: 'lock or exclusion', icon: '◆', copy: 'Lock an act you believe in or exclude one you would pass on. Then keep the slate feasible.' }
+  pressure: { number: '01', title: 'The 90% Room', target: '90%', unit: 'of the original budget', icon: 'budget', copy: 'Make the whole slate work with 90% of the original budget.' },
+  discovery: { number: '02', title: 'Open the Side Door', target: '+1', unit: 'discovered act', icon: 'sparkles', copy: 'Bring in a Qloo-discovered act with your quote and availability confirmed, while keeping the slate feasible.' },
+  diversity: { number: '03', title: 'Three Colours', target: '1–3', unit: 'buyer-defined genres', icon: 'layers', copy: 'Broaden the mix across up to three planning genres, depending on your slot count, and keep the slate feasible.' },
+  shock: { number: '04', title: 'Rain Check', target: '+10%', unit: 'on every known quote', icon: 'trend-up', copy: 'Keep the exact selected lineup feasible when every known quote rises by 10%.' },
+  evidence: { number: '05', title: 'Receipts, Please', target: 'ALL', unit: 'selected acts supported', icon: 'receipt', copy: 'Support every selected act with relative-rank evidence, while keeping the slate feasible.' },
+  conviction: { number: '06', title: 'Make the Call', target: '1+', unit: 'lock or exclusion', icon: 'pin', copy: 'Lock an act you believe in or exclude one you would pass on. Then keep the slate feasible.' }
 };
 
 function previewGauntletChallenge(id) {
   const challenge = Object.hasOwn(gauntletPreviews, id) ? gauntletPreviews[id] : null;
   if (!challenge) return;
   $('gauntlet-preview-number').textContent = 'CHALLENGE ' + challenge.number + ' / 06';
-  for (const field of ['title', 'target', 'unit', 'icon', 'copy']) $('gauntlet-preview-' + field).textContent = challenge[field];
+  for (const field of ['title', 'target', 'unit', 'copy']) $('gauntlet-preview-' + field).textContent = challenge[field];
+  $('gauntlet-preview-icon').dataset.icon = challenge.icon;
   for (const button of document.querySelectorAll('[data-gauntlet-preview]')) button.setAttribute('aria-pressed', String(button.dataset.gauntletPreview === id));
 }
 
@@ -30,9 +31,9 @@ function installGauntletUI() {
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet'; stylesheet.href = '/gauntlet.css';
   document.head.insertBefore(stylesheet, document.querySelector('link[href="/theme.css"]'));
-  $('memo-notes').insertAdjacentHTML('beforebegin', '<section class="gauntlet-invite"><div><p class="small-label">THE DECISION GAUNTLET</p><h3>Can your slate survive the room?</h3><p>Six server-verified missions test cost pressure, discovery, diversity, evidence, resilience, and conviction.</p></div><button id="enter-gauntlet" type="button" class="button dark">Enter the Gauntlet ✦</button></section>');
+  $('memo-notes').insertAdjacentHTML('beforebegin', '<section class="gauntlet-invite"><div><p class="small-label">THE DECISION GAUNTLET</p><h3>Can your slate survive the room?</h3><p>Six server-verified missions test cost pressure, discovery, diversity, evidence, resilience, and conviction.</p></div><button id="enter-gauntlet" type="button" class="button dark">Enter the Gauntlet <span class="ui-icon" data-icon="trophy" aria-hidden="true"></span></button></section>');
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><header class="gauntlet-arena" aria-labelledby="gauntlet-heading">
-  <div class="arena-marquee"><span><i aria-hidden="true">✳</i> THE HOUSELIGHTS CHALLENGE SERIES</span><span>06 CHALLENGES · ONE LINEUP</span></div>
+  <div class="arena-marquee"><span><i class="ui-icon" data-icon="sparkles" aria-hidden="true"></i> THE HOUSELIGHTS CHALLENGE SERIES</span><span>06 CHALLENGES · ONE LINEUP</span></div>
   <div class="arena-layout">
     <div class="arena-intro">
       <p class="arena-kicker">GOOD TASTE, UNDER PRESSURE.</p>
@@ -42,29 +43,29 @@ function installGauntletUI() {
       <ol class="arena-route" aria-label="The Gauntlet workflow"><li><span>01</span> Explore</li><li><span>02</span> Decide</li><li><span>03</span> Verify</li></ol>
     </div>
     <div class="arena-stage">
-      <div class="arena-stage-label"><span>PREVIEW A CHALLENGE</span><span aria-hidden="true">↙ PICK YOUR PRESSURE</span></div>
+      <div class="arena-stage-label"><span>PREVIEW A CHALLENGE</span><span aria-hidden="true"><span class="ui-icon" data-icon="arrow-down-left" aria-hidden="true"></span> PICK YOUR PRESSURE</span></div>
       <div class="arena-ticket-stack">
         <img class="arena-disc" src="/assets/brand/disc.png" alt="" width="997" height="1506" loading="lazy" aria-hidden="true">
         <article class="arena-ticket" id="gauntlet-preview" aria-labelledby="gauntlet-preview-title" aria-live="polite" aria-atomic="true">
           <div class="arena-ticket-top"><span id="gauntlet-preview-number">CHALLENGE 01 / 06</span><span class="arena-preview-label">PREVIEW</span></div>
-          <div class="arena-target"><strong id="gauntlet-preview-target">90%</strong><span id="gauntlet-preview-unit">of the original budget</span><span class="arena-target-mark" id="gauntlet-preview-icon" aria-hidden="true">↘</span></div>
+          <div class="arena-target"><strong id="gauntlet-preview-target">90%</strong><span id="gauntlet-preview-unit">of the original budget</span><span class="arena-target-mark ui-icon" id="gauntlet-preview-icon" data-icon="budget" aria-hidden="true"></span></div>
           <h2 id="gauntlet-preview-title">The 90% Room</h2>
           <p class="arena-challenge-copy" id="gauntlet-preview-copy">Make the whole slate work with 90% of the original budget.</p>
-          <div class="arena-ticket-stub"><span class="arena-barcode" aria-hidden="true"></span><p>Explore freely. Score a saved slate<br>to check the result.</p><span class="arena-stub-mark" aria-hidden="true">✳</span></div>
+          <div class="arena-ticket-stub"><span class="arena-barcode" aria-hidden="true"></span><p>Explore freely. Score a saved slate<br>to check the result.</p><span class="ui-icon arena-stub-mark" data-icon="sparkles" aria-hidden="true"></span></div>
         </article>
       </div>
       <div class="arena-choices" role="group" aria-label="Preview a Gauntlet challenge">
-        <button type="button" data-gauntlet-preview="pressure" aria-controls="gauntlet-preview" aria-pressed="true"><span>01</span> Budget <i aria-hidden="true">↘</i></button>
-        <button type="button" data-gauntlet-preview="discovery" aria-controls="gauntlet-preview" aria-pressed="false"><span>02</span> Discovery <i aria-hidden="true">✦</i></button>
-        <button type="button" data-gauntlet-preview="diversity" aria-controls="gauntlet-preview" aria-pressed="false"><span>03</span> Genre mix <i aria-hidden="true">◒</i></button>
-        <button type="button" data-gauntlet-preview="shock" aria-controls="gauntlet-preview" aria-pressed="false"><span>04</span> Quote rise <i aria-hidden="true">↗</i></button>
-        <button type="button" data-gauntlet-preview="evidence" aria-controls="gauntlet-preview" aria-pressed="false"><span>05</span> Evidence <i aria-hidden="true">◇</i></button>
-        <button type="button" data-gauntlet-preview="conviction" aria-controls="gauntlet-preview" aria-pressed="false"><span>06</span> Your call <i aria-hidden="true">◆</i></button>
+        <button type="button" data-gauntlet-preview="pressure" aria-controls="gauntlet-preview" aria-pressed="true"><span>01</span> Budget <i class="ui-icon" data-icon="budget" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="discovery" aria-controls="gauntlet-preview" aria-pressed="false"><span>02</span> Discovery <i class="ui-icon" data-icon="sparkles" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="diversity" aria-controls="gauntlet-preview" aria-pressed="false"><span>03</span> Genre mix <i class="ui-icon" data-icon="layers" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="shock" aria-controls="gauntlet-preview" aria-pressed="false"><span>04</span> Quote rise <i class="ui-icon" data-icon="trend-up" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="evidence" aria-controls="gauntlet-preview" aria-pressed="false"><span>05</span> Evidence <i class="ui-icon" data-icon="receipt" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="conviction" aria-controls="gauntlet-preview" aria-pressed="false"><span>06</span> Your call <i class="ui-icon" data-icon="pin" aria-hidden="true"></i></button>
       </div>
     </div>
   </div>
-  <div class="arena-footnote"><span><i aria-hidden="true">◈</i> EVERY POINT HAS TO BE EARNED.</span><p>Six missions. Server-checked results. A more considered decision.</p></div>
-</header><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio ↗</button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate ↗</button></article></section></section>`);
+  <div class="arena-footnote"><span><i class="ui-icon" data-icon="shield-check" aria-hidden="true"></i> EVERY POINT HAS TO BE EARNED.</span><p>Six missions. Server-checked results. A more considered decision.</p></div>
+</header><div id="gauntlet-empty" class="panel gauntlet-empty"><p class="small-label">YOUR FIRST MISSION</p><h2>Build a slate, then put it under pressure.</h2><p>The Gauntlet turns the optimizer into a hands-on decision game. Lower the budget, take a discovery bet, protect genre breadth, survive quote increases, and record what you chose.</p><button type="button" class="button dark" data-view="slate">Go to Slate studio <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button></div><section id="gauntlet-results" hidden><div class="gauntlet-score panel"><div class="xp-ring" id="xp-ring"><strong id="gauntlet-xp">0</strong><span>XP</span></div><div class="gauntlet-rank"><p class="small-label">CURRENT TIER</p><h2 id="gauntlet-tier">Soundcheck</h2><p id="gauntlet-next"></p><div class="xp-track"><span id="xp-progress"></span></div><small id="gauntlet-summary"></small></div><div id="gauntlet-metrics" class="gauntlet-metrics"></div></div><div id="mission-grid" class="mission-grid"></div><article class="panel gauntlet-rules"><h2>Why these missions matter</h2><p>This is a learning layer over the exact optimizer. XP is not a forecast or measure of artistic quality. It rewards explicit assumptions, supported evidence, portfolio resilience, and meaningful constraint trade-offs.</p><button id="rescore-gauntlet" type="button" class="button primary">Re-score current slate <span class="ui-icon" data-icon="refresh" aria-hidden="true"></span></button></article></section></section>`);
 }
 installGauntletUI();
 const label = value => String(value ?? '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ');
@@ -135,7 +136,7 @@ function renderOffers() {
     <td><input data-offer="${index}" data-field="fee" value="${offer.fee == null ? '' : escapeHTML(offer.fee)}" type="number" min="0" step="0.01" placeholder="Quote needed" aria-label="Fee for act ${index + 1}"></td>
     <td><input data-offer="${index}" data-field="genre" value="${escapeHTML(offer.genre)}" maxlength="60" placeholder="Planning genre" aria-label="Genre for act ${index + 1}"></td>
     <td class="center"><input data-offer="${index}" data-field="available" type="checkbox" ${offer.available ? 'checked' : ''} aria-label="Act ${index + 1} is available"></td>
-    <td><button type="button" class="remove-offer" data-remove="${index}" aria-label="Remove act ${index + 1}" ${state.offers.length < 2 ? 'disabled' : ''}>×</button></td>
+    <td><button type="button" class="remove-offer" data-remove="${index}" aria-label="Remove act ${index + 1}" ${state.offers.length < 2 ? 'disabled' : ''}><span class="ui-icon" data-icon="x" aria-hidden="true"></span></button></td>
   </tr>`).join('');
   $('add-offer').disabled = state.offers.length >= 6 || state.busy;
 }
@@ -185,8 +186,8 @@ function setBusy(busy, kind = 'build') {
   $('build-button').disabled = busy; $('optimize-button').disabled = busy; $('load-scenario').disabled = busy; $('empty-example').disabled = busy;
   for (const node of document.querySelectorAll('#brief-form input, #brief-form select, #brief-form button, #candidate-rows input')) node.disabled = busy;
   $('add-offer').disabled = busy || state.offers.length >= 6;
-  $('build-button').innerHTML = busy && kind === 'build' ? 'Building your slate…' : 'Build my slate <span aria-hidden="true">↗</span>';
-  $('optimize-button').innerHTML = busy && kind === 'optimize' ? 'Checking combinations…' : 'Re-optimize <span aria-hidden="true">↻</span>';
+  $('build-button').innerHTML = busy && kind === 'build' ? 'Building your slate…' : 'Build my slate <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span>';
+  $('optimize-button').innerHTML = busy && kind === 'optimize' ? 'Checking combinations…' : 'Re-optimize <span class="ui-icon" data-icon="refresh" aria-hidden="true"></span>';
   document.querySelectorAll('[data-remove]').forEach(node => { node.disabled = busy || state.offers.length < 2; });
   $('analyze-button').disabled = busy || !state.memo;
   $('score-gauntlet').disabled = busy || !state.memo || !state.savedId;
@@ -206,7 +207,7 @@ function renderReceipts() {
   const cached = state.receipts.filter(receipt => receipt.cached).length;
   $('ledger-summary').textContent = state.receipts.length ? `${state.receipts.length} receipts · ${synthetic ? `${synthetic} synthetic` : 'Qloo source'} · ${cached} cache hits` : 'Run a booking brief to collect evidence.';
   if (!state.receipts.length) {
-    $('receipt-list').innerHTML = '<div class="panel ledger-empty"><span aria-hidden="true">◈</span><h2>Evidence starts with a real question.</h2><p>Your calls will appear here as the agent works.</p></div>';
+    $('receipt-list').innerHTML = '<div class="panel ledger-empty"><span class="ui-icon" data-icon="receipt" aria-hidden="true"></span><h2>Evidence starts with a real question.</h2><p>Your calls will appear here as the agent works.</p></div>';
     return;
   }
   $('receipt-list').innerHTML = state.receipts.map((receipt, index) => `<details class="receipt" id="receipt-${index}">
@@ -252,7 +253,7 @@ function renderAlternatives(slate) {
     $('alternatives').innerHTML = nearest.length ? nearest.map(item => `<article class="alternative"><div class="alternative-title"><strong>${escapeHTML(names(item.selectedIds))}</strong></div><p class="infeasible">${escapeHTML(item.violations?.join(' '))}</p><p>${escapeHTML(money(item.totalFee))} · ${number(item.score)} policy points</p></article>`).join('') : '<p class="no-data">Enter valid booking terms or adjust the brief to explore alternatives.</p>';
     return;
   }
-  $('alternatives').innerHTML = (slate.alternatives || []).slice(0, 5).map((item, index) => `<article class="alternative"><div class="alternative-title"><strong>${escapeHTML(byId(item.removedId)?.name)} <span aria-hidden="true">→</span> ${escapeHTML(byId(item.addedId)?.name)}</strong><span>${delta(item.scoreDelta)} pts</span></div><p class="${item.feasible ? '' : 'infeasible'}">${item.feasible ? `${item.costDelta > 0 ? '+' : ''}${escapeHTML(money(item.costDelta))} in fees · all constraints satisfied` : escapeHTML(item.violations?.join(' '))}</p>${item.feasible ? `<button class="button small subtle" type="button" data-swap="${index}">Require replacement &amp; re-optimize ↗</button>` : ''}</article>`).join('') || '<p class="no-data">All available candidates are already on the slate.</p>';
+  $('alternatives').innerHTML = (slate.alternatives || []).slice(0, 5).map((item, index) => `<article class="alternative"><div class="alternative-title"><strong>${escapeHTML(byId(item.removedId)?.name)} <span class="ui-icon" data-icon="arrow-right" aria-hidden="true"></span> ${escapeHTML(byId(item.addedId)?.name)}</strong><span>${delta(item.scoreDelta)} pts</span></div><p class="${item.feasible ? '' : 'infeasible'}">${item.feasible ? `${item.costDelta > 0 ? '+' : ''}${escapeHTML(money(item.costDelta))} in fees · all constraints satisfied` : escapeHTML(item.violations?.join(' '))}</p>${item.feasible ? `<button class="button small subtle" type="button" data-swap="${index}">Require replacement &amp; re-optimize <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>` : ''}</article>`).join('') || '<p class="no-data">All available candidates are already on the slate.</p>';
 }
 
 function renderPolicy(slate) {
@@ -284,7 +285,7 @@ function renderMemo() {
 }
 
 function renderChoices() {
-  $('entity-choices').innerHTML = state.needsInput.map((entry, index) => `<div class="entity-choice"><p><strong>Confirm the artist for “${escapeHTML(entry.name)}”</strong> ${state.picks[entry.name] ? `Selected: ${escapeHTML(state.picks[entry.name].name)}` : 'Choose an identity before rebuilding the brief.'}</p>${(entry.candidates || []).map((candidate, choice) => `<button class="button small subtle" type="button" data-choice="${index}" data-option="${choice}" aria-pressed="${state.picks[entry.name]?.id === candidate.id}">${escapeHTML(candidate.name)} <span>${escapeHTML(candidate.id || '')}</span></button>`).join('')}</div>`).join('') + (state.needsInput.length ? '<button id="resolve-again" type="button" class="button dark resolve-button">Rebuild with confirmed identities ↗</button>' : '');
+  $('entity-choices').innerHTML = state.needsInput.map((entry, index) => `<div class="entity-choice"><p><strong>Confirm the artist for “${escapeHTML(entry.name)}”</strong> ${state.picks[entry.name] ? `Selected: ${escapeHTML(state.picks[entry.name].name)}` : 'Choose an identity before rebuilding the brief.'}</p>${(entry.candidates || []).map((candidate, choice) => `<button class="button small subtle" type="button" data-choice="${index}" data-option="${choice}" aria-pressed="${state.picks[entry.name]?.id === candidate.id}">${escapeHTML(candidate.name)} <span>${escapeHTML(candidate.id || '')}</span></button>`).join('')}</div>`).join('') + (state.needsInput.length ? '<button id="resolve-again" type="button" class="button dark resolve-button">Rebuild with confirmed identities <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>' : '');
 }
 
 function handleEvent(event) {
@@ -492,7 +493,7 @@ function renderGauntlet() {
   $('gauntlet-results').hidden = !result;
   $('gauntlet-count').textContent = result ? `${result.completed}/${result.total}` : '0/6';
   if (!result) {
-    $('score-gauntlet').textContent = state.memo ? 'Score this slate ↗' : 'Build a slate first';
+    $('score-gauntlet').innerHTML = state.memo ? 'Score this slate <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span>' : 'Build a slate first';
     $('score-gauntlet').disabled = state.busy || !state.memo || !state.savedId;
     return;
   }
@@ -510,7 +511,7 @@ function renderGauntlet() {
     ['Rank coverage', `${metrics.rankCoveragePercent ?? 0}%`],
     ['+10% quotes', metrics.quoteShock10 == null ? 'Unknown' : metrics.quoteShock10 ? 'Holds' : 'Breaks']
   ].map(([name, value]) => `<div><span>${escapeHTML(name)}</span><strong>${escapeHTML(value)}</strong></div>`).join('');
-  $('mission-grid').innerHTML = result.missions.map((mission, index) => `<article class="mission-card ${mission.achieved ? 'complete' : ''}"><div class="mission-top"><span class="mission-number">${String(index + 1).padStart(2, '0')}</span><span class="mission-icon" aria-hidden="true">${escapeHTML(mission.icon)}</span><span class="mission-points">${mission.achieved ? `+${mission.points} XP` : `${mission.points} XP`}</span></div><p class="small-label">${mission.achieved ? 'MISSION CLEARED' : 'OPEN MISSION'}</p><h2>${escapeHTML(mission.title)}</h2><p>${escapeHTML(mission.instruction)}</p><div class="mission-progress"><span>${mission.achieved ? '✓' : '○'}</span>${escapeHTML(mission.progress)}</div><button type="button" class="button ${mission.achieved ? 'subtle' : 'dark'} small" data-gauntlet-action="${escapeHTML(mission.action)}">${mission.achieved ? 'Review' : escapeHTML(mission.actionLabel)} ↗</button></article>`).join('');
+  $('mission-grid').innerHTML = result.missions.map((mission, index) => `<article class="mission-card ${mission.achieved ? 'complete' : ''}"><div class="mission-top"><span class="mission-number">${String(index + 1).padStart(2, '0')}</span><span class="mission-icon ui-icon" data-icon="${Object.hasOwn(gauntletPreviews, mission.id) ? gauntletPreviews[mission.id].icon : 'shield-check'}" aria-hidden="true"></span><span class="mission-points">${mission.achieved ? `+${mission.points} XP` : `${mission.points} XP`}</span></div><p class="small-label">${mission.achieved ? 'MISSION CLEARED' : 'OPEN MISSION'}</p><h2>${escapeHTML(mission.title)}</h2><p>${escapeHTML(mission.instruction)}</p><div class="mission-progress"><span class="ui-icon" data-icon="${mission.achieved ? 'check' : 'circle'}" aria-hidden="true"></span>${escapeHTML(mission.progress)}</div><button type="button" class="button ${mission.achieved ? 'subtle' : 'dark'} small" data-gauntlet-action="${escapeHTML(mission.action)}">${mission.achieved ? 'Review' : escapeHTML(mission.actionLabel)} <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button></article>`).join('');
 }
 
 async function scoreGauntlet() {
@@ -526,8 +527,8 @@ async function scoreGauntlet() {
     toast(`${result.completed} missions cleared · ${result.xp} server-verified XP.`);
   } catch (failure) { error(failure.message); }
   finally {
-    $('score-gauntlet').textContent = 'Score this slate ↗';
-    $('rescore-gauntlet').textContent = 'Re-score current slate ↗';
+    $('score-gauntlet').innerHTML = 'Score this slate <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span>';
+    $('rescore-gauntlet').innerHTML = 'Re-score current slate <span class="ui-icon" data-icon="refresh" aria-hidden="true"></span>';
     setBusy(false);
   }
 }
@@ -574,12 +575,12 @@ async function analyze() {
     const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Stress analysis could not complete.');
     state.analysis = result; renderStress(); toast(`${result.budgetScenarios.length + result.feeScenarios.length} planning scenarios checked. No new Qloo calls.`);
   } catch (failure) { error(failure.message); }
-  finally { setBusy(false); $('analyze-button').textContent = 'Run stress tests ↗'; }
+  finally { setBusy(false); $('analyze-button').innerHTML = 'Run stress tests <span class="ui-icon" data-icon="shield-check" aria-hidden="true"></span>'; }
 }
 
 function renderScenarioHistory() {
   $('scenario-history').className = 'scenario-history';
-  $('scenario-history').innerHTML = state.scenarioHistory.map(row => `<a href="/m/${encodeURIComponent(row.id)}">${escapeHTML(row.name)} ↗</a>${row.parentId ? `<a href="/m/${encodeURIComponent(row.parentId)}">Source run ↗</a>` : ''}`).join('');
+  $('scenario-history').innerHTML = state.scenarioHistory.map(row => `<a href="/m/${encodeURIComponent(row.id)}">${escapeHTML(row.name)} <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>${row.parentId ? `<a href="/m/${encodeURIComponent(row.parentId)}">Source run <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>` : ''}`).join('');
 }
 
 async function saveScenario() {
@@ -595,7 +596,7 @@ async function saveScenario() {
     $('share-link').href = `/m/${encodeURIComponent(result.id)}`; $('share-link').hidden = false;
     renderMemo(); renderScenarioHistory(); toast('Scenario saved with the original evidence and a link to its source.');
   } catch (failure) { error(failure.message); }
-  finally { $('save-scenario').textContent = 'Save scenario ↗'; setBusy(false); }
+  finally { $('save-scenario').innerHTML = 'Save scenario <span class="ui-icon" data-icon="save" aria-hidden="true"></span>'; setBusy(false); }
 }
 
 function renderModelBaseline() {
