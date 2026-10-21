@@ -9,7 +9,9 @@ self-hosted with OFL licenses.
 The judge page, organizer workspace, Festival GM, Decision Room, evidence,
 Gauntlet, portfolio, evaluation and private review page share the identity.
 Supplied logo and music cutouts replace the five earlier illustrations/GIF.
-Other supplied posters are visual references, not purported Houselights events.
+Supplied photographs and posters fill the camera and record frames as decorative
+artwork, not purported Houselights events. The Slate Studio empty state omits the
+microphone. The public "Great nights. Defensible decisions." hero is unchanged.
 
 Entrance and hover motion is brief. Decorative disc motion is opt-in, persists
 locally, stops while the document is hidden, and respects reduced-motion settings.

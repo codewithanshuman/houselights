@@ -127,3 +127,27 @@ label{font-size:13px;font-weight:500;line-height:1.6}pre,code,kbd,.receipt-id,.r
 h4,h5,h6{font-family:var(--serif);font-weight:500}.gm-layout h4{font-size:20px}.judge-brand{font-family:var(--serif)}.judge-brand .brand-logo{width:82px;height:82px}.judge-page #judge-result>h4{font:500 22px var(--serif)}
 .table-scroll{position:relative}
 .review-shell fieldset{margin-top:24px}.review-shell fieldset legend{font:500 18px var(--serif);margin-bottom:12px}.review-shell fieldset label:has(input[type=radio]){flex-direction:row;align-items:center;gap:10px;margin:10px 0}.review-shell input[type=radio]{width:18px;height:18px;min-height:18px;accent-color:var(--purple)}
+/* Supplied frame artwork: coordinates follow each original image's pixel grid.
+   Keep these rules scoped to the organizer; the public judge hero is unchanged. */
+#view-slate .record-frame-stage{display:block;position:relative;width:min(100%,calc(290px * 940 / 1672));aspect-ratio:940/1672;margin-inline:auto;isolation:isolate}
+#view-slate .record-frame-stage>img{position:absolute;display:block;max-width:none;pointer-events:none}
+#view-slate .record-frame-stage>.frame-cutout{inset:0;width:100%;height:100%}
+/* The polaroid openings are opaque black, so photos sit precisely above them. */
+#view-slate .record-print{object-fit:cover;transform-origin:0 0;z-index:1}
+#view-slate .record-print-one{left:26.596%;top:8.313%;width:37.234%;height:20.694%;transform:matrix(.971429,-.234286,.236994,.971098,0,0)}
+#view-slate .record-print-two{left:61.064%;top:29.605%;width:35.957%;height:20.694%;transform:matrix(.940828,.328402,-.329480,.942197,0,0);object-position:center 32%}
+#view-slate .record-print-three{left:30.213%;top:63.696%;width:37.234%;height:21.292%;transform:matrix(.971429,-.222857,.210674,.980337,0,0)}
+#view-slate .empty-state-text{grid-template-columns:minmax(0,1fr)}
+#view-slate .empty-state-text .text-button{grid-column:1}
+#view-evidence .evidence-camera{margin:0;pointer-events:none}
+#view-evidence .camera-frame-stage{display:block;position:relative;width:min(100%,186.6667px);aspect-ratio:1024/1536;margin-inline:auto;isolation:isolate}
+#view-evidence .camera-frame-stage>img{position:absolute;display:block;max-width:none;pointer-events:none}
+#view-evidence .camera-frame-stage>.frame-cutout{inset:0;width:100%;height:100%;z-index:1}
+/* Slight overlap beneath the film border prevents seams as the artwork scales. */
+#view-evidence .film-print{left:15.332%;width:28.516%;object-fit:cover}
+#view-evidence .film-print-one{top:24.544%;height:15.299%}
+#view-evidence .film-print-two{top:41.146%;height:13.932%;object-position:center 35%}
+#view-evidence .film-print-three{top:56.315%;height:13.737%;object-position:center 45%}
+#view-evidence .film-print-four{top:71.484%;height:15.104%}
+#view-evidence .film-print-tail{top:87.891%;height:3.19%;object-position:center 65%}
+@media(max-width:550px){#view-slate .record-frame-stage{width:min(100%,calc(175px * 940 / 1672))}}

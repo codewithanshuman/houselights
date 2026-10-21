@@ -14,9 +14,18 @@ They are decorative artwork, not Qloo evidence or photographs of recommended act
 | `brand/disc.png` | `codex-clipboard-8e049936-7b39-4241-8a90-108722c924c3.png` |
 | `brand/camera.png` | `codex-clipboard-918c0a65-860c-4e88-a662-5c3867df5fad.png` |
 | `brand/crowd.png` | `codex-clipboard-e00958bb-f657-439b-a84c-7c08bf9c3b35.png` |
+| `brand/record-frames.png` | `codex-clipboard-4a0e00c3-9c2e-4fd2-90b0-962e91bf7e9b.png` |
+| `brand/concert-hall.png` | `Creator Spotlight ✨_Meet Paul Jochum, the art director and graphic designer behind the Berliner Philharmonie campaign_ His work captures the elegance and spirit of a world-class music.com_paul_jochum_faphdnjt.png` |
+| `brand/jazz.png` | `codex-clipboard-5d1990b6-7abb-4b7b-98cf-9484453f8c9d.png` |
+| `brand/concerto.png` | `codex-clipboard-1ee4a374-fb23-43d3-ab3c-da63ca071960.png` |
+| `brand/headphones.png` | `codex-clipboard-92931d7f-cff0-400a-8ec3-b07489e00f81.png` |
+| `brand/arctic-monkeys.png` | `codex-clipboard-a44ce0cb-cc83-4641-bd86-c6c9553b1bc1.png` |
+| `brand/music-speaks.png` | `codex-clipboard-12b754e4-e3c9-4e6f-bb50-3802cba129b5.png` |
 
-Other supplied posters informed the editorial layout and are not presented as
-Houselights event listings. The code's MIT license does not assert ownership of
+The supplied photographs and posters fill the camera's film windows and the
+record's three polaroid frames as decorative collages, not Houselights event
+listings. The microphone is retained as an asset but no longer displayed in Slate
+Studio. The code's MIT license does not assert ownership of
 the supplied artwork. Fraunces, IBM Plex Sans and IBM Plex Mono are self-hosted
 from Google Fonts; their OFL license files are included in `fonts/`.
 
