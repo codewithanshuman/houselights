@@ -126,3 +126,4 @@ label{font-size:13px;font-weight:500;line-height:1.6}pre,code,kbd,.receipt-id,.r
 
 h4,h5,h6{font-family:var(--serif);font-weight:500}.gm-layout h4{font-size:20px}.judge-brand{font-family:var(--serif)}.judge-brand .brand-logo{width:82px;height:82px}.judge-page #judge-result>h4{font:500 22px var(--serif)}
 .table-scroll{position:relative}
+.review-shell fieldset{margin-top:24px}.review-shell fieldset legend{font:500 18px var(--serif);margin-bottom:12px}.review-shell fieldset label:has(input[type=radio]){flex-direction:row;align-items:center;gap:10px;margin:10px 0}.review-shell input[type=radio]{width:18px;height:18px;min-height:18px;accent-color:var(--purple)}
