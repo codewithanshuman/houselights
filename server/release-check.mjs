@@ -45,7 +45,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
-      if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"'));
+      if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
+        page.data.includes('id="load-twin"')&&page.data.includes('id="add-seed"'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const shocks=await request('/shocks-summary.json');
