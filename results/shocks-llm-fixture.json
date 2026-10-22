@@ -1,0 +1,539 @@
+{
+  "version": "1.0",
+  "responses": {
+    "4986d98dcd8ac838aed3874a:budget-90": {
+      "briefDigest": "sha256:623ceafa0c0fbd60a8ce987cdff4e0c90bae933cf4e8f3304767be5eba0b6e78",
+      "status": "responded",
+      "selectedIds": [
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:4ac4b4b6a9016b8c535c44c2e62596985e8e81d716ac74193dedbd2cf65f26ea",
+        "requestDigest": "sha256:3648c3b9777d031f0b6d1930717749d42b425352a67c60685bdf02b9a21f6e81",
+        "responseDigest": "sha256:fb97ab829a07a2027992cae2730ea7a52929c9644a4e8429b6eea5a1300718e9",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:29:59.037Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:budget-80": {
+      "briefDigest": "sha256:c49d6c7fa5c7946d6ebc3deca5fc43173514f01daff4926e0a97cca6df9e6449",
+      "status": "responded",
+      "selectedIds": [
+        "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:bb86665392f70a44f1db0b0918695286b3a1b0a2a567718df0e3aa44fb53e29e",
+        "requestDigest": "sha256:22aebfa79bf469ea871b26dc6a0d5b1567926d6d7a0f5f4eab9fa8c2ef16be5b",
+        "responseDigest": "sha256:5c72cf943387f5d50b9aa687dc54dae6744ad1a59ddc51e62df0d75dfe96d2b5",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:00.798Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:budget-70": {
+      "briefDigest": "sha256:5f1bc986a93158cc221187946bf40388de74661d95837cc32ac74b7365f1e869",
+      "status": "responded",
+      "selectedIds": [],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:dc1a3a44fecb1137f7a2c1bd862633baff20cd7d079e9e4298dd5e8ab9e93370",
+        "requestDigest": "sha256:dab103330d533031ca8d6088be2605ab3d202a1699f6f15ac2084a117d3bfe4d",
+        "responseDigest": "sha256:f5edf0a158a8efc467c6d4e0a53b4ad5da31982bb1c4fce35dbdfa1de8632714",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:01.616Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:cancel-B3C36B49-259E-4A4F-80E6-AE9F19F6004C": {
+      "briefDigest": "sha256:6a0249f41a3c5f419d04b1ed83664a4ca9ea026512caf1118eccfc475eba62e5",
+      "status": "responded",
+      "selectedIds": [
+        "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:fe4babd051c964fd768511c3ef238580b735617a541e907d4d56ed5f260052af",
+        "requestDigest": "sha256:a97e7681d451e626d35c3b15bf576e72c989c82753daebc68d755f382f4225ec",
+        "responseDigest": "sha256:81a99bf2862b95bfd3db8382c1a2590dbc0831ce9c42542b8512ff674c7f4331",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:02.968Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:fee-15-B3C36B49-259E-4A4F-80E6-AE9F19F6004C": {
+      "briefDigest": "sha256:8fc90d807eb1f0c66152dd277bf87488963e86a93d96cd7621c01f39460fed19",
+      "status": "responded",
+      "selectedIds": [
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:aeebb9e3ef4afae89e772df408c9330bf4f229c2b438aff159b8f6d74ba6349e",
+        "requestDigest": "sha256:ab37046be6066097ce3725e6a092f1dac21d5017615e06eda8635faa990fb8aa",
+        "responseDigest": "sha256:b32076bb0641f185d3925c6fb548fbe937a0a02bb026492cf7f0dab11879c050",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:04.411Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:unavailable-B3C36B49-259E-4A4F-80E6-AE9F19F6004C": {
+      "briefDigest": "sha256:b6109b85f135bd77b1f7efef6daf06dbf05231fc587dc86c1872baf2fa4c64b5",
+      "status": "responded",
+      "selectedIds": [
+        "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "97FCD59C-4F36-4605-B458-79167FBCED33"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:df1bff1fe047e2332345ca54a5217d8f0cecef4f7310f2d26937c4b9ebbb9be7",
+        "requestDigest": "sha256:0238ffad07c49336092d179d8fa598bcf65bbdd3fa138b929d3ba8a8d4a97aee",
+        "responseDigest": "sha256:84782c3331e26093fbbd7aee92077f38224f1c9273aa2a5f02bf044749c9ad4f",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:05.490Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:cancel-B3176305-C5BA-4B25-BD83-FB86B6E706C1": {
+      "briefDigest": "sha256:b6c466970322d8fdc2775048321511211fbc36c136e2432997eb63b9c28cd964",
+      "status": "responded",
+      "selectedIds": [
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "8AD89B8C-43AF-420E-BA13-62DB30D5F8C4"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:bc2ae6e7e41059cc939973badd3900de51b8e63c2f3114193f3ac471f98687f9",
+        "requestDigest": "sha256:e1c379fb80d9322a011fceaa90c77fdb106f606920038a445eb62685039c7aa3",
+        "responseDigest": "sha256:883bbf063f5b0d44f6f9fbf34fc6e3d4e41058be0265ea84d92a8fe8fa8d1ace",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:06.570Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:fee-15-B3176305-C5BA-4B25-BD83-FB86B6E706C1": {
+      "briefDigest": "sha256:f81a68358f545069cf5c7a47c7fe4c720eeb72301cd02ea5dd7316c466a27204",
+      "status": "responded",
+      "selectedIds": [
+        "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:24c83d3c947d5cbd3142322fda07ea2d7a138f60fa1034d178cd536f603fe50d",
+        "requestDigest": "sha256:5c5100d917f3f41e8a9d61685de6b69cc1290e18a8d592db07952e10fad80238",
+        "responseDigest": "sha256:8d8c6884a15e84a270c065b2e0f78db31137324fdedd97327fffca54060b3d6b",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:07.575Z"
+      }
+    },
+    "4986d98dcd8ac838aed3874a:unavailable-B3176305-C5BA-4B25-BD83-FB86B6E706C1": {
+      "briefDigest": "sha256:ec31c9dbc883a0570f414ad6418ba8b123788c918739856a89af8a179c3a2fb4",
+      "status": "responded",
+      "selectedIds": [
+        "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "8AD89B8C-43AF-420E-BA13-62DB30D5F8C4"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:bb83b4ef9a02deb86ae884100d69ff4b76c1ffeb15f10e5a71219d70a61c8fcb",
+        "requestDigest": "sha256:e1b79976209ae5364148d5c867312a9eddd68596259271284686984b884d1a7f",
+        "responseDigest": "sha256:8d67c55ae2fd58c03ebfc6e3cc54659796533ec811f48ea36657d0212da9bdd2",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:08.796Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:budget-90": {
+      "briefDigest": "sha256:0e060a7bdab203ce3b8e4cd284ee1b5aab0b5a0c3de33714ce7fd82227ce2314",
+      "status": "responded",
+      "selectedIds": [
+        "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:614285c214253ba4568456f5d59f62137d07d7419907589560ebae3fdb57fefb",
+        "requestDigest": "sha256:8395f4bb7966e3b97896f0042c1848ccecafa49ae13e26cc0f9b5601687cc739",
+        "responseDigest": "sha256:e1c1f026e8d239e8df9ca9303b6652ffb3eb9b5c32f27399aaa0732ded8041f0",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:10.081Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:budget-80": {
+      "briefDigest": "sha256:f3933a934e108226ffc743fe03ead9951081ea92166f4d2d7267a22c73985c59",
+      "status": "responded",
+      "selectedIds": [
+        "120402A8-860E-4384-B2F2-91E49383D42B",
+        "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:516732e5341c824b6327e4ee412de31e1eb65a641c1f220cebf1123e54a932e0",
+        "requestDigest": "sha256:c97b20d96e3ef6bb28b1ce44f32daddba2a59c5aed0ce64d3dc956f9fccc5c62",
+        "responseDigest": "sha256:213035d59e56ce738c426b920cbf608912438c90470cfa30a038c5dab8e0dcc3",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:11.377Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:budget-70": {
+      "briefDigest": "sha256:47b8356acaca602633698a60f8b1c0efa04299992982ee35504c44cb80748bb3",
+      "status": "responded",
+      "selectedIds": [],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:ecbd9e4647b6d8cc78b97ceea9160e6cd396abef04e497d3f889fcb5e790e5e3",
+        "requestDigest": "sha256:668babc2d40cb8ef8120ac3a95530d0fe77a7e892f1315610ca553053b74b5cd",
+        "responseDigest": "sha256:53676a28aed2008f65a2d969c186a7de68c36567740e3a091e36e6550fdfd86c",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:12.282Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:cancel-120402A8-860E-4384-B2F2-91E49383D42B": {
+      "briefDigest": "sha256:3da96c799b56eeac9a13ec838d9fc534f43eff16a7317020dc0a1dce87743b22",
+      "status": "responded",
+      "selectedIds": [
+        "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:effc4c309cd02749efa4e78682e373e48e647e3eca6a12222293d75aba2cb11a",
+        "requestDigest": "sha256:03004d37108070ef1aa35ff76425ab622d9c857e5f38cf8ae7774de352e7bb1d",
+        "responseDigest": "sha256:48dfcbec839e70c1ad75d43fc5efddd9137e256554ceb64f4c5b74d53c5c8547",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:14.492Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:unavailable-120402A8-860E-4384-B2F2-91E49383D42B": {
+      "briefDigest": "sha256:555a2d03e052ee8f4d00c3b6fe1d52e9548612fdd9aae0a24f717a1776e53190",
+      "status": "responded",
+      "selectedIds": [
+        "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:0a8182ab9cc47917a5ec60f50229a16cd6fadb49efdd71530686547da4d2f427",
+        "requestDigest": "sha256:45275bc7e6045cca94bfc11faafa7ea73f6dd75431553164cce570225d61ba90",
+        "responseDigest": "sha256:d690f00e8da1daedad0f441c9ca85aaf26e3956b81e4b5624edd6aa6b700f4dc",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:20.877Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:fee-15-4F87DE42-3B65-4ED1-B1C8-D015920E8E10": {
+      "briefDigest": "sha256:f3b431d0f6904014f3fe7a8bad8f310272d7dae8ab0c678b7fb7a0cdc9310027",
+      "status": "responded",
+      "selectedIds": [
+        "78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+        "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:e7dbe974b61caebe67d69d1369791d1b4c1de39697c9d381ef24daed19aebc67",
+        "requestDigest": "sha256:41ba3ce306b6a85dc0388b61f25bfcec0baf3815b736e8a9e7018ce980aca79f",
+        "responseDigest": "sha256:95a33ba53fab766cc3b1b7b57e349f8cec19283ebfcba44a4db71cf3bd86ee86",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:26.630Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:budget-90": {
+      "briefDigest": "sha256:4085ca3311530da2f4069263e06138062d0ca0e380f95e4ad9143741d4a7ca44",
+      "status": "responded",
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:e8445b3e54fc69b2e1dd9bb7b50e185d18a71a983b52763b224c62a2ac391720",
+        "requestDigest": "sha256:ff36f2a03dc24a8e4d4a16e29d2c8600f8185321b91c01bfdd5b372b341b12d2",
+        "responseDigest": "sha256:47330fd07e6f39dce445339f77d19ff68aecf54dba04ef2cfe5a8bbd1cf8dd1d",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:32.762Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:budget-70": {
+      "briefDigest": "sha256:0ede15e05324cd08ea6bfeccf749310cb9d9d02907b646b3da706c685a1b775a",
+      "status": "responded",
+      "selectedIds": [
+        "57478178-BBBC-49A4-8755-5D942B388316",
+        "AC007829-3D79-438E-9F02-11228C82AD38"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:3f3bdc0c5cfdf6b50d3e320095dff407ece911f458a11251813d7f8085a4a5c9",
+        "requestDigest": "sha256:b884cc89f26a21cc4def7d83c4f6bed870571e883d2293de0573fe09e5908aae",
+        "responseDigest": "sha256:ead0f97af42f652b7b52438b62f9f8ed3bdfc91d889fbd34bd4531a98b685d77",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:37.472Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:fee-15-368316C7-795A-46AF-8BBC-270F6633BE04": {
+      "briefDigest": "sha256:e7a27827be4db25b3af1ee58ef10353644f4c7fef2401cd687ebc7f7795b9bcb",
+      "status": "responded",
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:5bf3dc1814242396d1d58b8b16f518e41c3ec1fb894961ea9b184b5146af6967",
+        "requestDigest": "sha256:6cc063d904d6032c694b5b01ccf61dd3e88c5afd51bc23298c54557a55fb611f",
+        "responseDigest": "sha256:8ea77381e4484893ec865d53c014788c706127df12740b18671a0270d6676aba",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:44.174Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:cancel-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0": {
+      "briefDigest": "sha256:88fa6b2cf7b1e62ff4f791e74e49d7fd152c5c41bcc53afcebf784bafee9b140",
+      "status": "responded",
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:1fba2d31c9fb291dc49ea98be2e5c2b3e0e5c2c74125c01d128d6ad68372ffd8",
+        "requestDigest": "sha256:82f923888e8f97d56a0e3cf588cb9e8157601627196ba8f1d557efa3c5fa895f",
+        "responseDigest": "sha256:a32df38ab98b3e86c8523e37b5d32e83a758dcc00e0b6bc1c376da370621cce7",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:48.878Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:unavailable-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0": {
+      "briefDigest": "sha256:21d00465d7ceaae81d1fd4ad0d2b54de3f222d46ba082ff61c1c0f8fbf45a3ff",
+      "status": "responded",
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:15945ce5fa873da7620bf53c06759e0a967eb6160ee5305d5128095ac54e624f",
+        "requestDigest": "sha256:a41019b071f4f0db482f9ac9894fef94e0678250abe129b0f8517a8a0c19355f",
+        "responseDigest": "sha256:34e61cd9e61c21224aaf7fd98b449e32c4b6deac11c29af47574ea0e5fb4035b",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:30:54.749Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:fee-15-120402A8-860E-4384-B2F2-91E49383D42B": {
+      "briefDigest": "sha256:9cf29edb456675bca9f76f9c2dfb7f8454ce36401fb3e93d56c91b73c6852376",
+      "status": "responded",
+      "selectedIds": [
+        "78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+        "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:e62374890f1a1f8c86195e1c3725f16934db641d953e9e62f9a16a0254f322fa",
+        "requestDigest": "sha256:2b5837767bad308b1662d5573eb70b33854002518b55272b5d0ae66a4b501b2d",
+        "responseDigest": "sha256:7d5bd3da1afdb39636101b0e3ba4e76eeb57eb8f5f1997f48462b7842ff17a41",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:38.254Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:cancel-4F87DE42-3B65-4ED1-B1C8-D015920E8E10": {
+      "briefDigest": "sha256:4c686121c5a68d1fad5942ee706f9494ce5022177654bc241de10bea06b5aa91",
+      "status": "responded",
+      "selectedIds": [
+        "120402A8-860E-4384-B2F2-91E49383D42B",
+        "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:4a887e3d1a5cebb948490592d3dc2d91db90894724c776067a5ac66262330f55",
+        "requestDigest": "sha256:8546861b6dfd804bcec9fc8aa0bdd882f2a65103e398d17d0ef0c99d23629efd",
+        "responseDigest": "sha256:b6a336a17bca247373b81f8d25494ace61410b943d0a58cab73d735e5cc05503",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:40.361Z"
+      }
+    },
+    "934e002267e2db9ccdc1b5a9:unavailable-4F87DE42-3B65-4ED1-B1C8-D015920E8E10": {
+      "briefDigest": "sha256:75aa5e13c60523b9bd8564bae22bbfadd5b3ad841e657334b21a948982a0bb2a",
+      "status": "responded",
+      "selectedIds": [
+        "36254E3F-20E4-4151-AC61-D753CA41F34A",
+        "78AA0492-B692-47A8-8C6-78CB0721AF2F"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:acb0eb682d9e0d76639794e7a83265c943ef4b9ec1f84af2ce50444b8ed1ae8a",
+        "requestDigest": "sha256:a69a28d1e1ce24bc3e5df5db25e4ec5e9688c6eee12beb6e530253081ff1a70a",
+        "responseDigest": "sha256:d0233c12ceb4133388f277372ea47f88210c32b5a179d329effbbb0489c9d622",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:41.244Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:budget-80": {
+      "briefDigest": "sha256:512f2cb48d52b30da19e3c5cf3cff53830085b91d0869d7b5329349a0de33999",
+      "status": "responded",
+      "selectedIds": [
+        "57478178-BBBC-49A4-8755-5D942B388316",
+        "368316C7-795A-46AF-8BBC-270F6633BE04"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:8adf3b6e082d049e641f7bedfda6d5763ba0c266b1410ee3e3a87194aec3006b",
+        "requestDigest": "sha256:66938b85e536fca5a72a7956e2ada95a41358ae41955969866aaf824afac510a",
+        "responseDigest": "sha256:75eca04a07fafc7021739bd13c0c1f8b2387349d937a1d0df1479ace078a6dac",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:42.287Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:cancel-368316C7-795A-46AF-8BBC-270F6633BE04": {
+      "briefDigest": "sha256:8ab7be13f940b268237b65906340a3210d1d6cd2553202f86d24c58e634add9f",
+      "status": "responded",
+      "selectedIds": [
+        "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:61ef743399a4e778b77aebdefea4c98e8dece494d0cae9545f934310134ce15b",
+        "requestDigest": "sha256:ca637c00a2a966ae12dcc0a4e22bf35af00cfc36cfc8cdc240b838f5998fda01",
+        "responseDigest": "sha256:3a14c6a5c4eb88813f3d8cba0ec1a447fc58dfdf0961147eb6c8d112a492f560",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:43.362Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:unavailable-368316C7-795A-46AF-8BBC-270F6633BE04": {
+      "briefDigest": "sha256:8436dec879458532b86df3e0354a1de5cc11dfbd030db85b81d39febf49e3a71",
+      "status": "responded",
+      "selectedIds": [
+        "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+        "AC007829-3D79-438E-9F02-11228C82AD38"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:4ab20ceb9a62efa838f38af2c71d49d6e83f406e8caa13262c515c21b267be25",
+        "requestDigest": "sha256:14f4798f1144f3fc1706d393e4d50d07dc15cb3eabc6f29209591179829f55cf",
+        "responseDigest": "sha256:40ea691a2f3314c93bba7ae8c069cd2bde43227ec672a7758d0119185bd374cf",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:44.604Z"
+      }
+    },
+    "bf9b65d52eeff00e0e258917:fee-15-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0": {
+      "briefDigest": "sha256:8ad7c7b179b81d5252a5b409dc3602a4214f5f1b3867f6ac3ebebda9aa81656f",
+      "status": "responded",
+      "selectedIds": [
+        "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+        "AC007829-3D79-438E-9F02-11228C82AD38"
+      ],
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "httpStatus": 200,
+        "promptDigest": "sha256:1bfc1a3ea000a1de84e7190734aa6d3e2f946ff84636352b803a5b56d1fdd43e",
+        "requestDigest": "sha256:8fe1dbbeef8aef18727971a5556f226eda05e6e7a81596e833df45499c55300c",
+        "responseDigest": "sha256:89bcc56da32d74d400592bb1b6399b45ec47d8e2b103aa4eb8523f6067abd827",
+        "toolsAllowed": false,
+        "startedAt": "2026-10-22T06:32:45.816Z"
+      }
+    }
+  }
+}

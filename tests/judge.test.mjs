@@ -51,6 +51,8 @@ test('public experiments recompute exact results, preserve survivors and never s
   const response=await post(path,{budget:60});assert.equal(response.status,200);const result=await response.json();
   assert.deepEqual(result.snapshot.memo.slate.selectedIds,['b','c']);assert.equal(result.comparison.feeDelta,-40);assert.equal(result.persisted,false);assert.equal(result.providerCalls,0);
   const recovered=await (await post(path,{cancelId:'a'})).json();assert.deepEqual(recovered.snapshot.memo.slate.selectedIds,['b','c']);assert.equal(recovered.comparison.survivorsPreserved,true);
+  const higherFee=judge.judgeExperiment(record,{feeIncreaseId:'a'});assert.equal(higherFee.snapshot.memo.items.find(item=>item.id==='a').terms.fee,69);
+  const unavailable=judge.judgeExperiment(record,{unavailableId:'a'});assert.deepEqual(unavailable.snapshot.memo.slate.selectedIds,['b','c']);
   const impossible=await (await post(path,{cancelId:'a',excludedIds:['b']})).json();assert.equal(impossible.snapshot.memo.slate.feasible,false);assert.equal(impossible.comparison.survivorsPreserved,null);
   assert.equal(db.prepare('SELECT count(*) AS n FROM snapshots').get().n,before);assert.deepEqual(judge.loadJudgeCase(record.id),record);
   assert.equal((await post('/api/benchmarks',{sourceId:'anything'})).status,401);assert.equal((await post('/api/scenario',{})).status,401);
@@ -64,7 +66,7 @@ test('withdrawing rank evidence makes fit unknown for every dependent artist and
 });
 test('rejects injected scores, unknown IDs, unsupported budgets and non-illustrative publication',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture'),path='/api/judge/cases/'+record.id+'/experiment';
-  for(const body of [{items:[{fit:10000}]},{lockedIds:['invented']},{budget:'60'},{budget:-1},{budget:1e12},{cancelId:'c'},{withdrawReceiptId:'invented'}])assert.equal((await post(path,body)).status,400);
+  for(const body of [{items:[{fit:10000}]},{lockedIds:['invented']},{budget:'60'},{budget:-1},{budget:1e12},{cancelId:'c'},{feeIncreaseId:'c'},{unavailableId:'c'},{withdrawReceiptId:'invented'}])assert.equal((await post(path,body)).status,400);
   assert.equal((await post('/api/judge/cases/'+'f'.repeat(24)+'/experiment',{})).status,404);
   const real=source();real.input.exampleBookingTerms=false;assert.throws(()=>judge.publishJudgeCase(real,'Fixture'),/illustrative/);
 });

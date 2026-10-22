@@ -60,12 +60,19 @@ export function loadJudgeCase(id) {
 }
 export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body));}
 export function judgeExperiment(record,raw={}) {
-  const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId'];
-  if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!allowed.includes(k)))throw fault('Only budget, locks, exclusions, cancellation and receipt withdrawal can be changed.');
+  const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId'];
+  if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!allowed.includes(k)))throw fault('Only budget, locks, exclusions, cancellation, a 15% fee increase, unavailability and receipt withdrawal can be changed.');
   const snapshot=structuredClone(record.snapshot),baseline=snapshot.memo.slate;
   const ids=new Set(snapshot.memo.items.map(i=>i.id));
   for(const key of ['lockedIds','excludedIds'])if(raw[key]!==undefined&&(!Array.isArray(raw[key])||raw[key].length>10||raw[key].some(id=>!ids.has(id))))throw fault('Locks and exclusions must refer to this case’s candidate pool.');
   if(raw.budget!==undefined&&(typeof raw.budget!=='number'||!Number.isFinite(raw.budget)||raw.budget<0||raw.budget>1e9))throw fault('Budget must be a number between 0 and 1,000,000,000.');
+  for(const key of ['feeIncreaseId','unavailableId'])if(raw[key]!==undefined&&(!baseline.selectedIds.includes(raw[key])||typeof raw[key]!=='string'))throw fault(`${key} must refer to an artist selected in the published baseline.`);
+  if(raw.feeIncreaseId!==undefined){
+    const item=snapshot.memo.items.find(item=>item.id===raw.feeIncreaseId);
+    if(typeof item.terms.fee!=='number'||!Number.isFinite(item.terms.fee))throw fault('A fee shock requires a known buyer-entered fee.');
+    item.terms.fee=Math.round(item.terms.fee*115)/100;
+  }
+  if(raw.unavailableId!==undefined)snapshot.memo.items.find(item=>item.id===raw.unavailableId).terms.available=false;
   const constraints={...snapshot.memo.constraints,...fields(raw,['budget','lockedIds','excludedIds'])};
   let survivors=[];
   if(raw.cancelId!==undefined&&raw.cancelId!==null&&raw.cancelId!=='') {

@@ -6,9 +6,11 @@ The buyer supplies the city, artists representing the room's audience, offers, f
 
 The [advanced workflows](docs/advanced-workflows.md) include a bounded model-directed investigator with native function calls and server-rendered facts, private source-document review, approval enforcement across planning APIs, joint commercial stress, diverse-brief evaluation, and verified SQLite backup/restore. Real Groq controls cover London, Manchester, Berlin and New York; an incomplete Mumbai ranking remains explicitly non-comparable. External human judgments remain pending.
 
-**Public demo:** [Houselights judge workspace](https://houselights.80-225-218-239.sslip.io). Commit `30f86d59b7fa640fc73d016258f7ebd5d0cea4ed` was deployed on the existing Oracle ARM VM on 20 October 2026. Public HTTP checks, bounded live Qloo/Groq requests, application-container recreation and a server backup/restore passed. The hostname uses free third-party DNS. No new cloud resource was purchased or provisioned; account billing eligibility and long-term uptime have not been verified. See the [deployment record](docs/live-validation.md#oracle-public-deployment--20-october-2026).
+**Public demo:** [Houselights judge workspace](https://houselights.80-225-218-239.sslip.io) on the existing Oracle ARM VM. Public HTTP checks, bounded live Qloo/Groq requests, application-container recreation and a server backup/restore passed in the [initial deployment validation](docs/live-validation.md#oracle-public-deployment--20-october-2026). The hostname uses free third-party DNS. No new cloud resource was purchased or provisioned; account billing eligibility and long-term uptime have not been verified.
 
 The [judge workspace](docs/judge-workspace.md) at `/judge.html` lets visitors change budgets, lock artists, withdraw evidence and rehearse cancellations against curated public cases, with no organizer token or new provider calls. Benchmark batches now run in the [persistent worker](docs/persistent-research.md#durable-benchmark-contract), with idempotent submission, cancellation, reconnect and explicit unknown outcomes after interruption.
+
+The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and captured tool-free Groq re-prompts under the same 36 changes. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups.
 
 ## Run locally
 

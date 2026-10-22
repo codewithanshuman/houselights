@@ -1,0 +1,2809 @@
+{
+  "version": "1.0",
+  "methodology": "Deterministic single shocks against public seeded judge cases. Fees and availability are illustrative. Houselights re-optimizes through judgeExperiment; the static LLM replays its saved first-trial lineup; the re-prompted LLM uses a captured tool-free response to the shocked brief. Acts changed counts IDs in the symmetric difference from that arm’s original lineup. Abstention is not a feasible lineup and is not counted as a hard-constraint violation.",
+  "note": "Houselights has zero proposed-lineup violations by construction: its exact optimizer only returns lineups that satisfy its constraints. This is an engineering property, not independent evidence of better attendance, revenue, or cultural demand.",
+  "summary": {
+    "houselights": {
+      "shocks": 36,
+      "feasible": 34,
+      "abstained": 2,
+      "unavailable": 0,
+      "invalidOrInfeasible": 0,
+      "totalHardConstraintViolations": 0
+    },
+    "staticLlm": {
+      "shocks": 36,
+      "feasible": 15,
+      "abstained": 0,
+      "unavailable": 9,
+      "invalidOrInfeasible": 12,
+      "totalHardConstraintViolations": 13
+    },
+    "repromptedLlm": {
+      "shocks": 36,
+      "feasible": 24,
+      "abstained": 0,
+      "unavailable": 9,
+      "invalidOrInfeasible": 3,
+      "totalHardConstraintViolations": 3
+    }
+  },
+  "rows": [
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "budget-90",
+        "kind": "budget",
+        "label": "Budget 90%",
+        "patch": {
+          "budget": 5400
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:623ceafa0c0fbd60a8ce987cdff4e0c90bae933cf4e8f3304767be5eba0b6e78",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:budget-90",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "budget-80",
+        "kind": "budget",
+        "label": "Budget 80%",
+        "patch": {
+          "budget": 4800
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:c49d6c7fa5c7946d6ebc3deca5fc43173514f01daff4926e0a97cca6df9e6449",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:budget-80",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "budget-70",
+        "kind": "budget",
+        "label": "Budget 70%",
+        "patch": {
+          "budget": 4200
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:5f1bc986a93158cc221187946bf40388de74661d95837cc32ac74b7365f1e869",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:budget-70",
+      "arms": {
+        "houselights": {
+          "status": "abstained",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null,
+          "survivorsPreserved": null
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [
+            "budget"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 1,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [
+            "slots"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 1,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "cancel-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "kind": "cancellation",
+        "label": "Cancel Nubya Garcia",
+        "patch": {
+          "cancelId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:6a0249f41a3c5f419d04b1ed83664a4ca9ea026512caf1118eccfc475eba62e5",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:cancel-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "97FCD59C-4F36-4605-B458-79167FBCED33"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [
+            "exclusions"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "fee-15-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "kind": "fee_increase",
+        "label": "Raise Nubya Garcia fee 15%",
+        "patch": {
+          "feeIncreaseId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:8fc90d807eb1f0c66152dd277bf87488963e86a93d96cd7621c01f39460fed19",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:fee-15-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "A597EA33-1741-47A9-BB53-D32ABEFC4B78"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "unavailable-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+        "kind": "unavailability",
+        "label": "Mark Nubya Garcia unavailable",
+        "patch": {
+          "unavailableId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:b6109b85f135bd77b1f7efef6daf06dbf05231fc587dc86c1872baf2fa4c64b5",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:unavailable-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "97FCD59C-4F36-4605-B458-79167FBCED33"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [
+            "availability"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 1,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "97FCD59C-4F36-4605-B458-79167FBCED33"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "cancel-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "kind": "cancellation",
+        "label": "Cancel Alfa Mist",
+        "patch": {
+          "cancelId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:b6c466970322d8fdc2775048321511211fbc36c136e2432997eb63b9c28cd964",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:cancel-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "97FCD59C-4F36-4605-B458-79167FBCED33"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [
+            "exclusions"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "8AD89B8C-43AF-420E-BA13-62DB30D5F8C4"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "fee-15-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "kind": "fee_increase",
+        "label": "Raise Alfa Mist fee 15%",
+        "patch": {
+          "feeIncreaseId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:f81a68358f545069cf5c7a47c7fe4c720eeb72301cd02ea5dd7316c466a27204",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:fee-15-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": {
+        "id": "unavailable-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+        "kind": "unavailability",
+        "label": "Mark Alfa Mist unavailable",
+        "patch": {
+          "unavailableId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ],
+        "staticLlm": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "briefDigest": "sha256:ec31c9dbc883a0570f414ad6418ba8b123788c918739856a89af8a179c3a2fb4",
+      "fixtureKey": "4986d98dcd8ac838aed3874a:unavailable-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "97FCD59C-4F36-4605-B458-79167FBCED33"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+          ],
+          "hardConstraintViolations": [
+            "availability"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 1,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+            "8AD89B8C-43AF-420E-BA13-62DB30D5F8C4"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "budget-90",
+        "kind": "budget",
+        "label": "Budget 90%",
+        "patch": {
+          "budget": 11250
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:0e060a7bdab203ce3b8e4cd284ee1b5aab0b5a0c3de33714ce7fd82227ce2314",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:budget-90",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "budget"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 1,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+            "36254E3F-20E4-4151-AC61-D753CA41F34A"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "budget-80",
+        "kind": "budget",
+        "label": "Budget 80%",
+        "patch": {
+          "budget": 10000
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:f3933a934e108226ffc743fe03ead9951081ea92166f4d2d7267a22c73985c59",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:budget-80",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "budget"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 1,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 4
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "budget-70",
+        "kind": "budget",
+        "label": "Budget 70%",
+        "patch": {
+          "budget": 8750
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:47b8356acaca602633698a60f8b1c0efa04299992982ee35504c44cb80748bb3",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:budget-70",
+      "arms": {
+        "houselights": {
+          "status": "abstained",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null,
+          "survivorsPreserved": null
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "budget"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 1,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [
+            "slots"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 1,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "cancel-120402A8-860E-4384-B2F2-91E49383D42B",
+        "kind": "cancellation",
+        "label": "Cancel Jon Hopkins",
+        "patch": {
+          "cancelId": "120402A8-860E-4384-B2F2-91E49383D42B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:3da96c799b56eeac9a13ec838d9fc534f43eff16a7317020dc0a1dce87743b22",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:cancel-120402A8-860E-4384-B2F2-91E49383D42B",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "locks"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+            "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 4
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "fee-15-120402A8-860E-4384-B2F2-91E49383D42B",
+        "kind": "fee_increase",
+        "label": "Raise Jon Hopkins fee 15%",
+        "patch": {
+          "feeIncreaseId": "120402A8-860E-4384-B2F2-91E49383D42B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:9cf29edb456675bca9f76f9c2dfb7f8454ce36401fb3e93d56c91b73c6852376",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:fee-15-120402A8-860E-4384-B2F2-91E49383D42B",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+            "36254E3F-20E4-4151-AC61-D753CA41F34A"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "unavailable-120402A8-860E-4384-B2F2-91E49383D42B",
+        "kind": "unavailability",
+        "label": "Mark Jon Hopkins unavailable",
+        "patch": {
+          "unavailableId": "120402A8-860E-4384-B2F2-91E49383D42B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:555a2d03e052ee8f4d00c3b6fe1d52e9548612fdd9aae0a24f717a1776e53190",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:unavailable-120402A8-860E-4384-B2F2-91E49383D42B",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "cancel-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "kind": "cancellation",
+        "label": "Cancel Floating Points",
+        "patch": {
+          "cancelId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:4c686121c5a68d1fad5942ee706f9494ce5022177654bc241de10bea06b5aa91",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:cancel-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "36254E3F-20E4-4151-AC61-D753CA41F34A"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "locks"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "fee-15-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "kind": "fee_increase",
+        "label": "Raise Floating Points fee 15%",
+        "patch": {
+          "feeIncreaseId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:f3b431d0f6904014f3fe7a8bad8f310272d7dae8ab0c678b7fb7a0cdc9310027",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:fee-15-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+            "36254E3F-20E4-4151-AC61-D753CA41F34A"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": {
+        "id": "unavailable-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+        "kind": "unavailability",
+        "label": "Mark Floating Points unavailable",
+        "patch": {
+          "unavailableId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ],
+        "staticLlm": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "briefDigest": "sha256:75aa5e13c60523b9bd8564bae22bbfadd5b3ad841e657334b21a948982a0bb2a",
+      "fixtureKey": "934e002267e2db9ccdc1b5a9:unavailable-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "120402A8-860E-4384-B2F2-91E49383D42B",
+            "36254E3F-20E4-4151-AC61-D753CA41F34A"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "invalid_response",
+          "feasible": false,
+          "selectedIds": [
+            "36254E3F-20E4-4151-AC61-D753CA41F34A",
+            "78AA0492-B692-47A8-8C6-78CB0721AF2F"
+          ],
+          "hardConstraintViolations": [
+            "candidate_id"
+          ],
+          "violationCount": 1,
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "budget-90",
+        "kind": "budget",
+        "label": "Budget 90%",
+        "patch": {
+          "budget": 13050
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:4085ca3311530da2f4069263e06138062d0ca0e380f95e4ad9143741d4a7ca44",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:budget-90",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "budget-80",
+        "kind": "budget",
+        "label": "Budget 80%",
+        "patch": {
+          "budget": 11600
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:512f2cb48d52b30da19e3c5cf3cff53830085b91d0869d7b5329349a0de33999",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:budget-80",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "368316C7-795A-46AF-8BBC-270F6633BE04"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "budget-70",
+        "kind": "budget",
+        "label": "Budget 70%",
+        "patch": {
+          "budget": 10150
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:0ede15e05324cd08ea6bfeccf749310cb9d9d02907b646b3da706c685a1b775a",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:budget-70",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "cancel-368316C7-795A-46AF-8BBC-270F6633BE04",
+        "kind": "cancellation",
+        "label": "Cancel Michael Kiwanuka",
+        "patch": {
+          "cancelId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:8ab7be13f940b268237b65906340a3210d1d6cd2553202f86d24c58e634add9f",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:cancel-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [
+            "locks",
+            "exclusions"
+          ],
+          "violationCount": 2,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "fee-15-368316C7-795A-46AF-8BBC-270F6633BE04",
+        "kind": "fee_increase",
+        "label": "Raise Michael Kiwanuka fee 15%",
+        "patch": {
+          "feeIncreaseId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:e7a27827be4db25b3af1ee58ef10353644f4c7fef2401cd687ebc7f7795b9bcb",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:fee-15-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "unavailable-368316C7-795A-46AF-8BBC-270F6633BE04",
+        "kind": "unavailability",
+        "label": "Mark Michael Kiwanuka unavailable",
+        "patch": {
+          "unavailableId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:8436dec879458532b86df3e0354a1de5cc11dfbd030db85b81d39febf49e3a71",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:unavailable-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "infeasible",
+          "feasible": false,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [
+            "availability"
+          ],
+          "violationCount": 1,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 1,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 4
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "cancel-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+        "kind": "cancellation",
+        "label": "Cancel Sault",
+        "patch": {
+          "cancelId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:88fa6b2cf7b1e62ff4f791e74e49d7fd152c5c41bcc53afcebf784bafee9b140",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:cancel-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "fee-15-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+        "kind": "fee_increase",
+        "label": "Raise Sault fee 15%",
+        "patch": {
+          "feeIncreaseId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:8ad7c7b179b81d5252a5b409dc3602a4214f5f1b3867f6ac3ebebda9aa81656f",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:fee-15-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 4
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "caseTitle": "New York: compare all three methods",
+      "shock": {
+        "id": "unavailable-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+        "kind": "unavailability",
+        "label": "Mark Sault unavailable",
+        "patch": {
+          "unavailableId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "staticLlm": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "briefDigest": "sha256:21d00465d7ceaae81d1fd4ad0d2b54de3f222d46ba082ff61c1c0f8fbf45a3ff",
+      "fixtureKey": "bf9b65d52eeff00e0e258917:unavailable-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        },
+        "repromptedLlm": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "budget-90",
+        "kind": "budget",
+        "label": "Budget 90%",
+        "patch": {
+          "budget": 945000
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:f2bc2396e15bbcab7ec0a13b90090ffc6539af0191abc1e137ca139290f7d8eb",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "budget-80",
+        "kind": "budget",
+        "label": "Budget 80%",
+        "patch": {
+          "budget": 840000
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:f69eb67a50881d13195d70717c24c1d2ba78e23a34c1344c858a4700289b9201",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "budget-70",
+        "kind": "budget",
+        "label": "Budget 70%",
+        "patch": {
+          "budget": 735000
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:92a397fb2dae5bb6cd5a24722233cf541cf7eafc7e9a71d9147a678927a74c61",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "cancel-708E858B-D0E9-4606-A64B-47B890D46108",
+        "kind": "cancellation",
+        "label": "Cancel The Local train",
+        "patch": {
+          "cancelId": "708E858B-D0E9-4606-A64B-47B890D46108"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:890292c87eaf6baff706f8cf08b5867ed25be7511fa45f9ed5ab3508b8d4e6fe",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "C8A2D53C-5353-4996-985C-868BB38762D9",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "fee-15-708E858B-D0E9-4606-A64B-47B890D46108",
+        "kind": "fee_increase",
+        "label": "Raise The Local train fee 15%",
+        "patch": {
+          "feeIncreaseId": "708E858B-D0E9-4606-A64B-47B890D46108"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:7133f31b3979b50e31be842e24fb9e7a4fd40258429c86e358078a068ab1a818",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "C8A2D53C-5353-4996-985C-868BB38762D9",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "unavailable-708E858B-D0E9-4606-A64B-47B890D46108",
+        "kind": "unavailability",
+        "label": "Mark The Local train unavailable",
+        "patch": {
+          "unavailableId": "708E858B-D0E9-4606-A64B-47B890D46108"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:36a2fcc20ae8b8467047e23e79b8b319f7aabf5c0754c46474e59228adf57822",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "C8A2D53C-5353-4996-985C-868BB38762D9",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "cancel-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+        "kind": "cancellation",
+        "label": "Cancel Ankur Tewari",
+        "patch": {
+          "cancelId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:6d685785cae48d9aba9ae4d963370314602130d19b051bbced6e11af58ddbd2d",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "C8A2D53C-5353-4996-985C-868BB38762D9"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "fee-15-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+        "kind": "fee_increase",
+        "label": "Raise Ankur Tewari fee 15%",
+        "patch": {
+          "feeIncreaseId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:8169b099d1737a2f2b6adf10f7e827f8faf7504cab78696d26919a62672ff4c4",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 0,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": {
+        "id": "unavailable-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+        "kind": "unavailability",
+        "label": "Mark Ankur Tewari unavailable",
+        "patch": {
+          "unavailableId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        }
+      },
+      "baseline": {
+        "houselights": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ],
+        "staticLlm": null
+      },
+      "briefDigest": "sha256:ac7613cc6c76a61ca8486dcb8d93d61c7d2936aa87753bc06656084b50ea2750",
+      "fixtureKey": null,
+      "arms": {
+        "houselights": {
+          "status": "feasible",
+          "feasible": true,
+          "selectedIds": [
+            "708E858B-D0E9-4606-A64B-47B890D46108",
+            "C8A2D53C-5353-4996-985C-868BB38762D9"
+          ],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": 2,
+          "survivorsPreserved": true
+        },
+        "staticLlm": {
+          "status": "unavailable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        },
+        "repromptedLlm": {
+          "status": "not_comparable",
+          "feasible": false,
+          "selectedIds": [],
+          "hardConstraintViolations": [],
+          "violationCount": 0,
+          "violationCounts": {
+            "budget": 0,
+            "availability": 0,
+            "slots": 0,
+            "genre": 0
+          },
+          "actsChanged": null
+        }
+      },
+      "evidenceMode": "live"
+    }
+  ]
+}

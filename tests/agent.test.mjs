@@ -45,6 +45,7 @@ test('offers resolving to an anchor cannot be ranked or booked, including aliase
     assert.deepEqual(ranking.args.options, ['artist-beta'], 'the anchor must not be ranked against itself');
     assert.deepEqual(memo.items.map(item => item.id), ['artist-beta']);
     assert.deepEqual(memo.slate.selectedIds, ['artist-beta'], 'the valid offer remains bookable');
+    assert.match(memo.caveats.join(' '), new RegExp(`Not ranked or booked because they are also anchors: ${offer}\\.`));
   });
 });
 

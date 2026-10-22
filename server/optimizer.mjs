@@ -215,7 +215,8 @@ export function evaluateSelection(candidates, rawConstraints, selectedIds) {
   if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
   if (!Array.isArray(selectedIds) || unique(selectedIds).length !== selectedIds.length || selectedIds.some(id => !candidates.some(item => item.id === id))) throw new Error('Selection must contain unique known candidate IDs.');
   const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds));
-  return publicSlate(evaluate(pool.filter(item => selectedIds.includes(item.id)), validation.constraints, pool));
+  const result=evaluate(pool.filter(item => selectedIds.includes(item.id)), validation.constraints, pool);
+  return {...publicSlate(result),violationCodes:unique(result.violations.map(item=>item.code))};
 }
 
 // Shared evaluator for proofs: enumerate the same exact-size subsets and retain
