@@ -33,12 +33,14 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const access=await request('/api/access');
     record('anonymous-is-read-only',access.status===200&&access.data.protected===true&&access.data.editable===false);
     if(!checks.find(c=>c.name==='anonymous-is-read-only').passed)throw new Error('Access protection failed; further checks stopped.');
-    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks']){
+    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan']){
       const response=await request(path,{body:{}});
       record('protected-write:'+path,response.status===401);
     }
     record('protected-private-read',(await request('/api/studies/missing-release-check')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html']){
+    record('protected-demand-model',(await request('/api/demand/model')).status===401);
+    record('protected-reported-outcomes',(await request('/api/demand/reported-outcomes')).status===401);
+    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));

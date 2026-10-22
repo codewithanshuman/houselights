@@ -1,6 +1,7 @@
 // A small slate is exhaustively searchable. Keep economics, evidence and policy
 // preferences separate so that every chosen trade-off can be inspected.
-const MAX_CANDIDATES = 12;
+const MAX_CANDIDATES = 20;
+const MAX_COMBINATIONS = 25000;
 const EPSILON = 1e-9;
 const WEIGHTS = Object.freeze({
   fit: 100,
@@ -19,6 +20,22 @@ const finite = value => typeof value === 'number' && Number.isFinite(value);
 const isMoney = value => finite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER / 100;
 const toCents = value => Math.round((value + Number.EPSILON) * 100);
 const unique = values => [...new Set(values)];
+const combinations = (n, k) => {
+  if (k > n) return 0;
+  let count = 1;
+  for (let index = 1; index <= Math.min(k, n - k); index++) count = count * (n - index + 1) / index;
+  return Math.round(count);
+};
+function eachCombination(pool, size, visit) {
+  const selected = [];
+  const walk = start => {
+    if (selected.length === size) { visit([...selected]); return; }
+    for (let index = start; index <= pool.length - (size - selected.length); index++) {
+      selected.push(pool[index]); walk(index + 1); selected.pop();
+    }
+  };
+  walk(0);
+}
 const emptyBreakdown = () => ({ fit: 0, momentum: 0, local: 0, genreBreadth: 0, discovery: 0, concentrationPenalty: 0, riskPenalty: 0, total: 0 });
 
 function policy() {
@@ -52,9 +69,9 @@ function normalizeConstraints(raw, count) {
     ...(raw.minimumAverageFit != null ? { minimumAverageFit: raw.minimumAverageFit } : {}),
   };
   if (!isMoney(constraints.budget)) errors.push('Budget must be a finite, non-negative monetary amount.');
-  if (!Number.isInteger(constraints.slots) || constraints.slots < 1 || constraints.slots > MAX_CANDIDATES) errors.push('Slots must be an integer between 1 and 12.');
-  if (!Number.isInteger(constraints.discoveryMin) || constraints.discoveryMin < 0 || constraints.discoveryMin > MAX_CANDIDATES) errors.push('Discovery minimum must be an integer between 0 and 12.');
-  if (!Number.isInteger(constraints.maxPerGenre) || constraints.maxPerGenre < 1 || constraints.maxPerGenre > MAX_CANDIDATES) errors.push('Maximum per genre must be an integer between 1 and 12.');
+  if (!Number.isInteger(constraints.slots) || constraints.slots < 1 || constraints.slots > MAX_CANDIDATES) errors.push('Slots must be an integer between 1 and 20.');
+  if (!Number.isInteger(constraints.discoveryMin) || constraints.discoveryMin < 0 || constraints.discoveryMin > MAX_CANDIDATES) errors.push('Discovery minimum must be an integer between 0 and 20.');
+  if (!Number.isInteger(constraints.maxPerGenre) || constraints.maxPerGenre < 1 || constraints.maxPerGenre > MAX_CANDIDATES) errors.push('Maximum per genre must be an integer between 1 and 20.');
   if (!finite(constraints.riskTolerance) || constraints.riskTolerance < 0 || constraints.riskTolerance > 100) errors.push('Risk tolerance must be a number between 0 and 100.');
   if (constraints.minimumAverageFit != null && (!finite(constraints.minimumAverageFit) || constraints.minimumAverageFit < 0 || constraints.minimumAverageFit > 1)) errors.push('Minimum average fit must be between 0 and 1.');
   for (const field of ['lockedIds', 'excludedIds']) {
@@ -207,7 +224,8 @@ function publicSlate(result) {
   };
 }
 
-/** Find the global best slate under the declared policy for at most 12 candidates.
+/** Find the global best slate under the declared policy for at most 20 candidates
+ * and 25,000 exact-size combinations.
  * The function is pure: it never writes candidate terms, calls Qloo, or infers fees.
  */
 export function evaluateSelection(candidates, rawConstraints, selectedIds) {
@@ -225,12 +243,10 @@ export function enumerateSlates(candidates, rawConstraints) {
   const validation = optimizeSlate(candidates, rawConstraints);
   if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
   const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds)), rows = [];
-  for (let mask = 0; mask < 2 ** pool.length; mask++) {
-    const selected = pool.filter((_, index) => mask & (1 << index));
-    if (selected.length !== validation.constraints.slots) continue;
+  eachCombination(pool, validation.constraints.slots, selected => {
     const result = evaluate(selected, validation.constraints, pool);
     rows.push({ ...publicSlate(result), rawScore: result.rawScore, rawBreakdown: result.rawBreakdown, violationCodes: unique(result.violations.map(item => item.code)) });
-  }
+  });
   return rows;
 }
 
@@ -238,7 +254,8 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   const input = Array.isArray(candidates) ? candidates : [];
   const { constraints, errors } = normalizeConstraints(rawConstraints, input.length);
   if (!Array.isArray(candidates)) errors.push('Candidates must be an array.');
-  if (input.length > MAX_CANDIDATES) errors.push('Exact optimization supports at most 12 candidates. Narrow the shortlist before optimizing.');
+  if (input.length > MAX_CANDIDATES) errors.push('Exact optimization supports at most 20 candidates. Narrow the shortlist before optimizing.');
+  if (Number.isInteger(constraints.slots) && constraints.slots >= 0 && combinations(input.length, constraints.slots) > MAX_COMBINATIONS) errors.push(`This brief has more than ${MAX_COMBINATIONS} combinations. Reduce the candidate pool or slot count.`);
   const inputIds = [];
   for (const item of input) {
     if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id.trim()) errors.push('Every candidate needs a non-empty string ID.');
@@ -274,10 +291,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   // Evaluate all exact-size subsets, including unbookable ones, so infeasibility
   // diagnostics can identify which constraints actually exclude a combination.
   const evaluated = [];
-  for (let mask = 0; mask < 2 ** normalized.length; mask++) {
-    const selected = normalized.filter((_, index) => mask & (1 << index));
-    if (selected.length === constraints.slots) evaluated.push(evaluate(selected, constraints, normalized));
-  }
+  eachCombination(normalized, constraints.slots, selected => evaluated.push(evaluate(selected, constraints, normalized)));
   base.checkedCount = evaluated.length;
   const feasible = evaluated.filter(result => result.feasible).sort(compareResults);
   base.feasibleCount = feasible.length;

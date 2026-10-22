@@ -128,7 +128,7 @@ test('invalid input returns explanatory warnings and never starts scenario runs'
     [null, constraints()],
     [[null], constraints()],
     [[act('a', 1, 1), act('a', 1, 1)], constraints()],
-    [Array.from({ length: 13 }, (_, i) => act(String(i), 1, 1)), constraints()],
+    [Array.from({ length: 21 }, (_, i) => act(String(i), 1, 1)), constraints()],
     [[act('a', 1, 1)], constraints({ budget: '100' })],
     [[act('a', 1, 1)], constraints({ budget: NaN })],
     [[act('a', 1, 1)], constraints({ budget: Infinity })],

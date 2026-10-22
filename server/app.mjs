@@ -27,6 +27,7 @@ import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
+import { registerDemandRoutes } from './demand-api.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -85,6 +86,7 @@ export function createApp() {
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
   registerResearchRoutes(app);
+  registerDemandRoutes(app);
   registerJudgeRoutes(app);
   registerOperationalRoutes(app);
   app.post('/api/investigation/:id/apply', (req,res) => {
@@ -257,7 +259,7 @@ export function createApp() {
     } catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.post('/api/optimize', (req, res) => {
-    if (!Array.isArray(req.body?.items) || req.body.items.length > 12) return res.status(400).json({ error: 'Provide at most 12 candidates.' });
+    if (!Array.isArray(req.body?.items) || req.body.items.length > 20) return res.status(400).json({ error: 'Provide at most 20 candidates.' });
     const result = optimizeSlate(req.body.items, req.body.constraints);
     return result.status === 'invalid' ? res.status(400).json({ error: result.reasons.join(' '), ...result }) : res.json(result);
   });

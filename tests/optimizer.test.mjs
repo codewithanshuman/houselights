@@ -152,7 +152,8 @@ test('invalid inputs are rejected before enumeration and do not mutate caller da
   assert.equal(optimizeSlate([candidates[0], candidates[0]], constraints()).status, 'invalid');
   assert.equal(optimizeSlate([null], constraints()).status, 'invalid');
   assert.equal(optimizeSlate(null, constraints()).status, 'invalid');
-  assert.equal(optimizeSlate(Array.from({ length: 13 }, (_, i) => act(String(i), 0.5, 10)), constraints()).status, 'invalid');
+  assert.equal(optimizeSlate(Array.from({ length: 21 }, (_, i) => act(String(i), 0.5, 10)), constraints()).status, 'invalid');
+  assert.equal(optimizeSlate(Array.from({ length: 20 }, (_, i) => act(String(i), 0.5, 10)), constraints({ slots: 6 })).status, 'invalid');
   optimizeSlate(candidates, constraints());
   assert.deepEqual(candidates, initial);
 });
@@ -215,4 +216,11 @@ test('ten candidates enumerate every requested combination without search trunca
   assert.equal(result.feasibleCount, 252);
   assert.deepEqual(result.selectedIds, ['act-5', 'act-6', 'act-7', 'act-8', 'act-9']);
   assert.equal(result.alternatives.length, 25);
+});
+
+test('twenty candidates and five slots use exact bounded combination search', () => {
+  const result=optimizeSlate(Array.from({length:20},(_,i)=>act(`act-${i}`,i/20,1)),constraints({slots:5,maxPerGenre:5}));
+  assert.equal(result.status,'optimal');
+  assert.equal(result.checkedCount,15504);
+  assert.deepEqual(result.selectedIds,['act-15','act-16','act-17','act-18','act-19']);
 });

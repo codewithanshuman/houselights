@@ -26,6 +26,7 @@
     "reproduce:shocks": "node --env-file-if-exists=.env scripts/reproduce-shocks.mjs",
     "release:verify": "node scripts/verify-release.mjs",
     "release:rehearse": "node scripts/rehearse-release.mjs",
+    "import:outcomes": "node scripts/import-demand-outcomes.mjs",
     "deploy:prepare-vercel": "node scripts/prepare-vercel.mjs"
   },
   "keywords": [],
