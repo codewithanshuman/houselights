@@ -30,8 +30,8 @@ test('uncalibrated demand plan uses exact booking constraints and labels assumpt
   assert.equal(result.selected.economics.grossRevenue.point,135000);
   assert.ok(result.selected.selectedIds.length===2);
   assert.equal(result.selected.cultural.observedOverlapPairs,0);
-  assert.match(result.caveats[0],/not ticket demand estimates/);
-  assert.ok(result.priceScenarios[0].assumedAttendance>result.priceScenarios.at(-1).assumedAttendance);
+  assert.match(result.caveats[0],/not ticket-demand estimates/);
+  assert.ok(result.priceScenarios[0].assumedTicketsSold>result.priceScenarios.at(-1).assumedTicketsSold);
   assert.ok(result.alternatives.every(row=>row.selectedIds.length===2));
   const noAssumptions=planDemand(normalizeDemandInput({...raw,assumptions:{}}),model);
   assert.equal(noAssumptions.selected.scenario,null);
@@ -60,13 +60,14 @@ test('chronological real-outcome gate, held-out error, Qloo ablation and cold-st
   const records=Array.from({length:50},(_,index)=>{
     const date=new Date(Date.UTC(2025,0,1+index*3)).toISOString().slice(0,10);
     const capacity=3000+(index%4)*500,price=30+(index%7)*4,qlooMean=.2+(index%9)*.07;
-    const paidAttendance=Math.min(capacity,Math.round(capacity*(.32+.32*qlooMean-.002*(price-30))));
-    return {id:`real-${index}`,eventDate:date,city:index%2?'London':'Berlin',capacity,paidAttendance,
+    const paidTicketsSold=Math.min(capacity,Math.round(capacity*(.32+.32*qlooMean-.002*(price-30))));
+    return {id:`real-${index}`,eventDate:date,city:index%2?'London':'Berlin',capacity,paidTicketsSold,
       features:{city:index%2?'London':'Berlin',qlooProtocol:'fixed-pool-test',logCapacity:Math.log(capacity),logPrice:Math.log(price),competition:index%3,actCount:2,
         qlooMean,qlooCoverage:1,localFraction:index%2},synthetic:false,
       provenance:{realOutcome:true,preEventFeatures:true,qlooPreEvent:true,qlooProtocol:'fixed-pool-test'}};
   });
   assert.equal(trainDemandModel(records.slice(0,39)).status,'insufficient_outcomes');
+  assert.equal(trainDemandModel(records.map(({paidTicketsSold,...row})=>({...row,paidAttendance:paidTicketsSold}))).eligible,0);
   assert.equal(trainDemandModel(records.map(row=>({...row,synthetic:true}))).status,'insufficient_outcomes');
   const report=trainDemandModel(records);
   assert.equal(report.status,'backtested');
@@ -78,8 +79,9 @@ test('chronological real-outcome gate, held-out error, Qloo ablation and cold-st
   const features=demandFeatures(brief,[{qloo:{rank:true,fit:.7,local:true}}]);
   const prediction=predictDemand(report,brief,features);
   assert.equal(prediction.model,'qloo_augmented');
-  assert.ok(prediction.attendance.low<=prediction.attendance.point);
-  assert.ok(prediction.attendance.point<=prediction.attendance.high);
+  assert.equal(prediction.targetMetric,'paid_tickets_sold');
+  assert.ok(prediction.ticketsSold.low<=prediction.ticketsSold.point);
+  assert.ok(prediction.ticketsSold.point<=prediction.ticketsSold.high);
   assert.ok(prediction.explanations.terms.qlooMean!==undefined);
   const changedPool=predictDemand(report,{...brief,qlooProtocol:'another-pool'},demandFeatures({...brief,qlooProtocol:'another-pool'},[{qloo:{rank:true,fit:.7,local:true}}]));
   assert.equal(changedPool.model,'market_baseline');
@@ -115,7 +117,7 @@ test('private API saves immutable pre-event plans and refuses premature or unsup
   const plan=await response.json();
   assert.match(plan.forecastId,/^[a-f0-9]{24}$/);
   assert.equal((await fetch(origin+'/api/demand/forecasts/'+plan.forecastId)).status,200);
-  const outcome=await fetch(origin+'/api/demand/outcomes',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({forecastId:plan.forecastId,paidAttendance:3000,sourceKind:'box_office_export',sourceReference:'box-office-123'})});
+  const outcome=await fetch(origin+'/api/demand/outcomes',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({forecastId:plan.forecastId,paidTicketsSold:3000,sourceKind:'box_office_export',sourceReference:'box-office-123'})});
   assert.equal(outcome.status,400);
   assert.match((await outcome.json()).error,/event date must have passed/);
   const status=await(await fetch(origin+'/api/demand/model')).json();

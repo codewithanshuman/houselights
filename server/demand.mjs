@@ -87,7 +87,7 @@ function culturalSignals(selected, overlaps) {
   const observedPairs=pairs.filter(pair=>pair.observedBuyerOverlap!==null);
   const meanOverlap=observedPairs.length?observedPairs.reduce((sum,pair)=>sum+pair.observedBuyerOverlap,0)/observedPairs.length:null;
   const bridgeFraction=pairs.length?pairs.filter(pair=>pair.culturalBridge).length/pairs.length:0;
-  // Editorial ranking utility. Never display it as a probability or attendance.
+  // Editorial ranking utility. Never display it as a probability or tickets sold.
   const proxy=round(Math.max(0,Math.min(100,
     50*(meanFit??0)+15*localFraction+10*selected.filter(item=>item.qloo.trend==='rising').length/selected.length+
     10*Math.max(0,genres.size-1)/Math.max(1,selected.length-1)+5*bridgeFraction-
@@ -98,12 +98,12 @@ function culturalSignals(selected, overlaps) {
     interpretation:'Proxy points rank cultural evidence only. Shared themes are not unique buyers; measured pair overlap requires an aggregate ticketing source.'};
 }
 
-function financial(brief,fees,attendance,assumptions) {
-  if(!attendance)return null;
+function financial(brief,fees,ticketsSold,assumptions) {
+  if(!ticketsSold)return null;
   const calculation=count=>round(count*(brief.ticketPrice-assumptions.variableCostPerAttendee)-fees-assumptions.fixedCosts);
-  return {grossRevenue:{low:round(attendance.low*brief.ticketPrice),point:round(attendance.point*brief.ticketPrice),high:round(attendance.high*brief.ticketPrice)},
-    operatingMargin:{low:calculation(attendance.low),point:calculation(attendance.point),high:calculation(attendance.high)},
-    basis:'Arithmetic on the stated attendance scenario or backtested observational range; artist fees, fixed and variable costs remain buyer-entered.'};
+  return {grossRevenue:{low:round(ticketsSold.low*brief.ticketPrice),point:round(ticketsSold.point*brief.ticketPrice),high:round(ticketsSold.high*brief.ticketPrice)},
+    operatingMargin:{low:calculation(ticketsSold.low),point:calculation(ticketsSold.point),high:calculation(ticketsSold.high)},
+    basis:'Arithmetic on the stated paid-ticket scenario or backtested observational range; artist fees, fixed and variable costs remain buyer-entered.'};
 }
 
 function priceScenarios(brief,selected,modelReport,assumptions) {
@@ -113,7 +113,7 @@ function priceScenarios(brief,selected,modelReport,assumptions) {
     const model=hasModel?predictDemand(modelReport,changed,demandFeatures(changed,selected)):null;
     const scenario=assumptions.baseSellThrough!=null&&assumptions.priceElasticity!=null
       ?Math.round(brief.capacity*Math.max(0,Math.min(1,assumptions.baseSellThrough*(price/brief.ticketPrice)**assumptions.priceElasticity))):null;
-    return {ticketPrice:price,modelAttendance:model?.attendance??null,assumedAttendance:scenario,
+    return {ticketPrice:price,modelTicketsSold:model?.ticketsSold??null,assumedTicketsSold:scenario,
       basis:model?'Observational model association, not causal price elasticity.':scenario!=null?'Buyer-supplied sell-through and elasticity assumptions; not a forecast.':'Price effect unavailable without a trained model or explicit assumptions.'};
   });
 }
@@ -130,14 +130,14 @@ export function planDemand(input, modelReport) {
     const scenario=assumptions.baseSellThrough!=null?{status:'buyer_assumption',low:Math.floor(brief.capacity*Math.max(0,assumptions.baseSellThrough-.15)),
       point:Math.round(brief.capacity*assumptions.baseSellThrough),high:Math.ceil(brief.capacity*Math.min(1,assumptions.baseSellThrough+.15)),
       note:'The ±15 percentage-point band is a planning stress, not a statistical interval.'}:null;
-    const attendance=forecast?.attendance??scenario;
-    const economics=financial(brief,row.totalFee,attendance,assumptions);
+    const ticketsSold=forecast?.ticketsSold??scenario;
+    const economics=financial(brief,row.totalFee,ticketsSold,assumptions);
     return {selectedIds:row.selectedIds,fees:row.totalFee,cultural,features,forecast,scenario,economics,
       objective:forecast?economics.operatingMargin.low:cultural.proxy};
   };
   const assessed=feasible.map(assess).sort((a,b)=>b.objective-a.objective||a.fees-b.fees||a.selectedIds.join('|').localeCompare(b.selectedIds.join('|')));
   const best=assessed[0], selected=best.selectedIds.map(id=>candidates.find(item=>item.id===id));
-  return {status:'feasible',mode:best.forecast?'backtested_observational_forecast':'cultural_scenario_proxy',
+  return {status:'feasible',mode:best.forecast?'backtested_observational_forecast':'cultural_scenario_proxy',targetMetric:'paid_tickets_sold',
     brief,checkedCount:rows.length,feasibleCount:feasible.length,
     objective:best.forecast?'Maximize lower-bound modeled operating margin under hard constraints.':'Maximize explicitly uncalibrated cultural proxy under hard constraints.',
     selected:best,alternatives:assessed.slice(1,4),priceScenarios:priceScenarios(brief,selected,modelReport,assumptions),
@@ -148,7 +148,7 @@ export function planDemand(input, modelReport) {
       trainingCutoff:modelReport.trainingCutoff,holdoutStart:modelReport.holdoutStart,
       baseline:modelReport.baseline.heldOut,qlooComparison:modelReport.qlooComparison}:null,
     caveats:[
-      best.forecast?'Attendance is an observational forecast with a held-out residual range; it is not a guarantee.':'No calibrated attendance model exists. Cultural proxy and buyer assumptions are not ticket demand estimates.',
+      best.forecast?'Paid tickets sold is an observational forecast with a held-out residual range; it is not a guarantee or a count of venue entries.':'No calibrated paid-ticket model exists. Cultural proxy and buyer assumptions are not ticket-demand estimates.',
       best.cultural.observedOverlapPairs===best.cultural.totalPairs?'Aggregate pairwise buyer-overlap observations are available for every pair.':'Audience overlap is unmeasured for some or all selected pairs; cultural similarity cannot be turned into unique buyers.',
       input.synthetic?'Qloo source is synthetic and must never be presented as live market evidence.':'Qloo receipts describe aggregate taste relationships, not sales outcomes.',
     ]};

@@ -25,7 +25,7 @@ export function saveDemandForecast(input, result, source) {
   const createdAt=new Date().toISOString(), forecast={id:id(),createdAt,brief:input.brief,
     sourceId:input.sourceId,sourceCreatedAt:source?.createdAt??null,synthetic:input.synthetic,
     selectedIds:result.selected.selectedIds,features:result.selected.features,
-    mode:result.mode,attendance:result.selected.forecast?.attendance??null,
+    mode:result.mode,ticketsSold:result.selected.forecast?.ticketsSold??null,targetMetric:'paid_tickets_sold',
     assumptions:input.assumptions,modelStatus:result.modelStatus,
     note:'Immutable pre-event prediction/assumption snapshot. Its creation time is recorded before any outcome is attached.'};
   db.prepare('INSERT INTO demand_forecasts(id,body,created_at) VALUES(?,?,?)').run(forecast.id,JSON.stringify(forecast),createdAt);
@@ -39,17 +39,17 @@ export function recordDemandOutcome(raw) {
   const forecast=loadDemandForecast(raw?.forecastId);
   if(!forecast)throw new Error('Saved forecast not found.');
   if(Date.now()<=eventEnd(forecast.brief.eventDate))throw new Error('The event date must have passed before recording an outcome.');
-  if(!Number.isInteger(raw?.paidAttendance)||raw.paidAttendance<0||raw.paidAttendance>forecast.brief.capacity)
-    throw new Error('Paid attendance must be an integer within venue capacity.');
+  if(!Number.isInteger(raw?.paidTicketsSold)||raw.paidTicketsSold<0||raw.paidTicketsSold>forecast.brief.capacity)
+    throw new Error('Paid tickets sold must be an integer within sellable capacity.');
   const source=requiredSource(raw),createdAt=new Date().toISOString();
   const preEvent=Date.parse(forecast.createdAt)<Date.parse(`${forecast.brief.eventDate}T00:00:00Z`);
   const qlooPreEvent=preEvent&&!forecast.synthetic&&forecast.features.qlooCoverage===1&&forecast.sourceCreatedAt&&
     Date.parse(forecast.sourceCreatedAt)<Date.parse(`${forecast.brief.eventDate}T00:00:00Z`);
   const outcome={id:forecast.id,eventKey:eventKey(forecast.brief),eventDate:forecast.brief.eventDate,city:forecast.brief.city,
-    capacity:forecast.brief.capacity,paidAttendance:raw.paidAttendance,features:forecast.features,
-    forecastGeneratedAt:forecast.createdAt,forecastAttendance:forecast.attendance?.point??null,
-    forecastError:forecast.attendance?.point==null?null:forecast.attendance.point-raw.paidAttendance,
-    absoluteForecastError:forecast.attendance?.point==null?null:Math.abs(forecast.attendance.point-raw.paidAttendance),
+    capacity:forecast.brief.capacity,paidTicketsSold:raw.paidTicketsSold,features:forecast.features,targetMetric:'paid_tickets_sold',
+    forecastGeneratedAt:forecast.createdAt,forecastTicketsSold:forecast.ticketsSold?.point??null,
+    forecastError:forecast.ticketsSold?.point==null?null:forecast.ticketsSold.point-raw.paidTicketsSold,
+    absoluteForecastError:forecast.ticketsSold?.point==null?null:Math.abs(forecast.ticketsSold.point-raw.paidTicketsSold),
     synthetic:forecast.synthetic,createdAt,provenance:{realOutcome:true,preEventFeatures:preEvent,
       qlooPreEvent:!!qlooPreEvent,qlooProtocol:forecast.brief.qlooProtocol??null,source,classification:preEvent?'prospective':'retrospective_excluded',
       note:'The organizer attests to the source. The application validates timing and arithmetic, not the external document.'}};
@@ -67,8 +67,8 @@ export function recordHistoricalEvent(raw, sourceSnapshot=null) {
     !Number.isInteger(brief.competitionCount)||brief.competitionCount<0||brief.competitionCount>100||
     (brief.venue!=null&&(typeof brief.venue!=='string'||brief.venue.length>120))||
     !Array.isArray(selected)||selected.length<1||selected.length>20||
-    !Number.isInteger(raw.paidAttendance)||raw.paidAttendance<0||raw.paidAttendance>brief.capacity)
-    throw new Error('Historical event needs a valid city, date, capacity, price, competition count, lineup and paid attendance.');
+    !Number.isInteger(raw.paidTicketsSold)||raw.paidTicketsSold<0||raw.paidTicketsSold>brief.capacity)
+    throw new Error('Historical event needs a valid city, date, capacity, price, competition count, lineup and paid tickets sold.');
   if(Date.now()<=eventEnd(brief.eventDate))throw new Error('Historical outcome must be after the event date.');
   if(typeof raw.featureObservedAt!=='string'||Number.isNaN(Date.parse(raw.featureObservedAt)))throw new Error('Feature observation timestamp is required.');
   const source=requiredSource(raw),observed=Date.parse(raw.featureObservedAt),before=observed<Date.parse(`${brief.eventDate}T00:00:00Z`);
@@ -87,7 +87,7 @@ export function recordHistoricalEvent(raw, sourceSnapshot=null) {
   });
   const features=demandFeatures({...brief,qlooProtocol:qlooSourceBefore?qlooProtocol(sourceSnapshot):null},joined),createdAt=new Date().toISOString();
   const outcome={id:id(),eventKey:eventKey(brief),eventDate:brief.eventDate,city:brief.city.trim(),capacity:brief.capacity,
-    paidAttendance:raw.paidAttendance,features,synthetic:false,createdAt,
+    paidTicketsSold:raw.paidTicketsSold,features,synthetic:false,createdAt,targetMetric:'paid_tickets_sold',
     provenance:{realOutcome:true,preEventFeatures:before,qlooPreEvent:!!(before&&qlooSourceBefore&&features.qlooCoverage===1),qlooProtocol:features.qlooProtocol,
       source,featureObservedAt:raw.featureObservedAt,sourceId:sourceSnapshot?.id??null,
       classification:before?'organizer_attested_historical':'post_event_features_excluded',

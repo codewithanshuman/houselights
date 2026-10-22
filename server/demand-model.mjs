@@ -56,7 +56,7 @@ function fit(rows, fields) {
   const means = Object.fromEntries(fields.map(field => [field, rows.reduce((sum, row) => sum + featureValue(row,field), 0) / rows.length]));
   const scales = Object.fromEntries(fields.map(field => [field, Math.max(1e-6, Math.sqrt(rows.reduce((sum, row) => sum + (featureValue(row,field) - means[field]) ** 2, 0) / rows.length))]));
   const vectors = rows.map(row => [1, ...fields.map(field => (featureValue(row,field) - means[field]) / scales[field])]);
-  const targets = rows.map(row => logit(clamp((row.paidAttendance + .5) / (row.capacity + 1), 1e-6, 1 - 1e-6)));
+  const targets = rows.map(row => logit(clamp((row.paidTicketsSold + .5) / (row.capacity + 1), 1e-6, 1 - 1e-6)));
   const size = fields.length + 1, gram = Array.from({length:size}, () => Array(size).fill(0)), rhs = Array(size).fill(0);
   for (let index = 0; index < rows.length; index++) for (let a = 0; a < size; a++) {
     rhs[a] += vectors[index][a] * targets[index];
@@ -73,7 +73,7 @@ function predict(model, features) {
 }
 
 function evaluate(model, rows, fixedWidth = null) {
-  const errors = rows.map(row => predict(model, row.features).occupancy - row.paidAttendance / row.capacity);
+  const errors = rows.map(row => predict(model, row.features).occupancy - row.paidTicketsSold / row.capacity);
   const absolute = errors.map(Math.abs).sort((a, b) => a - b);
   // Split-conformal absolute-residual quantile at nominal 90% coverage.
   const quantileIndex = Math.min(absolute.length - 1, Math.ceil(.9 * (absolute.length + 1)) - 1);
@@ -84,7 +84,7 @@ function evaluate(model, rows, fixedWidth = null) {
 
 const valid = row => row && row.synthetic !== true && row.provenance?.realOutcome === true && row.provenance?.preEventFeatures === true &&
   typeof row.eventDate === 'string' && Number.isInteger(row.capacity) && row.capacity > 0 &&
-  Number.isInteger(row.paidAttendance) && row.paidAttendance >= 0 && row.paidAttendance <= row.capacity &&
+  Number.isInteger(row.paidTicketsSold) && row.paidTicketsSold >= 0 && row.paidTicketsSold <= row.capacity &&
   baseFields.every(field => Number.isFinite(row.features?.[field]));
 const hasQloo = row => row.features?.qlooCoverage === 1 && qlooFields.every(field => Number.isFinite(row.features?.[field])) &&
   row.provenance?.qlooPreEvent === true && typeof row.provenance?.qlooProtocol === 'string' &&
@@ -103,7 +103,7 @@ export function trainDemandModel(outcomes) {
   });
   if (rows.length < 40) return {status:'insufficient_outcomes', eligible:rows.length, required:40,
     duplicatesExcluded:candidates.length-rows.length,
-    reason:'At least 40 distinct real, sourced events with pre-event features are required before an attendance model is exposed.'};
+    reason:'At least 40 distinct real, sourced events with pre-event features are required before a paid-ticket model is exposed.'};
   const trainEnd = Math.floor(rows.length * .6), calibrationEnd = Math.floor(rows.length * .8);
   const train = rows.slice(0, trainEnd), calibration = rows.slice(trainEnd,calibrationEnd), test = rows.slice(calibrationEnd);
   if (train.length<24||calibration.length<8||test.length < 8 || train.at(-1).eventDate >= calibration[0].eventDate || calibration.at(-1).eventDate >= test[0].eventDate) return {status:'insufficient_time_separation',eligible:rows.length,
@@ -150,8 +150,8 @@ export function predictDemand(modelReport, brief, features) {
   const coldStart=!model.seenCities.includes(String(brief.city).toLowerCase());
   const width=Math.min(1,validation.intervalHalfWidth+(coldStart?.1:0));
   const point = predict(model, features), lower = clamp(point.occupancy - width, 0, 1), upper = clamp(point.occupancy + width, 0, 1);
-  return {status:'backtested_association',model:useQloo?'qloo_augmented':'market_baseline',
-    attendance:{low:Math.floor(lower*brief.capacity),point:Math.round(point.occupancy*brief.capacity),high:Math.ceil(upper*brief.capacity)},
+  return {status:'backtested_association',model:useQloo?'qloo_augmented':'market_baseline',targetMetric:'paid_tickets_sold',
+    ticketsSold:{low:Math.floor(lower*brief.capacity),point:Math.round(point.occupancy*brief.capacity),high:Math.ceil(upper*brief.capacity)},
     occupancy:{low:round(lower),point:round(point.occupancy),high:round(upper)},
     nominalIntervalCoverage:coldStart?null:.9,heldOut:validation,coldStartCity:coldStart,
     explanations:{intercept:round(model.coefficients[0]),terms:Object.fromEntries(Object.entries(point.terms).map(([key,value])=>[key,round(value)])),scale:'Contributions to log-odds of occupancy; observational associations, not causal effects.'},

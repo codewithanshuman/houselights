@@ -25,7 +25,7 @@
   function renderModel(data){
     $('model-status').textContent=data.status==='backtested'
       ?`${data.eligible} eligible sourced outcomes. Chronological holdout: ${data.heldOut} later events.`
-      :`${data.eligible??0} eligible real outcomes of ${data.required??40} needed. Attendance forecasting is disabled.`;
+      :`${data.eligible??0} eligible real outcomes of ${data.required??40} needed. Paid-ticket forecasting is disabled.`;
     $('model-details').innerHTML=data.status==='backtested'
       ?`<p>Baseline held-out occupancy MAE: <strong>${escape(data.baseline?.mae)}</strong>. ${data.qlooComparison?
         `Matched Qloo cohort: ${escape(data.qlooComparison.cohort)} events; no-Qloo MAE ${escape(data.qlooComparison.withoutQloo.mae)}, Qloo MAE ${escape(data.qlooComparison.withQloo.mae)}. ${data.qlooComparison.qlooImproved?'Qloo improved this holdout.':'Qloo did not improve this holdout.'}`:
@@ -36,16 +36,16 @@
   async function refreshModel(){try{renderModel(await read('/api/demand/model'));}catch(error){$('model-status').textContent=error.message;$('model-details').textContent='Unlock organizer access to inspect private training records.';}}
   function renderPlan(data,request){
     state.last=data;$('results').hidden=false;
-    $('result-mode').textContent=data.status==='infeasible'?'No feasible lineup':data.mode==='backtested_observational_forecast'?'Backtested observational forecast':'Cultural scenario proxy · not attendance prediction';
+    $('result-mode').textContent=data.status==='infeasible'?'No feasible lineup':data.mode==='backtested_observational_forecast'?'Backtested paid-ticket forecast':'Cultural scenario proxy · not a ticket-sales prediction';
     if(data.status!=='feasible'){$('result-summary').textContent=data.reasons.join(' ');return;}
     const names=ids=>ids.map(id=>request.candidates.find(item=>item.id===id)?.name||id).join(' + ');
-    const selection=data.selected,att=selection.forecast?.attendance||selection.scenario;
+    const selection=data.selected,att=selection.forecast?.ticketsSold||selection.scenario;
     $('result-summary').innerHTML=`<p><strong>${escape(names(selection.selectedIds))}</strong></p><p><span class="metric">${escape(data.feasibleCount)} feasible of ${escape(data.checkedCount)} exact combinations</span><span class="metric">${escape(money(selection.fees,data.brief.currency))} artist fees</span><span class="metric">${escape(selection.cultural.proxy)} cultural proxy points</span></p>
       <p>${escape(data.objective)}</p>${data.forecastId?`<p class="mono">Saved pre-event forecast ID: ${escape(data.forecastId)}</p>`:''}`;
-    $('result-financial').innerHTML=`<h3>Attendance and economics</h3>${att
-      ?`<div class="result-grid"><article><strong>${selection.forecast?'Modeled attendance range':'Assumed attendance stress'}</strong><p>${escape(att.low)}–${escape(att.high)} · central ${escape(att.point)}</p></article><article><strong>Gross revenue</strong><p>${escape(money(selection.economics?.grossRevenue.low,data.brief.currency))}–${escape(money(selection.economics?.grossRevenue.high,data.brief.currency))}</p></article><article><strong>Operating margin</strong><p>${escape(money(selection.economics?.operatingMargin.low,data.brief.currency))}–${escape(money(selection.economics?.operatingMargin.high,data.brief.currency))}</p></article></div>`
-      :'<p>Attendance and financial ranges are unavailable. Add explicit sell-through assumptions or genuine outcomes sufficient for backtesting.</p>'}`;
-    $('result-prices').innerHTML=`<h3>Price sensitivity</h3><div class="table-scroll"><table><thead><tr><th>Ticket price</th><th>Modeled attendance</th><th>Assumed attendance</th><th>Basis</th></tr></thead><tbody>${data.priceScenarios.map(row=>`<tr><td>${escape(money(row.ticketPrice,data.brief.currency))}</td><td>${row.modelAttendance?`${escape(row.modelAttendance.low)}–${escape(row.modelAttendance.high)}`:'Unavailable'}</td><td>${row.assumedAttendance??'Unavailable'}</td><td>${escape(row.basis)}</td></tr>`).join('')}</tbody></table></div>`;
+    $('result-financial').innerHTML=`<h3>Paid tickets and economics</h3>${att
+      ?`<div class="result-grid"><article><strong>${selection.forecast?'Modeled paid-ticket range':'Assumed ticket-sales stress'}</strong><p>${escape(att.low)}–${escape(att.high)} · central ${escape(att.point)}</p></article><article><strong>Gross revenue</strong><p>${escape(money(selection.economics?.grossRevenue.low,data.brief.currency))}–${escape(money(selection.economics?.grossRevenue.high,data.brief.currency))}</p></article><article><strong>Operating margin</strong><p>${escape(money(selection.economics?.operatingMargin.low,data.brief.currency))}–${escape(money(selection.economics?.operatingMargin.high,data.brief.currency))}</p></article></div>`
+      :'<p>Paid-ticket and financial ranges are unavailable. Add explicit sell-through assumptions or genuine outcomes sufficient for backtesting.</p>'}`;
+    $('result-prices').innerHTML=`<h3>Price sensitivity</h3><div class="table-scroll"><table><thead><tr><th>Ticket price</th><th>Modeled paid tickets</th><th>Assumed paid tickets</th><th>Basis</th></tr></thead><tbody>${data.priceScenarios.map(row=>`<tr><td>${escape(money(row.ticketPrice,data.brief.currency))}</td><td>${row.modelTicketsSold?`${escape(row.modelTicketsSold.low)}–${escape(row.modelTicketsSold.high)}`:'Unavailable'}</td><td>${row.assumedTicketsSold??'Unavailable'}</td><td>${escape(row.basis)}</td></tr>`).join('')}</tbody></table></div>`;
     const cultural=selection.cultural;
     $('result-evidence').innerHTML=`<h3>Cultural and overlap evidence</h3><p>${escape(Math.round(cultural.rankCoverage*100))}% of selected artists have receipt-backed rank evidence. ${escape(cultural.observedOverlapPairs)}/${escape(cultural.totalPairs)} pairs have measured aggregate buyer-overlap observations. ${escape(cultural.culturalBridgeFraction)} is the fraction with a shared cultural theme, not unique buyers.</p>
       <div class="table-scroll"><table><thead><tr><th>Artist</th><th>Qloo source</th><th>Relative fit utility</th><th>Receipt IDs</th></tr></thead><tbody>${data.candidateEvidence.map(row=>`<tr><td>${escape(row.name)}</td><td>${escape(row.source)}</td><td>${row.rankFit==null?'Unknown':escape(row.rankFit)}</td><td class="mono">${escape(row.receiptIds.join(', ')||'None')}</td></tr>`).join('')}</tbody></table></div>
@@ -71,8 +71,8 @@
       const result=await read('/api/demand/plan',request);renderPlan(result,request);$('plan-status').textContent='Decision calculated. No new Qloo or LLM calls were made.';$('results').scrollIntoView({behavior:'smooth',block:'start'});
     }catch(error){$('plan-status').textContent=error.message;}finally{submit.disabled=false;}};
   $('outcome-form').onsubmit=async event=>{event.preventDefault();const f=event.currentTarget;
-    try{const result=await read('/api/demand/outcomes',{forecastId:f.elements.namedItem('forecastId').value.trim(),paidAttendance:Number(f.elements.namedItem('paidAttendance').value),sourceKind:f.elements.namedItem('sourceKind').value,sourceReference:f.elements.namedItem('sourceReference').value.trim()});
-      $('outcome-status').textContent=`Outcome recorded as ${result.provenance.classification}. ${result.forecastError==null?'No pre-event attendance forecast existed.':`Forecast error: ${result.forecastError} tickets.`}`;await refreshModel();
+    try{const result=await read('/api/demand/outcomes',{forecastId:f.elements.namedItem('forecastId').value.trim(),paidTicketsSold:Number(f.elements.namedItem('paidTicketsSold').value),sourceKind:f.elements.namedItem('sourceKind').value,sourceReference:f.elements.namedItem('sourceReference').value.trim()});
+      $('outcome-status').textContent=`Outcome recorded as ${result.provenance.classification}. ${result.forecastError==null?'No pre-event paid-ticket forecast existed.':`Forecast error: ${result.forecastError} tickets.`}`;await refreshModel();
     }catch(error){$('outcome-status').textContent=error.message;}};
   $('historical-submit').onclick=async()=>{try{const result=await read('/api/demand/historical-events',JSON.parse($('historical-json').value));
     $('historical-status').textContent=`Imported ${result.id}: ${result.provenance.classification}.`;await refreshModel();
