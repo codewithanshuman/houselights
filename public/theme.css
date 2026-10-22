@@ -22,7 +22,7 @@ label{font-size:13px;font-weight:500;line-height:1.6}pre,code,kbd,.receipt-id,.r
 .sidebar{width:238px;padding:24px 18px 20px;background:var(--paper);color:var(--ink);border-right:1px solid var(--line);overflow-y:auto}
 .brand{gap:5px;font:500 26px/1 var(--serif);letter-spacing:-1.1px;color:var(--ink)}.brand-dot{color:var(--purple)}
 .brand-logo-frame{display:block;width:42px;height:48px;overflow:hidden;flex-shrink:0;position:relative}
-.brand-logo{position:absolute;width:82px;max-width:none;height:82px;left:-19px;top:-17px;object-fit:contain}
+.brand-logo{position:absolute;width:54px;max-width:none;height:54px;left:-7.8px;top:-3.3px;object-fit:contain}
 .workspace-label{margin:28px 10px 12px;font:10px var(--mono);letter-spacing:1.2px;color:var(--muted)}.sidebar nav{gap:3px}
 .nav-item{min-height:40px;color:#5C5964;font-size:12px;padding:10px;border-radius:7px;gap:10px;text-decoration:none}.nav-item:hover{background:#EEEBF3}
 .nav-item.active{background:var(--lavender);color:#583AA7;font-weight:600}.nav-key{color:var(--muted)}.nav-count{color:#644BA8;background:#DDD3F2;font-size:10px}.nav-icon{color:var(--purple);font-size:16px}
@@ -125,7 +125,7 @@ label{font-size:13px;font-weight:500;line-height:1.6}pre,code,kbd,.receipt-id,.r
 .brief-main,.constraint-panel,.brief-grid,.table-scroll,.field-row>label,.view,.analysis-panel{min-width:0}.table-scroll{max-width:100%}.hero-art .hero-art-note strong{font-family:var(--serif);color:#65517C}.sidebar-disc{height:58px;min-height:58px}
 @media(max-width:700px){.gauntlet-hero img{opacity:.13}.gauntlet-hero:after{background:none}.gauntlet-hero .lede{color:#5C4C70}.gauntlet-hero>div{max-width:calc(100% - 48px)}}
 
-h4,h5,h6{font-family:var(--serif);font-weight:500}.gm-layout h4{font-size:20px}.judge-brand{font-family:var(--serif)}.judge-brand .brand-logo{width:82px;height:82px}.judge-page #judge-result>h4{font:500 22px var(--serif)}
+h4,h5,h6{font-family:var(--serif);font-weight:500}.gm-layout h4{font-size:20px}.judge-brand{font-family:var(--serif)}.judge-brand .brand-logo{width:54px;height:54px}.judge-page #judge-result>h4{font:500 22px var(--serif)}
 .table-scroll{position:relative}
 .review-shell fieldset{margin-top:24px}.review-shell fieldset legend{font:500 18px var(--serif);margin-bottom:12px}.review-shell fieldset label:has(input[type=radio]){flex-direction:row;align-items:center;gap:10px;margin:10px 0}.review-shell input[type=radio]{width:18px;height:18px;min-height:18px;accent-color:var(--purple)}
 /* Supplied frame artwork: coordinates follow each original image's pixel grid.
