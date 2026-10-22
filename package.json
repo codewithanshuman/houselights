@@ -27,6 +27,7 @@
     "release:verify": "node scripts/verify-release.mjs",
     "release:rehearse": "node scripts/rehearse-release.mjs",
     "import:outcomes": "node scripts/import-demand-outcomes.mjs",
+    "financial:demo": "node scripts/generate-financial-demo.mjs",
     "deploy:prepare-vercel": "node scripts/prepare-vercel.mjs"
   },
   "keywords": [],

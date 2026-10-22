@@ -1,0 +1,66 @@
+import { checked, ratio, sum } from './money.mjs';
+
+function allocatedTickets(sold, tiers, capacity) {
+  if (!Number.isInteger(sold) || sold < 0 || sold > capacity) throw new Error('Paid ticket count cannot exceed sellable capacity.');
+  // A stable proportional allocation avoids silently assuming that the highest
+  // priced tier sells first. Largest remainders resolve rounding exactly.
+  const rows = tiers.map((tier, index) => {
+    const exact = sold * tier.allocation / capacity;
+    return { index, whole: Math.floor(exact), remainder: exact % 1 };
+  });
+  let remaining = sold - rows.reduce((total, row) => total + row.whole, 0);
+  rows.sort((a, b) => b.remainder - a.remainder || a.index - b.index);
+  for (const row of rows) if (remaining > 0 && row.whole < tiers[row.index].allocation) { row.whole++; remaining--; }
+  if (remaining) throw new Error('Ticket allocation could not reconcile.');
+  return rows.sort((a, b) => a.index - b.index).map((row, index) => ({ ...tiers[index], sold: row.whole }));
+}
+
+export function accountDraw(config, { ticketsSold, selectedFeesCents, costMultiplier = 1,
+  canceled = false, artistCanceled = false, canceledArtistFeeCents = 0, feeEscalationCents = 0, replacementFeeCents = 0 } = {}) {
+  if (!Number.isSafeInteger(selectedFeesCents) || selectedFeesCents < 0) throw new Error('Selected artist fees must be non-negative integer minor units.');
+  const tiers = allocatedTickets(ticketsSold, config.ticketTiers, config.sellableCapacity);
+  const ticketBaseCents = sum(tiers.map(row => checked(row.sold * row.priceCents)));
+  const collectedTaxCents = config.tax.mode === 'added' ? ratio(ticketBaseCents, config.tax.rate) : 0;
+  const ticketReceiptsCents = checked(ticketBaseCents + collectedTaxCents);
+  const refundFraction = canceled ? config.booking.eventTicketRefundFraction : artistCanceled ? config.booking.ticketRefundFraction : 0;
+  const refundsCents = ratio(ticketReceiptsCents, refundFraction);
+  const retainedTicketReceiptsCents = ticketReceiptsCents - refundsCents;
+  const taxCents = config.tax.mode === 'none' ? 0 : config.tax.mode === 'added'
+    ? ratio(retainedTicketReceiptsCents, config.tax.rate / (1 + config.tax.rate))
+    : ratio(retainedTicketReceiptsCents, config.tax.rate / (1 + config.tax.rate));
+  const attendance = canceled ? 0 : Math.min(ticketsSold, config.sellableCapacity);
+  const ancillaryCents = canceled ? 0 : checked(config.ancillaryFixedCents + attendance * config.ancillaryPerTicketCents);
+  const grossRevenueCents = checked(ticketReceiptsCents + ancillaryCents);
+  const promoterFeesCents = config.fees.ownership === 'promoter'
+    ? checked(config.fees.fixedCents + ticketsSold * config.fees.perTicketCents + ratio(ticketReceiptsCents, config.fees.percent)) : 0;
+  const artistFeeRefundCents = canceled ? ratio(selectedFeesCents, config.booking.eventArtistFeeRefundFraction) :
+    artistCanceled ? ratio(canceledArtistFeeCents, config.booking.artistCancellationRefundFraction) : 0;
+  const artistCostsCents = checked(selectedFeesCents - artistFeeRefundCents + feeEscalationCents + replacementFeeCents +
+    (canceled || artistCanceled ? config.booking.cancellationPenaltyCents : 0));
+  const fixedCostsCents = checked(Math.round(sum(Object.values(config.costs)) * costMultiplier));
+  const variableCostsCents = checked(attendance * config.perAttendeeCents);
+  const netRevenueCents = checked(grossRevenueCents - refundsCents - promoterFeesCents - taxCents);
+  const totalCostsCents = checked(artistCostsCents + fixedCostsCents + variableCostsCents);
+  const profitCents = checked(netRevenueCents - totalCostsCents);
+  const cashBeforeRevenueCents = checked(ratio(selectedFeesCents, config.cashTiming.artistDepositFraction) +
+    ratio(fixedCostsCents, config.cashTiming.fixedCostPreRevenueFraction) +
+    ratio(ticketReceiptsCents, config.cashTiming.refundReserveFraction));
+  return { ticketsSold, attendance, tierSales: tiers.map(({ name, sold, priceCents }) => ({ name, sold, priceCents })),
+    ticketReceiptsCents, ancillaryCents, grossRevenueCents, refundsCents, promoterFeesCents, taxCents, netRevenueCents,
+    artistCostsCents, fixedCostsCents, variableCostsCents, totalCostsCents, profitCents, cashBeforeRevenueCents,
+    canceled, artistCanceled, feeEscalationCents, replacementFeeCents };
+}
+
+export function breakEvenVolume(config, selectedFeesCents, costMultiplier = 1) {
+  // Exact search uses the same integer accounting as every draw, including
+  // tier rounding, taxes, promoter fees and variable costs.
+  let low = 0, high = config.sellableCapacity;
+  if (accountDraw(config, { ticketsSold: 0, selectedFeesCents, costMultiplier }).profitCents >= 0) return 0;
+  if (accountDraw(config, { ticketsSold: high, selectedFeesCents, costMultiplier }).profitCents < 0) return null;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (accountDraw(config, { ticketsSold: middle, selectedFeesCents, costMultiplier }).profitCents >= 0) high = middle;
+    else low = middle + 1;
+  }
+  return low;
+}

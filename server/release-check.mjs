@@ -33,7 +33,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const access=await request('/api/access');
     record('anonymous-is-read-only',access.status===200&&access.data.protected===true&&access.data.editable===false);
     if(!checks.find(c=>c.name==='anonymous-is-read-only').passed)throw new Error('Access protection failed; further checks stopped.');
-    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan','/api/demand/twins']){
+    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan','/api/demand/twins','/api/financial/jobs']){
       const response=await request(path,{body:{}});
       record('protected-write:'+path,response.status===401);
     }
@@ -42,13 +42,19 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('protected-reported-outcomes',(await request('/api/demand/reported-outcomes')).status===401);
     record('protected-audience-twin',(await request('/api/demand/twins/000000000000000000000000')).status===401);
     record('protected-twin-validation',(await request('/api/demand/twin-validation')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html']){
+    record('protected-financial-validation',(await request('/api/financial/validation')).status===401);
+    record('protected-financial-job',(await request('/api/financial/jobs/000000000000000000000000')).status===401);
+    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
       if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
         page.data.includes('id="load-twin"')&&page.data.includes('id="add-seed"'));
+      if(path==='/financial.html')record('financial-risk-ui',page.data.includes('id="chart"')&&page.data.includes('id="frontier"')&&page.data.includes('id="stress"'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
+    const financialDemo=await request('/financial-demo.json');
+    record('published-financial-scenario',financialDemo.status===200&&financialDemo.data.label?.includes('SYNTHETIC')&&
+      financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5);
     const shocks=await request('/shocks-summary.json');
     record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.headlineDenominator?.candidateCount===12);
     const reviews=await request('/api/evidence/reviews');

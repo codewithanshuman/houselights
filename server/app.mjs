@@ -28,6 +28,7 @@ import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
 import { registerDemandRoutes } from './demand-api.mjs';
+import { registerFinancialRoutes } from './financial/api.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -87,6 +88,7 @@ export function createApp() {
   app.use(accessMiddleware);
   registerResearchRoutes(app);
   registerDemandRoutes(app);
+  registerFinancialRoutes(app);
   registerJudgeRoutes(app);
   registerOperationalRoutes(app);
   app.post('/api/investigation/:id/apply', (req,res) => {
