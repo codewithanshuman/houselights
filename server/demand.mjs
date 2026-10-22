@@ -121,9 +121,9 @@ function priceScenarios(brief,selected,modelReport,assumptions) {
 
 export function planDemand(input, modelReport, twin=null) {
   const {brief,candidates,constraints,assumptions,observedAudienceOverlap}=input;
-  const rows=enumerateSlates(candidates,constraints),feasible=rows.filter(row=>row.feasible);
+  const rows=enumerateSlates(candidates,constraints),feasible=rows.filter(row=>row.feasible&&(!twin||row.selectedIds.every(id=>twin.rankedCandidateIds.includes(id))));
   if(!feasible.length)return {status:'infeasible',mode:'none',checkedCount:rows.length,feasibleCount:0,
-    reasons:['No lineup satisfies the booking constraints. No demand or financial outcome is inferred.'],modelStatus:modelReport.status};
+    reasons:[twin?'No lineup satisfies both booking constraints and the audience twin’s fully ranked candidate pool. Seed artists cannot be self-ranked.':'No lineup satisfies the booking constraints. No demand or financial outcome is inferred.'],modelStatus:modelReport.status};
   const assess=row=>{
     const selected=row.selectedIds.map(id=>candidates.find(item=>item.id===id));
     const cultural=culturalSignals(selected,observedAudienceOverlap),features=demandFeatures(brief,selected);
@@ -144,7 +144,7 @@ export function planDemand(input, modelReport, twin=null) {
     objective:best.forecast?'Maximize lower-bound modeled operating margin under hard constraints.':twin?'Maximize organizer-assumed audience scenario operating margin under hard constraints; this is not a validated forecast.':'Maximize explicitly uncalibrated cultural proxy under hard constraints.',
     selected:best,alternatives:assessed.slice(1,4),priceScenarios:priceScenarios(brief,selected,modelReport,assumptions),
     audienceTwin:twin?{id:twin.id,sourceId:twin.sourceId,synthetic:twin.synthetic,originalSeedCount:twin.originalSeedCount,clusterCount:twin.clusterCount,
-      audiencePool:twin.audiencePool,overlapAssumption:twin.overlapAssumption,
+      audiencePool:twin.audiencePool,overlapAssumption:twin.overlapAssumption,excludedSeedArtistIds:twin.excludedSeedArtistIds,
       priceScenarios:[.8,.9,1,1.1,1.2].map(multiplier=>simulateAudienceTwin(twin,brief,best.selectedIds,{price:round(brief.ticketPrice*multiplier)})),
       interpretation:twin.interpretation}:null,
     candidateEvidence:candidates.map(item=>({id:item.id,name:item.name,source:item.qloo.source,rankFit:item.qloo.fit,

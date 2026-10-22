@@ -46,7 +46,7 @@ export function registerDemandRoutes(app) {
       const input=normalizeDemandInput(req.body,store.load(twin.sourceId));assertTwinCompatible(twin,input);
       const original=req.body?.originalIds,changed=req.body?.changedIds;
       if(!Array.isArray(original)||!Array.isArray(changed)||[original,changed].some(list=>
-        list.length!==input.constraints.slots||new Set(list).size!==list.length||list.some(id=>!twin.candidateIds.includes(id))))
+        list.length!==input.constraints.slots||new Set(list).size!==list.length||list.some(id=>!twin.rankedCandidateIds.includes(id))))
         throw new Error('Both lineups must contain distinct artists from this twin and fill every slot.');
       const feasible=new Set(enumerateSlates(input.candidates,input.constraints).filter(row=>row.feasible).map(row=>[...row.selectedIds].sort().join('|')));
       if(!feasible.has([...original].sort().join('|'))||!feasible.has([...changed].sort().join('|')))

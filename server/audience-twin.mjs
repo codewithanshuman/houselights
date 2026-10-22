@@ -27,9 +27,13 @@ export function validateTwinSeeds(raw,source,input) {
   });
   const total=normalized.reduce((sum,row)=>sum+row.weight,0);
   if(Math.abs(total-1)>.001)throw new Error('Taste-seed population weights must sum to 1.');
+  const candidateSet=new Set(input.candidates.map(item=>item.id));
+  const excludedSeedArtistIds=[...new Set(normalized.flatMap(row=>row.anchorIds).filter(id=>candidateSet.has(id)))];
+  if(input.candidates.length-excludedSeedArtistIds.length<Math.max(2,input.constraints.slots))
+    throw new Error('At least two non-seed candidates must remain, including enough artists to fill the lineup slots.');
   if(!Number.isInteger(raw.audiencePool)||raw.audiencePool<1||raw.audiencePool>10000000)throw new Error('Enter an assumed reachable audience pool from 1 to 10,000,000.');
   if(!finite(raw.overlapAssumption,0,1))throw new Error('Overlap assumption must be between 0 and 1.');
-  return {seeds,audiencePool:raw.audiencePool,overlapAssumption:raw.overlapAssumption};
+  return {seeds,audiencePool:raw.audiencePool,overlapAssumption:raw.overlapAssumption,excludedSeedArtistIds};
 }
 
 const distance=(a,b)=>Math.sqrt(a.reduce((sum,value,index)=>sum+(value-b[index])**2,0)/a.length);
@@ -57,24 +61,25 @@ export function clusterRankProfiles(profiles) {
 }
 
 export async function researchAudienceTwin(raw,source,input,{run}={}) {
-  const checked=validateTwinSeeds(raw,source,input),candidateIds=input.candidates.map(item=>item.id);
+  const checked=validateTwinSeeds(raw,source,input),candidateIds=input.candidates.map(item=>item.id),
+    rankedCandidateIds=candidateIds.filter(id=>!checked.excludedSeedArtistIds.includes(id));
   const workflow=run||new Run({budget:checked.seeds.length*3,receiptPrefix:'at',mode:isMock()?'mock':'live',deadlineMs:90000});
   const profiles=[];
   for(const seed of checked.seeds){
-    const {env,receipt}=await workflow.call('rank',{options:candidateIds,option_type:'artist',signals:seed.anchorIds,signal_location:input.brief.city},`Relative artist ordering for synthetic taste seed ${seed.label}`);
-    const ranked=(env.status==='ok'&&receipt.status==='ok')?env.results.map(row=>candidateIds.find(id=>key(id)===key(idOf(row)))||
-      input.candidates.find(candidate=>key(candidate.name)===key(nameOf(row)))?.id).filter(Boolean):[];
-    if(new Set(ranked).size!==candidateIds.length||ranked.length!==candidateIds.length){
+    const {env,receipt}=await workflow.call('rank',{options:rankedCandidateIds,option_type:'artist',signals:seed.anchorIds,signal_location:input.brief.city},`Relative artist ordering for synthetic taste seed ${seed.label}`);
+    const ranked=(env.status==='ok'&&receipt.status==='ok')?env.results.map(row=>rankedCandidateIds.find(id=>key(id)===key(idOf(row)))||
+      input.candidates.find(candidate=>rankedCandidateIds.includes(candidate.id)&&key(candidate.name)===key(nameOf(row)))?.id).filter(Boolean):[];
+    if(new Set(ranked).size!==rankedCandidateIds.length||ranked.length!==rankedCandidateIds.length){
       return {status:'insufficient_qloo_evidence',reason:`A complete comparable Qloo ranking was unavailable for ${seed.label}. No audience twin was saved.`,
         receipts:workflow.receipts,completedSeeds:profiles.length,synthetic:source.mock===true};
     }
-    profiles.push({...seed,candidateIds,vector:candidateIds.map(id=>ranked.length===1?.5:1-ranked.indexOf(id)/(ranked.length-1)),receiptId:receipt.id});
+    profiles.push({...seed,candidateIds:rankedCandidateIds,vector:rankedCandidateIds.map(id=>ranked.length===1?.5:1-ranked.indexOf(id)/(ranked.length-1)),receiptId:receipt.id});
   }
   const segments=clusterRankProfiles(profiles),createdAt=new Date().toISOString();
   const twin={id:randomBytes(12).toString('hex'),createdAt,status:'scenario_ready',city:input.brief.city,sourceId:source.id,
-    candidateIds,audiencePool:checked.audiencePool,overlapAssumption:checked.overlapAssumption,segments,
+    candidateIds,rankedCandidateIds,excludedSeedArtistIds:checked.excludedSeedArtistIds,audiencePool:checked.audiencePool,overlapAssumption:checked.overlapAssumption,segments,
     originalSeedCount:profiles.length,clusterCount:segments.length,receipts:workflow.receipts,synthetic:source.mock===true,
-    interpretation:'Clusters group organizer-defined taste seeds by Qloo relative rank patterns for one fixed artist pool. Segment sizes and purchase parameters are organizer hypotheses, not Qloo demographics or real customer records.'};
+    interpretation:'Clusters group organizer-defined taste seeds by Qloo relative rank patterns for one fixed artist pool. Seed artists inside the original candidate pool are excluded from ranked lineup choices because Qloo can omit self-ranking. Segment sizes and purchase parameters are organizer hypotheses, not Qloo demographics or real customer records.'};
   db.prepare('INSERT INTO audience_twins(id,body,created_at) VALUES(?,?,?)').run(twin.id,JSON.stringify(twin),createdAt);
   return twin;
 }
@@ -90,6 +95,8 @@ export function assertTwinCompatible(twin,input){
 }
 
 export function simulateAudienceTwin(twin,brief,selectedIds,{price=brief.ticketPrice,competitionCount=brief.competitionCount,overlap=twin.overlapAssumption}={}) {
+  if(!Array.isArray(selectedIds)||selectedIds.some(id=>!twin.rankedCandidateIds.includes(id)))
+    throw new Error('Audience-twin simulation requires artists with complete rank evidence in every segment.');
   const segmentRows=twin.segments.map(segment=>{
     // The 20–80% response scale is a declared scenario mapping, not a Qloo
     // purchase probability. It keeps a top rank from implying full coverage.

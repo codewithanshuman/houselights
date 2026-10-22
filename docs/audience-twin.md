@@ -2,7 +2,7 @@
 
 Audience Twin is the organizer-only simulation inside Demand Lab. It uses **the same artist pool, city and Qloo `rank` endpoint** for each organizer-defined taste seed. Every returned rank must be complete and receipt-backed before a twin is saved. Each rank is converted into a 0–1 **relative position within that fixed pool**, never an affinity percentage, fan count or purchase probability. Changing the artist pool or city requires new Qloo research. A Qloo failure or partial ranking produces `insufficient_qloo_evidence`, not filled-in scores.
 
-Organizers enter 2–5 taste-seed hypotheses with 1–3 artist IDs from a saved Qloo source each. They also enter weights summing to one, an assumed reachable audience pool, base ticket-purchase intent, price elasticity, competition loss and fan-overlap strength. These are **explicit scenario assumptions**. No real customer profile or personal data is generated. Qloo does not provide segment sizes, intent, elasticity or measured buyer overlap.
+Organizers enter 2–5 taste-seed hypotheses with 1–3 artist IDs from a saved Qloo source each. They also enter weights summing to one, an assumed reachable audience pool, base ticket-purchase intent, price elasticity, competition loss and fan-overlap strength. These are **explicit scenario assumptions**. No real customer profile or personal data is generated. Qloo does not provide segment sizes, intent, elasticity or measured buyer overlap. Qloo can omit an artist ranked against itself; any seed artist also entered as a lineup candidate is explicitly excluded from the fixed ranked pool and twin-driven lineup choices. At least two non-seed candidates and enough acts to fill the slots must remain.
 
 ## What each engine does
 

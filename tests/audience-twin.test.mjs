@@ -73,6 +73,20 @@ test('fixed-pool Qloo rankings produce clustered synthetic profiles, bounded ove
   assert.match(plan.caveats.join(' '),/not a calibrated prediction interval/);
 });
 
+test('seed artists inside the lineup pool are excluded symmetrically before Qloo ranking',async()=>{
+  const changed={...raw,constraints:{...raw.constraints,maxPerGenre:2},segmentSeeds:[raw.segmentSeeds[0],{...raw.segmentSeeds[1],anchorIds:['a']}]};
+  const normalized=normalizeDemandInput(changed,source);
+  const seedRun=new Run({mode:'mock',budget:2,cacheStore:new Map(),execute:async(_tool,args)=>({status:'ok',results:args.options.map(id=>({entity_id:id,name:id}))})});
+  const twin=await researchAudienceTwin(changed,source,normalized,{run:seedRun});
+  assert.equal(twin.status,'scenario_ready');
+  assert.deepEqual(twin.excludedSeedArtistIds,['a']);
+  assert.ok(twin.receipts.every(receipt=>receipt.args.options.every(id=>id!=='a')));
+  assert.throws(()=>simulateAudienceTwin(twin,normalized.brief,['a','b']),/complete rank evidence/);
+  const plan=planDemand(normalized,trainDemandModel([]),twin);
+  assert.equal(plan.status,'feasible');
+  assert.ok(plan.selected.selectedIds.every(id=>id!=='a'));
+});
+
 test('private twin and validation APIs are gated and a saved twin can enter exact optimization',async()=>{
   const twin=await researchAudienceTwin(raw,source,input,{run:run()});
   const planResponse=await fetch(origin+'/api/demand/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...raw,twinId:twin.id,save:true})});
