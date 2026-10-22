@@ -24,8 +24,8 @@ The organizer workspace at `/index.html` contains deeper research, decision proo
 - [x] Live Qloo and Groq transport checks, documented separately in [live validation](live-validation.md).
 - [x] Four reference/poster images removed from the public project; remaining artwork provenance and compression recorded in [SOURCES](../public/assets/SOURCES.md).
 - [x] Organizer attested on 22 October 2026 that every entrant is an adult in their jurisdiction, no entrant is excluded or connected to sponsor/judges, and permission exists to publish the remaining supplied artwork. This is an organizer statement, not independent verification.
-- [ ] Final release deployment and anonymous external-browser checks for the exact submitted commit.
-- [ ] Capture final screenshots and optional short video, showing the data mode and limits accurately.
+- [x] Public application release and anonymous external-browser checks completed on 22 October 2026. The application-code commit and report are recorded in [live validation](live-validation.md); repeat the checker if a later application change is deployed.
+- [x] Mobile-width screenshots of the public decision room and evidence page captured in ignored local artifacts. A video remains optional; a physical fresh-phone test has not been performed.
 - [ ] Collect real blind-review judgments and authentic commercial source evidence if available before submission; if not, keep the zero-evidence disclosure.
 - [ ] Enter the public URL, repository, license, project description and team details in Devpost, then submit.
 

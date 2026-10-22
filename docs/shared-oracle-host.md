@@ -1,10 +1,11 @@
 # Sharing an existing Oracle server
 
-## Current deployment — 20 October 2026
+## Current deployment — 22 October 2026
 
 [Houselights is publicly available](https://houselights.80-225-218-239.sslip.io)
-from the existing Ubuntu 22.04 ARM A1 VM with 2 OCPUs and 12 GB RAM, at commit
-`30f86d59b7fa640fc73d016258f7ebd5d0cea4ed`. The deployment uses
+from the existing Ubuntu 22.04 ARM A1 VM with 2 OCPUs and 12 GB RAM. The
+22 October public evidence release was deployed from application commit
+`a247916edf490ca03abfc9e91f80c9e342b43780`. The deployment uses
 `shared.compose.yaml` with `shared-public.override.yaml`: the application is
 limited to 0.5 CPU/1536 MiB and its separate Caddy HTTPS proxy to
 0.1 CPU/128 MiB. The actual Docker build ran in a separately limited
@@ -16,12 +17,12 @@ stopped or reconfigured. The five original container IDs/start times and the
 existing ffmpeg process ID remained unchanged after deployment. That confirms
 process continuity, not independently measured livestream quality.
 
-Public HTTP and browser checks, bounded live Qloo/Groq requests, saved proof
+Public HTTP and browser checks, earlier bounded live Qloo/Groq requests, saved proof
 data after application-container recreation, and server/off-host
 backup-restores passed. The hostname relies on free third-party DNS and the
 VM retaining its public IP. Account billing/free eligibility, long-term uptime
 and VM-reboot recovery remain unverified; no VM reboot was performed.
-See the [deployment evidence](live-validation.md#oracle-public-deployment--20-october-2026).
+See the [deployment evidence](live-validation.md#public-evidence-release--22-october-2026).
 
 ## Capacity requirements
 
