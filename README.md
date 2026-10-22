@@ -10,7 +10,7 @@ The [advanced workflows](docs/advanced-workflows.md) include a bounded model-dir
 
 The [judge workspace](docs/judge-workspace.md) at `/judge.html` lets visitors change budgets, lock artists, withdraw evidence and rehearse cancellations against curated public cases, with no organizer token or new provider calls. Benchmark batches now run in the [persistent worker](docs/persistent-research.md#durable-benchmark-contract), with idempotent submission, cancellation, reconnect and explicit unknown outcomes after interruption.
 
-The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and captured tool-free Groq re-prompts under the same 36 changes. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups.
+The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and three captured tool-free Groq re-prompts per shock, including clearly labeled synthetic 10- and 12-candidate stress cases. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups. The [single demo path](docs/judge-demo.md) shows the live execution trace, one changed decision and the stress result.
 
 ## Run locally
 
@@ -109,7 +109,7 @@ Browser → Node/Express → bounded agent workflow → official Qloo MCP harnes
 | Compare | `qloo_compare_audiences` | Retain aggregate comparison context |
 | Timing | `qloo_trends` | Use interpretable, explicit source changes |
 
-The optimizer enumerates every exact-size subset for at most ten candidates. Its declared policy combines relative rank utility, evidence availability, explicit trend direction, buyer-entered genre diversity and discovery. Fees are rounded to cents. Missing fees or unconfirmed availability make an act ineligible; missing rank evidence can make a selected slate provisional. An exact optimum means best **under this policy and candidate pool**, not the best possible commercial booking decision.
+The optimizer enumerates every exact-size subset for at most twelve candidates. Its declared policy combines relative rank utility, evidence availability, explicit trend direction, buyer-entered genre diversity and discovery. Fees are rounded to cents. Missing fees or unconfirmed availability make an act ineligible; missing rank evidence can make a selected slate provisional. An exact optimum means best **under this policy and candidate pool**, not the best possible commercial booking decision.
 
 The optional LLM chooses names from the candidate pool for deeper checks and selects from verified claim IDs. It cannot write new factual prose into the grounded memo. Without it, deterministic planning and template claims remain available. See [architecture and evidence limits](docs/architecture.md) for the scoring formula and provenance model.
 

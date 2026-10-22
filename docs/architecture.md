@@ -34,7 +34,7 @@ The run budget counts uncached workflow attempts, including retries. A harness w
 
 ## Exact optimization
 
-The pure optimizer supports up to ten candidates and checks every combination with exactly the requested number of slots. Hard constraints are total fee budget, confirmed availability, valid fees, required and excluded IDs, minimum discovered acts and maximum acts per known genre. Unknown genres do not receive diversity credit and cannot establish genre concentration. A discovered act means it came from outside the original shortlist, not that it is obscure or attracts a new audience.
+The pure optimizer supports up to twelve candidates and checks every combination with exactly the requested number of slots. Hard constraints are total fee budget, confirmed availability, valid fees, required and excluded IDs, minimum discovered acts and maximum acts per known genre. Unknown genres do not receive diversity credit and cannot establish genre concentration. A discovered act means it came from outside the original shortlist, not that it is obscure or attracts a new audience.
 
 For a slate of `n` artists, the current policy is:
 
@@ -68,7 +68,7 @@ These are deterministic, one-assumption-at-a-time planning scenarios. They do no
 
 The response reports feasibility, retained and replaced IDs, cost and score changes, candidate selection rates across feasible scenarios, a backup bench and critical dependencies. Its coverage percentage is the share of these declared cases with a feasible response. It is not a likelihood, confidence level or estimate of real-world cancellation risk.
 
-The robust-slate search enumerates every exact-size candidate subset, removes any slate that violates the original constraints, and rehearses one frozen-survivor cancellation per selected artist. It orders the remaining slates by cancellation coverage, worst fallback score, average fallback score, original policy score, cost and deterministic ID order. `utilitySacrifice` exposes how many policy points the robust slate gives up against the original optimum. Up to five ranked alternatives are returned as the robustness frontier. At ten candidates the search remains bounded by the same small exact decision space as the optimizer.
+The robust-slate search enumerates every exact-size candidate subset, removes any slate that violates the original constraints, and rehearses one frozen-survivor cancellation per selected artist. It orders the remaining slates by cancellation coverage, worst fallback score, average fallback score, original policy score, cost and deterministic ID order. `utilitySacrifice` exposes how many policy points the robust slate gives up against the original optimum. Up to five ranked alternatives are returned as the robustness frontier. At twelve candidates the search remains bounded by the same small exact decision space as the optimizer.
 
 `POST /api/contingency` accepts a saved `sourceId`, current terms keyed by known candidate ID and current constraints. Like the Gauntlet, it restores scores, evidence and receipts from the saved run and applies only valid term edits. Client-provided candidate arrays and fit scores are ignored. `npm run contingency -- <saved-run-id>` generates the same analysis directly from a stored snapshot for demos or downstream automation.
 

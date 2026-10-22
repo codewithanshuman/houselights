@@ -152,7 +152,7 @@ test('invalid inputs are rejected before enumeration and do not mutate caller da
   assert.equal(optimizeSlate([candidates[0], candidates[0]], constraints()).status, 'invalid');
   assert.equal(optimizeSlate([null], constraints()).status, 'invalid');
   assert.equal(optimizeSlate(null, constraints()).status, 'invalid');
-  assert.equal(optimizeSlate(Array.from({ length: 11 }, (_, i) => act(String(i), 0.5, 10)), constraints()).status, 'invalid');
+  assert.equal(optimizeSlate(Array.from({ length: 13 }, (_, i) => act(String(i), 0.5, 10)), constraints()).status, 'invalid');
   optimizeSlate(candidates, constraints());
   assert.deepEqual(candidates, initial);
 });

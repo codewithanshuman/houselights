@@ -5,7 +5,7 @@ const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const json = value => escapeHTML(JSON.stringify(value ?? null, null, 2));
 const state = { memo: null, receipts: [], offers: [], picks: {}, needsInput: [], busy: false, dirty: false, briefDirty: false, savedId: null, mock: null, runMock: null, currency: 'GBP', example: false, lockedIds: new Set(), excludedIds: new Set() };
-state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.gauntlet = null;
+state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.gauntlet = null; state.trace = []; state.traceStarted = 0;
 
 
 // Header previews explain the existing missions; they never score or edit a run.
@@ -288,7 +288,27 @@ function renderChoices() {
   $('entity-choices').innerHTML = state.needsInput.map((entry, index) => `<div class="entity-choice"><p><strong>Confirm the artist for “${escapeHTML(entry.name)}”</strong> ${state.picks[entry.name] ? `Selected: ${escapeHTML(state.picks[entry.name].name)}` : 'Choose an identity before rebuilding the brief.'}</p>${(entry.candidates || []).map((candidate, choice) => `<button class="button small subtle" type="button" data-choice="${index}" data-option="${choice}" aria-pressed="${state.picks[entry.name]?.id === candidate.id}">${escapeHTML(candidate.name)} <span>${escapeHTML(candidate.id || '')}</span></button>`).join('')}</div>`).join('') + (state.needsInput.length ? '<button id="resolve-again" type="button" class="button dark resolve-button">Rebuild with confirmed identities <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>' : '');
 }
 
+function recordTrace(event) {
+  if ($('live-trace').hidden) return;
+  const elapsed = Math.max(0, Math.round((Date.now() - state.traceStarted) / 1000));
+  const receipt = event.receipt;
+  const detail = event.type === 'stage' ? event.text
+    : event.type === 'receipt' ? `${receipt?.tool || 'Tool'} · ${receipt?.status || 'unknown'} · ${receipt?.source === 'synthetic' ? 'synthetic fixture' : receipt?.source || 'source unknown'} · ${receipt?.id || 'no ID'}${Number.isFinite(receipt?.ms) ? ` · ${receipt.ms} ms` : ''}`
+    : event.type === 'plan' ? `${event.by === 'llm' ? 'Model' : 'Rules'} selected ${(event.deep || []).length} deep checks`
+    : event.type === 'needs_input' ? `Identity confirmation needed for ${event.name}`
+    : event.type === 'memo' ? `Exact optimization complete · ${event.slate?.feasible ? 'feasible slate' : 'infeasible, no bookable slate'}`
+    : event.type === 'saved' ? 'Run saved with its receipts'
+    : event.type === 'error' ? event.text || 'Run stopped'
+    : event.type === 'start' ? `${event.mock ? 'Synthetic' : 'Live Qloo'} source selected` : null;
+  if (!detail) return;
+  state.trace.push({elapsed,type:event.type,detail:String(detail)});
+  const inspect = event.type === 'receipt' && receipt?.id ? ` <button type="button" data-receipt="${escapeHTML(receipt.id)}">Inspect receipt</button>` : '';
+  $('live-trace-entries').insertAdjacentHTML('beforeend', `<li><time>+${elapsed}s</time><span>${escapeHTML(event.type.replaceAll('_',' '))}</span><strong>${escapeHTML(detail)}${inspect}</strong></li>`);
+  $('live-trace-status').textContent = `${state.trace.length} actual events · ${event.type === 'error' ? 'stopped' : event.type === 'saved' ? 'saved' : 'running'}`;
+}
+
 function handleEvent(event) {
+  recordTrace(event);
   switch (event.type) {
     case 'start': state.runMock = event.mock; updateMode(event.mock); break;
     case 'stage': {
@@ -348,6 +368,8 @@ async function buildSlate() {
   state.lockedIds.clear(); state.excludedIds.clear();
   state.currency = $('currency').value; state.runMock = state.mock;
   $('results').hidden = true; $('empty-state').hidden = true; $('run-progress').hidden = false; $('entity-choices').innerHTML = '';
+  state.trace = []; state.traceStarted = Date.now(); $('live-trace-entries').replaceChildren(); $('live-trace').hidden = false;
+  $('live-trace-status').textContent = 'Waiting for first server event';
   $('progress-label').textContent = 'Preparing your slate'; $('plan-explanation').textContent = ''; $('call-budget').textContent = '';
   $('share-link').hidden = true; $('dirty-banner').hidden = true;
   document.querySelectorAll('[data-step]').forEach(node => node.classList.remove('active'));
@@ -362,7 +384,8 @@ async function buildSlate() {
   } catch (failure) {
     error(failure.name === 'AbortError' ? 'The evidence run timed out. Check the server connection and try again.' : failure.message);
     if (!state.memo) $('empty-state').hidden = false;
-  } finally { clearTimeout(timeout); $('run-progress').hidden = true; setBusy(false); }
+  } finally { clearTimeout(timeout); $('run-progress').hidden = true; setBusy(false);
+    $('live-trace-status').textContent = `${state.trace.length} actual events · ${state.memo ? 'decision complete' : 'run incomplete'}`; }
 }
 
 async function optimize() {
@@ -391,6 +414,7 @@ function exportRun() {
 }
 
 async function loadSaved(id) {
+  state.trace = []; $('live-trace').hidden = true;
   setBusy(true); $('progress-label').textContent = 'Loading saved evidence'; $('run-progress').hidden = false;
   try {
     const response = await fetch(`/api/memo/${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(30000) });

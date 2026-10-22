@@ -19,7 +19,7 @@ const sameSelection=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b]
 // A separate public record, never a raw source snapshot or private source document.
 export function publicJudgeSnapshot(source) {
   if(source?.memo?.exampleBookingTerms!==true&&source?.input?.exampleBookingTerms!==true)throw fault('Judge cases require explicitly illustrative booking terms.');
-  if(!Array.isArray(source.memo.items)||source.memo.items.length<2||source.memo.items.length>10)throw fault('Choose a saved pool of 2–10 candidates.');
+  if(!Array.isArray(source.memo.items)||source.memo.items.length<2||source.memo.items.length>12)throw fault('Choose a saved pool of 2–12 candidates.');
   const original=optimizeSlate(source.memo.items,source.memo.constraints);
   if(original.status==='invalid')throw fault('Resolve invalid source constraints first.');
   const receipts=(source.receipts??[]).slice(0,250).map(r=>({id:text(r.id),tool:text(r.tool),status:text(r.status,30),
@@ -59,14 +59,15 @@ export function loadJudgeCase(id) {
   const row=db.prepare('SELECT body FROM judge_cases WHERE id=?').get(id);return row?JSON.parse(row.body):null;
 }
 export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body));}
-export function judgeExperiment(record,raw={}) {
+export function judgeExperiment(record,raw={},options={}) {
   const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId'];
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!allowed.includes(k)))throw fault('Only budget, locks, exclusions, cancellation, a 15% fee increase, unavailability and receipt withdrawal can be changed.');
   const snapshot=structuredClone(record.snapshot),baseline=snapshot.memo.slate;
   const ids=new Set(snapshot.memo.items.map(i=>i.id));
-  for(const key of ['lockedIds','excludedIds'])if(raw[key]!==undefined&&(!Array.isArray(raw[key])||raw[key].length>10||raw[key].some(id=>!ids.has(id))))throw fault('Locks and exclusions must refer to this case’s candidate pool.');
+  const shockedIds=new Set([...baseline.selectedIds,...(snapshot.benchmark?.control?.selectedIds??[])]);
+  for(const key of ['lockedIds','excludedIds'])if(raw[key]!==undefined&&(!Array.isArray(raw[key])||raw[key].length>12||raw[key].some(id=>!ids.has(id))))throw fault('Locks and exclusions must refer to this case’s candidate pool.');
   if(raw.budget!==undefined&&(typeof raw.budget!=='number'||!Number.isFinite(raw.budget)||raw.budget<0||raw.budget>1e9))throw fault('Budget must be a number between 0 and 1,000,000,000.');
-  for(const key of ['feeIncreaseId','unavailableId'])if(raw[key]!==undefined&&(!baseline.selectedIds.includes(raw[key])||typeof raw[key]!=='string'))throw fault(`${key} must refer to an artist selected in the published baseline.`);
+  for(const key of ['feeIncreaseId','unavailableId'])if(raw[key]!==undefined&&(!shockedIds.has(raw[key])||!ids.has(raw[key])||typeof raw[key]!=='string'))throw fault(`${key} must refer to an artist selected by a published arm.`);
   if(raw.feeIncreaseId!==undefined){
     const item=snapshot.memo.items.find(item=>item.id===raw.feeIncreaseId);
     if(typeof item.terms.fee!=='number'||!Number.isFinite(item.terms.fee))throw fault('A fee shock requires a known buyer-entered fee.');
@@ -76,7 +77,7 @@ export function judgeExperiment(record,raw={}) {
   const constraints={...snapshot.memo.constraints,...fields(raw,['budget','lockedIds','excludedIds'])};
   let survivors=[];
   if(raw.cancelId!==undefined&&raw.cancelId!==null&&raw.cancelId!=='') {
-    if(!baseline.selectedIds.includes(raw.cancelId))throw fault('Cancel an artist selected in the published baseline.');
+    if(!shockedIds.has(raw.cancelId)||!ids.has(raw.cancelId))throw fault('Cancel an artist selected by a published arm.');
     survivors=baseline.selectedIds.filter(id=>id!==raw.cancelId);
     constraints.lockedIds=[...new Set([...constraints.lockedIds.filter(id=>id!==raw.cancelId),...survivors])];
     constraints.excludedIds=[...new Set([...constraints.excludedIds,raw.cancelId])];
@@ -100,8 +101,9 @@ export function judgeExperiment(record,raw={}) {
   }
   snapshot.memo.constraints=constraints;snapshot.memo.slate=optimizeSlate(snapshot.memo.items,constraints);
   if(snapshot.memo.slate.status==='invalid')throw fault(snapshot.memo.slate.reasons.join(' '));
-  const result=snapshot.memo.slate,proof=buildDecisionProof(snapshot);
-  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,snapshot,proof,methods:judgeMethods(snapshot,proof,record.snapshot),
+  const result=snapshot.memo.slate,proof=options.lightweight===true?null:buildDecisionProof(snapshot);
+  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,snapshot,proof,
+    methods:proof?judgeMethods(snapshot,proof,record.snapshot):null,
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
       feeDelta:result.feasible&&baseline.feasible?Math.round((result.totalFee-baseline.totalFee)*100)/100:null,
       survivorIds:survivors,survivorsPreserved:result.feasible?survivors.every(id=>result.selectedIds.includes(id)):null,affectedIds,

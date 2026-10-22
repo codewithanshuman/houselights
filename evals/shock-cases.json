@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "disclosure": "Entirely synthetic stress cases. Artist names, taste utilities, fees, genres and availability are invented; these are not Qloo observations or real quotes.",
+  "cases": [
+    {
+      "title": "SYNTHETIC · 10 candidates / 4 slots",
+      "city": "Synthetic Metro A",
+      "currency": "USD",
+      "constraints": { "budget": 15500, "slots": 4, "discoveryMin": 1, "maxPerGenre": 1, "riskTolerance": 50, "lockedIds": [], "excludedIds": [] },
+      "candidates": [
+        { "id": "sa-e1", "name": "Neon Harbor", "genre": "Electronic", "fee": 5200, "fit": 0.95, "found": false },
+        { "id": "sa-e2", "name": "Silver Current", "genre": "Electronic", "fee": 3900, "fit": 0.72, "found": true },
+        { "id": "sa-e3", "name": "Orbit Keys", "genre": "Electronic", "fee": 3400, "fit": 0.51, "found": false },
+        { "id": "sa-i1", "name": "Paper Atlas", "genre": "Indie", "fee": 5100, "fit": 0.91, "found": false },
+        { "id": "sa-i2", "name": "Velvet Signals", "genre": "Indie", "fee": 3900, "fit": 0.68, "found": true },
+        { "id": "sa-i3", "name": "Amber Radio", "genre": "Indie", "fee": 3200, "fit": 0.43, "found": false },
+        { "id": "sa-j1", "name": "Blue Hour Quartet", "genre": "Jazz", "fee": 4100, "fit": 0.86, "found": false },
+        { "id": "sa-j2", "name": "Mosaic Brass", "genre": "Jazz", "fee": 2800, "fit": 0.54, "found": true },
+        { "id": "sa-h1", "name": "Northline Verse", "genre": "Hip hop", "fee": 5200, "fit": 0.89, "found": false },
+        { "id": "sa-h2", "name": "Pocket Rhythm", "genre": "Hip hop", "fee": 3500, "fit": 0.57, "found": false }
+      ]
+    },
+    {
+      "title": "SYNTHETIC · 12 candidates / 5 slots",
+      "city": "Synthetic Metro B",
+      "currency": "USD",
+      "constraints": { "budget": 21500, "slots": 5, "discoveryMin": 1, "maxPerGenre": 1, "riskTolerance": 50, "lockedIds": [], "excludedIds": [] },
+      "candidates": [
+        { "id": "sb-e1", "name": "Lumen District", "genre": "Electronic", "fee": 5900, "fit": 0.96, "found": false },
+        { "id": "sb-e2", "name": "Static Bloom", "genre": "Electronic", "fee": 3800, "fit": 0.66, "found": true },
+        { "id": "sb-e3", "name": "Quiet Voltage", "genre": "Electronic", "fee": 3400, "fit": 0.44, "found": false },
+        { "id": "sb-i1", "name": "The Lantern Maps", "genre": "Indie", "fee": 5600, "fit": 0.93, "found": false },
+        { "id": "sb-i2", "name": "Tidal Letters", "genre": "Indie", "fee": 4000, "fit": 0.70, "found": true },
+        { "id": "sb-i3", "name": "Pale Avenue", "genre": "Indie", "fee": 3500, "fit": 0.48, "found": false },
+        { "id": "sb-j1", "name": "Sunroom Ensemble", "genre": "Jazz", "fee": 4800, "fit": 0.87, "found": false },
+        { "id": "sb-j2", "name": "Tin Roof Trio", "genre": "Jazz", "fee": 3100, "fit": 0.53, "found": false },
+        { "id": "sb-f1", "name": "Willow Archive", "genre": "Folk", "fee": 4500, "fit": 0.82, "found": false },
+        { "id": "sb-f2", "name": "Golden Thread", "genre": "Folk", "fee": 3200, "fit": 0.58, "found": true },
+        { "id": "sb-r1", "name": "Signal Poet", "genre": "Rap", "fee": 5400, "fit": 0.90, "found": false },
+        { "id": "sb-r2", "name": "Copper Lines", "genre": "Rap", "fee": 3600, "fit": 0.56, "found": false }
+      ]
+    }
+  ]
+}

@@ -1,15 +1,10 @@
-# Festival GM walkthrough
+# One demo path: a slate under pressure
 
-Use Node 24+, `npm ci`, then `npm run dev` for a clearly labeled synthetic rehearsal. For live evidence, put `QLOO_API_KEY` in ignored `.env`, leave `QLOO_MODE` unset, run `npm run validate:live`, then `npm start`. Optional LLM control requires both `ANTHROPIC_API_KEY` and `LLM_MODEL`.
+Use the [public Houselights demo](https://houselights.80-225-218-239.sslip.io). Keep the presentation to this single decision story; the other workspaces remain available for questions.
 
-1. In Slate studio, load the example or enter a city, audience anchors, available artist offers and real quotes. Build the slate. Example fees are illustrative, never provider-sourced.
-2. Open Festival GM. Compare London and Paris, choosing London as the decision city. Run research. Inspect relative ranks, missing demographic evidence, cultural connections and each scoring component. Open the agent decisions to see gap repair and re-optimization.
-3. Ask for a replacement while keeping budget and audience fit. Declare the headliner explicitly. A rejected change is a valid outcome: inspect binding constraints instead of silently relaxing them.
-4. Cancel a selected act. Recovery removes that act, locks every survivor and searches for a feasible replacement. Inspect the replacement, budget and retained IDs. The source link opens the unchanged earlier decision.
-5. Run the LLM-only control if configured. Both slates use identical booking constraints. The numerical score difference is an in-sample diagnostic; unavailable controls remain unavailable.
-6. To evaluate usefulness independently, repeat with distinct briefs, create a blind study and share private invitations with real consenting reviewers yourself. Record preferences and reasons. Automated fixture ballots are test data, never promoter evidence.
-7. Pin a researched example for judge access. On a protected deployment, a fresh browser can read that example but cannot spend Qloo quota or edit bookings without organizer access.
+1. **Make the decision.** In Slate studio, load the London example and build the slate. State that the quotes, genres and availability are illustrative buyer inputs. Point to the **Live decision trace** as actual stage and tool-receipt events arrive, then show the chosen acts and the exact budget/genre checks. The trace is an execution log, not private model reasoning.
+2. **Apply pressure.** Open [the Berlin public judge case](https://houselights.80-225-218-239.sslip.io/judge.html#934e002267e2db9ccdc1b5a9). Use **Test a tighter budget**. Show the recomputed feasible slate, the fixed original LLM lineup checked against that same cut, and the constraint violation. The static replay is not a new LLM generation.
+3. **Prove the boundary.** Cancel one baseline act. Show whether survivors remain and whether a valid replacement exists. Open one receipt and explain that cultural affinity is not ticket demand or an artist quote.
+4. **Show the broader stress result.** Open the [shock benchmark](../results/shocks.md). Read its 12-candidate headline with the denominator and synthetic label. Show the three independent re-prompts per shock, budget-overage amounts, and abstentions. The optimizer's zero proposed-lineup violations are a constraint-design property. The synthetic stress cases do not validate real market quality.
 
-The local browser rehearsal verified London/Paris research and a Four Tet cancellation replaced by Caribou while retaining Japanese Breakfast and BADBADNOTGOOD within the £55,000 example budget. This was synthetic; it does not validate actual fees or London audience demand.
-
-Live end-to-end research and recovery were subsequently verified on 14 October 2026 with 41 successful Qloo receipts and no failed receipts. See [the validation record](live-validation.md). Still required for release: a configured LLM and actual independent evaluations if claimed, a chosen host, Docker/runtime validation there, HTTPS, backup/restore checks and an externally reachable demo. No prize outcome is guaranteed.
+This path moves from evidence retrieval to a defensible decision, one changed assumption, recovery and reproducible stress evidence. Do not claim independent reviewer preference yet; [blind review invitation drafts](reviewer-invitation-drafts.md) are ready, but no genuine judgments have been collected.

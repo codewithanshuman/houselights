@@ -107,6 +107,9 @@ test('public budget and cancellation replays retain the original LLM choices and
   assert.deepEqual(canceled.methods.llm.selectedIds,['a','c']);
   assert.ok(canceled.methods.llm.violations.some(v=>v.includes('excluded')));
   assert.ok(canceled.methods.llm.violations.some(v=>v.includes('Locked')));
+  const controlOnly=judge.judgeExperiment(record,{cancelId:'c'});
+  assert.deepEqual(controlOnly.snapshot.memo.slate.selectedIds,['a','b']);
+  assert.ok(controlOnly.methods.llm.violations.some(v=>v.includes('excluded')));
   assert.deepEqual(judge.loadJudgeCase(record.id),record);
   assert.equal(judge.judgeExperiment(record,{}).methods.llm.mode,'saved_benchmark');
 });

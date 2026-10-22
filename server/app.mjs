@@ -269,12 +269,12 @@ export function createApp() {
     } catch (error) { return res.status(400).json({ error: error.message }); }
   });
   app.post('/api/optimize', (req, res) => {
-    if (!Array.isArray(req.body?.items) || req.body.items.length > 10) return res.status(400).json({ error: 'Provide at most 10 candidates.' });
+    if (!Array.isArray(req.body?.items) || req.body.items.length > 12) return res.status(400).json({ error: 'Provide at most 12 candidates.' });
     const result = optimizeSlate(req.body.items, req.body.constraints);
     return result.status === 'invalid' ? res.status(400).json({ error: result.reasons.join(' '), ...result }) : res.json(result);
   });
   app.post('/api/analyze', (req, res) => {
-    if (!Array.isArray(req.body?.items) || req.body.items.length > 10) return res.status(400).json({ error: 'Provide at most 10 candidates.' });
+    if (!Array.isArray(req.body?.items) || req.body.items.length > 12) return res.status(400).json({ error: 'Provide at most 12 candidates.' });
     const result = analyzeSlate(req.body.items, req.body.constraints);
     return result.baseline.status === 'invalid' ? res.status(400).json({ error: result.warnings?.join(' ') || 'Invalid scenario inputs.', ...result }) : res.json(result);
   });
