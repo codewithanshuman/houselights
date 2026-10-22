@@ -183,7 +183,7 @@
 .arena-ticket-stub { position: relative; display: flex; align-items: center; gap: 12px; margin: 0 -22px; padding: 15px 22px; border-top: 1px dashed #cec0df; }
 .arena-ticket-stub::before,.arena-ticket-stub::after { content: ''; position: absolute; width: 13px; height: 13px; border: 1px solid #d7cbe6; border-radius: 50%; background: #f3effa; top: -7px; left: -7px; clip-path: inset(0 0 0 50%); }
 .arena-ticket-stub::after { left: auto; right: -7px; clip-path: inset(0 50% 0 0); }
-.arena-barcode { flex: 0 0 35px; height: 29px; background: repeating-linear-gradient(90deg,#8a74a1 0 1px,transparent 1px 3px,#8a74a1 3px 5px,transparent 5px 8px); opacity: .65; }
+.arena-barcode { flex: 0 0 35px; height: 29px; background: url('/assets/icons/supplied/barcode.png') center/contain no-repeat; opacity: .8; }
 .arena-ticket-stub p { font: 9px/1.65 var(--mono); color: #72617f; }
 .arena-stub-mark { margin-left: auto; color: var(--purple); font-size: 26px; }
 .arena-choices { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }

@@ -12,7 +12,7 @@ state.analysis = null; state.scenarioHistory = []; state.keyed = false; state.ga
 const gauntletPreviews = {
   pressure: { number: '01', title: 'The 90% Room', target: '90%', unit: 'of the original budget', icon: 'budget', copy: 'Make the whole slate work with 90% of the original budget.' },
   discovery: { number: '02', title: 'Open the Side Door', target: '+1', unit: 'discovered act', icon: 'sparkles', copy: 'Bring in a Qloo-discovered act with your quote and availability confirmed, while keeping the slate feasible.' },
-  diversity: { number: '03', title: 'Three Colours', target: '1–3', unit: 'buyer-defined genres', icon: 'layers', copy: 'Broaden the mix across up to three planning genres, depending on your slot count, and keep the slate feasible.' },
+  diversity: { number: '03', title: 'Three Colours', target: '1–3', unit: 'buyer-defined genres', icon: 'sliders', copy: 'Broaden the mix across up to three planning genres, depending on your slot count, and keep the slate feasible.' },
   shock: { number: '04', title: 'Rain Check', target: '+10%', unit: 'on every known quote', icon: 'trend-up', copy: 'Keep the exact selected lineup feasible when every known quote rises by 10%.' },
   evidence: { number: '05', title: 'Receipts, Please', target: 'ALL', unit: 'selected acts supported', icon: 'receipt', copy: 'Support every selected act with relative-rank evidence, while keeping the slate feasible.' },
   conviction: { number: '06', title: 'Make the Call', target: '1+', unit: 'lock or exclusion', icon: 'pin', copy: 'Lock an act you believe in or exclude one you would pass on. Then keep the slate feasible.' }
@@ -57,7 +57,7 @@ function installGauntletUI() {
       <div class="arena-choices" role="group" aria-label="Preview a Gauntlet challenge">
         <button type="button" data-gauntlet-preview="pressure" aria-controls="gauntlet-preview" aria-pressed="true"><span>01</span> Budget <i class="ui-icon" data-icon="budget" aria-hidden="true"></i></button>
         <button type="button" data-gauntlet-preview="discovery" aria-controls="gauntlet-preview" aria-pressed="false"><span>02</span> Discovery <i class="ui-icon" data-icon="sparkles" aria-hidden="true"></i></button>
-        <button type="button" data-gauntlet-preview="diversity" aria-controls="gauntlet-preview" aria-pressed="false"><span>03</span> Genre mix <i class="ui-icon" data-icon="layers" aria-hidden="true"></i></button>
+        <button type="button" data-gauntlet-preview="diversity" aria-controls="gauntlet-preview" aria-pressed="false"><span>03</span> Genre mix <i class="ui-icon" data-icon="sliders" aria-hidden="true"></i></button>
         <button type="button" data-gauntlet-preview="shock" aria-controls="gauntlet-preview" aria-pressed="false"><span>04</span> Quote rise <i class="ui-icon" data-icon="trend-up" aria-hidden="true"></i></button>
         <button type="button" data-gauntlet-preview="evidence" aria-controls="gauntlet-preview" aria-pressed="false"><span>05</span> Evidence <i class="ui-icon" data-icon="receipt" aria-hidden="true"></i></button>
         <button type="button" data-gauntlet-preview="conviction" aria-controls="gauntlet-preview" aria-pressed="false"><span>06</span> Your call <i class="ui-icon" data-icon="pin" aria-hidden="true"></i></button>

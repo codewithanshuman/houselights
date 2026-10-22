@@ -25,7 +25,23 @@
 .ui-icon[data-icon="shield-check"]{--ui-icon:url('/assets/icons/shield-check.svg?v=phosphor-1');}
 .ui-icon[data-icon="pin"]{--ui-icon:url('/assets/icons/pin.svg?v=phosphor-1');}
 .ui-icon[data-icon="save"]{--ui-icon:url('/assets/icons/save.svg?v=phosphor-1');}
+/* Owner-supplied pictograms keep their original two-tone purple treatment. */
+.ui-icon[data-icon="slate"],.ui-icon[data-icon="trophy"],.ui-icon[data-icon="receipt"],.ui-icon[data-icon="sliders"],.ui-icon[data-icon="compass"],.ui-icon[data-icon="network"],.ui-icon[data-icon="layers"],.ui-icon[data-icon="compare"],.ui-icon[data-icon="folder-open"],.ui-icon[data-icon="check"],.ui-icon[data-icon="sparkles"],.ui-icon[data-icon="budget"],.ui-icon[data-icon="trend-up"],.ui-icon[data-icon="shield-check"],.ui-icon[data-icon="pin"]{background-color:transparent;background-image:var(--supplied-icon);background-position:center;background-size:contain;background-repeat:no-repeat;-webkit-mask:none;mask:none;}
+.ui-icon[data-icon="slate"]{--supplied-icon:url('/assets/icons/supplied/clapperboard.png');}
+.ui-icon[data-icon="trophy"]{--supplied-icon:url('/assets/icons/supplied/trophy.png');}
+.ui-icon[data-icon="receipt"]{--supplied-icon:url('/assets/icons/supplied/barcode.png');}
+.ui-icon[data-icon="sliders"]{--supplied-icon:url('/assets/icons/supplied/balance.png');}
+.ui-icon[data-icon="compass"]{--supplied-icon:url('/assets/icons/supplied/compass.png');}
+.ui-icon[data-icon="network"]{--supplied-icon:url('/assets/icons/supplied/connectivity.png');}
+.ui-icon[data-icon="layers"],.ui-icon[data-icon="folder-open"]{--supplied-icon:url('/assets/icons/supplied/folder.png');}
+.ui-icon[data-icon="compare"]{--supplied-icon:url('/assets/icons/supplied/magnifying-glass.png');}
+.ui-icon[data-icon="check"]{--supplied-icon:url('/assets/icons/supplied/verify.png');}
+.ui-icon[data-icon="sparkles"]{--supplied-icon:url('/assets/icons/supplied/stars.png');}
+.ui-icon[data-icon="budget"]{--supplied-icon:url('/assets/icons/supplied/wallet.png');}
+.ui-icon[data-icon="trend-up"]{--supplied-icon:url('/assets/icons/supplied/trend.png');}
+.ui-icon[data-icon="shield-check"]{--supplied-icon:url('/assets/icons/supplied/insurance.png');}
+.ui-icon[data-icon="pin"]{--supplied-icon:url('/assets/icons/supplied/thumbtacks.png');}
 .nav-icon.ui-icon{width:16px;height:16px;}
 .button .ui-icon,.text-button .ui-icon{width:1em;height:1em;}
 .arena-choices .ui-icon,.arena-marquee .ui-icon,.arena-footnote .ui-icon,.arena-target-mark.ui-icon,.arena-stub-mark.ui-icon,.mission-icon.ui-icon{width:1em;height:1em;}
-@media(forced-colors:active){.ui-icon{background-color:currentColor;forced-color-adjust:none;}button:disabled .ui-icon{background-color:GrayText;}}
+@media(forced-colors:active){.ui-icon{background-image:none!important;background-color:currentColor!important;-webkit-mask:var(--ui-icon) center/contain no-repeat!important;mask:var(--ui-icon) center/contain no-repeat!important;forced-color-adjust:none;}button:disabled .ui-icon{background-color:GrayText!important;}}
