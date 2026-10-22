@@ -1,4 +1,4 @@
-// Ported from Theme-Night-GM, MIT (c) 2026 ZNLong2203. See ./LICENSE.
+// Ported from an owner-supplied MIT reference, (c) 2026 ZNLong2203. See ./LICENSE.
 
 
 const MAJOR_IP_HOLDERS =

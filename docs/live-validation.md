@@ -41,7 +41,7 @@ On 14 October 2026, the new `season-research` workflow was checked against the l
 
 ## Supporting fandoms and capacity evidence continuation
 
-On 14 October 2026, the reattached Routed and Theme Night GM ZIPs were inspected at their new paths; their hashes matched the previous audit. The Routed capacity parser was ported with its MIT license. Capacity review, conflict selection, qualification and escaped HTML export were exercised end to end with explicitly synthetic supplied venue text. No independently retrieved venue capacity is claimed.
+On 14 October 2026, the reattached Routed and owner-supplied festival research archives were inspected; their hashes matched the previous audit. The Routed capacity parser was ported with its MIT license. Capacity review, conflict selection, qualification and escaped HTML export were exercised end to end with explicitly synthetic supplied venue text. No independently retrieved venue capacity is claimed.
 
 Live crossover research was exercised through the Festival GM browser controls:
 

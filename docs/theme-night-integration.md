@@ -1,10 +1,10 @@
-# Theme Night GM integration
+# Festival GM source integration
 
-This integrates Theme Night GM workflows into Houselights' saved-evidence and booking model. Festival GM browser controls expose the principal workflows; the API and `npm run gm` also support advanced options. Existing visual styling is reused.
+This adapts workflows from an owner-supplied MIT reference into Houselights' saved-evidence and booking model. Festival GM browser controls expose the principal workflows; the API and `npm run gm` also support advanced options. Existing visual styling is reused.
 
 ## Source provenance and exact ports
 
-Source: owner-supplied `Theme-Night-GM-main.zip`.
+Source: owner-supplied MIT reference archive.
 SHA-256: `7596eae65f594d9cfdff704b4218a60e5b635081df5a53b204cb70c845bf2f9e`.
 The archive declares MIT, copyright 2026 ZNLong2203. Its full license is retained in `server/theme-night/LICENSE`.
 
@@ -115,7 +115,7 @@ Overrides reserve a known theme for a selected date before other nights are assi
 
 Preflight counts domain-local ranks, optional reference ranks, supported age-bucket ranks and four partner workflows per night. Retries share the same attempt budget and deadline. Protected access and persistent paid-research quotas also cover `season-research`. A live source cannot be enriched in synthetic mode or vice versa.
 
-The user reattached the archive at `D:\A - Download\Theme-Night-GM-main.zip`. On 14 October 2026 it was inspected again; SHA-256 `7596EAE65F594D9CFDFF704B4218A60E5B635081DF5A53B204CB70C845BF2F9E` matches the previously audited archive. The renewed inspection covered the agent loop, replay store/hook, assembly, autopilot and targeted crossover/support tools. This does not claim every source workflow has been migrated.
+On 14 October 2026 the owner-supplied archive was inspected again; SHA-256 `7596EAE65F594D9CFDFF704B4218A60E5B635081DF5A53B204CB70C845BF2F9E` matches the previously audited archive. The renewed inspection covered the agent loop, replay store/hook, assembly, autopilot and targeted crossover/support tools. This does not claim every source workflow has been migrated.
 
 ### Supporting fandoms and crossover checks
 

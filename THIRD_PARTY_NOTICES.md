@@ -1,8 +1,8 @@
 # Third-party notices
 
-## Theme Night GM
+## Festival research reference
 
-The supplied `Theme-Night-GM-main.zip` declares MIT, copyright (c) 2026 ZNLong2203. The original market comparison, scoring, scheduling, sensitivity and licensing utilities are preserved with TypeScript types removed in `server/theme-night`. The full notice and license are retained in [server/theme-night/LICENSE](server/theme-night/LICENSE). Houselights' festival research, GM and theme-season modules adapt those workflows to its existing Qloo harness and exact booking optimizer. See [the integration audit](docs/theme-night-integration.md) for exact ports, adaptations and remaining differences.
+The owner-supplied reference archive declares MIT, copyright (c) 2026 ZNLong2203. The original market comparison, scoring, scheduling, sensitivity and licensing utilities are preserved with TypeScript types removed in `server/theme-night`. The full notice and license are retained in [server/theme-night/LICENSE](server/theme-night/LICENSE). Houselights' festival research, GM and theme-season modules adapt those workflows to its existing Qloo harness and exact booking optimizer. See [the integration audit](docs/theme-night-integration.md) for exact ports, adaptations and remaining differences.
 
 ## Routed
 

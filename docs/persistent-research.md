@@ -47,4 +47,4 @@ Final interpretations must cite successful observations; citations establish tra
 
 ## Reference attribution
 
-Theme Night GM's `src/lib/store.ts`, `src/lib/featured.ts`, `src/app/api/runs/[id]/route.ts` and agent replay approach provided the product pattern. PartDrop's `server/src/orders.ts` supplied the evidence-linked state-transition pattern. This implementation is original Node/SQLite code; it does not copy Redis or payment-provider code. Existing exact ports and licenses remain documented separately.
+The owner-supplied festival research reference's `src/lib/store.ts`, `src/lib/featured.ts`, `src/app/api/runs/[id]/route.ts` and agent replay approach provided the product pattern. PartDrop's `server/src/orders.ts` supplied the evidence-linked state-transition pattern. This implementation is original Node/SQLite code; it does not copy Redis or payment-provider code. Existing exact ports and licenses remain documented separately.

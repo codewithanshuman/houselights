@@ -10,7 +10,7 @@ import { investigatorOptions, investigateDecision } from './investigator.mjs';
 import { llmConfiguration } from './llm.mjs';
 import { initializeBenchmark, executeBenchmark, stopBenchmark } from './benchmark-batches.mjs';
 
-// Theme Night GM's persisted replay and PartDrop's transition ledger informed
+// The owner-supplied MIT reference's persisted replay and PartDrop's transition ledger informed
 // this implementation. Provider execution is never silently replayed on restart.
 db.exec(`CREATE TABLE IF NOT EXISTS research_runs(
   id TEXT PRIMARY KEY, request_key TEXT UNIQUE NOT NULL, body TEXT NOT NULL);

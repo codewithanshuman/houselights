@@ -1,4 +1,4 @@
-// Ported from Theme-Night-GM, MIT (c) 2026 ZNLong2203. See ./LICENSE.
+// Ported from an owner-supplied MIT reference, (c) 2026 ZNLong2203. See ./LICENSE.
 // Market DNA: compare what two markets love, domain by domain. Pure functions and types so the API
 // route computes the overlap and the client page can import the shapes without pulling in server code.
 

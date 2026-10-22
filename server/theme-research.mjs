@@ -1,4 +1,4 @@
-// Theme Night GM's per-domain audience matrix and per-night research workflow,
+// The owner-supplied MIT reference's per-domain audience matrix and per-night research workflow,
 // adapted to the official bounded harness. Exact scoring utilities retain their license.
 import { buildThemeSeason } from './theme-season.mjs';
 import { rankPool } from './festival-research.mjs';

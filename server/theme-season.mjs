@@ -24,7 +24,7 @@ export function planDates(raw = {}) {
   });
   const planned = pickWeakDates(normalized, count, gapDays), selected = planned.filter(row => row.target);
   return { dates: planned, selected, requestedCount: count, scheduledCount: selected.length, synthetic,
-    method: 'Original Theme Night GM weekday/season weakness heuristic with rotating segments and minimum date spacing.',
+    method: 'Weekday/season weakness heuristic with rotating segments and minimum date spacing.',
     warnings: [...(synthetic ? ['Generated sports dates are synthetic 2026–2027 examples, not actual fixtures.'] : []),
       ...(selected.length < count ? ['The spacing rule prevents selecting the requested number of nights.'] : []),
       'Weakness is a programming heuristic, not observed attendance. Audience segments are organizer planning categories.'] };
