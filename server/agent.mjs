@@ -14,8 +14,7 @@ export const defaultConstraints = { budget: 20000, slots: 3, discoveryMin: 0, ma
 export async function buildMemo({ city, anchors, offers, picks = {}, terms = {}, constraints = {}, currency = 'USD', exampleBookingTerms = false }, run) {
   constraints = { ...defaultConstraints, ...constraints };
   const say = text => run.emit({ type: 'stage', text });
-  const baselinePromise = llm.baseline({ city, anchors, offers });
-  const candidates = new Map(), lookup = new Map(), pending = [], anchorRefs = [];
+  const candidates = new Map(), lookup = new Map(), pending = [], anchorRefs = [], anchorIdentities = new Set();
   const remember = (ref, name) => { lookup.set(low(ref), ref); lookup.set(low(name), ref); };
   const termsFor = (original, name) => {
     const entry = Object.entries(terms).find(([key]) => [low(original), low(name)].includes(low(key)))?.[1];
@@ -25,6 +24,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   say('Resolve · confirming artist identities');
   for (const [names, isAnchor] of [[anchors, true], [[...new Set(offers)], false]]) {
     for (const original of names) {
+      if (!isAnchor && anchorIdentities.has(low(original))) continue;
       const picked = picks[original];
       const { env, receipt } = await run.call('describe', { entity: picked?.id || picked?.name || original, type: 'artist' }, `Confirm “${original}”`);
       if (env.status === 'needs_input') {
@@ -36,9 +36,15 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       const row = rows(env)[0];
       if (!usable(env) || !row) { pending.push(original); continue; }
       const name = nameOf(row) || original, ref = idOf(row) || name;
-      remember(ref, name);
-      if (isAnchor) { if (!anchorRefs.includes(ref)) anchorRefs.push(ref); }
-      else if (!candidates.has(ref)) candidates.set(ref, { id: ref, name, originalName: original, found: false, terms: termsFor(original, name), identityReceipt: receipt.id });
+      if (isAnchor) {
+        remember(ref, name);
+        lookup.set(low(original), ref);
+        for (const identity of [ref, name, original]) anchorIdentities.add(low(identity));
+        if (!anchorRefs.includes(ref)) anchorRefs.push(ref);
+      } else if (![ref, name, original].some(identity => anchorIdentities.has(low(identity)))) {
+        remember(ref, name);
+        if (!candidates.has(ref)) candidates.set(ref, { id: ref, name, originalName: original, found: false, terms: termsFor(original, name), identityReceipt: receipt.id });
+      }
     }
   }
   if (!anchorRefs.length) { run.emit({ type: 'error', text: 'No anchor artists could be confirmed. Resolve the matches or check the names.' }); return; }
@@ -53,6 +59,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     candidates.set(ref, { id: ref, name, found: true, terms: termsFor(name, name), identityReceipt: discovery.receipt.id });
   }
   if (!candidates.size) { run.emit({ type: 'error', text: 'No candidates could be resolved or discovered.' }); return; }
+  const eligibleOffers = [...candidates.values()].filter(candidate => !candidate.found).map(candidate => candidate.originalName);
+  const baselinePromise = eligibleOffers.length ? llm.baseline({ city, anchors, offers: eligibleOffers }) : Promise.resolve(null);
   say('Rank · testing the candidate pool against your anchors');
   const ranking = await run.call('rank', { options: [...candidates.keys()], option_type: 'artist', signals: anchorRefs, signal_location: city }, 'Relative audience fit for this candidate pool and city');
   const order = usable(ranking.env) ? [...new Set(rows(ranking.env).map(row => lookup.get(low(idOf(row))) || lookup.get(low(nameOf(row)))).filter(ref => candidates.has(ref)))] : [];
