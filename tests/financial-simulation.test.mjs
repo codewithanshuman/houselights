@@ -8,6 +8,7 @@ import { marketDraws, simulateLineup } from '../server/financial/simulation.mjs'
 import { riskMetrics } from '../server/financial/risk-metrics.mjs';
 import { exactFeasibleLineups, evaluateFinancial, pareto, selectPolicy } from '../server/financial/optimizer.mjs';
 import { prepareLineupDemand } from '../server/financial/demand-adapter.mjs';
+import { explainFinancial } from '../server/financial/explanations.mjs';
 import { demoInput } from '../scripts/generate-financial-demo.mjs';
 
 function setup() { const input = normalizeDemandInput(demoInput), config = normalizeFinancial(demoInput.financial, input);
@@ -29,7 +30,9 @@ test('shared market factors are reproducible and correlated', () => {
 });
 test('CVaR and value-at-risk use the worst 5 percent of profit draws', () => {
   const rows = [-10000, -5000, 0, 5000, 10000].map(profitCents => ({ profitCents, ticketsSold: 0, attendance: 0,
-    grossRevenueCents: 0, totalCostsCents: 0, promoterFeesCents: 0, taxCents: 0, refundsCents: 0, cashBeforeRevenueCents: 0 }));
+    ticketReceiptsCents: 0, ancillaryCents: 0, grossRevenueCents: 0, netRevenueCents: 0,
+    artistCostsCents: 0, fixedCostsCents: 0, variableCostsCents: 0, totalCostsCents: 0,
+    promoterFeesCents: 0, taxCents: 0, refundsCents: 0, cashBeforeRevenueCents: 0 }));
   const metrics = riskMetrics(rows, 6000);
   assert.equal(metrics.profit.mean, 0); assert.equal(metrics.conditionalValueAtRisk95, 100);
   assert.equal(metrics.valueAtRisk95, 90); assert.equal(metrics.breakEvenProbability, .6);
@@ -47,6 +50,9 @@ test('optimizer only compares exact-feasible lineups and emits explicit scenario
     assert.ok(row.metrics.attendance.maximum <= config.sellableCapacity);
     assert.equal(row.demand.source, 'organizer_sell_through_assumption');
   }
+  const bridge = explainFinancial(result, [], base.id).comparison;
+  assert.ok(bridge); assert.ok(Math.abs(bridge.components.reduce((sum, item) => sum + item.contribution, 0) - bridge.expectedProfitDifference) <= .04);
+  assert.equal(base.rows[0].culturalFit, null);
   assert.ok(pareto(base.rows).length); assert.ok(selectPolicy(base.rows, { objective: 'expected_profit' }));
   assert.equal(selectPolicy(base.rows, { objective: 'downside', maxCvarLossCents: 0 }), null);
 });

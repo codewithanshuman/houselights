@@ -20,6 +20,14 @@ export function riskMetrics(draws, thresholdCents) {
   const tailCount = Math.max(1, Math.ceil(.05 * sorted.length));
   const cvarProfitCents = average(sorted.slice(0, tailCount));
   const profit = distribution(profits);
+  const ledgerFields = [
+    'ticketReceiptsCents', 'ancillaryCents', 'grossRevenueCents', 'refundsCents', 'promoterFeesCents', 'taxCents',
+    'netRevenueCents', 'artistCostsCents', 'fixedCostsCents', 'variableCostsCents', 'totalCostsCents', 'profitCents',
+  ];
+  const ledgerTotals = Object.fromEntries(ledgerFields.map(field => [field, 0]));
+  for (const row of draws) for (const field of ledgerFields) ledgerTotals[field] += row[field];
+  const expectedLedger = Object.fromEntries(ledgerFields.map(field =>
+    [field.replace(/Cents$/, ''), major(Math.round(ledgerTotals[field] / draws.length))]));
   return { profit, paidTickets: distribution(draws.map(row => row.ticketsSold), { money: false }),
     attendance: distribution(draws.map(row => row.attendance), { money: false }),
     grossRevenue: distribution(draws.map(row => row.grossRevenueCents)),
@@ -33,5 +41,6 @@ export function riskMetrics(draws, thresholdCents) {
     eventCancellationRate: draws.filter(row => row.canceled).length / draws.length,
     artistCancellationRate: draws.filter(row => row.artistCanceled).length / draws.length,
     eventBudgetOverrunProbability: draws.filter(row => row.eventBudgetOverrun === true).length / draws.length,
+    expectedLedger,
     monteCarloStandardErrorProfit: major(Math.round(Math.sqrt(average(profits.map(value => (value - profit.mean * 100) ** 2)) / draws.length))) };
 }

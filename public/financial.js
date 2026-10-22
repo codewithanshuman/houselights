@@ -109,6 +109,18 @@
     $('drivers').replaceChildren(...(result.explanationsBySet?.[set.id]?.drivers ?? result.explanations?.drivers ?? []).slice(0, 5).map(item => {
       const box = document.createElement('div'); box.appendChild(setText(document.createElement('span'), item.name));
       box.appendChild(setText(document.createElement('strong'), money(item.expectedProfitChange))); return box; }));
+    const comparison = result.explanationsBySet?.[set.id]?.comparison ?? result.explanations?.comparison;
+    const comparisonRoot = $('comparison'); comparisonRoot.replaceChildren();
+    if (comparison) {
+      comparisonRoot.appendChild(setText(document.createElement('p'),
+        `${ids(chosen.selectedIds)} versus ${ids(comparison.againstSelectedIds)}: ${money(comparison.expectedProfitDifference)} expected profit difference.`));
+      const list = document.createElement('div'); list.className = 'bridge';
+      for (const item of comparison.components) { const row = document.createElement('div');
+        row.appendChild(setText(document.createElement('span'), item.name));
+        row.appendChild(setText(document.createElement('strong'), money(item.contribution)));
+        list.appendChild(row); }
+      comparisonRoot.appendChild(list); comparisonRoot.appendChild(setText(document.createElement('p'), comparison.note));
+    }
     const provenance = $('provenance'); provenance.replaceChildren();
     const lines = [
       `Demand basis: ${chosen.demand.source}; Qloo source: ${payload.provenance?.sourceClassification ?? payload.provenance?.qlooSource ?? 'unknown'}.`,

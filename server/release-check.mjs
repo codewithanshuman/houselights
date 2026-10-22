@@ -54,7 +54,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     }
     const financialDemo=await request('/financial-demo.json');
     record('published-financial-scenario',financialDemo.status===200&&financialDemo.data.label?.includes('SYNTHETIC')&&
-      financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5);
+      financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5&&
+      financialDemo.data.result.explanationsBySet?.base?.comparison?.components?.length===8);
     const shocks=await request('/shocks-summary.json');
     record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.headlineDenominator?.candidateCount===12);
     const reviews=await request('/api/evidence/reviews');
