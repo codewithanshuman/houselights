@@ -19,7 +19,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const text=await response.text();
     if(text.length>5_000_000)throw new Error('A release response exceeded the inspection limit.');
     const data=format==='json'?JSON.parse(text):text;
-    return {status:response.status,cache:response.headers.get('cache-control')??'',data};
+    return {status:response.status,cache:response.headers.get('cache-control')??'',csp:response.headers.get('content-security-policy')??'',data};
   }
   try{
     const health=await request('/healthz');
@@ -38,10 +38,15 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       record('protected-write:'+path,response.status===401);
     }
     record('protected-private-read',(await request('/api/studies/missing-release-check')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html']){
+    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
+      if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
+    const shocks=await request('/shocks-summary.json');
+    record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.headlineDenominator?.candidateCount===12);
+    const reviews=await request('/api/evidence/reviews');
+    record('review-evidence-status',reviews.status===200&&Number.isInteger(reviews.data.completedReviewers)&&Array.isArray(reviews.data.cases));
     const catalog=await request('/api/judge/cases');
     record('catalog-not-cached',catalog.cache.includes('no-store'));
     record('published-cases',catalog.status===200&&Array.isArray(catalog.data.cases)&&catalog.data.cases.length>0);
@@ -63,6 +68,9 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
         const withdrawn=await request(path+'/experiment',{body:{withdrawReceiptId:receipt}});
         record(item.id+':evidence-withdrawal',withdrawn.status===200&&withdrawn.data.providerCalls===0&&withdrawn.data.comparison?.affectedIds.length>0&&withdrawn.data.proof?.status==='blocked');
       }
+      const withoutQloo=await request(path+'/experiment',{body:{qlooOff:true}});
+      record(item.id+':qloo-off',withoutQloo.status===200&&withoutQloo.data.qlooOff===true&&withoutQloo.data.providerCalls===0&&
+        withoutQloo.data.snapshot?.memo.items.every(i=>i.fit===null&&i.evidence.rank===false));
       const after=await request(path);
       record(item.id+':case-unchanged',equal(after.data,b));
       cases.push({id:item.id,title:item.title,synthetic:b.snapshot.mock===true,controlStatus:b.methods?.llm.status??'unavailable'});
@@ -72,6 +80,6 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
   }
   return {version:'1.0',checkedAt:new Date().toISOString(),origin,scope:allowLocal?'local-rehearsal':'public-http-check',
     passed:checks.length>0&&checks.every(c=>c.passed),checks,cases,
-    notVerified:['Host restart and persistent volume','Live Qloo/LLM requests','Human outcome validation','Artwork or entrant eligibility'],
+    notVerified:['Host restart and persistent volume','Live Qloo/LLM requests','Human outcome validation','Organizer-attested artwork and entrant eligibility'],
     sideEffects:'Anonymous, temporary judge experiments and request-quota increments only.'};
 }

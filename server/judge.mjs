@@ -60,13 +60,14 @@ export function loadJudgeCase(id) {
 }
 export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body));}
 export function judgeExperiment(record,raw={},options={}) {
-  const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId'];
+  const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId','qlooOff'];
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!allowed.includes(k)))throw fault('Only budget, locks, exclusions, cancellation, a 15% fee increase, unavailability and receipt withdrawal can be changed.');
   const snapshot=structuredClone(record.snapshot),baseline=snapshot.memo.slate;
   const ids=new Set(snapshot.memo.items.map(i=>i.id));
   const shockedIds=new Set([...baseline.selectedIds,...(snapshot.benchmark?.control?.selectedIds??[])]);
   for(const key of ['lockedIds','excludedIds'])if(raw[key]!==undefined&&(!Array.isArray(raw[key])||raw[key].length>12||raw[key].some(id=>!ids.has(id))))throw fault('Locks and exclusions must refer to this case’s candidate pool.');
   if(raw.budget!==undefined&&(typeof raw.budget!=='number'||!Number.isFinite(raw.budget)||raw.budget<0||raw.budget>1e9))throw fault('Budget must be a number between 0 and 1,000,000,000.');
+  if(raw.qlooOff!==undefined&&typeof raw.qlooOff!=='boolean')throw fault('Qloo evidence toggle must be a boolean.');
   for(const key of ['feeIncreaseId','unavailableId'])if(raw[key]!==undefined&&(!shockedIds.has(raw[key])||!ids.has(raw[key])||typeof raw[key]!=='string'))throw fault(`${key} must refer to an artist selected by a published arm.`);
   if(raw.feeIncreaseId!==undefined){
     const item=snapshot.memo.items.find(item=>item.id===raw.feeIncreaseId);
@@ -99,10 +100,18 @@ export function judgeExperiment(record,raw={},options={}) {
     }
     snapshot.receipts=snapshot.receipts.map(r=>r.id===receiptId?{...r,status:'withdrawn'}:r);
   }
+  if(raw.qlooOff===true){
+    for(const item of snapshot.memo.items){
+      for(const kind of kinds)item.evidence[kind]=false;
+      item.fit=null;item.rank=null;item.local='no data';item.momentum='unknown';item.culturalLinks=[];
+      if(!affectedIds.includes(item.id))affectedIds.push(item.id);
+    }
+    snapshot.receipts=snapshot.receipts.map(r=>r.source==='qloo'||r.source==='synthetic'?{...r,status:'withdrawn'}:r);
+  }
   snapshot.memo.constraints=constraints;snapshot.memo.slate=optimizeSlate(snapshot.memo.items,constraints);
   if(snapshot.memo.slate.status==='invalid')throw fault(snapshot.memo.slate.reasons.join(' '));
   const result=snapshot.memo.slate,proof=options.lightweight===true?null:buildDecisionProof(snapshot);
-  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,snapshot,proof,
+  return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,qlooOff:raw.qlooOff===true,snapshot,proof,
     methods:proof?judgeMethods(snapshot,proof,record.snapshot):null,
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
       feeDelta:result.feasible&&baseline.feasible?Math.round((result.totalFee-baseline.totalFee)*100)/100:null,

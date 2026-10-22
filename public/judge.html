@@ -20,7 +20,7 @@
       <span>Houselights<span class="judge-brand-period">.</span></span>
     </a>
     <span class="judge-nav-label">THE DECISION ROOM</span>
-    <a class="judge-organizer-link" href="/index.html">Organizer workspace <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>
+    <a class="judge-organizer-link" href="/evidence.html">Evidence &amp; limits <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>
   </nav>
   <main id="main" class="judge-main">
     <header class="judge-hero">
@@ -32,9 +32,9 @@
       </div>
       <div class="judge-hero-art" aria-hidden="true">
         <span class="judge-art-orbit"></span>
-        <img class="judge-disc" src="/assets/brand/disc.png" alt="" width="230" height="280" fetchpriority="high">
+        <img class="judge-disc" src="/assets/brand/disc.webp" alt="" width="230" height="280" fetchpriority="high">
         <figure class="judge-photo">
-          <img src="/assets/brand/crowd.png" alt="" width="240" height="238" fetchpriority="high">
+          <img src="/assets/brand/crowd.webp" alt="" width="240" height="238" fetchpriority="high">
           <figcaption>A little culture. A lot of clarity.</figcaption>
         </figure>
         <span class="judge-art-note">FOR THE NIGHTS<br>THAT MATTER.</span>
@@ -46,6 +46,8 @@
       <li><span>02</span><div><strong>Change the assumptions</strong><p>Test the budget, artists, or evidence.</p></div></li>
       <li><span>03</span><div><strong>Follow the receipts</strong><p>Compare outcomes. Inspect the proof.</p></div></li>
     </ol>
+    <section class="judge-status-strip" aria-label="Evidence status"><span id="judge-live-count">Loading saved cases…</span><span id="judge-review-count">Independent reviews: loading…</span><a href="/evidence.html">Open the evidence page</a></section>
+    <section class="judge-break-panel" aria-labelledby="judge-break-title"><div><p class="judge-eyebrow">THE 60-SECOND PATH</p><h2 id="judge-break-title">Break a decision. See what survives.</h2><p>Choose a saved case, tighten its budget, turn Qloo evidence off, and inspect the receipts. The experiment makes no new Qloo or LLM calls.</p><a class="judge-hero-link" href="#judge-case" data-judge-scroll>Start the guided path <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a></div><div id="judge-shock-teaser" aria-live="polite">Loading recorded shock study…</div></section>
     <section class="judge-case-picker" aria-label="Choose a published example">
       <div class="judge-case-input">
         <label for="judge-case">Your starting point</label>
@@ -74,6 +76,7 @@
           <label>Cancel a baseline artist <select id="judge-cancel"></select></label>
           <label>Withdraw a saved receipt <select id="judge-withdraw"></select></label>
         </div>
+        <label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label>
         <div id="judge-candidates"></div>
         <div class="judge-form-actions">
           <button class="button primary" type="submit">Recalculate and prove <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
@@ -105,7 +108,7 @@
         <div id="judge-receipts"></div>
       </section>
     </section>
-    <footer class="judge-footer"><span>Houselights<span class="judge-brand-period">.</span> <span>Culture, with receipts.</span></span><a href="/index.html">Open organizer workspace <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a></footer>
+    <footer class="judge-footer"><span>Houselights<span class="judge-brand-period">.</span> <span>Culture, with receipts.</span></span><a href="/evidence.html">Evidence &amp; limits <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a></footer>
   </main>
 </body>
 </html>

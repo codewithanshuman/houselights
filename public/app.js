@@ -45,7 +45,7 @@ function installGauntletUI() {
     <div class="arena-stage">
       <div class="arena-stage-label"><span>PREVIEW A CHALLENGE</span><span aria-hidden="true"><span class="ui-icon" data-icon="arrow-down-left" aria-hidden="true"></span> PICK YOUR PRESSURE</span></div>
       <div class="arena-ticket-stack">
-        <img class="arena-disc" src="/assets/brand/disc.png" alt="" width="997" height="1506" loading="lazy" aria-hidden="true">
+        <img class="arena-disc" src="/assets/brand/disc.webp" alt="" width="997" height="1506" loading="lazy" aria-hidden="true">
         <article class="arena-ticket" id="gauntlet-preview" aria-labelledby="gauntlet-preview-title" aria-live="polite" aria-atomic="true">
           <div class="arena-ticket-top"><span id="gauntlet-preview-number">CHALLENGE 01 / 06</span><span class="arena-preview-label">PREVIEW</span></div>
           <div class="arena-target"><strong id="gauntlet-preview-target">90%</strong><span id="gauntlet-preview-unit">of the original budget</span><span class="arena-target-mark ui-icon" id="gauntlet-preview-icon" data-icon="budget" aria-hidden="true"></span></div>
@@ -307,6 +307,31 @@ function recordTrace(event) {
   $('live-trace-status').textContent = `${state.trace.length} actual events · ${event.type === 'error' ? 'stopped' : event.type === 'saved' ? 'saved' : 'running'}`;
 }
 
+let replayTimers = [];
+function replaySavedTrace() {
+  replayTimers.forEach(clearTimeout); replayTimers = [];
+  const trace = Array.isArray(state.snapshot?.trace) ? state.snapshot.trace : [];
+  if (!trace.length) return;
+  $('live-trace-entries').replaceChildren();
+  $('live-trace-status').textContent = `Replaying ${trace.length} recorded events`;
+  let previous = 0, delay = 0;
+  for (const entry of trace) {
+    delay += Math.min(450, Math.max(90, (Number(entry.elapsedMs) || 0) - previous));
+    previous = Number(entry.elapsedMs) || previous;
+    replayTimers.push(setTimeout(() => {
+      const detail = entry.type === 'receipt' ? `${entry.tool || 'Tool'} · ${entry.status || 'unknown'} · ${entry.source || 'source unknown'} · ${entry.receiptId || 'no ID'}${Number.isFinite(entry.ms) ? ` · ${entry.ms} ms` : ''}`
+        : entry.type === 'start' ? `${entry.mock ? 'Synthetic' : 'Live Qloo'} source selected`
+        : entry.type === 'memo' ? `Exact optimization complete · ${entry.feasible ? 'feasible slate' : 'infeasible, no bookable slate'}`
+        : entry.type === 'plan' ? `Evidence plan · ${entry.text}` : entry.text || entry.type.replaceAll('_', ' ');
+      const inspect = entry.receiptId && state.receipts.some(receipt => receipt.id === entry.receiptId)
+        ? ` <button type="button" data-receipt="${escapeHTML(entry.receiptId)}">Inspect receipt</button>` : '';
+      $('live-trace-entries').insertAdjacentHTML('beforeend', `<li><time>+${Math.round((Number(entry.elapsedMs) || 0) / 1000)}s</time><span>${escapeHTML(entry.type.replaceAll('_', ' '))}</span><strong>${escapeHTML(detail)}${inspect}</strong></li>`);
+      $('live-trace-status').textContent = `${$('live-trace-entries').children.length}/${trace.length} recorded events · original timings shown`;
+    }, delay));
+  }
+}
+$('replay-trace').onclick = replaySavedTrace;
+
 function handleEvent(event) {
   recordTrace(event);
   switch (event.type) {
@@ -368,6 +393,7 @@ async function buildSlate() {
   state.lockedIds.clear(); state.excludedIds.clear();
   state.currency = $('currency').value; state.runMock = state.mock;
   $('results').hidden = true; $('empty-state').hidden = true; $('run-progress').hidden = false; $('entity-choices').innerHTML = '';
+  replayTimers.forEach(clearTimeout); replayTimers = []; $('replay-trace').hidden = true;
   state.trace = []; state.traceStarted = Date.now(); $('live-trace-entries').replaceChildren(); $('live-trace').hidden = false;
   $('live-trace-status').textContent = 'Waiting for first server event';
   $('progress-label').textContent = 'Preparing your slate'; $('plan-explanation').textContent = ''; $('call-budget').textContent = '';
@@ -414,7 +440,8 @@ function exportRun() {
 }
 
 async function loadSaved(id) {
-  state.trace = []; $('live-trace').hidden = true;
+  replayTimers.forEach(clearTimeout); replayTimers = [];
+  state.trace = []; $('live-trace').hidden = true; $('replay-trace').hidden = true;
   setBusy(true); $('progress-label').textContent = 'Loading saved evidence'; $('run-progress').hidden = false;
   try {
     const response = await fetch(`/api/memo/${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(30000) });
@@ -423,6 +450,11 @@ async function loadSaved(id) {
     if (!saved.memo?.slate) throw new Error('This saved run predates the slate optimizer. Build a new brief below.');
     state.snapshot = saved;
     state.memo = saved.memo; state.receipts = saved.receipts || []; state.savedId = id; state.runMock = saved.mock === true || saved.memo.mode === 'mock'; state.gauntlet = null;
+    if (Array.isArray(saved.trace) && saved.trace.length) {
+      $('live-trace').hidden = false; $('replay-trace').hidden = false;
+      $('live-trace-entries').replaceChildren();
+      $('live-trace-status').textContent = `${saved.trace.length} recorded events · replay available`;
+    }
     document.dispatchEvent(new CustomEvent('houselights:decision-loaded',{detail:{id}}));
     state.currency = saved.memo.currency || saved.input?.currency || 'USD';
     const input = saved.memo.input || saved.input;

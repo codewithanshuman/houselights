@@ -8,6 +8,14 @@ export function canEdit(req) {
   if (!token || token.length < 32) return false;
   return timingSafeEqual(hash(req.get('authorization') ?? ''), hash(`Bearer ${token}`));
 }
+export function routeQuota(req, name, { minuteLimit, dayLimit } = {}) {
+  const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 864e5);
+  const address = hash(req.ip ?? 'unknown').toString('hex');
+  const rules = [];
+  if (minuteLimit) rules.push({ key: `route:${name}:${minute}:${address}`, limit: minuteLimit, expires: (minute + 1) * 60000 });
+  if (dayLimit) rules.push({ key: `route:${name}:${day}`, limit: dayLimit, expires: (day + 1) * 864e5 });
+  return consumeQuota(rules, now);
+}
 export function accessMiddleware(req, res, next) {
   if (!req.path.startsWith('/api/')) return next();
   res.set('Cache-Control', 'no-store');

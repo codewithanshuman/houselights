@@ -24,6 +24,11 @@ test('health and asset endpoints expose mode without credentials', async () => {
   assert.equal(health.mock, true);
   assert.equal(typeof health.keyed, 'boolean');
   assert.equal((await fetch(url)).status, 200);
+  assert.match((await fetch(url+'/judge.html')).headers.get('content-security-policy'),/script-src 'self'/);
+  assert.equal((await fetch(url+'/evidence.html')).status,200);
+  assert.equal((await fetch(url+'/shocks-summary.json')).status,200);
+  const reviews=await (await fetch(url+'/api/evidence/reviews')).json();
+  assert.equal(reviews.completedReviewers,0);
   assert.equal((await fetch(url + '/api/memo/not-found')).status, 404);
 });
 
@@ -69,6 +74,8 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   const saved = events.find(event => event.type === 'saved');
   const snapshot = await (await fetch(url + '/api/memo/' + saved.id)).json();
   assert.equal(snapshot.mock, true);
+  assert.ok(Array.isArray(snapshot.trace)&&snapshot.trace.some(event=>event.type==='receipt'));
+  assert.equal(db.prepare('SELECT pinned FROM snapshots WHERE id=?').get(saved.id).pinned,1);
   assert.deepEqual(snapshot.memo.slate.selectedIds, memo.slate.selectedIds);
   assert.equal(snapshot.input.constraints.budget, 10000);
   const adjusted = await (await post('/api/optimize', { items: memo.items, constraints: { ...memo.constraints, budget: 14000 } })).json();

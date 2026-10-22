@@ -3,10 +3,10 @@ import { randomBytes } from 'node:crypto';
 import { join } from 'node:path';
 import { db, dataRoot, transaction } from './database.mjs';
 import { mergedCommercialFacts } from './commercial-facts.mjs';
-export function save(snap, { withinTransaction = false } = {}) {
+export function save(snap, { withinTransaction = false, retain = false } = {}) {
   const id = randomBytes(7).toString('base64url'), createdAt = new Date().toISOString();
   const persist = () => {
-    db.prepare('INSERT INTO snapshots(id,body,created_at) VALUES(?,?,?)').run(id, JSON.stringify({ ...snap, id, createdAt }), createdAt);
+    db.prepare('INSERT INTO snapshots(id,body,created_at,pinned) VALUES(?,?,?,?)').run(id, JSON.stringify({ ...snap, id, createdAt }), createdAt, retain ? 1 : 0);
     // Private source evidence follows immutable child decisions without entering
     // the public snapshot JSON. Each child has independent review history.
     if (snap.parentId && db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='operational_evidence'").get()) {

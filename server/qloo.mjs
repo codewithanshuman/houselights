@@ -10,6 +10,7 @@ const positive = (value, fallback) => Number.isFinite(Number(value)) && Number(v
 const TTL = positive(process.env.QLOO_CACHE_TTL_S, 21600) * 1000;
 const cache = new Map();
 const CACHE_LIMIT = 512;
+const sharedDailyCap = () => Math.max(1, Math.floor(positive(process.env.DAILY_QLOO_WORKFLOW_CAP, 500)));
 const hash = value => createHash('sha256').update(value).digest('hex');
 const stable = value => JSON.stringify(value, (_, v) => v && typeof v === 'object' && !Array.isArray(v)
   ? Object.fromEntries(Object.keys(v).sort().map(key => [key, v[key]])) : v);
@@ -100,11 +101,22 @@ export class Run {
     this.receiptPrefix = /^[a-z][a-z0-9_-]{0,15}$/i.test(receiptPrefix) ? receiptPrefix : 'r';
     this.receiptOffset = Math.max(0, Math.floor(positive(receiptOffset, 0)));
     this.scope = `${mode}:${credentialScope()}`;
+    // Injected transports and synthetic runs remain isolated from live-account quotas.
+    this.sharedLive = mode === 'live' && !execute && cacheStore === cache;
   }
 
   async call(tool, args, why, { refresh = false } = {}) {
     const key = hash(this.scope + tool + stable(args));
-    const t0 = this.now(), hit = this.cache.get(key);
+    const t0 = this.now();
+    let hit = this.cache.get(key);
+    if (!hit && this.sharedLive && !refresh) {
+      const { db } = await import('./database.mjs');
+      const row = db.prepare('SELECT body,fetched_at FROM qloo_cache WHERE key=?').get(key);
+      if (row && t0 - row.fetched_at < this.ttl) {
+        try { hit = { at: row.fetched_at, env: JSON.parse(row.body) }; this.cache.set(key, hit); }
+        catch { db.prepare('DELETE FROM qloo_cache WHERE key=?').run(key); }
+      }
+    }
     let env, cached = false, fetchedAt, attempts = 0;
     if (t0 >= this.deadlineAt) {
       env = failure('DEADLINE', 'The research deadline has elapsed. Remaining evidence is unavailable.');
@@ -115,6 +127,14 @@ export class Run {
       if (hit) this.cache.delete(key);
       env = failure('BUDGET', 'Per-memo workflow attempt budget exhausted.');
       while (attempts < 3 && this.used < this.budget && this.now() < this.deadlineAt) {
+        if (this.sharedLive) {
+          const { consumeQuota } = await import('./database.mjs');
+          const day = Math.floor(this.now() / 864e5);
+          if (!consumeQuota([{ key: `qloo-workflow:${day}:${credentialScope()}`, limit: sharedDailyCap(), expires: (day + 1) * 864e5 }], this.now())) {
+            env = failure('SHARED_CAP', 'The shared daily Qloo workflow cap is reached. Recent cached evidence remains available.');
+            break;
+          }
+        }
         this.used++; attempts++;
         try { env = normalizeEnvelope(await timedCall(this.execute, tool, args, Math.max(1, Math.min(this.timeoutMs, this.deadlineAt - this.now()))), tool); }
         catch (error) { env = error?.name === 'TimeoutError' || error?.code === -32001
@@ -127,6 +147,11 @@ export class Run {
       if (['ok', 'empty', 'partial'].includes(env.status)) {
         if (this.cache.size >= CACHE_LIMIT) this.cache.delete(this.cache.keys().next().value);
         this.cache.set(key, { at: fetchedAt, env: structuredClone(env) });
+        if (this.sharedLive) {
+          const { db } = await import('./database.mjs');
+          db.prepare('INSERT INTO qloo_cache(key,body,fetched_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET body=excluded.body,fetched_at=excluded.fetched_at').run(key, JSON.stringify(env), fetchedAt);
+          db.prepare('DELETE FROM qloo_cache WHERE fetched_at < ? OR key NOT IN (SELECT key FROM qloo_cache ORDER BY fetched_at DESC LIMIT ?)').run(fetchedAt - this.ttl, CACHE_LIMIT);
+        }
       }
     }
     const evidence = compactEvidence(tool, env);

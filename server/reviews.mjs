@@ -97,7 +97,25 @@ export function studyReport(studyId) {
     limitations: ['Reviewers may evaluate multiple cases; votes are not independent samples.', 'Organizer supplies reviewer identity and role; neither is independently verified.', 'Identical lineups provide no evidence of system preference.', 'Synthetic briefs do not validate actual market relevance.'] };
 }
 
+export function publicReviewEvidence() {
+  const id = process.env.PUBLIC_STUDY_ID;
+  if (!id) return { status: 'pending', completedReviewers: 0, distinctBriefs: 0, cases: [],
+    conclusion: 'No independent judgments collected or published yet.',
+    missing: 'Real venue programmers or festival organizers must assess anonymized lineups; no invitations have been sent.' };
+  const report = studyReport(id);
+  return { status: report.completedReviewers ? 'collected' : 'pending', completedReviewers: report.completedReviewers,
+    distinctBriefs: report.distinctBriefs, cases: report.cases.map(row => ({ city: row.city, synthetic: row.synthetic,
+      identical: row.identical, qloo: row.qloo, control: row.control, tie: row.tie, abstain: row.abstain,
+      reasons: row.reasons.map(reason => ({ preference: reason.preference, role: reason.role, reason: reason.reason, ratings: reason.ratings })) })),
+    conclusion: report.conclusion, limitations: report.limitations,
+    missing: report.completedReviewers ? 'Artist quote or availability source review and observed commercial outcomes remain pending.' : 'No independent judgments collected yet.' };
+}
+
 export function registerReviewRoutes(app) {
+  app.get('/api/evidence/reviews', (_req, res) => {
+    try { res.json(publicReviewEvidence()); }
+    catch { res.status(503).json({ error: 'Published review study is unavailable.' }); }
+  });
   app.post('/api/studies', (req, res) => { try { res.status(201).json(createStudy(req.body)); } catch (error) { res.status(400).json({ error: error.message }); } });
   app.get('/api/studies/:id', (req, res) => { try { res.json(studyReport(req.params.id)); } catch (error) { res.status(404).json({ error: error.message }); } });
   app.get('/api/reviews/:id', (req, res) => { try { res.json(blindReview(req.params.id, req.get('x-review-token'))); } catch (error) { res.status(404).json({ error: error.message }); } });

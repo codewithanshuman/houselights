@@ -64,6 +64,17 @@ test('withdrawing rank evidence makes fit unknown for every dependent artist and
   assert.ok(result.snapshot.memo.items.every(i=>i.fit===null&&i.evidence.rank===false));
   assert.ok(result.proof.findings.some(f=>f.id==='missing-rank'));assert.equal(record.snapshot.receipts[0].status,'ok');
 });
+test('Qloo-off replay withdraws every linked receipt and keeps the same booking constraints',()=>{
+  const record=judge.publishJudgeCase(source(),'Fixture');
+  const result=judge.judgeExperiment(record,{qlooOff:true});
+  assert.equal(result.qlooOff,true);
+  assert.equal(result.providerCalls,0);
+  assert.equal(result.proof.status,'blocked');
+  assert.deepEqual(result.snapshot.memo.constraints,record.snapshot.memo.constraints);
+  assert.ok(result.snapshot.memo.items.every(item=>item.fit===null&&Object.values(item.evidence).every(value=>value===false)));
+  assert.ok(result.snapshot.receipts.every(receipt=>receipt.status==='withdrawn'));
+  assert.equal(record.snapshot.receipts[0].status,'ok');
+});
 test('rejects injected scores, unknown IDs, unsupported budgets and non-illustrative publication',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture'),path='/api/judge/cases/'+record.id+'/experiment';
   for(const body of [{items:[{fit:10000}]},{lockedIds:['invented']},{budget:'60'},{budget:-1},{budget:1e12},{cancelId:'c'},{feeIncreaseId:'c'},{unavailableId:'c'},{withdrawReceiptId:'invented'}])assert.equal((await post(path,body)).status,400);

@@ -17,7 +17,7 @@ import { activationWorkflowCount, buildLocalActivation, normalizeActivationInput
 import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived, preserveRankProvenance } from './gm.mjs';
-import { accessMiddleware, canEdit, protectedMode } from './access.mjs';
+import { accessMiddleware, canEdit, protectedMode, routeQuota } from './access.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
 import { registerOperationalRoutes } from './operational-evidence.mjs';
@@ -71,15 +71,17 @@ function trustedScenarioInput(source, body, label) {
 }
 
 export function createApp() {
-  const app = express(), hits = new Map(), scenarioHits = new Map(), intelligenceHits = new Map(), venueHits = new Map(), activationHits = new Map();
-  let day = { date: '', count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0, activationCount: 0 };
-  const resetDay = () => { const date = new Date().toISOString().slice(0, 10); if (day.date !== date) day = { date, count: 0, scenarioCount: 0, intelligenceCount: 0, venueCount: 0, activationCount: 0 }; };
+  const app = express();
   const dailyCap = positiveInteger(process.env.DAILY_MEMO_CAP, 150);
   const budget = Math.min(60, positiveInteger(process.env.CALL_BUDGET, 30));
   const intelligenceBudget = Math.min(60, positiveInteger(process.env.INTELLIGENCE_CALL_BUDGET, 60));
   app.disable('x-powered-by');
   if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
-  app.use((_req, res, next) => { res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer'); next(); });
+  app.use((_req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer');
+    res.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+    next();
+  });
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
   registerResearchRoutes(app);
@@ -144,6 +146,7 @@ export function createApp() {
     if (!snapshot) return res.status(404).type('text/plain').send('Saved run not found.');
     try {
       res.set('Cache-Control', 'no-store');
+      res.set('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");
       res.set('Content-Disposition', `attachment; filename="houselights-${req.params.id.replace(/[^a-z0-9_-]/gi, '')}-report.html"`);
       return res.type('html').send(dossierHtml(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) })));
     } catch (error) { return res.status(400).type('text/plain').send(error.message); }
@@ -212,12 +215,7 @@ export function createApp() {
     if (!artistCount || !source.memo?.slate?.feasible) return res.status(400).json({ error: 'A feasible saved slate is required.' });
     const expectedCalls = intelligenceWorkflowCount(input, artistCount);
     if (expectedCalls > intelligenceBudget) return res.status(400).json({ error: `This analysis requires ${expectedCalls} workflows; reduce markets, route stops or slate size to the ${intelligenceBudget}-workflow limit.`, expectedCalls, callBudget: intelligenceBudget });
-    resetDay();
-    const now = Date.now();
-    for (const [ip, times] of intelligenceHits) if (times.every(time => now - time >= 60000)) intelligenceHits.delete(ip);
-    const recent = (intelligenceHits.get(req.ip) || []).filter(time => now - time < 60000);
-    if (recent.length >= 3 || day.intelligenceCount >= 50) return res.status(429).json({ error: 'Cultural-intelligence run limit reached. Existing intelligence remains available from its saved snapshot.' });
-    intelligenceHits.set(req.ip, [...recent, now]); day.intelligenceCount++;
+    if (!routeQuota(req, 'intelligence', { minuteLimit: 3, dayLimit: 50 })) return res.status(429).json({ error: 'Cultural-intelligence run limit reached. Existing intelligence remains available from its saved snapshot.' });
     try {
       const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'i', receiptOffset: receiptOffset(source, 'i') });
       const intelligence = await buildCulturalIntelligence(source, input, run);
@@ -234,12 +232,7 @@ export function createApp() {
     const reviewing = req.params.action === 'capacity-review';
     try { result = reviewing ? buildCapacityResearch(source, req.body) : buildVenuePlan(source, req.body); }
     catch (error) { return res.status(400).json({ error: error.message }); }
-    resetDay();
-    const now = Date.now();
-    for (const [ip, times] of venueHits) if (times.every(time => now - time >= 60000)) venueHits.delete(ip);
-    const recent = (venueHits.get(req.ip) || []).filter(time => now - time < 60000);
-    if (recent.length >= 12 || day.venueCount >= 200) return res.status(429).json({ error: 'Venue-plan save limit reached. Existing plans remain available from their saved snapshots.' });
-    venueHits.set(req.ip, [...recent, now]); day.venueCount++;
+    if (!routeQuota(req, 'venue', { minuteLimit: 12, dayLimit: 200 })) return res.status(429).json({ error: 'Venue-plan save limit reached. Existing plans remain available from their saved snapshots.' });
     const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, localActivation: undefined,
       ...(reviewing ? { capacityResearch: result, venuePlan: undefined } : { venuePlan: result }) };
     const id = store.save(snapshot);
@@ -253,12 +246,7 @@ export function createApp() {
     try { input = normalizeActivationInput(source, req.body); expectedCalls = activationWorkflowCount(source, input); }
     catch (error) { return res.status(400).json({ error: error.message }); }
     if (expectedCalls > intelligenceBudget) return res.status(400).json({ error: `This activation requires up to ${expectedCalls} workflows; reduce markets or opener candidates to the ${intelligenceBudget}-workflow limit.`, expectedCalls, callBudget: intelligenceBudget });
-    resetDay();
-    const now = Date.now();
-    for (const [ip, times] of activationHits) if (times.every(time => now - time >= 60000)) activationHits.delete(ip);
-    const recent = (activationHits.get(req.ip) || []).filter(time => now - time < 60000);
-    if (recent.length >= 3 || day.activationCount >= 50) return res.status(429).json({ error: 'Local-activation run limit reached. Existing activation plans remain available from saved snapshots.' });
-    activationHits.set(req.ip, [...recent, now]); day.activationCount++;
+    if (!routeQuota(req, 'activation', { minuteLimit: 3, dayLimit: 50 })) return res.status(429).json({ error: 'Local-activation run limit reached. Existing activation plans remain available from saved snapshots.' });
     try {
       const run = new Run({ budget: intelligenceBudget, receiptPrefix: 'l', receiptOffset: receiptOffset(source, 'l') });
       const localActivation = await buildLocalActivation(source, input, run);
@@ -301,12 +289,7 @@ export function createApp() {
     if (error) return res.status(400).json({ error });
     const slate = optimizeSlate(items, constraints);
     if (slate.status === 'invalid') return res.status(400).json({ error: slate.reasons.join(' ') });
-    resetDay();
-    const now = Date.now();
-    for (const [ip, times] of scenarioHits) if (times.every(time => now - time >= 60000)) scenarioHits.delete(ip);
-    const recent = (scenarioHits.get(req.ip) || []).filter(time => now - time < 60000);
-    if (recent.length >= 12 || day.scenarioCount >= 200) return res.status(429).json({ error: 'Scenario save limit reached. Existing evidence can still be re-optimized and exported.' });
-    scenarioHits.set(req.ip, [...recent, now]); day.scenarioCount++;
+    if (!routeQuota(req, 'scenario', { minuteLimit: 12, dayLimit: 200 })) return res.status(429).json({ error: 'Scenario save limit reached. Existing evidence can still be re-optimized and exported.' });
     const normalizedConstraints = slate.constraints;
     const currency = ['GBP', 'USD', 'EUR', 'INR'].includes(b.currency) ? b.currency : source.memo.currency;
     const exampleBookingTerms = source.memo.exampleBookingTerms === true || source.input?.exampleBookingTerms === true;
@@ -318,27 +301,32 @@ export function createApp() {
       input: { ...source.input, currency, exampleBookingTerms, constraints: normalizedConstraints, terms },
       memo: { ...source.memo, currency, exampleBookingTerms, input: { ...source.memo.input, currency, exampleBookingTerms, constraints: normalizedConstraints }, items, constraints: normalizedConstraints, slate }
     };
-    const id = store.save(snapshot);
+    const id = store.save(snapshot, { retain: true });
     return res.status(201).json({ id, snapshot: store.load(id) });
   });
   app.post('/api/memo', async (req, res) => {
     let input;
     try { input = bookingInput(req.body); } catch (error) { return res.status(400).json({ error: error.message }); }
     if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Set QLOO_API_KEY in the server environment, or use npm run dev for clearly labeled synthetic data.' });
-    const now = Date.now();
-    resetDay();
-    for (const [key, times] of hits) if (times.every(t => now - t >= 60000)) hits.delete(key);
-    const recent = (hits.get(req.ip) || []).filter(t => now - t < 60000);
-    if (recent.length >= 4 || day.count >= dailyCap) return res.status(429).json({ error: 'Run limit reached. Try again later. Re-optimizing existing evidence does not spend Qloo calls.' });
-    hits.set(req.ip, [...recent, now]); day.count++;
+    if (!routeQuota(req, 'memo', { minuteLimit: 4, dayLimit: dailyCap })) return res.status(429).json({ error: 'Run limit reached. Try again later. Re-optimizing existing evidence does not spend Qloo calls.' });
     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
-    const emit = event => { if (res.destroyed) throw new Error('Client disconnected'); res.write(`data: ${JSON.stringify(event)}\n\n`); };
+    const trace = [], startedAt = Date.now();
+    const emit = event => {
+      if (res.destroyed) throw new Error('Client disconnected');
+      if (['start', 'stage', 'receipt', 'plan', 'needs_input', 'memo'].includes(event.type) && trace.length < 100) {
+        trace.push({ elapsedMs: Date.now() - startedAt, type: event.type, text: String(event.text || event.reason || '').slice(0, 240),
+          receiptId: event.receipt?.id || null, tool: event.receipt?.tool || null, status: event.receipt?.status || null,
+          source: event.receipt?.source || null, ms: event.receipt?.ms ?? null, mock: event.type === 'start' ? event.mock === true : undefined,
+          feasible: event.type === 'memo' ? event.slate?.feasible === true : undefined });
+      }
+      res.write(`data: ${JSON.stringify(event)}\n\n`);
+    };
     const heartbeat = setInterval(() => { if (!res.destroyed) res.write(': heartbeat\n\n'); }, 15000);
     try {
       emit({ type: 'start', mock: isMock() });
       const run = new Run({ budget, emit });
       const memo = await buildMemo(input, run);
-      if (memo && !res.destroyed) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo }) });
+      if (memo && !res.destroyed) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace }, { retain: true }) });
     } catch {
       if (!res.destroyed) emit({ type: 'error', text: 'The run could not complete. Review the last receipt and try again. No booking was made.' });
     } finally { clearInterval(heartbeat); res.end(); }

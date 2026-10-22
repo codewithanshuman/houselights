@@ -14,7 +14,7 @@
     const methods=result.methods??{qloo:result.proof.baseline,constraintOnly:result.proof.constraintOnly,
       llm:{available:false,status:'unavailable',interpretation:'No saved first-trial LLM control is published for this case.'}};
     const llm=methods.llm;
-    const rows=[['Qloo-informed optimizer',methods.qloo],['Cheapest feasible lineup',methods.constraintOnly],['Saved LLM selection',llm]];
+    const rows=[[result.qlooOff?'Optimizer with Qloo evidence off':'Qloo-informed optimizer',methods.qloo],['Cheapest feasible lineup',methods.constraintOnly],['Saved LLM selection',llm]];
     return `<h4>Compare the three methods</h4><div class="table-scroll"><table class="gm-table"><thead><tr><th>Method</th><th>Selected artists</th><th>Fees</th><th>Policy points</th><th>Constraint check</th></tr></thead><tbody>${rows.map(([label,row])=>`<tr><td>${e(label)}</td><td>${row.selectedIds?.length?e(names(row.selectedIds)):'No selection available'}</td><td>${e(money(row.totalFee))}</td><td>${Number.isFinite(row.score)?e(row.score.toFixed(2)):'—'}</td><td>${e(row.feasible===true?'Pass':row.feasible===false?'Fails constraints':row.status)}</td></tr>`).join('')}</tbody></table></div><p>The cheapest feasible lineup is selected by cost alone. All displayed policy points are scored afterward with the current evidence.</p><p>${e(llm.interpretation)}</p>${llm.available?`<p>${e(llm.generation?.provider)} · ${e(llm.generation?.model)} · first trial · ${llm.identicalSelection?'same selection as the optimizer':'different selection from the optimizer'}.</p>${llm.violations?.length?`<ul>${llm.violations.map(v=>`<li>Saved LLM selection: ${e(v)}</li>`).join('')}</ul>`:''}`:''}<p>${e(methods.interpretation??'Policy points evaluate the optimizer’s own objective. They are not independent evidence, attendance predictions or revenue uplift.')}</p>${methods.policyPointDelta!=null?`<p>Optimizer minus LLM: ${e(methods.policyPointDelta.toFixed(2))} policy points on this unchanged saved brief.</p>`:''}`;
   }
   function renderResult(){
@@ -24,7 +24,7 @@
   function reset(){
     if(!current)return;
     const {memo}=current.snapshot;
-    $('judge-budget').value=memo.constraints.budget;$('judge-cancel').value='';$('judge-withdraw').value='';
+    $('judge-budget').value=memo.constraints.budget;$('judge-cancel').value='';$('judge-withdraw').value='';$('judge-qloo-off').checked=false;
     document.querySelectorAll('[data-judge-lock]').forEach(input=>input.checked=memo.constraints.lockedIds.includes(input.dataset.judgeLock));
     document.querySelectorAll('[data-judge-exclude]').forEach(input=>input.checked=memo.constraints.excludedIds.includes(input.dataset.judgeExclude));
     result={caseId:current.id,snapshot:current.snapshot,proof:current.proof,methods:current.methods,providerCalls:0,persisted:false,terms:current.terms};renderResult();
@@ -48,7 +48,7 @@
     if(busy||!current)return;busy=true;const id=current.id;
     $('judge-case').disabled=true;document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select').forEach(b=>b.disabled=true);say('Enumerating feasible lineups and checking evidence dependencies…');
     try{
-      const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value};
+      const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
       result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
     }catch(error){say(error.message);}finally{busy=false;$('judge-case').disabled=false;document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select').forEach(b=>b.disabled=false);}
   }
@@ -59,8 +59,14 @@
   $('judge-export').onclick=()=>{if(!result)return;const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download=`houselights-judge-${current.id}.json`;link.click();URL.revokeObjectURL(url);};
   $('judge-case').onchange=()=>void load($('judge-case').value);
   request('/api/judge/cases').then(({cases})=>{
+    $('judge-live-count').textContent=`${cases.filter(c=>!c.synthetic).length} saved live-Qloo cases · ${cases.filter(c=>c.synthetic).length} synthetic cases`;
     $('judge-case').innerHTML=cases.map(c=>`<option value="${e(c.id)}">${e(c.title)}${c.synthetic?' · Synthetic':''}</option>`).join('');
     if(!cases.length){say('No public cases have been prepared on this server yet.');return;}
     const id=location.hash.slice(1);$('judge-case').value=cases.some(c=>c.id===id)?id:cases[0].id;void load($('judge-case').value);
   }).catch(error=>say(error.message));
+  request('/api/evidence/reviews').then(report=>$('judge-review-count').textContent=`${report.completedReviewers} independent reviews recorded`).catch(()=>$('judge-review-count').textContent='Review status unavailable');
+  fetch('/shocks-summary.json').then(response=>response.json()).then(data=>{
+    const count=data.headlineDenominator;
+    $('judge-shock-teaser').innerHTML=`<strong>${e(count.violationResponses)}/${e(count.returnedResponses)}</strong><span>violating re-prompted LLM responses in the clearly labeled synthetic ${e(count.candidateCount)}-candidate case</span><small>Houselights returned 0 invalid lineups across ${e(data.summary.houselights.shocks)} deterministic shocks, with ${e(data.summary.houselights.abstained)} explicit abstentions. This follows from exact constraint enforcement; it does not prove commercial uplift.</small><a href="/evidence.html">Inspect all shocks and limitations ↗</a>`;
+  }).catch(()=>$('judge-shock-teaser').textContent='Shock study unavailable; the live decision room remains usable.');
 })();

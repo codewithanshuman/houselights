@@ -1,0 +1,1435 @@
+{
+  "version": "2.0",
+  "headline": "0 hard-constraint violations and explicit infeasibility, versus 9.7% for a re-prompted LLM at 12 candidates.",
+  "headlineDenominator": {
+    "candidateCount": 12,
+    "returnedResponses": 72,
+    "violationResponses": 7
+  },
+  "methodology": "Deterministic single shocks across public real-data seeds and clearly labeled synthetic 10- and 12-candidate stress cases. Each shock targets the union of both original lineups. Houselights re-optimizes through judgeExperiment; the static LLM replays its saved first-trial lineup; the re-prompted LLM has three independent tool-free captures of the shocked brief. Failure rate counts responses that propose a hard-constraint violation, including invalid artist IDs; provider failures and missing responses are excluded and counted separately. Synthetic fit, fees, availability and artists are invented. Acts changed counts IDs in the symmetric difference from that arm’s original lineup. Abstention is not a feasible lineup.",
+  "note": "Houselights has zero proposed-lineup violations by construction: its exact optimizer only returns lineups that satisfy its constraints. This is an engineering property, not independent evidence of better attendance, revenue, or cultural demand.",
+  "summary": {
+    "houselights": {
+      "shocks": 93,
+      "feasible": 86,
+      "abstained": 7,
+      "unavailable": 0,
+      "invalidOrInfeasible": 0,
+      "totalHardConstraintViolations": 0
+    },
+    "staticLlm": {
+      "shocks": 93,
+      "feasible": 37,
+      "abstained": 0,
+      "unavailable": 9,
+      "invalidOrInfeasible": 47,
+      "totalHardConstraintViolations": 60
+    },
+    "repromptedLlm": {
+      "shocks": 93,
+      "requestedTrials": 279,
+      "respondedTrials": 252,
+      "feasibleTrials": 228,
+      "violationTrials": 24,
+      "totalHardConstraintViolations": 43,
+      "failureRate": 0.09523809523809523
+    }
+  },
+  "rows": [
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Budget 90%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Budget 80%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Budget 70%",
+      "candidates": 12,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Static Bloom",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Static Bloom fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Static Bloom unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Tidal Letters",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Tidal Letters fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Tidal Letters unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Sunroom Ensemble",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Sunroom Ensemble fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Sunroom Ensemble unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Golden Thread",
+      "candidates": 12,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Golden Thread fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Golden Thread unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Signal Poet",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Signal Poet fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Signal Poet unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Tin Roof Trio",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Tin Roof Trio fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 1,
+        "rate": 0.3333333333333333
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Tin Roof Trio unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Cancel Copper Lines",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Raise Copper Lines fee 15%",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 12 candidates / 5 slots",
+      "shock": "Mark Copper Lines unavailable",
+      "candidates": 12,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Budget 90%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Budget 80%",
+      "candidates": 10,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Budget 70%",
+      "candidates": 10,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Silver Current",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Silver Current fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Silver Current unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Velvet Signals",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Velvet Signals fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Velvet Signals unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Blue Hour Quartet",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Blue Hour Quartet fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Blue Hour Quartet unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Pocket Rhythm",
+      "candidates": 10,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Pocket Rhythm fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Pocket Rhythm unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Orbit Keys",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Orbit Keys fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Orbit Keys unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Amber Radio",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Amber Radio fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Amber Radio unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Cancel Mosaic Brass",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Raise Mosaic Brass fee 15%",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "SYNTHETIC · 10 candidates / 4 slots",
+      "shock": "Mark Mosaic Brass unavailable",
+      "candidates": 10,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Budget 90%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Budget 80%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Budget 70%",
+      "candidates": 5,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Cancel Nubya Garcia",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Raise Nubya Garcia fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Mark Nubya Garcia unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Cancel Alfa Mist",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Raise Alfa Mist fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Manchester: compare all three methods",
+      "shock": "Mark Alfa Mist unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Budget 90%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Budget 80%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Budget 70%",
+      "candidates": 5,
+      "houselights": {
+        "status": "abstained",
+        "violations": 0,
+        "budgetOverage": null
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 3,
+        "rate": 1
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Cancel Jon Hopkins",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Raise Jon Hopkins fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Mark Jon Hopkins unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Cancel Floating Points",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Raise Floating Points fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Mark Floating Points unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 1,
+        "rate": 0.3333333333333333
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Cancel Moderat",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Raise Moderat fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Mark Moderat unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Cancel Bicep",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Raise Bicep fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Berlin: compare all three methods",
+      "shock": "Mark Bicep unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 1,
+        "rate": 0.3333333333333333
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Budget 90%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Budget 80%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Budget 70%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Cancel Michael Kiwanuka",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Raise Michael Kiwanuka fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Mark Michael Kiwanuka unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Cancel Sault",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Raise Sault fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Mark Sault unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Cancel Jordan Rakei",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Raise Jordan Rakei fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "New York: compare all three methods",
+      "shock": "Mark Jordan Rakei unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 3,
+        "failures": 0,
+        "rate": 0
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Budget 90%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Budget 80%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Budget 70%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Cancel The Local train",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Raise The Local train fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Mark The Local train unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Cancel Ankur Tewari",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Raise Ankur Tewari fee 15%",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    },
+    {
+      "caseTitle": "Mumbai: why a comparison is unavailable",
+      "shock": "Mark Ankur Tewari unavailable",
+      "candidates": 5,
+      "houselights": {
+        "status": "feasible",
+        "violations": 0,
+        "budgetOverage": 0
+      },
+      "reprompted": {
+        "returned": 0,
+        "failures": 0,
+        "rate": null
+      }
+    }
+  ]
+}

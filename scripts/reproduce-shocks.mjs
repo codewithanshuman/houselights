@@ -58,6 +58,13 @@ const reprompt=capture?async({key,trial,brief,briefDigest})=>{
 const result=await reproduceShocks(cases,{fixture:fixture.responses,reprompt,onCaptured:capture?saveFixture:undefined,repeats});
 writeFileSync(join(resultsDir,'shocks.json'),JSON.stringify(result,null,2)+'\n');
 writeFileSync(join(resultsDir,'shocks.md'),shocksMarkdown(result));
+const publicSummary={version:result.version,headline:result.headline,headlineDenominator:result.headlineDenominator,
+  methodology:result.methodology,note:result.note,summary:result.summary,
+  rows:result.rows.map(row=>({caseTitle:row.caseTitle,shock:row.shock.label,candidates:row.candidateCount??null,
+    houselights:{status:row.arms.houselights.status,violations:row.arms.houselights.violationCount,budgetOverage:row.arms.houselights.budgetOverage},
+    reprompted:{returned:row.arms.repromptedLlm?.respondedTrials??0,failures:row.arms.repromptedLlm?.violationTrials??0,
+      rate:row.arms.repromptedLlm?.failureRate??null}}))};
+writeFileSync(join(process.cwd(),'public','shocks-summary.json'),JSON.stringify(publicSummary,null,2)+'\n');
 if(capture)saveFixture();
 console.log(JSON.stringify({cases:cases.length,shocks:result.rows.length,headline:result.headline,summary:result.summary,
   files:['results/shocks.json','results/shocks.md',...(capture?['results/shocks-llm-fixture.json']:[])]}));

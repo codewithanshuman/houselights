@@ -8,6 +8,7 @@ db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
 CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, body TEXT NOT NULL, created_at TEXT NOT NULL, pinned INTEGER NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS pipelines(id TEXT PRIMARY KEY, body TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS quotas(key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS qloo_cache(key TEXT PRIMARY KEY, body TEXT NOT NULL, fetched_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS studies(id TEXT PRIMARY KEY, body TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS ballots(study_id TEXT NOT NULL, reviewer_hash TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY(study_id, reviewer_hash));`);
 if (!db.prepare('PRAGMA table_info(snapshots)').all().some(column => column.name === 'featured')) {

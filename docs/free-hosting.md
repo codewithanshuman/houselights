@@ -86,11 +86,11 @@ organizer interface; provider workflows require the organizer token.
 
 Startup seeds four curated public cases into a separate persistent database.
 No local private database, review invitation or commercial source document is
-transferred. All capabilities remain in the application; UI redesign and the
-five artwork replacements are deferred. The current organizer artwork remains
-in the deployed build; replacement and confirmation of publication rights are
-still outstanding. The judge page itself does not use those assets. Hosting
-verification does not resolve those rights.
+transferred. All capabilities remain in the application. The current public
+release uses a light interface; four reference/poster images were removed from
+the public build and the larger remaining assets were compressed. The owner
+attested publication rights for the remaining supplied artwork on 22 October
+2026. Hosting verification does not independently establish those rights.
 
 ## Verify storage, jobs and recovery
 
