@@ -1,5 +1,6 @@
 import { enumerateSlates } from './optimizer.mjs';
 import { demandFeatures, predictDemand, qlooProtocol } from './demand-model.mjs';
+import { simulateAudienceTwin } from './audience-twin.mjs';
 
 const integer = (value, min, max) => Number.isInteger(value) && value >= min && value <= max;
 const amount = (value, max = 1e9) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= max;
@@ -118,7 +119,7 @@ function priceScenarios(brief,selected,modelReport,assumptions) {
   });
 }
 
-export function planDemand(input, modelReport) {
+export function planDemand(input, modelReport, twin=null) {
   const {brief,candidates,constraints,assumptions,observedAudienceOverlap}=input;
   const rows=enumerateSlates(candidates,constraints),feasible=rows.filter(row=>row.feasible);
   if(!feasible.length)return {status:'infeasible',mode:'none',checkedCount:rows.length,feasibleCount:0,
@@ -131,16 +132,21 @@ export function planDemand(input, modelReport) {
       point:Math.round(brief.capacity*assumptions.baseSellThrough),high:Math.ceil(brief.capacity*Math.min(1,assumptions.baseSellThrough+.15)),
       note:'The ±15 percentage-point band is a planning stress, not a statistical interval.'}:null;
     const ticketsSold=forecast?.ticketsSold??scenario;
-    const economics=financial(brief,row.totalFee,ticketsSold,assumptions);
-    return {selectedIds:row.selectedIds,fees:row.totalFee,cultural,features,forecast,scenario,economics,
-      objective:forecast?economics.operatingMargin.low:cultural.proxy};
+    const twinScenario=twin?simulateAudienceTwin(twin,brief,row.selectedIds):null;
+    const economics=financial(brief,row.totalFee,ticketsSold??twinScenario?.ticketsSold,assumptions);
+    return {selectedIds:row.selectedIds,fees:row.totalFee,cultural,features,forecast,scenario,twinScenario,economics,
+      objective:forecast?economics.operatingMargin.low:twinScenario?economics.operatingMargin.point:cultural.proxy};
   };
   const assessed=feasible.map(assess).sort((a,b)=>b.objective-a.objective||a.fees-b.fees||a.selectedIds.join('|').localeCompare(b.selectedIds.join('|')));
   const best=assessed[0], selected=best.selectedIds.map(id=>candidates.find(item=>item.id===id));
-  return {status:'feasible',mode:best.forecast?'backtested_observational_forecast':'cultural_scenario_proxy',targetMetric:'paid_tickets_sold',
+  return {status:'feasible',mode:best.forecast?'backtested_observational_forecast':twin?'synthetic_audience_scenario':'cultural_scenario_proxy',targetMetric:'paid_tickets_sold',
     brief,checkedCount:rows.length,feasibleCount:feasible.length,
-    objective:best.forecast?'Maximize lower-bound modeled operating margin under hard constraints.':'Maximize explicitly uncalibrated cultural proxy under hard constraints.',
+    objective:best.forecast?'Maximize lower-bound modeled operating margin under hard constraints.':twin?'Maximize organizer-assumed audience scenario operating margin under hard constraints; this is not a validated forecast.':'Maximize explicitly uncalibrated cultural proxy under hard constraints.',
     selected:best,alternatives:assessed.slice(1,4),priceScenarios:priceScenarios(brief,selected,modelReport,assumptions),
+    audienceTwin:twin?{id:twin.id,sourceId:twin.sourceId,synthetic:twin.synthetic,originalSeedCount:twin.originalSeedCount,clusterCount:twin.clusterCount,
+      audiencePool:twin.audiencePool,overlapAssumption:twin.overlapAssumption,
+      priceScenarios:[.8,.9,1,1.1,1.2].map(multiplier=>simulateAudienceTwin(twin,brief,best.selectedIds,{price:round(brief.ticketPrice*multiplier)})),
+      interpretation:twin.interpretation}:null,
     candidateEvidence:candidates.map(item=>({id:item.id,name:item.name,source:item.qloo.source,rankFit:item.qloo.fit,
       local:item.qloo.local,receiptIds:item.qloo.receiptIds,bookable:item.terms.available&&item.terms.fee!=null})),
     modelStatus:modelReport.status,backtest:modelReport.status==='backtested'?{
@@ -148,6 +154,7 @@ export function planDemand(input, modelReport) {
       trainingCutoff:modelReport.trainingCutoff,holdoutStart:modelReport.holdoutStart,
       baseline:modelReport.baseline.heldOut,qlooComparison:modelReport.qlooComparison}:null,
     caveats:[
+      ...(twin?['Audience-twin weights, reachable pool, intent, elasticity and overlap are organizer assumptions. Its range is a sensitivity stress, not a calibrated prediction interval.']:[]),
       best.forecast?'Paid tickets sold is an observational forecast with a held-out residual range; it is not a guarantee or a count of venue entries.':'No calibrated paid-ticket model exists. Cultural proxy and buyer assumptions are not ticket-demand estimates.',
       best.cultural.observedOverlapPairs===best.cultural.totalPairs?'Aggregate pairwise buyer-overlap observations are available for every pair.':'Audience overlap is unmeasured for some or all selected pairs; cultural similarity cannot be turned into unique buyers.',
       input.synthetic?'Qloo source is synthetic and must never be presented as live market evidence.':'Qloo receipts describe aggregate taste relationships, not sales outcomes.',

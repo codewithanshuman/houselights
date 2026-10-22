@@ -12,6 +12,8 @@ The [judge workspace](docs/judge-workspace.md) at `/judge.html` provides a one-m
 
 The organizer-only [Demand Lab](docs/demand-model.md) at `/demand.html` plans city-, event- and price-specific lineups from up to 20 candidates. The supplied real box-office rows are cataloged, but none contain timestamped pre-event predictors, so the lab displays an explicitly uncalibrated cultural proxy and buyer-entered financial scenarios. Immutable pre-event plans can later be paired with real ticketing outcomes; a numerical **paid-tickets-sold** model activates only after chronological holdout and minimum-data gates pass. Its matched Qloo/no-Qloo backtest reports negative results as well as improvements. Paid tickets sold are distinct from physical venue entries.
 
+[Audience Twin](docs/audience-twin.md) adds bounded Qloo rank research for organizer-defined taste seeds, deterministic clustering, synthetic weighted scenario profiles, overlap-aware lineup coverage, price and competition sensitivity, exact-slate scenario optimization and prospective event-total validation. Its weights and purchase behavior are assumptions, not Qloo demographics or an observed customer audience.
+
 The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and three captured tool-free Groq re-prompts per shock, including clearly labeled synthetic 10- and 12-candidate stress cases. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups. The [single demo path](docs/judge-demo.md) shows the live execution trace, one changed decision and the stress result.
 
 ## Run locally

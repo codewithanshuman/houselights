@@ -27,6 +27,8 @@ export function saveDemandForecast(input, result, source) {
     selectedIds:result.selected.selectedIds,features:result.selected.features,
     mode:result.mode,ticketsSold:result.selected.forecast?.ticketsSold??null,targetMetric:'paid_tickets_sold',
     assumptions:input.assumptions,modelStatus:result.modelStatus,
+    twinSnapshot:result.selected.twinScenario?{twinId:result.audienceTwin?.id,syntheticSource:result.audienceTwin?.synthetic===true,ticketsSold:result.selected.twinScenario.ticketsSold,
+      segmentScenarios:result.selected.twinScenario.segments.map(row=>({id:row.id,scenarioTickets:row.scenarioTickets}))}:null,
     note:'Immutable pre-event prediction/assumption snapshot. Its creation time is recorded before any outcome is attached.'};
   db.prepare('INSERT INTO demand_forecasts(id,body,created_at) VALUES(?,?,?)').run(forecast.id,JSON.stringify(forecast),createdAt);
   return forecast;
@@ -50,6 +52,13 @@ export function recordDemandOutcome(raw) {
     forecastGeneratedAt:forecast.createdAt,forecastTicketsSold:forecast.ticketsSold?.point??null,
     forecastError:forecast.ticketsSold?.point==null?null:forecast.ticketsSold.point-raw.paidTicketsSold,
     absoluteForecastError:forecast.ticketsSold?.point==null?null:Math.abs(forecast.ticketsSold.point-raw.paidTicketsSold),
+    twinComparison:forecast.twinSnapshot?{status:'scenario_vs_observed_total',twinId:forecast.twinSnapshot.twinId,
+      syntheticSource:forecast.twinSnapshot.syntheticSource===true,
+      scenarioTickets:forecast.twinSnapshot.ticketsSold,observedPaidTicketsSold:raw.paidTicketsSold,
+      signedError:forecast.twinSnapshot.ticketsSold.point-raw.paidTicketsSold,
+      absoluteError:Math.abs(forecast.twinSnapshot.ticketsSold.point-raw.paidTicketsSold),
+      withinSensitivityRange:raw.paidTicketsSold>=forecast.twinSnapshot.ticketsSold.low&&raw.paidTicketsSold<=forecast.twinSnapshot.ticketsSold.high,
+      caveat:'Event-total validation only. Segment-level accuracy cannot be evaluated without separately sourced segment sales.'}:null,
     synthetic:forecast.synthetic,createdAt,provenance:{realOutcome:true,preEventFeatures:preEvent,
       qlooPreEvent:!!qlooPreEvent,qlooProtocol:forecast.brief.qlooProtocol??null,source,classification:preEvent?'prospective':'retrospective_excluded',
       note:'The organizer attests to the source. The application validates timing and arithmetic, not the external document.'}};
