@@ -12,26 +12,42 @@
   const money=value=>value==null?'Unknown':new Intl.NumberFormat('en-GB',{style:'currency',currency:current.snapshot.memo.currency}).format(value);
   function renderAgentTrace(){
     const snapshot=current.snapshot,receipts=snapshot.receipts??[],brief=snapshot.memo.input??{};
-    const phases=[
-      ['Resolve the artists',['describe'],'Checked the identities of named artists before using their cultural evidence.'],
-      ['Explore the candidate space',['entity_tags','recommend'],'Used recorded tags and recommendations to inspect the available cultural neighborhood.'],
-      ['Compare audience fit',['rank'],'Ranked candidate artists against the saved audience anchors.'],
-      ['Check supporting context',['trends','where_popular','compare_audiences'],'Asked for momentum, local relevance and cross-artist observations.'],
-    ];
     const question=`Which of these ${snapshot.memo.items.length} artists fit ${brief.anchors?.join(' and ')||'the saved audience'} in ${brief.city||'this market'}, within the booking constraints?`;
-    const steps=[`<li><span class="agent-step-number">01</span><div><strong>Saved research question</strong><p>${e(question)}</p><small>Derived from the published brief; this is not a quotation of hidden model reasoning.</small></div></li>`];
-    for(const [index,[title,tools,purpose]] of phases.entries()){
-      const used=receipts.filter(receipt=>tools.includes(receipt.tool));if(!used.length)continue;
-      const count=used.reduce((total,receipt)=>total+(receipt.evidence?.rows?.length??0),0);
-      const ids=used.map(receipt=>receipt.id).join(', ');
-      const outcome=`${used.length} recorded ${used.length===1?'call':'calls'} · ${used.filter(receipt=>receipt.status==='ok').length} marked successful · ${count} projected evidence ${count===1?'row':'rows'}`;
-      steps.push(`<li><span class="agent-step-number">0${index+2}</span><div><strong>${e(title)}</strong><p>${e(purpose)}</p><small>${e(outcome)} · <a href="#judge-receipts">Receipts ${e(ids)}</a></small></div></li>`);
+    const receiptById=new Map(receipts.map(receipt=>[receipt.id,receipt]));
+    const title={describe:'Describe artist',entity_tags:'Inspect tags',recommend:'Discover related artists',rank:'Rank audience fit',
+      trends:'Check trends',where_popular:'Check local relevance',compare_audiences:'Compare audiences'};
+    const stamp=value=>Number.isFinite(Date.parse(value))?new Date(value).toISOString():'Timestamp unavailable';
+    const trace=Array.isArray(snapshot.trace)?snapshot.trace:[];
+    const recorded=trace.length>0;
+    const steps=[];
+    if(recorded){
+      const eventNames={start:'Run started',stage:'Research stage emitted',receipt:'Tool returned',plan:'Research plan emitted',needs_input:'Input requested',memo:'Optimizer result emitted'};
+      for(const [index,event] of [...trace].sort((a,b)=>a.elapsedMs-b.elapsedMs).entries()){
+        const receipt=receiptById.get(event.receiptId),kind=receipt?.tool;
+        const label=receipt?`${title[kind]??kind} returned`:eventNames[event.type]??'Recorded event';
+        const detail=receipt?`${receipt.status} · ${receipt.evidence?.rows?.length??0} projected rows · ${stamp(receipt.fetchedAt)}`:
+          event.type==='memo'?`Feasible: ${event.feasible?'yes':'no'}`:'The saved event contains no public explanation of the model’s reasoning.';
+        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(label)}</strong><p>${e(detail)}</p><small>Recorded +${e((event.elapsedMs/1000).toFixed(1))}s${receipt?` · <a href="#judge-receipts">Receipt ${e(receipt.id)}</a>`:''}</small></div></li>`);
+      }
+    }else{
+      const ordered=receipts.map((receipt,index)=>({receipt,index,time:Date.parse(receipt.fetchedAt)}))
+        .sort((a,b)=>(Number.isFinite(a.time)?a.time:Infinity)-(Number.isFinite(b.time)?b.time:Infinity)||a.index-b.index);
+      const groups=[];
+      for(const row of ordered){
+        const previous=groups.at(-1),gap=row.time-previous?.at(-1)?.time;
+        if(previous&&previous[0].receipt.tool===row.receipt.tool&&previous[0].receipt.status===row.receipt.status&&gap>=0&&gap<=60000)previous.push(row);
+        else groups.push([row]);
+      }
+      for(const [index,group] of groups.entries()){
+        const first=group[0].receipt,last=group.at(-1).receipt,rows=group.reduce((n,row)=>n+(row.receipt.evidence?.rows?.length??0),0);
+        const times=stamp(first.fetchedAt)+(group.length>1?` to ${stamp(last.fetchedAt)}`:'');
+        const gap=index>0?group[0].time-groups[index-1].at(-1).time:0;
+        const later=gap>60000?` · ${e(Math.round(gap/1000))}s after the preceding receipt; the case does not establish whether this was the same run.`:'';
+        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(title[first.tool]??first.tool)} · ${e(group.length)} ${group.length===1?'receipt':'receipts'}</strong><p>${e(first.status)} · ${e(rows)} projected evidence rows · ${e(times)}</p><small><a href="#judge-receipts">Receipts ${e(group.map(row=>row.receipt.id).join(', '))}</a> · Recorded completion order; the model’s reason for each call was not saved.${later}</small></div></li>`);
+      }
     }
-    const rankCalls=receipts.filter(receipt=>receipt.tool==='rank');
-    if(rankCalls.length>1)steps.push(`<li><span class="agent-step-number">↳</span><div><strong>Additional check recorded</strong><p>A later ranking call appears after the first. The saved projection does not establish why it was requested.</p><small>${e(rankCalls.slice(1).map(receipt=>receipt.id).join(', '))}</small></div></li>`);
     const slate=snapshot.memo.slate;
-    steps.push(`<li><span class="agent-step-number">✓</span><div><strong>Apply the booking constraints</strong><p>The exact optimizer checked ${e(slate.checkedCount)} lineups; ${e(slate.feasibleCount)} met every hard constraint. ${e(slate.feasible?'The selected lineup is feasible.':'No feasible lineup was found.')}</p><small>Fee and availability are illustrative booking inputs, not Qloo facts.</small></div></li>`);
-    $('judge-agent-trace').innerHTML=`<ol class="agent-trace-list">${steps.join('')}</ol>`;
+    $('judge-agent-trace').innerHTML=`<p class="judge-trace-disclosure">${recorded?'Actual saved run events are ordered by elapsed time. Free-text model reasoning is not published.':'This case has receipt completion timestamps but no saved model-step event log. The order below follows those timestamps; it does not reconstruct the agent’s choices.'}</p><p><strong>Published booking question:</strong> ${e(question)} <small>Derived from the brief, not a recorded model prompt.</small></p><ol class="agent-trace-list">${steps.join('')}</ol><p class="judge-trace-disclosure"><strong>Current replay:</strong> The exact optimizer checks ${e(slate.checkedCount)} lineups; ${e(slate.feasibleCount)} meet every hard constraint. ${e(slate.feasible?'The selected lineup is feasible.':'No feasible lineup was found.')} This replay is separate from the recorded receipt timeline. Fees and availability are illustrative booking inputs.</p>`;
   }
   function methodComparison(){
     const methods=result.methods??{qloo:result.proof.baseline,constraintOnly:result.proof.constraintOnly,

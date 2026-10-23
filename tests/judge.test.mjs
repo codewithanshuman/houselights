@@ -22,6 +22,9 @@ function source(){
     note:'PRIVATE-SENTINEL',terms:{fee:[60,40,20][i],available:true,genre:id,contract:'PRIVATE-SENTINEL'}}));
   const constraints={budget:100,slots:2};return {mock:true,input:{exampleBookingTerms:true,private:'PRIVATE-SENTINEL'},memo:{items,constraints,currency:'GBP',input:{city:'Fixture',anchors:['Anchor'],secret:'PRIVATE-SENTINEL'},slate:optimizeSlate(items,constraints),private:'PRIVATE-SENTINEL'},
     investigation:{secret:'PRIVATE-SENTINEL'},benchmark:{secret:'PRIVATE-SENTINEL'},decisionSession:{token:'PRIVATE-SENTINEL'},
+    trace:[{type:'start',elapsedMs:0,text:'PRIVATE-SENTINEL'},{type:'stage',elapsedMs:5,text:'PRIVATE-SENTINEL'},
+      {type:'receipt',elapsedMs:11,receiptId:'r1',text:'PRIVATE-SENTINEL'},
+      {type:'plan',elapsedMs:15,text:'PRIVATE-SENTINEL'},{type:'memo',elapsedMs:20,feasible:true,text:'PRIVATE-SENTINEL'}],
     receipts:[{id:'r1',tool:'rank',status:'ok',source:'synthetic',args:{options:items.map(i=>i.id),signals:['anchor-id'],secret:'PRIVATE-SENTINEL'},evidence:{rows:items.map(i=>({id:i.id,name:i.name,secret:'PRIVATE-SENTINEL'}))},raw:'PRIVATE-SENTINEL'}]};
 }
 async function benchmarkSource(selectedIds=['a','c']){
@@ -37,6 +40,8 @@ test('organizer publishes an immutable projection; private fields stay out and e
   const id=store.save(source());assert.equal((await post('/api/judge/cases',{sourceId:id,title:'Fixture'})).status,401);
   const response=await post('/api/judge/cases',{sourceId:id,title:'Fixture'},true);assert.equal(response.status,201);const record=await response.json();
   assert.ok(!JSON.stringify(record).includes('PRIVATE-SENTINEL'));assert.ok(!JSON.stringify(record).includes(id));
+  assert.deepEqual(record.snapshot.trace.map(event=>event.type),['start','stage','receipt','plan','memo']);
+  assert.equal(record.snapshot.trace[2].receiptId,'r1');
   assert.equal(judge.publishJudgeCase(record.snapshot,record.title).id,record.id);
   const publicResult=await (await realFetch(base+'/api/judge/cases/'+record.id)).json();assert.deepEqual(publicResult,record);
   assert.deepEqual(record.snapshot.memo.slate.selectedIds,['a','b']);assert.equal(record.snapshot.memo.slate.score,source().memo.slate.score);

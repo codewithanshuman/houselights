@@ -4,6 +4,8 @@ Open `/judge.html`. The published brief shows its booking constraints, and a one
 
 The comparison table shows the Qloo-informed optimizer, the cheapest feasible lineup and, when published, the saved first-trial LLM selection. All costs and policy points are recomputed from the public inputs; stored model scores and explanations are not trusted. An unchanged case is a saved matched benchmark. Changing booking assumptions or withdrawing evidence produces a **fixed selection replay**: the original model choices remain fixed, constraint violations stay visible, and no new model response or matched-benchmark score delta is claimed. Reset restores the original comparison.
 
+The evidence timeline uses actual saved run-event order when a published source contains those events. Older published cases have only Qloo receipt completion timestamps; their receipts are ordered by those timestamps and the page explicitly says that model-step decisions and reasons cannot be reconstructed. A later receipt is shown separately, with the time gap disclosed. The optimizer summary describes the current deterministic replay, not an event inserted into the historical sequence.
+
 Public cases are separate immutable SQLite records built from an explicit field allowlist. They contain artist identities, planning inputs, normalized evidence and reduced receipts. Source text, contacts, reviewer links, model conversations, approval records and arbitrary snapshot fields are not copied. The projection must preserve the original selected lineup and score or publication is rejected. Original receipt digests identify the saved receipt; they do not claim to hash the reduced public projection.
 
 ## Prepare cases

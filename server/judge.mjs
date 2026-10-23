@@ -31,6 +31,13 @@ export function publicJudgeSnapshot(source) {
     args:Object.fromEntries(['options','option_type','signals','signal_location','entity_id','entity_ids','location','type'].filter(key=>r.args?.[key]!==undefined).map(key=>[key,Array.isArray(r.args[key])?strings(r.args[key]):text(r.args[key])])),
     evidence:{kind:text(r.evidence?.kind),rows:(Array.isArray(r.evidence?.rows)?r.evidence.rows:[]).slice(0,100).map(row=>({id:text(row.id),name:text(row.name),affinity:number(row.affinity),popularity:number(row.popularity)}))},
     projection:'Public query and row projection. Original digest identifies the saved source receipt, not this reduced object.'}));
+  const receiptIds=new Set(receipts.map(receipt=>receipt.id));
+  const eventTypes=new Set(['start','stage','receipt','plan','needs_input','memo']);
+  const trace=(Array.isArray(source.trace)?source.trace:[]).slice(0,100)
+    .filter(event=>event&&typeof event==='object'&&eventTypes.has(event.type)&&Number.isInteger(event.elapsedMs)&&event.elapsedMs>=0)
+    .map(event=>({type:event.type,elapsedMs:event.elapsedMs,
+      receiptId:receiptIds.has(event.receiptId)?event.receiptId:null,
+      feasible:event.type==='memo'?event.feasible===true:undefined}));
   const items=preserveRankProvenance(source).map(i=>({id:text(i.id),name:text(i.name),found:i.found===true,
     fit:number(i.fit),rank:number(i.rank),of:number(i.of),identityReceipt:text(i.identityReceipt),
     rankCoverage:i.rankCoverage?{complete:i.rankCoverage.complete===true,returned:number(i.rankCoverage.returned),requested:number(i.rankCoverage.requested)}:undefined,
@@ -40,7 +47,7 @@ export function publicJudgeSnapshot(source) {
     terms:{fee:number(i.terms?.fee),available:i.terms?.available===true,genre:text(i.terms?.genre,60)},
     culturalLinks:(i.culturalLinks??[]).slice(0,10).map(link=>({otherId:text(link.otherId),available:link.available===true,receiptId:text(link.receiptId),sharedTastes:strings(link.sharedTastes)}))}));
   const constraints=fields(original.constraints,['budget','slots','discoveryMin','maxPerGenre','riskTolerance','lockedIds','excludedIds','minimumAverageFit','festivalPolicy']);
-  const snapshot={mock:source.mock===true,receipts,memo:{currency:['GBP','USD','EUR','INR'].includes(source.memo.currency)?source.memo.currency:'GBP',
+  const snapshot={mock:source.mock===true,receipts,...(trace.length?{trace}:{}),memo:{currency:['GBP','USD','EUR','INR'].includes(source.memo.currency)?source.memo.currency:'GBP',
     exampleBookingTerms:true,input:{city:text(source.memo.input?.city,100),anchors:strings(source.memo.input?.anchors),anchorIds:strings(source.memo.input?.anchorIds)},items,constraints}};
   snapshot.memo.slate=optimizeSlate(items,constraints);
   if(!sameSelection(original.selectedIds,snapshot.memo.slate.selectedIds)||original.score!==snapshot.memo.slate.score)throw fault('This source uses unsupported decision fields. Its public projection would change the result.');

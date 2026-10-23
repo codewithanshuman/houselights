@@ -50,6 +50,7 @@ test('break-even ticket volume uses the same accounting ledger', () => {
   const c = config(); const fee = 2000000, n = breakEvenVolume(c, fee);
   if (n != null) { assert.ok(accountDraw(c, { ticketsSold: n, selectedFeesCents: fee }).profitCents >= 0);
     if (n > 0) assert.ok(accountDraw(c, { ticketsSold: n - 1, selectedFeesCents: fee }).profitCents < 0); }
+  assert.throws(() => breakEvenVolume(c, -1), /non-negative integer minor units/);
 });
 test('break-even finds the first profitable volume even when tier rounding reverses profit', () => {
   const c = config();

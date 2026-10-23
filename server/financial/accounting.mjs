@@ -54,9 +54,36 @@ export function accountDraw(config, { ticketsSold, selectedFeesCents, costMultip
 export function breakEvenVolume(config, selectedFeesCents, costMultiplier = 1) {
   // Largest-remainder ticket-tier allocation can move a sale from an expensive
   // tier into cheaper tiers as volume rises. Profit is therefore not monotonic.
-  // Check each integer volume against the same accounting used by simulation.
-  for (let sold = 0; sold <= config.sellableCapacity; sold++) {
-    if (accountDraw(config, { ticketsSold: sold, selectedFeesCents, costMultiplier }).profitCents >= 0) return sold;
+  // Each tier receives at most its proportional share plus one rounded ticket.
+  // This deliberately generous affine profit ceiling lets us skip intervals
+  // that cannot break even; surviving volumes use the exact accounting ledger.
+  const zero=accountDraw(config,{ticketsSold:0,selectedFeesCents,costMultiplier});
+  if(zero.profitCents>=0)return 0;
+  const capacity = config.sellableCapacity;
+  const ticketMultiplier = config.tax.mode === 'added' ? 1 + config.tax.rate : 1;
+  const weightedPrice = config.ticketTiers.reduce((total, tier) =>
+    total + tier.priceCents * tier.allocation / capacity, 0);
+  const roundingAllowance = config.ticketTiers.reduce((total, tier) => total + tier.priceCents, 0);
+  const promoterFees = config.fees.ownership === 'promoter';
+  const slope = weightedPrice * ticketMultiplier + config.ancillaryPerTicketCents -
+    config.perAttendeeCents - (promoterFees ? config.fees.perTicketCents : 0);
+  const intercept = roundingAllowance * ticketMultiplier + (config.tax.mode === 'added' ? 1 : 0) +
+    config.ancillaryFixedCents - selectedFeesCents -
+    checked(Math.round(sum(Object.values(config.costs)) * costMultiplier)) -
+    (promoterFees ? config.fees.fixedCents : 0);
+  const intervals = [[1, capacity]];
+  while (intervals.length) {
+    const [low, high] = intervals.pop();
+    // A small margin covers floating-point error in the deliberately loose bound.
+    if (intercept + slope * (slope >= 0 ? high : low) + 2 < 0) continue;
+    if (high - low < 16) {
+      for (let sold = low; sold <= high; sold++) {
+        if (accountDraw(config, { ticketsSold: sold, selectedFeesCents, costMultiplier }).profitCents >= 0) return sold;
+      }
+    } else {
+      const middle = Math.floor((low + high) / 2);
+      intervals.push([middle + 1, high], [low, middle]);
+    }
   }
   return null;
 }
