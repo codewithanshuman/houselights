@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const dataDir = mkdtempSync(join(tmpdir(), 'houselights-financial-'));
@@ -32,7 +32,7 @@ async function finish(id) {
 test.after(async () => {
   await new Promise(done => server.close(done)); db.close(); await delay(300);
   const target = resolve(dataDir), parent = resolve(tmpdir());
-  if (!target.startsWith(parent + '\\') || !target.includes('houselights-financial-')) throw new Error('Unsafe test cleanup target.');
+  if (dirname(target) !== parent || !basename(target).startsWith('houselights-financial-')) throw new Error('Unsafe test cleanup target.');
   rmSync(target, { recursive: true, force: true });
 });
 
