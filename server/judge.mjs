@@ -20,6 +20,9 @@ const sameSelection=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b]
 export function publicJudgeSnapshot(source) {
   if(source?.memo?.exampleBookingTerms!==true&&source?.input?.exampleBookingTerms!==true)throw fault('Judge cases require explicitly illustrative booking terms.');
   if(!Array.isArray(source.memo.items)||source.memo.items.length<2||source.memo.items.length>12)throw fault('Choose a saved pool of 2–12 candidates.');
+  if(source.memo.items.some(item=>!item||typeof item!=='object'||
+    (item.culturalLinks!=null&&(!Array.isArray(item.culturalLinks)||item.culturalLinks.some(link=>!link||typeof link!=='object'||Array.isArray(link))))))
+    throw fault('The saved case contains malformed cultural links.');
   const original=optimizeSlate(source.memo.items,source.memo.constraints);
   if(original.status==='invalid')throw fault('Resolve invalid source constraints first.');
   const receipts=(source.receipts??[]).slice(0,250).map(r=>({id:text(r.id),tool:text(r.tool),status:text(r.status,30),
@@ -111,15 +114,24 @@ export function judgeExperiment(record,raw={},options={}) {
   snapshot.memo.constraints=constraints;snapshot.memo.slate=optimizeSlate(snapshot.memo.items,constraints);
   if(snapshot.memo.slate.status==='invalid')throw fault(snapshot.memo.slate.reasons.join(' '));
   const result=snapshot.memo.slate,proof=options.lightweight===true?null:buildDecisionProof(snapshot);
+  const matchedEvidenceWithdrawal=raw.qlooOff===true&&
+    JSON.stringify(constraints)===JSON.stringify(record.snapshot.memo.constraints)&&
+    snapshot.memo.items.every((item,index)=>JSON.stringify(item.terms)===JSON.stringify(record.snapshot.memo.items[index].terms))&&
+    !raw.cancelId&&!raw.unavailableId&&!raw.feeIncreaseId&&!raw.withdrawReceiptId;
   return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,qlooOff:raw.qlooOff===true,snapshot,proof,
     methods:proof?judgeMethods(snapshot,proof,record.snapshot):null,
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
+      matchedEvidenceWithdrawal,
       feeDelta:result.feasible&&baseline.feasible?Math.round((result.totalFee-baseline.totalFee)*100)/100:null,
       survivorIds:survivors,survivorsPreserved:result.feasible?survivors.every(id=>result.selectedIds.includes(id)):null,affectedIds,
       interpretation:'Exact optimization within the saved pool under the declared policy. Evidence withdrawal measures dependence, not causal value. No approval or booking is created.'}};
 }
 export function registerJudgeRoutes(app) {
-  const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){res.status(error.status??400).json({error:error.message});}};
+  const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
+    if(Number.isInteger(error?.status)&&error.status>=400&&error.status<500)return res.status(error.status).json({error:error.message});
+    console.error('Unexpected judge request failure:',error);
+    return res.status(500).json({error:'The request could not be completed.'});
+  }};
   app.get('/api/judge/cases',(_req,res)=>res.json({cases:listJudgeCases().map(r=>({id:r.id,title:r.title,city:r.snapshot.memo.input.city,synthetic:r.snapshot.mock,currency:r.snapshot.memo.currency,createdAt:r.createdAt}))}));
   app.post('/api/judge/cases',handle((req,res)=>{
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);

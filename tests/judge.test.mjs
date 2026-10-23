@@ -68,12 +68,27 @@ test('Qloo-off replay withdraws every linked receipt and keeps the same booking 
   const record=judge.publishJudgeCase(source(),'Fixture');
   const result=judge.judgeExperiment(record,{qlooOff:true});
   assert.equal(result.qlooOff,true);
+  assert.equal(result.comparison.matchedEvidenceWithdrawal,true);
   assert.equal(result.providerCalls,0);
   assert.equal(result.proof.status,'blocked');
   assert.deepEqual(result.snapshot.memo.constraints,record.snapshot.memo.constraints);
   assert.ok(result.snapshot.memo.items.every(item=>item.fit===null&&Object.values(item.evidence).every(value=>value===false)));
   assert.ok(result.snapshot.receipts.every(receipt=>receipt.status==='withdrawn'));
   assert.equal(record.snapshot.receipts[0].status,'ok');
+  assert.equal(judge.judgeExperiment(record,{qlooOff:true,budget:60}).comparison.matchedEvidenceWithdrawal,false);
+  assert.equal(judge.judgeExperiment(record,{qlooOff:true,withdrawReceiptId:record.snapshot.receipts[0].id}).comparison.matchedEvidenceWithdrawal,false);
+});
+test('judge publication rejects malformed optional links and unexpected route failures stay private',async()=>{
+  const malformed=source();malformed.memo.items[0].culturalLinks=[null];
+  assert.throws(()=>judge.publishJudgeCase(malformed,'Malformed'),/malformed cultural links/);
+  const id='a'.repeat(24);
+  db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,'{invalid-json');
+  const originalError=console.error;console.error=()=>{};
+  try{
+    const response=await realFetch(base+'/api/judge/cases/'+id);
+    assert.equal(response.status,500);
+    assert.deepEqual(await response.json(),{error:'The request could not be completed.'});
+  }finally{console.error=originalError;}
 });
 test('rejects injected scores, unknown IDs, unsupported budgets and non-illustrative publication',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture'),path='/api/judge/cases/'+record.id+'/experiment';
