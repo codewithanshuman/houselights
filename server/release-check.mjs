@@ -51,7 +51,9 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
         page.data.includes('id="load-twin"')&&page.data.includes('id="add-seed"'));
       if(path==='/financial.html')record('financial-risk-ui',page.data.includes('id="chart"')&&page.data.includes('id="frontier"')&&page.data.includes('id="stress"'));
-      if(path==='/proof-lab.html')record('qloo-proof-ui',page.data.includes('id="methods"')&&page.data.includes('id="signal-controls"')&&page.data.includes('id="receipts"'));
+      if(path==='/proof-lab.html')record('qloo-proof-ui',page.data.includes('id="methods"')&&page.data.includes('id="signal-controls"')&&page.data.includes('id="receipts"')&&page.data.includes('id="without-lineup"')&&page.data.includes('id="with-lineup"'));
+      if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#bf9b65d52eeff00e0e258917'));
+      if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const financialDemo=await request('/financial-demo.json');

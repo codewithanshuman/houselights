@@ -10,6 +10,23 @@ const artistNames = ids => ids.map(id => current?.recordNames?.[id] ?? id);
 const money = (value, currency) => value == null ? '—' : new Intl.NumberFormat('en', { style:'currency', currency: currency ?? 'GBP', maximumFractionDigits:0 }).format(value);
 const percent = value => value == null ? '—' : `${Math.round(value * 100)}%`;
 function tile(label, value, note) { const node=el('div','tile'); node.append(el('small','',label),el('strong','',value)); if(note)node.append(el('small','',note)); return node; }
+function renderHeadlineComparison() {
+  const r=current.report, full=r.methods.full_houselights, without=r.methods.qloo_ablated, difference=r.decisionDifference;
+  text($('without-lineup'),without.selectedIds.length?artistNames(without.selectedIds).join(' + '):'No feasible lineup');
+  text($('with-lineup'),full.selectedIds.length?artistNames(full.selectedIds).join(' + '):'No feasible lineup');
+  text($('without-feasibility'),`${without.feasible?'Meets':'Does not meet'} booking constraints · ${money(without.totalFee,r.brief.currency)} in planned fees`);
+  text($('with-feasibility'),`${full.feasible?'Meets':'Does not meet'} booking constraints · ${money(full.totalFee,r.brief.currency)} in planned fees`);
+  const removed=artistNames(difference.removedIds),added=artistNames(difference.addedIds);
+  text($('headline-change'),difference.changed?`Selection changed: ${removed.join(', ')||'none'} out; ${added.join(', ')||'none'} in.`:
+    'The selected artists did not change when Qloo evidence was withdrawn.');
+  const singleGroups=r.config.groups.filter((group,index)=>r.ablations.coalitions.find(row=>row.mask===(15^(1<<index)))?.difference.changed);
+  const receiptIds=[...new Set(difference.relevantReceipts.map(row=>row.receiptId))];
+  const signalNote=difference.changed?(singleGroups.length?`Removing ${singleGroups.map(group=>labels[group]).join(', ')} individually also changes the selection.`:
+    'No single signal withdrawal changed the selection alone; combined withdrawal did.'):
+    `Evidence confidence changed from ${difference.counterfactualConfidence} without Qloo to ${difference.fullConfidence} with Qloo.`;
+  text($('headline-evidence'),`${signalNote} ${receiptIds.length?`Associated saved receipts: ${receiptIds.slice(0,3).join(', ')}${receiptIds.length>3?` and ${receiptIds.length-3} more`:''}.`:
+    'No receipt is claimed to cause a selection change in this case.'}`);
+}
 function renderMethods() {
   const box = $('methods'); clear(box); const r=current.report;
   for (const [id,index,title] of methods) {
@@ -80,13 +97,14 @@ function render(){const r=current.report;current.recordNames=Object.fromEntries(
   const strip=$('status-strip');clear(strip);for(const value of [r.brief.synthetic?'SYNTHETIC EVIDENCE':'SAVED LIVE EVIDENCE',r.brief.illustrativeTerms?'ILLUSTRATIVE TERMS':'ORGANIZER TERMS',
     `${current.coverage.briefs} PUBLISHED BRIEFS`,`${current.coverage.distinctPools} DISTINCT POOLS`,`${current.review.completedReviewers??0} REVIEWERS COMPLETED`])strip.append(el('span','',value));
   text($('combination-count'),`${r.ablations.coalitions.length} / 16 combinations`);
-  renderMethods();renderSignalControls();renderSignal();renderContributions();renderEvaluation();renderAudit();
+  renderHeadlineComparison();renderMethods();renderSignalControls();renderSignal();renderContributions();renderEvaluation();renderAudit();
 }
 async function selectCase(id){text($('case-status'),'Loading locked report…');const response=await fetch(`/api/experiments/public/${encodeURIComponent(id)}`);if(!response.ok)throw new Error('Published case could not be loaded.');current=await response.json();current.coverage=window.proofCoverage;selectedMask=15;render();history.replaceState(null,'',`#${id}`);}
 async function init(){try{const response=await fetch('/api/experiments/public');if(!response.ok)throw new Error('Published case list unavailable.');const payload=await response.json();window.proofCoverage=payload.coverage;const select=$('case-select');clear(select);
     for(const item of payload.cases){const option=el('option','',`${item.title} · ${item.synthetic?'synthetic':'saved live'}`);option.value=item.id;select.append(option);}
     if(!payload.cases.length){text($('case-status'),'No published cases yet.');return;}
-    const requested=location.hash.slice(1),first=payload.cases.some(item=>item.id===requested)?requested:payload.cases[0].id;select.value=first;await selectCase(first);
+    const requested=location.hash.slice(1),guided=payload.cases.find(item=>item.id==='bf9b65d52eeff00e0e258917');
+    const first=payload.cases.some(item=>item.id===requested)?requested:(guided??payload.cases[0]).id;select.value=first;await selectCase(first);
     select.addEventListener('change',()=>selectCase(select.value).catch(error=>text($('case-status'),error.message)));
   }catch(error){text($('case-status'),error.message);}}
 $('download').addEventListener('click',()=>{if(!current)return;const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=el('a');a.href=url;a.download=`houselights-proof-${current.caseId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});

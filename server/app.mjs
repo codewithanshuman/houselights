@@ -41,6 +41,15 @@ const receiptOffset = (snapshot, prefix) => (snapshot?.receipts || []).reduce((m
   const match = String(receipt?.id || '').match(new RegExp(`^${prefix}(\\d+)$`));
   return match ? Math.max(max, Number(match[1])) : max;
 }, 0);
+export function classifyRequestError(error) {
+  const status = Number.isInteger(error?.status) && error.status >= 400 && error.status < 500 ? error.status : 500;
+  return { status, message: status === 500 ? 'The request could not be completed.' : error.message };
+}
+function sendProcessingError(res, error) {
+  const { status, message } = classifyRequestError(error);
+  if (status === 500) console.error('Unexpected HouseLights request failure:', error);
+  return res.status(status).json({ error: message });
+}
 
 function bookingInput(body) {
   const b = object(body) ? body : {};
@@ -108,7 +117,7 @@ export function createApp() {
       snapshot.decisionProof=buildDecisionProof(snapshot);
       const id=store.save(snapshot);store.retain(source.id);
       return res.status(201).json({id,proofStatus:snapshot.decisionProof.status});
-    }catch(error){return res.status(400).json({error:error.message});}
+    }catch(error){return sendProcessingError(res,error);}
   });
   app.post('/api/commercial-stress/:id', (req,res) => {
     const source=store.load(req.params.id);
@@ -145,7 +154,7 @@ export function createApp() {
     res.set('Cache-Control', 'no-store');
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
     try { return res.json(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) })); }
-    catch (error) { return res.status(400).json({ error: error.message }); }
+    catch (error) { return sendProcessingError(res,error); }
   });
   app.get('/api/dossier/:id/report', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -155,7 +164,7 @@ export function createApp() {
       res.set('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");
       res.set('Content-Disposition', `attachment; filename="houselights-${req.params.id.replace(/[^a-z0-9_-]/gi, '')}-report.html"`);
       return res.type('html').send(dossierHtml(buildDossier(snapshot, { investigationSource: store.load(snapshot.parentId) })));
-    } catch (error) { return res.status(400).type('text/plain').send(error.message); }
+    } catch (error) { const failure=classifyRequestError(error); return res.status(failure.status).type('text/plain').send(failure.message); }
   });
   app.post('/api/dossier/:id/ask', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -167,7 +176,7 @@ export function createApp() {
     const snapshot = store.load(req.params.id);
     if (!snapshot) return res.status(404).json({ error: 'Saved run not found.' });
     try { const approval = requirePlanningApproval(snapshot, req.body?.expectedDecisionRevision); return res.json({ ...buildBookingPacket(snapshot, req.body?.event), approval }); }
-    catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
+    catch (error) { return sendProcessingError(res,error); }
   });
   app.get('/api/tour-calendar/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -176,7 +185,7 @@ export function createApp() {
       res.set('Cache-Control', 'no-store');
       res.set('Content-Disposition', `attachment; filename="houselights-${req.params.id.replace(/[^a-z0-9_-]/gi, '')}-tour.ics"`);
       return res.type('text/calendar').send(tourCalendar(snapshot));
-    } catch (error) { return res.status(400).type('text/plain').send(error.message); }
+    } catch (error) { const failure=classifyRequestError(error); return res.status(failure.status).type('text/plain').send(failure.message); }
   });
   app.get('/api/pipeline/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -185,7 +194,7 @@ export function createApp() {
     try {
       const pipeline = pipelineStore.load(req.params.id) || pipelineStore.save(req.params.id, createPipeline(snapshot));
       return res.json(pipeline);
-    } catch (error) { return res.status(400).json({ error: error.message }); }
+    } catch (error) { return sendProcessingError(res,error); }
   });
   app.post('/api/pipeline/:id/events', (req, res) => {
     const snapshot = store.load(req.params.id);
@@ -208,7 +217,7 @@ export function createApp() {
     try {
       const pipeline = pipelineStore.load(req.params.id) || pipelineStore.save(req.params.id, createPipeline(snapshot));
       return res.json(buildCampaign(snapshot, pipeline));
-    } catch (error) { return res.status(400).json({ error: error.message }); }
+    } catch (error) { return sendProcessingError(res,error); }
   });
   app.post('/api/intelligence/:id', async (req, res) => {
     const source = store.load(req.params.id);
@@ -228,7 +237,7 @@ export function createApp() {
       const snapshot = { ...source, id: undefined, createdAt: undefined, parentId: source.id, intelligence, capacityResearch: undefined, venuePlan: undefined, localActivation: undefined, receipts: [...(source.receipts || []), ...run.receipts] };
       const id = store.save(snapshot);
       return res.status(201).json({ id, expectedCalls, workflowsUsed: run.used, snapshot: store.load(id) });
-    } catch (error) { return res.status(400).json({ error: error.message }); }
+    } catch (error) { return sendProcessingError(res,error); }
   });
   app.post('/api/venues/:id/:action', (req, res) => {
     if (!['qualify', 'capacity-review'].includes(req.params.action)) return res.status(404).json({ error: 'Unknown venue action.' });
@@ -260,7 +269,7 @@ export function createApp() {
         receipts: [...(source.receipts || []), ...run.receipts] };
       const id = store.save(snapshot);
       return res.status(201).json({ id, expectedCalls, workflowsUsed: run.used, snapshot: store.load(id) });
-    } catch (error) { return res.status(400).json({ error: error.message }); }
+    } catch (error) { return sendProcessingError(res,error); }
   });
   app.post('/api/optimize', (req, res) => {
     if (!Array.isArray(req.body?.items) || req.body.items.length > 20) return res.status(400).json({ error: 'Provide at most 20 candidates.' });
@@ -337,6 +346,10 @@ export function createApp() {
       if (!res.destroyed) emit({ type: 'error', text: 'The run could not complete. Review the last receipt and try again. No booking was made.' });
     } finally { clearInterval(heartbeat); res.end(); }
   });
-  app.use((error, _req, res, _next) => res.status(error.status === 413 ? 413 : 400).json({ error: error.status === 413 ? 'Request is too large.' : 'Invalid request body.' }));
+  app.use((error, _req, res, _next) => {
+    if (error.status === 413) return res.status(413).json({ error: 'Request is too large.' });
+    if (error.type === 'entity.parse.failed' || error.status === 400) return res.status(400).json({ error: 'Invalid request body.' });
+    return sendProcessingError(res, error);
+  });
   return app;
 }

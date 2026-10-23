@@ -10,6 +10,29 @@
   async function request(path,body){const response=await fetch(path,{...(body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw new Error(value.error??'Request failed.');return value;}
   const names=ids=>ids.map(id=>current.snapshot.memo.items.find(i=>i.id===id)?.name??id).join(' + ')||'No feasible lineup';
   const money=value=>value==null?'Unknown':new Intl.NumberFormat('en-GB',{style:'currency',currency:current.snapshot.memo.currency}).format(value);
+  function renderAgentTrace(){
+    const snapshot=current.snapshot,receipts=snapshot.receipts??[],brief=snapshot.memo.input??{};
+    const phases=[
+      ['Resolve the artists',['describe'],'Checked the identities of named artists before using their cultural evidence.'],
+      ['Explore the candidate space',['entity_tags','recommend'],'Used recorded tags and recommendations to inspect the available cultural neighborhood.'],
+      ['Compare audience fit',['rank'],'Ranked candidate artists against the saved audience anchors.'],
+      ['Check supporting context',['trends','where_popular','compare_audiences'],'Asked for momentum, local relevance and cross-artist observations.'],
+    ];
+    const question=`Which of these ${snapshot.memo.items.length} artists fit ${brief.anchors?.join(' and ')||'the saved audience'} in ${brief.city||'this market'}, within the booking constraints?`;
+    const steps=[`<li><span class="agent-step-number">01</span><div><strong>Saved research question</strong><p>${e(question)}</p><small>Derived from the published brief; this is not a quotation of hidden model reasoning.</small></div></li>`];
+    for(const [index,[title,tools,purpose]] of phases.entries()){
+      const used=receipts.filter(receipt=>tools.includes(receipt.tool));if(!used.length)continue;
+      const count=used.reduce((total,receipt)=>total+(receipt.evidence?.rows?.length??0),0);
+      const ids=used.map(receipt=>receipt.id).join(', ');
+      const outcome=`${used.length} recorded ${used.length===1?'call':'calls'} · ${used.filter(receipt=>receipt.status==='ok').length} marked successful · ${count} projected evidence ${count===1?'row':'rows'}`;
+      steps.push(`<li><span class="agent-step-number">0${index+2}</span><div><strong>${e(title)}</strong><p>${e(purpose)}</p><small>${e(outcome)} · <a href="#judge-receipts">Receipts ${e(ids)}</a></small></div></li>`);
+    }
+    const rankCalls=receipts.filter(receipt=>receipt.tool==='rank');
+    if(rankCalls.length>1)steps.push(`<li><span class="agent-step-number">↳</span><div><strong>Additional check recorded</strong><p>A later ranking call appears after the first. The saved projection does not establish why it was requested.</p><small>${e(rankCalls.slice(1).map(receipt=>receipt.id).join(', '))}</small></div></li>`);
+    const slate=snapshot.memo.slate;
+    steps.push(`<li><span class="agent-step-number">✓</span><div><strong>Apply the booking constraints</strong><p>The exact optimizer checked ${e(slate.checkedCount)} lineups; ${e(slate.feasibleCount)} met every hard constraint. ${e(slate.feasible?'The selected lineup is feasible.':'No feasible lineup was found.')}</p><small>Fee and availability are illustrative booking inputs, not Qloo facts.</small></div></li>`);
+    $('judge-agent-trace').innerHTML=`<ol class="agent-trace-list">${steps.join('')}</ol>`;
+  }
   function methodComparison(){
     const methods=result.methods??{qloo:result.proof.baseline,constraintOnly:result.proof.constraintOnly,
       llm:{available:false,status:'unavailable',interpretation:'No saved first-trial LLM control is published for this case.'}};
@@ -41,19 +64,21 @@
       $('judge-withdraw').innerHTML='<option value="">Keep all evidence</option>'+record.snapshot.receipts.map(r=>`<option value="${e(r.id)}">${e(r.id)} · ${e(r.tool)} · ${e(r.status)}</option>`).join('');
       $('judge-candidates').innerHTML=`<div class="table-scroll"><table class="gm-table"><thead><tr><th>Artist</th><th>Illustrative fee</th><th>Saved rank (before changes)</th><th>Lock</th><th>Exclude</th></tr></thead><tbody>${memo.items.map(i=>`<tr><td>${e(i.name)}</td><td>${e(money(i.terms.fee))}</td><td>${i.evidence.rank?e(i.rank??i.fit):'Unknown'}</td><td><input type="checkbox" data-judge-lock="${e(i.id)}" aria-label="Lock ${e(i.name)}"></td><td><input type="checkbox" data-judge-exclude="${e(i.id)}" aria-label="Exclude ${e(i.name)}"></td></tr>`).join('')}</tbody></table></div>`;
       $('judge-receipts').innerHTML=record.snapshot.receipts.map(r=>`<details><summary>${e(r.id)} · ${e(r.tool)} · ${e(r.status)}</summary><pre>${e(JSON.stringify(r,null,2))}</pre></details>`).join('');
+      renderAgentTrace();$('judge-proof-link').href='/proof-lab.html#'+encodeURIComponent(record.id);
       reset();$('judge-workspace').hidden=false;history.replaceState(null,'','#'+id);say('Ready. Each experiment uses the same saved pool.');
     }catch(error){if(sequence===loadSequence)say(error.message);}
   }
-  async function experiment(){
+  async function experiment(scrollToProof=false){
     if(busy||!current)return;busy=true;const id=current.id;
     $('judge-case').disabled=true;document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select').forEach(b=>b.disabled=true);say('Enumerating feasible lineups and checking evidence dependencies…');
     try{
       const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
       result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
+      if(scrollToProof)$('judge-proof-title').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
     }catch(error){say(error.message);}finally{busy=false;$('judge-case').disabled=false;document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select').forEach(b=>b.disabled=false);}
   }
   $('judge-form').onsubmit=event=>{event.preventDefault();void experiment();};$('judge-reset').onclick=()=>{reset();say('Published baseline restored.');};
-  $('judge-tight-budget').onclick=()=>{reset();$('judge-budget').value=Math.floor(current.snapshot.memo.slate.totalFee*.9);void experiment();};
+  $('judge-tight-budget').onclick=()=>{reset();$('judge-budget').value=Math.floor(current.snapshot.memo.slate.totalFee*.9);void experiment(true);};
   $('judge-rank-challenge').onclick=()=>{reset();const id=current.snapshot.memo.items.flatMap(i=>i.evidenceReceipts.rank??[]).find(id=>current.snapshot.receipts.some(r=>r.id===id));if(!id){say('No linked rank receipt is available in this case.');return;}$('judge-withdraw').value=id;void experiment();};
   $('judge-cancellation').onclick=()=>{reset();const id=current.snapshot.memo.slate.selectedIds[0];if(!id){say('The baseline has no feasible selected artist to cancel.');return;}$('judge-cancel').value=id;void experiment();};
   $('judge-export').onclick=()=>{if(!result)return;const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download=`houselights-judge-${current.id}.json`;link.click();URL.revokeObjectURL(url);};
@@ -62,7 +87,8 @@
     $('judge-live-count').textContent=`${cases.filter(c=>!c.synthetic).length} saved live-Qloo cases · ${cases.filter(c=>c.synthetic).length} synthetic cases`;
     $('judge-case').innerHTML=cases.map(c=>`<option value="${e(c.id)}">${e(c.title)}${c.synthetic?' · Synthetic':''}</option>`).join('');
     if(!cases.length){say('No public cases have been prepared on this server yet.');return;}
-    const id=location.hash.slice(1);$('judge-case').value=cases.some(c=>c.id===id)?id:cases[0].id;void load($('judge-case').value);
+    const id=location.hash.slice(1),guided=cases.find(c=>c.id==='bf9b65d52eeff00e0e258917')??cases.find(c=>c.city?.toLowerCase()==='new york');
+    $('judge-case').value=cases.some(c=>c.id===id)?id:(guided??cases[0]).id;void load($('judge-case').value);
   }).catch(error=>say(error.message));
   request('/api/evidence/reviews').then(report=>$('judge-review-count').textContent=`${report.completedReviewers} independent reviews recorded`).catch(()=>$('judge-review-count').textContent='Review status unavailable');
   fetch('/shocks-summary.json').then(response=>response.json()).then(data=>{

@@ -1,6 +1,6 @@
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -10,7 +10,7 @@ process.env.DATA_DIR = dir;
 process.env.ORGANIZER_TOKEN = 'qloo-proof-integration-token-1234567890';
 process.env.PUBLIC_DEMO = '1';
 const [{ createApp }, store, { db }, { optimizeSlate }, { benchmarkFestival },
-  { lockExperiment }, { runExperiment }, { publicJudgeSnapshot }] = await Promise.all([
+  { lockExperiment }, { runExperiment }, { publicJudgeSnapshot, judgeExperiment }] = await Promise.all([
   import('../server/app.mjs'), import('../server/store.mjs'), import('../server/database.mjs'),
   import('../server/optimizer.mjs'), import('../server/gm.mjs'),
   import('../server/experiments/experiment-schema.mjs'), import('../server/experiments/orchestrator.mjs'),
@@ -158,4 +158,19 @@ test('twelve-candidate five-slot synthetic stress case enumerates every coalitio
   assert.equal(report.methods.full_houselights.feasible, true);
   assert.equal(report.brief.synthetic, true);
   assert.ok(report.ablations.coalitions.every(row => row.selectedIds.length === 5 || !row.feasible));
+});
+test('the published New York challenge changes to another feasible slate and has a genuine Qloo counterfactual', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../deploy/judge-cases.json', import.meta.url), 'utf8'));
+  const published = manifest.cases.find(row => row.snapshot.memo.input.city === 'New York');
+  assert.ok(published);
+  const snapshot = published.snapshot;
+  const budget = Math.floor(snapshot.memo.slate.totalFee * .9);
+  const challenge = judgeExperiment({ id: 'saved-new-york', snapshot, terms: 'Illustrative booking terms' }, { budget });
+  assert.equal(challenge.providerCalls, 0);
+  assert.equal(challenge.snapshot.memo.slate.feasible, true);
+  assert.equal(challenge.comparison.changed, true);
+  const proof = runExperiment(lockExperiment({ ...snapshot, id: 'saved-new-york' }, { evidenceAsOf: asOf }));
+  assert.equal(proof.methods.full_houselights.feasible, true);
+  assert.equal(proof.methods.qloo_ablated.feasible, true);
+  assert.equal(proof.decisionDifference.changed, true);
 });

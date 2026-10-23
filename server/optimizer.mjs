@@ -116,7 +116,7 @@ function normalizeCandidate(candidate, excludedIds) {
   };
 }
 
-function evaluate(selected, constraints, pool = []) {
+function evaluate(selected, constraints, pool = [], recoveryCache = null) {
   const ids = selected.map(item => item.id);
   const idSet = new Set(ids);
   const count = selected.length;
@@ -170,7 +170,17 @@ function evaluate(selected, constraints, pool = []) {
       const recoveryConstraints = { ...constraints, festivalPolicy: false,
         lockedIds: unique([...constraints.lockedIds.filter(id => id !== canceled.id), ...survivors.map(item => item.id)]),
         excludedIds: unique([...constraints.excludedIds, canceled.id]) };
-      const replacements = pool.filter(item => !ids.includes(item.id) && evaluate([...survivors, item], recoveryConstraints).feasible).map(item => item.id);
+      const replacements = pool.filter(item => {
+        if (idSet.has(item.id)) return false;
+        const key = `${canceled.id}\u0000${[...survivors.map(part => part.id), item.id].sort().join('\u0000')}`;
+        if (recoveryCache?.has(key)) return recoveryCache.get(key);
+        const feasible = evaluate([...survivors, item], recoveryConstraints).feasible;
+        if (recoveryCache) {
+          if (recoveryCache.size >= 50000) recoveryCache.clear();
+          recoveryCache.set(key, feasible);
+        }
+        return feasible;
+      }).map(item => item.id);
       return { canceledId: canceled.id, replacementIds: replacements };
     }) : [];
     festival = { pairCount: pairs.length, supportedPairs: supported, sharedThemePairs: bridged, themes: [...themes].sort(), pairs, recovery,
@@ -243,8 +253,9 @@ export function enumerateSlates(candidates, rawConstraints) {
   const validation = optimizeSlate(candidates, rawConstraints);
   if (validation.status === 'invalid') throw new Error(validation.reasons.join(' '));
   const pool = candidates.map(item => normalizeCandidate(item, validation.constraints.excludedIds)), rows = [];
+  const recoveryCache = validation.constraints.festivalPolicy ? new Map() : null;
   eachCombination(pool, validation.constraints.slots, selected => {
-    const result = evaluate(selected, validation.constraints, pool);
+    const result = evaluate(selected, validation.constraints, pool, recoveryCache);
     rows.push({ ...publicSlate(result), rawScore: result.rawScore, rawBreakdown: result.rawBreakdown, violationCodes: unique(result.violations.map(item => item.code)) });
   });
   return rows;
@@ -262,6 +273,15 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     else inputIds.push(item.id);
   }
   if (unique(inputIds).length !== inputIds.length) errors.push('Candidate IDs must be unique.');
+  if (constraints.festivalPolicy) for (const item of input) {
+    if (item?.culturalLinks == null) continue;
+    if (!Array.isArray(item.culturalLinks) || item.culturalLinks.some(link => !link || typeof link !== 'object' || Array.isArray(link) ||
+      typeof link.otherId !== 'string' || !link.otherId.trim() ||
+      (link.available != null && typeof link.available !== 'boolean') ||
+      (link.receiptId != null && (typeof link.receiptId !== 'string' || !link.receiptId.trim())) ||
+      (link.sharedTastes != null && (!Array.isArray(link.sharedTastes) || link.sharedTastes.some(tag => typeof tag !== 'string')))))
+      errors.push(`Malformed culturalLinks for candidate ${item?.id ?? 'unknown'}.`);
+  }
   for (const id of [...constraints.lockedIds, ...constraints.excludedIds]) if (!inputIds.includes(id)) errors.push(`Constraint references unknown candidate ${id}.`);
   const base = {
     version: '1.0', method: 'exact-enumeration', status: 'invalid', feasible: false,
@@ -281,6 +301,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     missingEvidence: 'No fabricated neutral similarities. Unknown pairs are missing; theme counts are a policy proxy, not audience size.' };
 
   const normalized = input.map(item => normalizeCandidate(item, constraints.excludedIds));
+  const recoveryCache = constraints.festivalPolicy ? new Map() : null;
   base.candidateAssessments = normalized.map(item => ({
     id: item.id, name: item.name, eligible: item.exclusionReasons.length === 0,
     discovery: item.discovery, fee: item.feeCents == null ? null : money(item.feeCents),
@@ -291,7 +312,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   // Evaluate all exact-size subsets, including unbookable ones, so infeasibility
   // diagnostics can identify which constraints actually exclude a combination.
   const evaluated = [];
-  eachCombination(normalized, constraints.slots, selected => evaluated.push(evaluate(selected, constraints, normalized)));
+  eachCombination(normalized, constraints.slots, selected => evaluated.push(evaluate(selected, constraints, normalized, recoveryCache)));
   base.checkedCount = evaluated.length;
   const feasible = evaluated.filter(result => result.feasible).sort(compareResults);
   base.feasibleCount = feasible.length;
@@ -311,7 +332,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
     ...constraints.lockedIds,
     ...normalized.filter(item => item.exclusionReasons.length === 0).map(item => item.id),
   ]).slice(0, constraints.slots);
-  const baseline = evaluate(baselineIds.map(id => normalized.find(item => item.id === id)), constraints, normalized);
+  const baseline = evaluate(baselineIds.map(id => normalized.find(item => item.id === id)), constraints, normalized, recoveryCache);
   base.baseline = { label: 'First eligible input-order slate, with locks; not a popularity ranking', ...publicSlate(baseline), scoreDelta: null };
 
   if (!feasible.length) {
@@ -358,7 +379,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   const alternatives = [];
   for (const removed of selected) for (const added of normalized.filter(item => !winner.selectedIds.includes(item.id))) {
     const swapped = normalized.filter(item => (winner.selectedIds.includes(item.id) && item.id !== removed.id) || item.id === added.id);
-    const result = evaluate(swapped, constraints, normalized);
+    const result = evaluate(swapped, constraints, normalized, recoveryCache);
     const scoreDelta = round(result.rawScore - winner.rawScore);
     const costDelta = result.totalFee == null ? null : money(toCents(result.totalFee) - toCents(winner.totalFee));
     alternatives.push({

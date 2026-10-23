@@ -28,7 +28,7 @@
         <p class="judge-eyebrow"><span aria-hidden="true"></span> LIVE ENTERTAINMENT. CONSIDERED.</p>
         <h1>Great nights.<br><em>Defensible decisions.</em></h1>
         <p class="judge-intro">Challenge the lineup. Change a budget, remove evidence, or cancel an artist. Watch the exact optimizer explain what changes.</p>
-        <a class="judge-hero-link" href="#judge-case" data-judge-scroll>Put a decision to the test <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a>
+        <a class="judge-hero-link" href="#judge-case" data-judge-scroll>Try the booking challenge <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a>
       </div>
       <div class="judge-hero-art" aria-hidden="true">
         <span class="judge-art-orbit"></span>
@@ -47,7 +47,7 @@
       <li><span>03</span><div><strong>Follow the receipts</strong><p>Compare outcomes. Inspect the proof.</p></div></li>
     </ol>
     <section class="judge-status-strip" aria-label="Evidence status"><span id="judge-live-count">Loading saved cases…</span><span id="judge-review-count">Independent reviews: loading…</span><a href="/proof-lab.html">Open Qloo Proof Lab</a><a href="/evidence.html">Open the evidence page</a></section>
-    <section class="judge-break-panel" aria-labelledby="judge-break-title"><div><p class="judge-eyebrow">THE 60-SECOND PATH</p><h2 id="judge-break-title">Break a decision. See what survives.</h2><p>Choose a saved case, tighten its budget, turn Qloo evidence off, and inspect the receipts. The experiment makes no new Qloo or LLM calls.</p><a class="judge-hero-link" href="#judge-case" data-judge-scroll>Start the guided path <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a></div><div id="judge-shock-teaser" aria-live="polite">Loading recorded shock study…</div></section>
+    <section class="judge-break-panel" aria-labelledby="judge-break-title"><div><p class="judge-eyebrow">THE 60-SECOND PATH</p><h2 id="judge-break-title">Can this concert survive a budget cut?</h2><p>Review the saved New York lineup, tighten its budget, then follow the exact optimizer and recorded Qloo receipts. This replay makes no new provider calls.</p><a class="judge-hero-link" href="#judge-case" data-judge-scroll>Start the guided path <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a></div><div id="judge-shock-teaser" aria-live="polite">Loading recorded shock study…</div></section>
     <section class="judge-case-picker" aria-label="Choose a published example">
       <div class="judge-case-input">
         <label for="judge-case">Your starting point</label>
@@ -65,19 +65,15 @@
         <h2 id="judge-title"></h2>
         <p id="judge-source"></p>
         <div id="judge-baseline"></div>
+        <button class="button primary judge-budget-action" type="button" id="judge-tight-budget">Cut budget below this lineup’s cost <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
         <div class="judge-baseline-footnote"><span class="judge-note-mark" aria-hidden="true">↳</span><p id="judge-terms"></p></div>
       </section>
       <form id="judge-form" class="panel judge-experiment-panel">
         <p class="judge-section-label"><span>02</span> YOUR EXPERIMENT</p>
         <h2>What if things change?</h2>
         <p class="judge-section-intro">Set your constraints. Every change gets the same exact search.</p>
-        <div class="gm-fields">
-          <label>Budget <input id="judge-budget" type="number" min="0" max="1000000000" step="0.01" required></label>
-          <label>Cancel a baseline artist <select id="judge-cancel"></select></label>
-          <label>Withdraw a saved receipt <select id="judge-withdraw"></select></label>
-        </div>
-        <label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label>
-        <div id="judge-candidates"></div>
+        <div class="gm-fields judge-core-field"><label>Budget <input id="judge-budget" type="number" min="0" max="1000000000" step="0.01" required></label></div>
+        <details class="judge-advanced"><summary>More ways to challenge the decision</summary><div class="gm-fields"><label>Cancel a baseline artist <select id="judge-cancel"></select></label><label>Withdraw a saved receipt <select id="judge-withdraw"></select></label></div><label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label><div id="judge-candidates"></div></details>
         <div class="judge-form-actions">
           <button class="button primary" type="submit">Recalculate and prove <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
           <button class="button subtle" id="judge-reset" type="button">Reset assumptions</button>
@@ -86,18 +82,19 @@
         <details class="judge-guided-challenges">
           <summary>Need a starting point? Try a guided challenge</summary>
           <div class="judge-challenge-actions">
-            <button class="button subtle" type="button" id="judge-tight-budget">Test a tighter budget</button>
             <button class="button subtle" type="button" id="judge-rank-challenge">Remove ranking evidence</button>
             <button class="button subtle" type="button" id="judge-cancellation">Rehearse a cancellation</button>
           </div>
         </details>
       </form>
+      <section class="panel judge-agent-panel" aria-labelledby="judge-agent-title"><p class="judge-section-label"><span>↳</span> RECORDED RESEARCH PATH</p><h2 id="judge-agent-title">What the agent investigated</h2><p class="judge-section-intro">A readable replay of the saved Qloo calls and optimizer result. Tool purposes are explanations of recorded actions, not private model reasoning or a live run.</p><div id="judge-agent-trace"></div></section>
       <section class="panel judge-proof-panel" aria-live="polite" aria-labelledby="judge-proof-title">
         <div class="judge-section-heading">
           <div><p class="judge-section-label"><span>03</span> THE REASONING, REVEALED</p><h2 id="judge-proof-title">Decision and proof</h2></div>
           <button class="button subtle" type="button" id="judge-export">Export this experiment <span class="ui-icon" data-icon="download" aria-hidden="true"></span></button>
         </div>
         <div id="judge-result"></div>
+        <p class="judge-proof-next"><a id="judge-proof-link" href="/proof-lab.html">See the original Qloo-on / Qloo-off comparison and its receipts ↗</a></p>
       </section>
       <section class="panel judge-receipts-panel" aria-labelledby="judge-receipts-title">
         <div class="judge-section-heading">

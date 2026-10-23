@@ -52,15 +52,11 @@ export function accountDraw(config, { ticketsSold, selectedFeesCents, costMultip
 }
 
 export function breakEvenVolume(config, selectedFeesCents, costMultiplier = 1) {
-  // Exact search uses the same integer accounting as every draw, including
-  // tier rounding, taxes, promoter fees and variable costs.
-  let low = 0, high = config.sellableCapacity;
-  if (accountDraw(config, { ticketsSold: 0, selectedFeesCents, costMultiplier }).profitCents >= 0) return 0;
-  if (accountDraw(config, { ticketsSold: high, selectedFeesCents, costMultiplier }).profitCents < 0) return null;
-  while (low < high) {
-    const middle = Math.floor((low + high) / 2);
-    if (accountDraw(config, { ticketsSold: middle, selectedFeesCents, costMultiplier }).profitCents >= 0) high = middle;
-    else low = middle + 1;
+  // Largest-remainder ticket-tier allocation can move a sale from an expensive
+  // tier into cheaper tiers as volume rises. Profit is therefore not monotonic.
+  // Check each integer volume against the same accounting used by simulation.
+  for (let sold = 0; sold <= config.sellableCapacity; sold++) {
+    if (accountDraw(config, { ticketsSold: sold, selectedFeesCents, costMultiplier }).profitCents >= 0) return sold;
   }
-  return low;
+  return null;
 }

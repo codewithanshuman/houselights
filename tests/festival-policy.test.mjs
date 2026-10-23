@@ -37,6 +37,17 @@ test('missing pairs are penalized and never become invented similarity', () => {
   assert.equal(result.objectiveBreakdown.pairEvidencePenalty, -6);
   assert.equal(evaluateSelection(items, result.constraints, result.selectedIds).score, result.score);
 });
+test('festival evaluation rejects malformed cultural links before reading them', () => {
+  for (const malformed of [null, 'other artist', {}, { otherId: 'b', sharedTastes: 'jazz' }]) {
+    const items = pool();
+    items[0].culturalLinks = [malformed];
+    const result = optimizeSlate(items, { ...constraints, festivalPolicy: true });
+    assert.equal(result.status, 'invalid');
+    assert.match(result.reasons.join(' '), /Malformed culturalLinks/);
+  }
+  const items = pool(); items[0].culturalLinks = { otherId: 'b' };
+  assert.equal(optimizeSlate(items, { ...constraints, festivalPolicy: true }).status, 'invalid');
+});
 test('cancellation recovery cannot use excluded or unavailable backups and preserves survivor locks', async () => {
   const items = pool();
   items[3].terms.available = false;

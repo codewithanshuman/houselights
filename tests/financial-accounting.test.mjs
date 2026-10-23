@@ -51,3 +51,22 @@ test('break-even ticket volume uses the same accounting ledger', () => {
   if (n != null) { assert.ok(accountDraw(c, { ticketsSold: n, selectedFeesCents: fee }).profitCents >= 0);
     if (n > 0) assert.ok(accountDraw(c, { ticketsSold: n - 1, selectedFeesCents: fee }).profitCents < 0); }
 });
+test('break-even finds the first profitable volume even when tier rounding reverses profit', () => {
+  const c = config();
+  c.sellableCapacity = 9;
+  c.ticketTiers = [
+    { name: 'High', allocation: 1, priceCents: 10000 },
+    { name: 'Low A', allocation: 4, priceCents: 1 },
+    { name: 'Low B', allocation: 4, priceCents: 1 },
+  ];
+  c.costs = { venue: 0, production: 0, marketing: 0, staffing: 0, insurance: 0, other: 0 };
+  c.perAttendeeCents = 0;
+  c.ancillaryPerTicketCents = 0;
+  c.ancillaryFixedCents = 0;
+  c.tax = { mode: 'none', rate: 0 };
+  c.fees = { ownership: 'none', fixedCents: 0, perTicketCents: 0, percent: 0 };
+  const fee = 9000;
+  assert.ok(accountDraw(c, { ticketsSold: 3, selectedFeesCents: fee }).profitCents >= 0);
+  assert.ok(accountDraw(c, { ticketsSold: 4, selectedFeesCents: fee }).profitCents < 0);
+  assert.equal(breakEvenVolume(c, fee), 3);
+});

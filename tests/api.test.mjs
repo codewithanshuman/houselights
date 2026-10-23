@@ -8,7 +8,7 @@ process.env.QLOO_MODE = 'mock';
 process.env.LLM_MODE = 'off';
 const testDirectory = mkdtempSync(join(tmpdir(), 'houselights-api-'));
 process.env.DATA_DIR = testDirectory;
-const { createApp } = await import('../server/app.mjs');
+const { createApp, classifyRequestError } = await import('../server/app.mjs');
 const apiStore = await import('../server/store.mjs');
 const { db } = await import('../server/database.mjs');
 // Cases use independent request budgets; quota enforcement has dedicated production tests.
@@ -30,6 +30,13 @@ test('health and asset endpoints expose mode without credentials', async () => {
   const reviews=await (await fetch(url+'/api/evidence/reviews')).json();
   assert.equal(reviews.completedReviewers,0);
   assert.equal((await fetch(url + '/api/memo/not-found')).status, 404);
+});
+test('request validation stays 4xx while unexpected failures are 500 without leaking details', async () => {
+  const invalid = await fetch(url + '/api/optimize', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{bad-json' });
+  assert.equal(invalid.status, 400);
+  assert.deepEqual(await invalid.json(), { error: 'Invalid request body.' });
+  assert.deepEqual(classifyRequestError(Object.assign(new Error('bad choice'), { status: 422 })), { status: 422, message: 'bad choice' });
+  assert.deepEqual(classifyRequestError(new Error('database credentials or private stack details')), { status: 500, message: 'The request could not be completed.' });
 });
 
 test('activation and tour calendar APIs persist an evidence-linked child snapshot', async () => {
