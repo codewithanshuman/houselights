@@ -9,7 +9,7 @@ const {createResearchRun,getResearchRun,researchEvents}=await import('../server/
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const file=join(process.env.DATA_DIR,'container-drill.json'),mode=process.argv[2];
 if(mode==='prepare'){
-  const cases=listJudgeCases();assert.equal(cases.length,4);
+  const cases=listJudgeCases();assert.ok(cases.length>0,'A seeded public case is required for the restart drill.');
   const sourceId=store.save({...cases[0].snapshot,containerDrill:true});
   const requestKey=randomUUID(),input={sourceId,kind:'proof',options:{}};
   const submitted=createResearchRun(input,requestKey);
@@ -22,7 +22,7 @@ if(mode==='prepare'){
   assert.equal(run.status,'completed');assert.ok(run.resultId);assert.equal(run.expectedCalls,0);
   writeFileSync(file,JSON.stringify({caseDigest:digest(cases),sourceId,sourceDigest:digest(store.load(sourceId)),input,requestKey,
     runId:run.id,resultId:run.resultId,resultDigest:digest(store.load(run.resultId)),eventDigest:digest(researchEvents(run.id).events)}),{flag:'wx'});
-  console.log(JSON.stringify({workerCompleted:true,providerCalls:0,checkpointWritten:true}));
+  console.log(JSON.stringify({workerCompleted:true,providerCalls:0,checkpointWritten:true,cases:cases.length}));
 }else if(mode==='verify'){
   const before=JSON.parse(readFileSync(file,'utf8'));
   assert.equal(digest(listJudgeCases()),before.caseDigest);
@@ -32,5 +32,5 @@ if(mode==='prepare'){
   assert.equal(digest(researchEvents(before.runId).events),before.eventDigest);
   const retry=createResearchRun(before.input,before.requestKey);
   assert.equal(retry.reused,true);assert.equal(retry.run.id,before.runId);
-  console.log(JSON.stringify({restartPersistence:true,idempotentReconnect:true,cases:4,providerCalls:0}));
+  console.log(JSON.stringify({restartPersistence:true,idempotentReconnect:true,cases:listJudgeCases().length,providerCalls:0}));
 }else throw new Error('Usage: node scripts/container-drill.mjs prepare|verify');
