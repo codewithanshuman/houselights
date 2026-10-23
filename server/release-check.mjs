@@ -33,7 +33,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const access=await request('/api/access');
     record('anonymous-is-read-only',access.status===200&&access.data.protected===true&&access.data.editable===false);
     if(!checks.find(c=>c.name==='anonymous-is-read-only').passed)throw new Error('Access protection failed; further checks stopped.');
-    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan','/api/demand/twins','/api/financial/jobs']){
+    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan','/api/demand/twins','/api/financial/jobs','/api/experiments','/api/experiments/discovery']){
       const response=await request(path,{body:{}});
       record('protected-write:'+path,response.status===401);
     }
@@ -44,12 +44,14 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('protected-twin-validation',(await request('/api/demand/twin-validation')).status===401);
     record('protected-financial-validation',(await request('/api/financial/validation')).status===401);
     record('protected-financial-job',(await request('/api/financial/jobs/000000000000000000000000')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html']){
+    record('protected-proof-experiment',(await request('/api/experiments/000000000000000000000000')).status===401);
+    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
       if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
         page.data.includes('id="load-twin"')&&page.data.includes('id="add-seed"'));
       if(path==='/financial.html')record('financial-risk-ui',page.data.includes('id="chart"')&&page.data.includes('id="frontier"')&&page.data.includes('id="stress"'));
+      if(path==='/proof-lab.html')record('qloo-proof-ui',page.data.includes('id="methods"')&&page.data.includes('id="signal-controls"')&&page.data.includes('id="receipts"'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const financialDemo=await request('/financial-demo.json');
@@ -64,6 +66,13 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('catalog-not-cached',catalog.cache.includes('no-store'));
     record('published-cases',catalog.status===200&&Array.isArray(catalog.data.cases)&&catalog.data.cases.length>0);
     if(!Array.isArray(catalog.data.cases))throw new Error('No valid public case catalog.');
+    const proofCatalog=await request('/api/experiments/public');
+    record('published-proof-suite',proofCatalog.status===200&&proofCatalog.data.cases?.length>0&&proofCatalog.data.coverage?.distinctPools>0);
+    if(proofCatalog.data.cases?.length){
+      const proof=await request('/api/experiments/public/'+proofCatalog.data.cases[0].id);
+      record('full-signal-enumeration',proof.status===200&&proof.data.report?.ablations?.coalitions?.length===16&&
+        proof.data.report?.integrity?.noNewProviderCalls===true&&proof.data.report?.reportDigest?.startsWith('sha256:'));
+    }
     // Three calculations per case, four cases maximum: below the 20/IP/min cap.
     for(const item of catalog.data.cases.slice(0,4)){
       const path='/api/judge/cases/'+item.id,baseline=await request(path),b=baseline.data;

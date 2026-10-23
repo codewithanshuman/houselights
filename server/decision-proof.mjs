@@ -35,7 +35,7 @@ export function evidenceDependencies(snapshot, item) {
   }));
 }
 
-function stripEvidence(items, links, kind, receiptId) {
+export function stripEvidence(items, links, kind, receiptId) {
   return items.map(item => {
     const copy = structuredClone(item);
     for (const field of classes) {

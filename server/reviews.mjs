@@ -63,8 +63,8 @@ export function submitBallot(studyId, token, raw) {
     let ratings=null;
     if(item.ratings!=null){
       ratings={};
-      for(const side of ['a','b']){ratings[side]={};for(const criterion of ['culturalFit','programBreadth','bookingPracticality']){
-        const value=item.ratings?.[side]?.[criterion];
+      for(const side of ['a','b']){ratings[side]={};for(const criterion of ['culturalFit','programBreadth','bookingPracticality','expectedAudienceAppeal']){
+        const value=item.ratings?.[side]?.[criterion]??null;
         if(value!==null&&(!Number.isInteger(value)||value<1||value>5))throw new Error('Each rubric score must be 1–5 or null for insufficient evidence.');ratings[side][criterion]=value;
       }}
     }

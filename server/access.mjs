@@ -21,7 +21,8 @@ export function accessMiddleware(req, res, next) {
   res.set('Cache-Control', 'no-store');
   const ballot = /^\/api\/reviews\/[\w-]+\/ballot$/.test(req.path);
   const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/experiment$/.test(req.path);
-  const privateRead = /^\/api\/(pipeline|campaign|studies)(\/|$)/.test(req.path);
+  const privateRead = /^\/api\/(pipeline|campaign|studies)(\/|$)/.test(req.path) ||
+    (req.path.startsWith('/api/experiments') && !/^\/api\/experiments\/public(?:\/|$)/.test(req.path));
   if ((req.method !== 'GET' && req.method !== 'HEAD' && !ballot && !judgeExperiment || privateRead) && !canEdit(req)) return res.status(401).json({ error: 'Organizer access is required. Shared reports are read-only.' });
   const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 864e5);
   const address = hash(req.ip ?? 'unknown').toString('hex');

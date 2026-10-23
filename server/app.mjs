@@ -29,6 +29,7 @@ import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
 import { registerDemandRoutes } from './demand-api.mjs';
 import { registerFinancialRoutes } from './financial/api.mjs';
+import { registerExperimentRoutes } from './experiments/experiment-api.mjs';
 import * as store from './store.mjs';
 import * as pipelineStore from './pipeline-store.mjs';
 
@@ -89,6 +90,7 @@ export function createApp() {
   registerResearchRoutes(app);
   registerDemandRoutes(app);
   registerFinancialRoutes(app);
+  registerExperimentRoutes(app);
   registerJudgeRoutes(app);
   registerOperationalRoutes(app);
   app.post('/api/investigation/:id/apply', (req,res) => {

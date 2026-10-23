@@ -24,6 +24,7 @@
     "evaluate:offered": "node --env-file-if-exists=.env scripts/prepare-offered-evaluation.mjs",
     "judge:cases": "node --env-file-if-exists=.env scripts/judge-cases.mjs",
     "reproduce:shocks": "node --env-file-if-exists=.env scripts/reproduce-shocks.mjs",
+    "reproduce:qloo-proof": "node scripts/reproduce-qloo-proof.mjs",
     "release:verify": "node scripts/verify-release.mjs",
     "release:rehearse": "node scripts/rehearse-release.mjs",
     "import:outcomes": "node scripts/import-demand-outcomes.mjs",
