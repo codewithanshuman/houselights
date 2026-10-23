@@ -35,7 +35,7 @@ async function start(){
 }
 try{
   await start();
-  const http=await verifyPublicRelease(`http://127.0.0.1:${port}`,{allowLocal:true,allowSynthetic:true,expectedCommit:revision});
+  const http=await verifyPublicRelease(`http://127.0.0.1:${port}`,{allowLocal:true,allowSynthetic:true,requireRecordedCase:true,expectedCommit:revision});
   if(!http.passed)throw new Error('HTTP rehearsal failed: '+http.checks.filter(c=>!c.passed).map(c=>c.name).join(', '));
   // These subprocesses write only the explicitly isolated rehearsal DATA_DIR.
   const prepared=JSON.parse(execFileSync(process.execPath,['scripts/container-drill.mjs','prepare'],{cwd:repo,env,windowsHide:true,encoding:'utf8',timeout:45000}));

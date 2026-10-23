@@ -8,6 +8,11 @@ import {festivalBaselineAttempt,llmConfiguration,providerPacing} from '../server
 const capture=process.argv.includes('--capture-live'),repeats=3;
 const resultsDir=join(process.cwd(),'results'),fixturePath=join(resultsDir,'shocks-llm-fixture.json');
 const realSource=JSON.parse(readFileSync(join(process.cwd(),'deploy','judge-cases.json'),'utf8'));
+const cohort=JSON.parse(readFileSync(join(process.cwd(),'evals','shock-cohort.json'),'utf8'));
+if(cohort.version!=='1.0'||!Array.isArray(cohort.caseIds)||new Set(cohort.caseIds).size!==cohort.caseIds.length)
+  throw new Error('Invalid frozen shock-study cohort.');
+const realCases=seededShockCases(realSource).filter(record=>cohort.caseIds.includes(record.id));
+if(realCases.length!==cohort.caseIds.length)throw new Error('A frozen shock-study case is missing from the public manifest.');
 const syntheticSource=JSON.parse(readFileSync(join(process.cwd(),'evals','shock-cases.json'),'utf8'));
 mkdirSync(resultsDir,{recursive:true});
 let fixture=existsSync(fixturePath)?JSON.parse(readFileSync(fixturePath,'utf8')):{version:'2.0',baselines:{},responses:{}};
@@ -51,7 +56,7 @@ if(capture)for(const record of synthetic){
 }
 synthetic=syntheticShockCases(syntheticSource,fixture.baselines);
 // Get the 12-candidate rate first if a free provider quota interrupts capture.
-const cases=[...synthetic.sort((a,b)=>b.snapshot.memo.items.length-a.snapshot.memo.items.length),...seededShockCases(realSource)];
+const cases=[...synthetic.sort((a,b)=>b.snapshot.memo.items.length-a.snapshot.memo.items.length),...realCases];
 const reprompt=capture?async({key,trial,brief,briefDigest})=>{
   return captureResponse(key,trial,brief,briefDigest);
 }:undefined;

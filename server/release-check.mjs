@@ -10,7 +10,7 @@ export function releaseOrigin(value,{allowLocal=false}={}) {
 
 // Anonymous checks only. No credentials are transmitted and no paid provider
 // workflow, saved plan, ballot, approval or booking is created.
-export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic=false,expectedCommit,fetcher=fetch}={}) {
+export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic=false,requireRecordedCase=false,expectedCommit,fetcher=fetch}={}) {
   const origin=releaseOrigin(value,{allowLocal}),checks=[],cases=[];
   const record=(name,passed,detail)=>checks.push({name,passed:!!passed,...(detail?{detail}: {})});
   async function request(path,{body,format='json'}={}){
@@ -52,7 +52,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
         page.data.includes('id="load-twin"')&&page.data.includes('id="add-seed"'));
       if(path==='/financial.html')record('financial-risk-ui',page.data.includes('id="chart"')&&page.data.includes('id="frontier"')&&page.data.includes('id="stress"'));
       if(path==='/proof-lab.html')record('qloo-proof-ui',page.data.includes('id="methods"')&&page.data.includes('id="signal-controls"')&&page.data.includes('id="receipts"')&&page.data.includes('id="without-lineup"')&&page.data.includes('id="with-lineup"'));
-      if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#bf9b65d52eeff00e0e258917'));
+      if(path==='/evidence.html')record('recorded-run-provenance-ui',page.data.includes('id="agent-trace-status"')&&page.data.includes('id="agent-trace-link"'));
+      if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#8be4d03ef4792ca9f1466983'));
       if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
@@ -75,7 +76,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       record('full-signal-enumeration',proof.status===200&&proof.data.report?.ablations?.coalitions?.length===16&&
         proof.data.report?.integrity?.noNewProviderCalls===true&&proof.data.report?.reportDigest?.startsWith('sha256:'));
     }
-    // Three calculations per case, four cases maximum: below the 20/IP/min cap.
+    // Four calculations per case for up to four legacy cases, plus one traced
+    // matched replay: 17 total, below the 20/IP/min cap on a fresh verifier.
     for(const item of catalog.data.cases.slice(0,4)){
       const path='/api/judge/cases/'+item.id,baseline=await request(path),b=baseline.data;
       if(!b.snapshot?.memo)throw new Error('A public case is missing its decision inputs.');
@@ -98,6 +100,20 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       const after=await request(path);
       record(item.id+':case-unchanged',equal(after.data,b));
       cases.push({id:item.id,title:item.title,synthetic:b.snapshot.mock===true,controlStatus:b.methods?.llm.status??'unavailable'});
+    }
+    const traced=catalog.data.cases.find(item=>item.recordedTrace===true&&item.synthetic===false);
+    if(requireRecordedCase)record('recorded-case-published',!!traced);
+    if(requireRecordedCase&&traced){
+      const path='/api/judge/cases/'+traced.id,b=(await request(path)).data,events=b.snapshot?.trace??[];
+      const meta=b.snapshot?.traceMeta,links=events.filter(event=>event.type==='receipt'&&event.receiptId);
+      record('genuine-recorded-agent-run',b.snapshot?.mock===false&&meta?.complete===true&&
+        events[0]?.type==='start'&&events.at(-1)?.type==='memo'&&events.some(event=>event.type==='plan'&&event.by==='llm'&&event.deep?.length>0)&&
+        links.length===b.snapshot.receipts.length&&b.snapshot.receipts.every(receipt=>receipt.source==='qloo'));
+      const off=await request(path+'/experiment',{body:{qlooOff:true}});
+      record('matched-qloo-evidence-replay',off.status===200&&off.data.comparison?.matchedEvidenceWithdrawal===true&&
+        off.data.providerCalls===0&&off.data.persisted===false&&
+        equal(off.data.snapshot.memo.constraints,b.snapshot.memo.constraints)&&
+        off.data.snapshot.memo.items.every((item,index)=>equal(item.terms,b.snapshot.memo.items[index].terms)));
     }
   }catch(error){
     record('verification-completed',false,error.name==='TimeoutError'?'A request timed out.':error.message);

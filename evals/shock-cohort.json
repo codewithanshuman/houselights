@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "description": "Frozen four-case live-evidence cohort for the recorded shock v2 study. New public judge cases require a separate declared study and LLM captures before inclusion.",
+  "caseIds": [
+    "4986d98dcd8ac838aed3874a",
+    "934e002267e2db9ccdc1b5a9",
+    "bf9b65d52eeff00e0e258917",
+    "5031a69f837e1c28ce045422"
+  ]
+}

@@ -7,7 +7,9 @@ const dir=mkdtempSync(join(tmpdir(),'houselights-shocks-'));
 process.env.DATA_DIR=dir;
 const {seededShockCases,syntheticShockCases,enumerateShocks,reproduceShocks,shocksMarkdown}=await import('../server/shocks.mjs');
 const {db}=await import('../server/database.mjs');
-const real=seededShockCases(JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8')));
+const cohort=JSON.parse(readFileSync(new URL('../evals/shock-cohort.json',import.meta.url),'utf8'));
+const real=seededShockCases(JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8'))).filter(record=>cohort.caseIds.includes(record.id));
+assert.equal(real.length,cohort.caseIds.length,'the frozen study cohort must remain available');
 const syntheticSource=JSON.parse(readFileSync(new URL('../evals/shock-cases.json',import.meta.url),'utf8'));
 test('symmetric shocks include either arm’s picks; synthetic 12-candidate exact search never proposes a violation',async()=>{
   const synthetic=syntheticShockCases(syntheticSource);

@@ -84,7 +84,7 @@ trusted proxy hop. If another proxy is later added, recheck that configuration.
 The public root opens the judge workspace. `/index.html` retains the complete
 organizer interface; provider workflows require the organizer token.
 
-Startup seeds four curated public cases into a separate persistent database.
+Startup seeds five curated public cases into a separate persistent database: the four original benchmark cases and one later provider-backed run with a recorded agent event sequence.
 No local private database, review invitation or commercial source document is
 transferred. All capabilities remain in the application. The current public
 release uses a light interface; four reference/poster images were removed from

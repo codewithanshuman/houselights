@@ -1,6 +1,6 @@
 import test,{after,beforeEach} from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,rmSync} from 'node:fs';
+import {mkdtempSync,rmSync,readFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 const dir=mkdtempSync(join(tmpdir(),'houselights-judge-'));
@@ -49,6 +49,39 @@ test('organizer publishes an immutable projection; private fields stay out and e
   const original=store.load(id);original.memo.items[0].terms.fee=10000;
   db.prepare('UPDATE snapshots SET body=? WHERE id=?').run(JSON.stringify(original),id);
   assert.equal(judge.loadJudgeCase(record.id).snapshot.memo.items[0].terms.fee,60);
+});
+test('curated live case preserves a complete authentic event-to-receipt chain and matched Qloo counterfactual',()=>{
+  const manifest=JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8'));
+  const row=manifest.cases.find(entry=>entry.title==='New York: watch a recorded Qloo research run');
+  assert.ok(row);
+  const record=judge.publishJudgeCase(row.snapshot,row.title),snapshot=record.snapshot;
+  assert.equal(record.id,'8be4d03ef4792ca9f1466983');
+  assert.equal(snapshot.mock,false);
+  assert.equal(snapshot.traceMeta.complete,true);
+  assert.equal(snapshot.traceMeta.linkedReceipts,snapshot.receipts.length);
+  assert.equal(snapshot.trace[0].type,'start');
+  assert.equal(snapshot.trace.at(-1).type,'memo');
+  assert.deepEqual(snapshot.trace.filter(event=>event.type==='receipt').map(event=>event.receiptId),snapshot.receipts.map(receipt=>receipt.id));
+  assert.ok(snapshot.receipts.every(receipt=>receipt.source==='qloo'&&receipt.why&&/^sha256:[a-f0-9]{64}$/.test(receipt.originalDigest)));
+  assert.ok(snapshot.trace.some(event=>event.type==='plan'&&event.by==='llm'&&event.deep.length>0));
+  assert.equal(judge.publishJudgeCase(snapshot,row.title).id,record.id);
+  const off=judge.judgeExperiment(record,{qlooOff:true});
+  assert.equal(off.comparison.matchedEvidenceWithdrawal,true);
+  assert.equal(off.comparison.changed,true);
+  assert.equal(off.providerCalls,0);
+  assert.deepEqual(off.snapshot.memo.constraints,snapshot.memo.constraints);
+  assert.deepEqual(off.snapshot.memo.items.map(item=>item.terms),snapshot.memo.items.map(item=>item.terms));
+});
+test('headline all-signal withdrawal agrees with the interactive replay for every published case',()=>{
+  const manifest=JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8'));
+  for(const row of manifest.cases){
+    const record=judge.publishJudgeCase(row.snapshot,row.title);
+    const all=record.proof.ablations.find(candidate=>candidate.id==='class:all');
+    const interactive=judge.judgeExperiment(record,{qlooOff:true});
+    assert.ok(all,`missing saved all-signal withdrawal for ${row.title}`);
+    assert.deepEqual([...all.selectedIds].sort(),[...interactive.snapshot.memo.slate.selectedIds].sort(),row.title);
+    assert.equal(interactive.comparison.matchedEvidenceWithdrawal,true,row.title);
+  }
 });
 test('public experiments recompute exact results, preserve survivors and never save or approve plans',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture'),path='/api/judge/cases/'+record.id+'/experiment';

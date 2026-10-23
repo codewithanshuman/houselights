@@ -8,6 +8,7 @@ import { test, expect } from '@playwright/test';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const caseId = 'bf9b65d52eeff00e0e258917';
+const tracedCaseId = '8be4d03ef4792ca9f1466983';
 let app, dataDir, origin, output = '';
 
 async function freePort() {
@@ -99,15 +100,103 @@ test('budget plus evidence withdrawal is labeled as a combined change on mobile'
 test('anonymous visitor can follow the homepage challenge through proof and limits', async ({ page }) => {
   await page.goto(`${origin}/index.html`);
   await page.getByRole('link', { name: /Try the booking challenge/ }).click();
-  await expect(page).toHaveURL(new RegExp(`/judge\\.html#${caseId}$`));
+  await expect(page).toHaveURL(new RegExp(`/judge\\.html#${tracedCaseId}$`));
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Jordan Rakei');
   await expect(page.locator('#judge-status')).toContainText('Experiment complete');
   await page.locator('#judge-proof-link').click();
-  await expect(page).toHaveURL(new RegExp(`/proof-lab\\.html#${caseId}$`));
-  await expect(page.locator('.proof-headline')).toContainText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(page).toHaveURL(new RegExp(`/proof-lab\\.html#${tracedCaseId}$`));
+  await expect(page.locator('.proof-headline')).toContainText('Michael Kiwanuka + Sault');
   await page.getByRole('link', { name: 'Evidence & limits' }).first().click();
   await expect(page).toHaveURL(/\/evidence\.html$/);
   await expect(page.locator('#review-status')).toContainText('0 completed reviewers');
+  await expect(page.locator('#agent-trace-status')).toContainText('1 of 5 public cases have a complete saved application-event sequence');
+  await expect(page.locator('#agent-trace-link')).toBeVisible();
+});
+
+test('genuine agent run exposes recorded plan, ordered tool events, and matched Qloo decision proof', async ({ page }) => {
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#judge-title')).toContainText('recorded Qloo research run');
+  await expect(page.locator('#judge-qloo-preview')).toContainText('The choice changes under matched assumptions.');
+  await expect(page.locator('.judge-trace-summary')).toContainText('31 recorded events · 18/18 receipts linked');
+  await expect(page.locator('.agent-stage-list')).toContainText('Model-selected checks');
+  await expect(page.locator('.agent-stage-list')).toContainText('Charlotte Day Wilson');
+  await expect(page.locator('.agent-stage-list')).toContainText('Exact optimization found a feasible slate');
+  await page.locator('.judge-trace-full summary').click();
+  await expect(page.locator('.judge-trace-full .agent-trace-list li')).toHaveCount(31);
+  await page.locator('.judge-trace-full').getByRole('button', { name: 'Receipt r1', exact: true }).click();
+  const firstReceipt = page.locator('#judge-receipts details').filter({ has: page.locator('summary').getByText(/^r1 · describe · ok$/) });
+  await expect(firstReceipt).toHaveAttribute('open', '');
+  await expect(firstReceipt.locator('summary')).toBeFocused();
+  await page.getByRole('button', { name: /Run the matched test and inspect receipts/ }).click();
+  await expect(page.locator('.judge-evidence-comparison')).toContainText('MATCHED EVIDENCE TEST');
+  await expect(page.locator('.judge-evidence-comparison')).toContainText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(page.locator('#judge-status')).toContainText('Experiment complete');
+});
+
+test('mobile judge workflow retains the previous result and recovers after a failed replay', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Sault');
+  await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`, route => route.fulfill({
+    status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Temporary test outage' }),
+  }));
+  await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
+  await expect(page.locator('#judge-status')).toContainText('The previous result is still displayed; no new experiment completed.');
+  await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Sault');
+  await expect(page.getByRole('button', { name: 'Cut budget below this lineup’s cost' })).toBeEnabled();
+  await page.unroute(`**/api/judge/cases/${tracedCaseId}/experiment`);
+  await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
+  await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Jordan Rakei');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('anonymous core path has no page-level horizontal overflow on narrow phone and tablet', async ({ page }) => {
+  for (const width of [320, 768]) {
+    await page.setViewportSize({ width, height: 800 });
+    for (const path of ['/index.html', `/judge.html#${tracedCaseId}`, `/proof-lab.html#${tracedCaseId}`, '/evidence.html']) {
+      await page.goto(origin + path);
+      if (path.startsWith('/judge.html')) await expect(page.locator('#judge-title')).toContainText('New York');
+      if (path.startsWith('/proof-lab.html')) await expect(page.locator('#with-lineup')).toContainText('Michael Kiwanuka');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px ${path}`).toBe(true);
+    }
+  }
+});
+
+test('judge can withdraw one receipt, rehearse a cancellation, and cannot write private records', async ({ page }) => {
+  await page.goto(`${origin}/judge.html#${caseId}`);
+  await expect(page.locator('#judge-title')).toContainText('New York');
+  await page.locator('.judge-guided-challenges summary').click();
+  await page.getByRole('button', { name: 'Remove ranking evidence' }).click();
+  await expect(page.locator('#judge-result')).toContainText('Evidence state: blocked');
+  await page.getByRole('button', { name: 'Reset assumptions' }).click();
+  await page.getByRole('button', { name: 'Rehearse a cancellation' }).click();
+  await expect(page.locator('#judge-status')).toContainText('Experiment complete');
+  await expect(page.locator('#judge-result')).toContainText('Survivors');
+  for (const path of ['/api/judge/cases', '/api/experiments', '/api/financial/jobs']) {
+    const response = await page.request.post(origin + path, { data: {} });
+    expect(response.status(), `anonymous write to ${path}`).toBe(401);
+  }
+});
+
+test('Proof Lab changes signal groups against the same recorded case', async ({ page }) => {
+  await page.goto(`${origin}/proof-lab.html#${tracedCaseId}`);
+  await expect(page.locator('#with-lineup')).toHaveText('Michael Kiwanuka + Sault');
+  const without = await page.locator('#without-lineup').textContent();
+  const controls = page.locator('#signal-controls input[type=checkbox]');
+  await expect(controls).toHaveCount(4);
+  for (let index = 0; index < 4; index++) await controls.nth(index).uncheck();
+  await expect(page.locator('#signal-mask')).toContainText('0 OF 4 SIGNAL GROUPS RETAINED');
+  await expect(page.locator('#signal-lineup')).toHaveText(without);
+  await page.getByText('Inspect receipt-level counterfactuals').click();
+  await expect(page.locator('#receipt-ablations tbody tr').first()).toBeVisible();
+});
+
+test('incomplete older case discloses missing agent events and insufficient ranking', async ({ page }) => {
+  await page.goto(`${origin}/judge.html#5031a69f837e1c28ce045422`);
+  await expect(page.locator('#judge-title')).toContainText('Mumbai');
+  await expect(page.locator('#judge-agent-trace')).toContainText('no saved model-step event log');
+  await expect(page.locator('#judge-qloo-preview')).toContainText('Treat this comparison as inconclusive.');
+  await expect(page.locator('#judge-source')).toContainText('Receipts only; no agent event log');
 });

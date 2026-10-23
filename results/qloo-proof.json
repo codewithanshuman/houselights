@@ -1,7 +1,7 @@
 {
   "version": "qloo-proof-suite-v1",
   "source": "deploy/judge-cases.json",
-  "manifestDigest": "sha256:6f35c128395d6ea880fdf5d1f1fd3f533c57c5e0f0041651235d3cccda4991e1",
+  "manifestDigest": "sha256:599bd19e848a8100c6ed6247de7bdf804dde990abb9eed052b42f9b2600fb464",
   "records": [
     {
       "id": "4986d98dcd8ac838aed3874a",
@@ -11322,6 +11322,3389 @@
         ],
         "reportDigest": "sha256:c83d931d85745e94cc3afda264849bd186017638297c714adac21a066beca194"
       }
+    },
+    {
+      "id": "8be4d03ef4792ca9f1466983",
+      "title": "New York: watch a recorded Qloo research run",
+      "report": {
+        "version": "qloo-proof-v1",
+        "config": {
+          "version": "qloo-proof-v1",
+          "experimentType": "fixed_pool",
+          "sourceSnapshotId": "8be4d03ef4792ca9f1466983",
+          "datasetVersion": "published-judge-v1",
+          "policy": "original",
+          "originalFitFloor": null,
+          "constraints": {
+            "budget": 14500,
+            "slots": 2,
+            "discoveryMin": 0,
+            "maxPerGenre": 2,
+            "riskTolerance": 50,
+            "lockedIds": [],
+            "excludedIds": []
+          },
+          "candidateIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+            "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+            "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "groups": [
+            "rank",
+            "local",
+            "trends",
+            "comparison"
+          ],
+          "methods": [
+            "llm_only",
+            "constraint_only",
+            "qloo_ablated",
+            "full_houselights"
+          ],
+          "seed": 20261022,
+          "evidenceAsOf": "2026-10-23T13:25:00.689Z",
+          "studyId": null,
+          "scope": "Fixed-pool selection; the shared pool may already contain Qloo-discovered artists."
+        },
+        "inputDigest": "sha256:4d135fc49b26965fb323560b9992592862b4ff230a9df5376e64afcc273a5e02",
+        "sourceDigest": "sha256:0621397c82d930aa39d2b137a61d409fd1af9c3688eca547286c352b7ebd4e6f",
+        "poolDigest": "sha256:91899ee75c0ad8a338bfd0ed6d523d4baa4dbfcd9a5b651f0edcde5d077c84ee",
+        "briefDigest": "sha256:3bc7158f3f458ef0faa0213db7ae00845f3516f6e3c6fa2bd269335940e10e6b",
+        "brief": {
+          "city": "New York",
+          "currency": "USD",
+          "budget": 14500,
+          "slots": 2,
+          "candidateCount": 8,
+          "genre": null,
+          "eventDate": null,
+          "eventSize": null,
+          "synthetic": false,
+          "illustrativeTerms": true
+        },
+        "methods": {
+          "llm_only": {
+            "status": "unavailable",
+            "available": false,
+            "attempted": false,
+            "feasible": false,
+            "selectedIds": [],
+            "totalFee": null,
+            "violations": [],
+            "violationCodes": [],
+            "reason": "No saved LLM-only control for this locked brief. No response was invented.",
+            "selectionRule": null,
+            "generation": null
+          },
+          "constraint_only": {
+            "status": "feasible",
+            "available": true,
+            "attempted": true,
+            "feasible": true,
+            "selectedIds": [
+              "57478178-BBBC-49A4-8755-5D942B388316",
+              "AC007829-3D79-438E-9F02-11228C82AD38"
+            ],
+            "totalFee": 9000,
+            "violations": [],
+            "violationCodes": [],
+            "reason": null,
+            "selectionRule": "Minimum quoted fee among operationally feasible exact-size lineups.",
+            "generation": null
+          },
+          "qloo_ablated": {
+            "status": "provisional",
+            "available": true,
+            "attempted": true,
+            "feasible": true,
+            "selectedIds": [
+              "57478178-BBBC-49A4-8755-5D942B388316",
+              "AC007829-3D79-438E-9F02-11228C82AD38"
+            ],
+            "totalFee": 9000,
+            "violations": [
+              "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+              "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+              "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+              "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+            ],
+            "violationCodes": [],
+            "reason": null,
+            "selectionRule": "Exact optimizer with all four cultural evidence groups withdrawn.",
+            "generation": null
+          },
+          "full_houselights": {
+            "status": "optimal",
+            "available": true,
+            "attempted": true,
+            "feasible": true,
+            "selectedIds": [
+              "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+            ],
+            "totalFee": 13500,
+            "violations": [
+              "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+              "This slate has the highest declared policy score among all feasible combinations.",
+              "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+            ],
+            "violationCodes": [],
+            "reason": null,
+            "selectionRule": "Exact optimizer with all saved cultural evidence enabled.",
+            "generation": null
+          }
+        },
+        "metrics": {
+          "llm_only": {
+            "attempted": false,
+            "returned": false,
+            "feasible": false,
+            "hardConstraintViolations": 0,
+            "violationCodes": [],
+            "bookingCost": null,
+            "budgetUtilization": null,
+            "lineupJaccardVsFull": null,
+            "sameSelectionAsFull": null,
+            "evidenceCompleteness": null
+          },
+          "constraint_only": {
+            "attempted": true,
+            "returned": true,
+            "feasible": true,
+            "hardConstraintViolations": 0,
+            "violationCodes": [],
+            "bookingCost": 9000,
+            "budgetUtilization": 0.6206896551724138,
+            "lineupJaccardVsFull": 0,
+            "sameSelectionAsFull": false,
+            "evidenceCompleteness": null
+          },
+          "qloo_ablated": {
+            "attempted": true,
+            "returned": true,
+            "feasible": true,
+            "hardConstraintViolations": 0,
+            "violationCodes": [],
+            "bookingCost": 9000,
+            "budgetUtilization": 0.6206896551724138,
+            "lineupJaccardVsFull": 0,
+            "sameSelectionAsFull": false,
+            "evidenceCompleteness": null
+          },
+          "full_houselights": {
+            "attempted": true,
+            "returned": true,
+            "feasible": true,
+            "hardConstraintViolations": 0,
+            "violationCodes": [],
+            "bookingCost": 13500,
+            "budgetUtilization": 0.9310344827586207,
+            "lineupJaccardVsFull": 1,
+            "sameSelectionAsFull": true,
+            "evidenceCompleteness": {
+              "supported": 16,
+              "observations": 32,
+              "flagged": 0
+            }
+          }
+        },
+        "ablations": {
+          "coalitions": [
+            {
+              "mask": 0,
+              "enabled": [],
+              "disabled": [
+                "rank",
+                "local",
+                "trends",
+                "comparison"
+              ],
+              "retainedEvidence": 0,
+              "selectedIds": [
+                "57478178-BBBC-49A4-8755-5D942B388316",
+                "AC007829-3D79-438E-9F02-11228C82AD38"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 9000,
+              "score": -9,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 8.285714,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -9,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 4500,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "name": "Sault",
+                    "quotedFee": 7000,
+                    "fullEvidenceFit": 0.4285714285714286,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": true,
+                      "trends": false,
+                      "comparison": true
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+                    "name": "Hiatus Kaiyote",
+                    "quotedFee": 5500,
+                    "fullEvidenceFit": 0,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "local",
+                    "receiptId": "r17",
+                    "fetchedAt": "2026-10-23T13:25:00.096Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "trends",
+                    "receiptId": "r10",
+                    "fetchedAt": "2026-10-23T13:24:54.777Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "comparison",
+                    "receiptId": "r18",
+                    "fetchedAt": "2026-10-23T13:25:00.689Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 1,
+              "enabled": [
+                "rank"
+              ],
+              "disabled": [
+                "local",
+                "trends",
+                "comparison"
+              ],
+              "retainedEvidence": 0.25,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 65.428571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 65.428571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 2,
+              "enabled": [
+                "local"
+              ],
+              "disabled": [
+                "rank",
+                "trends",
+                "comparison"
+              ],
+              "retainedEvidence": 0.25,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -7.625,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -7.625,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 3,
+              "enabled": [
+                "rank",
+                "local"
+              ],
+              "disabled": [
+                "trends",
+                "comparison"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 66.803571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 66.803571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 4,
+              "enabled": [
+                "trends"
+              ],
+              "disabled": [
+                "rank",
+                "local",
+                "comparison"
+              ],
+              "retainedEvidence": 0.25,
+              "selectedIds": [
+                "57478178-BBBC-49A4-8755-5D942B388316",
+                "AC007829-3D79-438E-9F02-11228C82AD38"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 9000,
+              "score": -9,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 8.285714,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -9,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 4500,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "name": "Sault",
+                    "quotedFee": 7000,
+                    "fullEvidenceFit": 0.4285714285714286,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": true,
+                      "trends": false,
+                      "comparison": true
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+                    "name": "Hiatus Kaiyote",
+                    "quotedFee": 5500,
+                    "fullEvidenceFit": 0,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "local",
+                    "receiptId": "r17",
+                    "fetchedAt": "2026-10-23T13:25:00.096Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "trends",
+                    "receiptId": "r10",
+                    "fetchedAt": "2026-10-23T13:24:54.777Z"
+                  },
+                  {
+                    "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                    "group": "comparison",
+                    "receiptId": "r18",
+                    "fetchedAt": "2026-10-23T13:25:00.689Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 5,
+              "enabled": [
+                "rank",
+                "trends"
+              ],
+              "disabled": [
+                "local",
+                "comparison"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 65.428571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 65.428571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 6,
+              "enabled": [
+                "local",
+                "trends"
+              ],
+              "disabled": [
+                "rank",
+                "comparison"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -7.625,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -7.625,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 7,
+              "enabled": [
+                "rank",
+                "local",
+                "trends"
+              ],
+              "disabled": [
+                "comparison"
+              ],
+              "retainedEvidence": 0.75,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 66.803571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 66.803571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 8,
+              "enabled": [
+                "comparison"
+              ],
+              "disabled": [
+                "rank",
+                "local",
+                "trends"
+              ],
+              "retainedEvidence": 0.25,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -8.75,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -8.75,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 9,
+              "enabled": [
+                "rank",
+                "comparison"
+              ],
+              "disabled": [
+                "local",
+                "trends"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 65.678571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 65.678571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 10,
+              "enabled": [
+                "local",
+                "comparison"
+              ],
+              "disabled": [
+                "rank",
+                "trends"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -7.375,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -7.375,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 11,
+              "enabled": [
+                "rank",
+                "local",
+                "comparison"
+              ],
+              "disabled": [
+                "trends"
+              ],
+              "retainedEvidence": 0.75,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 12,
+              "enabled": [
+                "trends",
+                "comparison"
+              ],
+              "disabled": [
+                "rank",
+                "local"
+              ],
+              "retainedEvidence": 0.5,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -8.75,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -8.75,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 13,
+              "enabled": [
+                "rank",
+                "trends",
+                "comparison"
+              ],
+              "disabled": [
+                "local"
+              ],
+              "retainedEvidence": 0.75,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 65.678571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 65.678571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "mask": 14,
+              "enabled": [
+                "local",
+                "trends",
+                "comparison"
+              ],
+              "disabled": [
+                "rank"
+              ],
+              "retainedEvidence": 0.75,
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -7.375,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 31.339286,
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -7.375,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": null,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "mask": 15,
+              "enabled": [
+                "rank",
+                "local",
+                "trends",
+                "comparison"
+              ],
+              "disabled": [],
+              "retainedEvidence": 1,
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "diagnosticScore": 67.053571,
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            }
+          ],
+          "receipts": [
+            {
+              "receiptId": "r9",
+              "affectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316",
+                "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                "AC007829-3D79-438E-9F02-11228C82AD38"
+              ],
+              "selectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316"
+              ],
+              "feasible": true,
+              "status": "provisional",
+              "totalFee": 10500,
+              "score": -7.375,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate maximizes the declared policy with incomplete affinity evidence; review the missing evidence before booking.",
+                "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "insufficient",
+                "supportedFitCount": 0,
+                "totalCount": 2,
+                "missingFitIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "notes": [
+                  "2 selected act(s) lack supported affinity. This is a provisional policy result, not a confident taste recommendation.",
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": true,
+                "orderChanged": false,
+                "removedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04"
+                ],
+                "addedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "insufficient",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": -7.375,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 3000,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [
+                  {
+                    "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "name": "Michael Kiwanuka",
+                    "quotedFee": 6500,
+                    "fullEvidenceFit": 1,
+                    "effectiveFit": 1,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  },
+                  {
+                    "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "name": "Jordan Rakei",
+                    "quotedFee": 3500,
+                    "fullEvidenceFit": 0.2857142857142857,
+                    "effectiveFit": 0.2857142857142857,
+                    "evidence": {
+                      "rank": true,
+                      "local": false,
+                      "trends": false,
+                      "comparison": false
+                    }
+                  }
+                ],
+                "relevantReceipts": [
+                  {
+                    "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  },
+                  {
+                    "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+                    "group": "rank",
+                    "receiptId": "r9",
+                    "fetchedAt": "2026-10-23T13:24:53.705Z"
+                  }
+                ],
+                "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift."
+              }
+            },
+            {
+              "receiptId": "r11",
+              "affectedIds": [
+                "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r10",
+              "affectedIds": [],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r12",
+              "affectedIds": [
+                "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r13",
+              "affectedIds": [
+                "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r14",
+              "affectedIds": [
+                "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r15",
+              "affectedIds": [
+                "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r16",
+              "affectedIds": [
+                "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 67.053571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 67.053571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r17",
+              "affectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 65.678571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 65.678571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            },
+            {
+              "receiptId": "r18",
+              "affectedIds": [
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "feasible": true,
+              "status": "optimal",
+              "totalFee": 13500,
+              "score": 66.803571,
+              "violations": [
+                "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+                "This slate has the highest declared policy score among all feasible combinations.",
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ],
+              "confidence": {
+                "level": "supported",
+                "supportedFitCount": 2,
+                "totalCount": 2,
+                "missingFitIds": [],
+                "notes": [
+                  "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+                ]
+              },
+              "difference": {
+                "changed": false,
+                "orderChanged": false,
+                "removedIds": [],
+                "addedIds": [],
+                "fullFeasible": true,
+                "counterfactualFeasible": true,
+                "fullConfidence": "supported",
+                "counterfactualConfidence": "supported",
+                "fullPolicyScore": 67.053571,
+                "counterfactualPolicyScore": 66.803571,
+                "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+                "bookingCostDifference": 0,
+                "currency": "USD",
+                "sharedFinancialAssumptions": {
+                  "budget": 14500,
+                  "feeSource": "illustrative booking terms",
+                  "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+                },
+                "affectedCandidates": [],
+                "relevantReceipts": [],
+                "interpretation": "No selection change under this evidence configuration."
+              }
+            }
+          ],
+          "receiptCoverage": {
+            "eligible": 10,
+            "tested": 10,
+            "omitted": 0
+          },
+          "dependencies": {
+            "368316C7-795A-46AF-8BBC-270F6633BE04": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "trends": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "comparison": {
+                "receiptIds": [],
+                "mapping": "missing"
+              }
+            },
+            "57970D7A-5D86-401A-8BE4-961DAEC943E4": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [
+                  "r11"
+                ],
+                "mapping": "linked"
+              },
+              "trends": {
+                "receiptIds": [
+                  "r10"
+                ],
+                "mapping": "linked"
+              },
+              "comparison": {
+                "receiptIds": [
+                  "r12"
+                ],
+                "mapping": "linked"
+              }
+            },
+            "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [
+                  "r13"
+                ],
+                "mapping": "linked"
+              },
+              "trends": {
+                "receiptIds": [
+                  "r10"
+                ],
+                "mapping": "linked"
+              },
+              "comparison": {
+                "receiptIds": [
+                  "r14"
+                ],
+                "mapping": "linked"
+              }
+            },
+            "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [
+                  "r15"
+                ],
+                "mapping": "linked"
+              },
+              "trends": {
+                "receiptIds": [
+                  "r10"
+                ],
+                "mapping": "linked"
+              },
+              "comparison": {
+                "receiptIds": [
+                  "r16"
+                ],
+                "mapping": "linked"
+              }
+            },
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [
+                  "r17"
+                ],
+                "mapping": "linked"
+              },
+              "trends": {
+                "receiptIds": [
+                  "r10"
+                ],
+                "mapping": "linked"
+              },
+              "comparison": {
+                "receiptIds": [
+                  "r18"
+                ],
+                "mapping": "linked"
+              }
+            },
+            "57478178-BBBC-49A4-8755-5D942B388316": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "trends": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "comparison": {
+                "receiptIds": [],
+                "mapping": "missing"
+              }
+            },
+            "BAF6317A-DF94-4C90-92AE-63F86560C21B": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "trends": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "comparison": {
+                "receiptIds": [],
+                "mapping": "missing"
+              }
+            },
+            "AC007829-3D79-438E-9F02-11228C82AD38": {
+              "rank": {
+                "receiptIds": [
+                  "r9"
+                ],
+                "mapping": "linked"
+              },
+              "local": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "trends": {
+                "receiptIds": [],
+                "mapping": "missing"
+              },
+              "comparison": {
+                "receiptIds": [],
+                "mapping": "missing"
+              }
+            }
+          }
+        },
+        "contributions": {
+          "status": "computed",
+          "metric": "Full-evidence policy score of each coalition-selected lineup, evaluated after selection on the frozen full-evidence candidate pool.",
+          "scope": "Internal decision attribution only; not causal cultural impact, audience preference, attendance or sales uplift.",
+          "noSignalValue": 8.285714,
+          "fullValue": 67.053571,
+          "groups": [
+            {
+              "group": "rank",
+              "contribution": 43.398809
+            },
+            {
+              "group": "local",
+              "contribution": 7.684524
+            },
+            {
+              "group": "trends",
+              "contribution": 0
+            },
+            {
+              "group": "comparison",
+              "contribution": 7.684524
+            }
+          ]
+        },
+        "evidence": {
+          "asOf": "2026-10-23T13:25:00.689Z",
+          "maxAgeDays": 90,
+          "observations": [
+            {
+              "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "group": "local",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "group": "comparison",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+              "group": "local",
+              "supported": true,
+              "receiptIds": [
+                "r11"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:55.730Z"
+              ]
+            },
+            {
+              "candidateId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [
+                "r10"
+              ],
+              "mapping": "linked",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": [
+                "2026-10-23T13:24:54.777Z"
+              ]
+            },
+            {
+              "candidateId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+              "group": "comparison",
+              "supported": true,
+              "receiptIds": [
+                "r12"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:56.336Z"
+              ]
+            },
+            {
+              "candidateId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+              "group": "local",
+              "supported": true,
+              "receiptIds": [
+                "r13"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:57.206Z"
+              ]
+            },
+            {
+              "candidateId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [
+                "r10"
+              ],
+              "mapping": "linked",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": [
+                "2026-10-23T13:24:54.777Z"
+              ]
+            },
+            {
+              "candidateId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+              "group": "comparison",
+              "supported": true,
+              "receiptIds": [
+                "r14"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:57.805Z"
+              ]
+            },
+            {
+              "candidateId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+              "group": "local",
+              "supported": true,
+              "receiptIds": [
+                "r15"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:58.624Z"
+              ]
+            },
+            {
+              "candidateId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [
+                "r10"
+              ],
+              "mapping": "linked",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": [
+                "2026-10-23T13:24:54.777Z"
+              ]
+            },
+            {
+              "candidateId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+              "group": "comparison",
+              "supported": true,
+              "receiptIds": [
+                "r16"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:59.219Z"
+              ]
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "local",
+              "supported": true,
+              "receiptIds": [
+                "r17"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:25:00.096Z"
+              ]
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [
+                "r10"
+              ],
+              "mapping": "linked",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": [
+                "2026-10-23T13:24:54.777Z"
+              ]
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "comparison",
+              "supported": true,
+              "receiptIds": [
+                "r18"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:25:00.689Z"
+              ]
+            },
+            {
+              "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+              "group": "local",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+              "group": "comparison",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+              "group": "local",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+              "group": "comparison",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "group": "rank",
+              "supported": true,
+              "receiptIds": [
+                "r9"
+              ],
+              "mapping": "linked",
+              "flags": [],
+              "fetchedAt": [
+                "2026-10-23T13:24:53.705Z"
+              ]
+            },
+            {
+              "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "group": "local",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "group": "trends",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            },
+            {
+              "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "group": "comparison",
+              "supported": false,
+              "receiptIds": [],
+              "mapping": "missing",
+              "flags": [
+                "not_observed"
+              ],
+              "fetchedAt": []
+            }
+          ],
+          "counts": {
+            "observations": 32,
+            "supported": 16,
+            "flagged": 0,
+            "stale": 0,
+            "ambiguous": 0,
+            "unsupported": 0
+          },
+          "receiptIndex": [
+            {
+              "id": "r1",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:43.665Z",
+              "digest": "sha256:95b88c24a97583735641c05774b2da3496f543591dcba4d99dc7e3fbf12e2445"
+            },
+            {
+              "id": "r2",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:44.294Z",
+              "digest": "sha256:3090325a712cfdd27956e00ae4b0159e5c6cbe3dd3c6b6f38630a195f200cc9a"
+            },
+            {
+              "id": "r3",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:44.903Z",
+              "digest": "sha256:aa5e1283d30c3bd799d4d3fadbf2403c009570020b6c6459d0791f2c48676677"
+            },
+            {
+              "id": "r4",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:45.565Z",
+              "digest": "sha256:ffb6db684cbfc06bce9b109442032edb2bf03d8dff2ec9086d8dff63d5bb840d"
+            },
+            {
+              "id": "r5",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:46.182Z",
+              "digest": "sha256:6fb49be7ec45fb0cf9a55696c0a866e6f3b3210e9fa6ed6cf6b05ab2ea254e49"
+            },
+            {
+              "id": "r6",
+              "tool": "describe",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:46.785Z",
+              "digest": "sha256:266eb5acf042642c525ff6f86cf0c4f58506788b6f99b7c8c20ef45dc8451062"
+            },
+            {
+              "id": "r7",
+              "tool": "entity_tags",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:47.742Z",
+              "digest": "sha256:6620fd54053ca9ab4d8fd34f602fb7b266e1fda2c780c51f3926a56759c71ee6"
+            },
+            {
+              "id": "r8",
+              "tool": "recommend",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:51.901Z",
+              "digest": "sha256:1f0d185bc4bc14e65a92709b4243f2d562712e10c156c62ef164a8694c2706f6"
+            },
+            {
+              "id": "r9",
+              "tool": "rank",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:53.705Z",
+              "digest": "sha256:4c5cabbd61d0b14956fb1f00477d5c8d68a73fdacbc56596d76d451fbc3b7bc6"
+            },
+            {
+              "id": "r10",
+              "tool": "trends",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:54.777Z",
+              "digest": "sha256:631bd86fb412421cb34e489b5bbea5f7d6d29a8f6d5cdcb71e30ff174a65ba84"
+            },
+            {
+              "id": "r11",
+              "tool": "where_popular",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:55.730Z",
+              "digest": "sha256:5902655646b35a01e801c2bbe203f7c3b313c151b97bb27ac4d9729e2b3e98e6"
+            },
+            {
+              "id": "r12",
+              "tool": "compare_audiences",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:56.336Z",
+              "digest": "sha256:1b0ce94daaf2178297ecce054cabf69c1fef44b7b3f61701c2f1fda37ab13ec6"
+            },
+            {
+              "id": "r13",
+              "tool": "where_popular",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:57.206Z",
+              "digest": "sha256:18c9e48edaf8673d4ed0f97a82f86cdbd12f84468db25679242669efa67493af"
+            },
+            {
+              "id": "r14",
+              "tool": "compare_audiences",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:57.805Z",
+              "digest": "sha256:f75e7ecb7129d02fae45fc25ac26d1d142135eb1844b55b59141ea75af4a2402"
+            },
+            {
+              "id": "r15",
+              "tool": "where_popular",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:58.624Z",
+              "digest": "sha256:9b0428ee0e30563c4d9a5d31935d3fa53a91e4649b676fb79245224405e095a6"
+            },
+            {
+              "id": "r16",
+              "tool": "compare_audiences",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:24:59.219Z",
+              "digest": "sha256:197d44db8138aad88e6541e8d6f2ca1e8d89f0f867c80913fe985d1d9f8d7f01"
+            },
+            {
+              "id": "r17",
+              "tool": "where_popular",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:25:00.096Z",
+              "digest": "sha256:863a8b9ae94fd9540f7615a812bf689aea3d57417579cd4fc536f5729d6b44bd"
+            },
+            {
+              "id": "r18",
+              "tool": "compare_audiences",
+              "source": "qloo",
+              "status": "ok",
+              "fetchedAt": "2026-10-23T13:25:00.689Z",
+              "digest": "sha256:d897fc399ba42438ac08d9211bdd2ee016ad9e4f89a61ce13655e3b709747bdb"
+            }
+          ]
+        },
+        "independentEvaluation": {
+          "operational": {
+            "llm_only": {
+              "attempted": false,
+              "returned": false,
+              "feasible": false,
+              "hardConstraintViolations": 0,
+              "violationCodes": [],
+              "bookingCost": null,
+              "budgetUtilization": null,
+              "lineupJaccardVsFull": null,
+              "sameSelectionAsFull": null,
+              "evidenceCompleteness": null
+            },
+            "constraint_only": {
+              "attempted": true,
+              "returned": true,
+              "feasible": true,
+              "hardConstraintViolations": 0,
+              "violationCodes": [],
+              "bookingCost": 9000,
+              "budgetUtilization": 0.6206896551724138,
+              "lineupJaccardVsFull": 0,
+              "sameSelectionAsFull": false,
+              "evidenceCompleteness": null
+            },
+            "qloo_ablated": {
+              "attempted": true,
+              "returned": true,
+              "feasible": true,
+              "hardConstraintViolations": 0,
+              "violationCodes": [],
+              "bookingCost": 9000,
+              "budgetUtilization": 0.6206896551724138,
+              "lineupJaccardVsFull": 0,
+              "sameSelectionAsFull": false,
+              "evidenceCompleteness": null
+            },
+            "full_houselights": {
+              "attempted": true,
+              "returned": true,
+              "feasible": true,
+              "hardConstraintViolations": 0,
+              "violationCodes": [],
+              "bookingCost": 13500,
+              "budgetUtilization": 0.9310344827586207,
+              "lineupJaccardVsFull": 1,
+              "sameSelectionAsFull": true,
+              "evidenceCompleteness": {
+                "supported": 16,
+                "observations": 32,
+                "flagged": 0
+              }
+            }
+          },
+          "human": {
+            "status": "unavailable",
+            "completedReviewers": 0,
+            "submittedJudgments": 0,
+            "rows": [],
+            "reason": "No independent blinded review study is linked to this experiment."
+          },
+          "independentOutcomes": {
+            "status": "unavailable",
+            "count": 0,
+            "reason": "No linked held-out post-event audience preference or ticket outcome is available for this comparison."
+          }
+        },
+        "decisionDifference": {
+          "changed": true,
+          "orderChanged": false,
+          "removedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+          ],
+          "addedIds": [
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "fullFeasible": true,
+          "counterfactualFeasible": true,
+          "fullConfidence": "supported",
+          "counterfactualConfidence": "insufficient",
+          "fullPolicyScore": 67.053571,
+          "counterfactualPolicyScore": -9,
+          "scoreComparisonCaveat": "Scores use different evidence availability. Their difference is a policy diagnostic, not causal uplift.",
+          "bookingCostDifference": 4500,
+          "currency": "USD",
+          "sharedFinancialAssumptions": {
+            "budget": 14500,
+            "feeSource": "illustrative booking terms",
+            "financialScenario": "not linked; the fee difference is not a profit or revenue difference"
+          },
+          "affectedCandidates": [
+            {
+              "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "name": "Michael Kiwanuka",
+              "quotedFee": 6500,
+              "fullEvidenceFit": 1,
+              "effectiveFit": null,
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              }
+            },
+            {
+              "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "name": "Sault",
+              "quotedFee": 7000,
+              "fullEvidenceFit": 0.4285714285714286,
+              "effectiveFit": null,
+              "evidence": {
+                "rank": true,
+                "local": true,
+                "trends": false,
+                "comparison": true
+              }
+            },
+            {
+              "id": "57478178-BBBC-49A4-8755-5D942B388316",
+              "name": "Jordan Rakei",
+              "quotedFee": 3500,
+              "fullEvidenceFit": 0.2857142857142857,
+              "effectiveFit": null,
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              }
+            },
+            {
+              "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "name": "Hiatus Kaiyote",
+              "quotedFee": 5500,
+              "fullEvidenceFit": 0,
+              "effectiveFit": null,
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              }
+            }
+          ],
+          "relevantReceipts": [
+            {
+              "candidateId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "group": "rank",
+              "receiptId": "r9",
+              "fetchedAt": "2026-10-23T13:24:53.705Z"
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "rank",
+              "receiptId": "r9",
+              "fetchedAt": "2026-10-23T13:24:53.705Z"
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "local",
+              "receiptId": "r17",
+              "fetchedAt": "2026-10-23T13:25:00.096Z"
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "trends",
+              "receiptId": "r10",
+              "fetchedAt": "2026-10-23T13:24:54.777Z"
+            },
+            {
+              "candidateId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "group": "comparison",
+              "receiptId": "r18",
+              "fetchedAt": "2026-10-23T13:25:00.689Z"
+            },
+            {
+              "candidateId": "57478178-BBBC-49A4-8755-5D942B388316",
+              "group": "rank",
+              "receiptId": "r9",
+              "fetchedAt": "2026-10-23T13:24:53.705Z"
+            },
+            {
+              "candidateId": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "group": "rank",
+              "receiptId": "r9",
+              "fetchedAt": "2026-10-23T13:24:53.705Z"
+            }
+          ],
+          "interpretation": "Observed optimizer selection change under withdrawn evidence. Linked receipts identify evidence to inspect, not proven causal market uplift.",
+          "weightSensitivity": {
+            "profiles": [
+              {
+                "name": "Declared policy",
+                "factors": {},
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              },
+              {
+                "name": "Half audience weight",
+                "factors": {
+                  "fit": 0.5
+                },
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              },
+              {
+                "name": "Double audience weight",
+                "factors": {
+                  "fit": 2
+                },
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              },
+              {
+                "name": "Double cultural connection",
+                "factors": {
+                  "culturalCohesion": 2,
+                  "culturalBreadth": 2
+                },
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              },
+              {
+                "name": "Double evidence caution",
+                "factors": {
+                  "riskPenalty": 2,
+                  "pairEvidencePenalty": 2
+                },
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              },
+              {
+                "name": "Double recovery preference",
+                "factors": {
+                  "cancellationReadiness": 2
+                },
+                "fullSelectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "noEvidenceSelectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "fullFeasible": true,
+                "noEvidenceFeasible": true,
+                "differentSelections": true
+              }
+            ],
+            "testedProfiles": 6,
+            "changedUnderDeclaredPolicy": true,
+            "changedUnderOtherProfiles": 5,
+            "availableProfiles": 6,
+            "interpretation": "Discrete preference sensitivity of the full-versus-no-evidence selection. These weights express organizer values, not empirical probabilities."
+          }
+        },
+        "consistency": {
+          "coalitionCount": 16,
+          "changedCoalitions": 8,
+          "unchangedCoalitions": 8,
+          "orderOnlyChanges": 0,
+          "changedReceipts": 1,
+          "testedReceipts": 10
+        },
+        "integrity": {
+          "frozenCandidateIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+            "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+            "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+            "AC007829-3D79-438E-9F02-11228C82AD38"
+          ],
+          "candidatePoolShared": true,
+          "llmInputDigest": "sha256:1dcda557aac374846b3015e09a91c7e5ddd77127e35f1170346e21a6ad8686c3",
+          "noNewProviderCalls": true,
+          "seed": 20261022,
+          "modelVersion": "qloo-proof-v1",
+          "receiptDigests": [
+            {
+              "id": "r1",
+              "digest": "sha256:95b88c24a97583735641c05774b2da3496f543591dcba4d99dc7e3fbf12e2445"
+            },
+            {
+              "id": "r2",
+              "digest": "sha256:3090325a712cfdd27956e00ae4b0159e5c6cbe3dd3c6b6f38630a195f200cc9a"
+            },
+            {
+              "id": "r3",
+              "digest": "sha256:aa5e1283d30c3bd799d4d3fadbf2403c009570020b6c6459d0791f2c48676677"
+            },
+            {
+              "id": "r4",
+              "digest": "sha256:ffb6db684cbfc06bce9b109442032edb2bf03d8dff2ec9086d8dff63d5bb840d"
+            },
+            {
+              "id": "r5",
+              "digest": "sha256:6fb49be7ec45fb0cf9a55696c0a866e6f3b3210e9fa6ed6cf6b05ab2ea254e49"
+            },
+            {
+              "id": "r6",
+              "digest": "sha256:266eb5acf042642c525ff6f86cf0c4f58506788b6f99b7c8c20ef45dc8451062"
+            },
+            {
+              "id": "r7",
+              "digest": "sha256:6620fd54053ca9ab4d8fd34f602fb7b266e1fda2c780c51f3926a56759c71ee6"
+            },
+            {
+              "id": "r8",
+              "digest": "sha256:1f0d185bc4bc14e65a92709b4243f2d562712e10c156c62ef164a8694c2706f6"
+            },
+            {
+              "id": "r9",
+              "digest": "sha256:4c5cabbd61d0b14956fb1f00477d5c8d68a73fdacbc56596d76d451fbc3b7bc6"
+            },
+            {
+              "id": "r10",
+              "digest": "sha256:631bd86fb412421cb34e489b5bbea5f7d6d29a8f6d5cdcb71e30ff174a65ba84"
+            },
+            {
+              "id": "r11",
+              "digest": "sha256:5902655646b35a01e801c2bbe203f7c3b313c151b97bb27ac4d9729e2b3e98e6"
+            },
+            {
+              "id": "r12",
+              "digest": "sha256:1b0ce94daaf2178297ecce054cabf69c1fef44b7b3f61701c2f1fda37ab13ec6"
+            },
+            {
+              "id": "r13",
+              "digest": "sha256:18c9e48edaf8673d4ed0f97a82f86cdbd12f84468db25679242669efa67493af"
+            },
+            {
+              "id": "r14",
+              "digest": "sha256:f75e7ecb7129d02fae45fc25ac26d1d142135eb1844b55b59141ea75af4a2402"
+            },
+            {
+              "id": "r15",
+              "digest": "sha256:9b0428ee0e30563c4d9a5d31935d3fa53a91e4649b676fb79245224405e095a6"
+            },
+            {
+              "id": "r16",
+              "digest": "sha256:197d44db8138aad88e6541e8d6f2ca1e8d89f0f867c80913fe985d1d9f8d7f01"
+            },
+            {
+              "id": "r17",
+              "digest": "sha256:863a8b9ae94fd9540f7615a812bf689aea3d57417579cd4fc536f5729d6b44bd"
+            },
+            {
+              "id": "r18",
+              "digest": "sha256:d897fc399ba42438ac08d9211bdd2ee016ad9e4f89a61ce13655e3b709747bdb"
+            }
+          ]
+        },
+        "limitations": [
+          "The fixed candidate pool may itself include Qloo-discovered artists; this experiment does not test independent discovery.",
+          "Cultural policy scores and Shapley contributions are in-sample decision diagnostics, not independent booking quality or causal impact.",
+          "Illustrative fees and missing external judgments cannot establish commercial superiority.",
+          "The four methods share the declared operational policy; changed fit-floor policy is recorded explicitly.",
+          "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
+        ],
+        "reportDigest": "sha256:623c16923dea167d8b8b792dd2ae42e746ee82ea215756d83c9251413c5fcd83"
+      }
     }
   ],
   "summary": {
@@ -11398,6 +14781,22 @@
         "llmLineup": [],
         "fullFeasible": true,
         "feeDifference": null
+      },
+      {
+        "sourceId": "8be4d03ef4792ca9f1466983",
+        "city": "New York",
+        "genre": null,
+        "eventSize": null,
+        "slots": 2,
+        "currency": "USD",
+        "synthetic": false,
+        "poolDigest": "sha256:91899ee75c0ad8a338bfd0ed6d523d4baa4dbfcd9a5b651f0edcde5d077c84ee",
+        "candidateCount": 8,
+        "briefDigest": "sha256:3bc7158f3f458ef0faa0213db7ae00845f3516f6e3c6fa2bd269335940e10e6b",
+        "llmStatus": "unavailable",
+        "llmLineup": [],
+        "fullFeasible": true,
+        "feeDifference": null
       }
     ],
     "repeatedBriefs": [
@@ -11424,6 +14823,13 @@
       },
       {
         "briefDigest": "sha256:9cb1546678c5efea108a2d4e45882996d08afa62f948b657f012fc89556baedd",
+        "records": 1,
+        "attempts": 0,
+        "failures": 0,
+        "distinctLineups": 0
+      },
+      {
+        "briefDigest": "sha256:3bc7158f3f458ef0faa0213db7ae00845f3516f6e3c6fa2bd269335940e10e6b",
         "records": 1,
         "attempts": 0,
         "failures": 0,
@@ -11467,8 +14873,8 @@
           "distinctBriefs": 1
         },
         "New York": {
-          "records": 1,
-          "distinctBriefs": 1
+          "records": 2,
+          "distinctBriefs": 2
         },
         "Mumbai": {
           "records": 1,
@@ -11477,28 +14883,28 @@
       },
       "genre": {
         "unknown": {
-          "records": 4,
-          "distinctBriefs": 4
+          "records": 5,
+          "distinctBriefs": 5
         }
       },
       "eventSize": {
         "unknown": {
-          "records": 4,
-          "distinctBriefs": 4
+          "records": 5,
+          "distinctBriefs": 5
         }
       },
       "slots": {
         "2": {
-          "records": 4,
-          "distinctBriefs": 4
+          "records": 5,
+          "distinctBriefs": 5
         }
       }
     },
     "coverage": {
-      "publishedRecords": 4,
-      "briefs": 4,
+      "publishedRecords": 5,
+      "briefs": 5,
       "cities": 4,
-      "distinctPools": 4,
+      "distinctPools": 5,
       "syntheticBriefs": 0,
       "meetsTwelveDistinctBriefTarget": false
     },

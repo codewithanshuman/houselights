@@ -15,6 +15,34 @@ const strings=value=>Array.isArray(value)?value.filter(v=>typeof v==='string').s
 const kinds=['rank','local','trends','comparison'];
 const fields=(value,keys)=>Object.fromEntries(keys.filter(key=>value?.[key]!==undefined).map(key=>[key,value[key]]));
 const sameSelection=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
+const planReason='Check leading fit, discovered choices and affordable alternatives within the tool budget.';
+const fixedStages=new Set([
+  'Resolve · confirming artist identities',
+  'Discover · mapping the room’s taste and adjacent artists',
+  'Rank · testing the candidate pool against your anchors',
+  'Plan · allocating the remaining evidence budget',
+  'Optimize · checking every possible slate against your constraints',
+  'Write · assembling the booking brief from verified claim IDs',
+]);
+
+function publicResearchText(source) {
+  const city=source.memo.input?.city;
+  const names=(source.memo.items??[]).map(item=>item.name).filter(name=>typeof name==='string');
+  const identities=[...names,...(source.memo.input?.anchors??[])];
+  const objectives=new Set([
+    'Taste vocabulary associated with the anchor artists',
+    'Discover adjacent artists for this city',
+    'Relative audience fit for this candidate pool and city',
+    'Observed trend direction over the last six months',
+    ...identities.map(name=>`Confirm “${name}”`),
+    ...names.flatMap(name=>[
+      `Geographic popularity evidence for ${name} within ${city}`,
+      `Compare ${name} and the anchor audience; no net-new percentage inferred`,
+    ]),
+  ]);
+  const stages=new Set([...fixedStages,...names.map(name=>`Verify · local and audience context for ${name}`)]);
+  return {objectives,stages,names:new Set(names)};
+}
 
 // A separate public record, never a raw source snapshot or private source document.
 export function publicJudgeSnapshot(source) {
@@ -25,8 +53,11 @@ export function publicJudgeSnapshot(source) {
     throw fault('The saved case contains malformed cultural links.');
   const original=optimizeSlate(source.memo.items,source.memo.constraints);
   if(original.status==='invalid')throw fault('Resolve invalid source constraints first.');
+  const researchText=publicResearchText(source);
   const receipts=(source.receipts??[]).slice(0,250).map(r=>({id:text(r.id),tool:text(r.tool),status:text(r.status,30),
     source:r.source==='synthetic'?'synthetic':r.source==='qloo'?'qloo':'unknown',fetchedAt:text(r.fetchedAt,40),
+    ...(typeof r.cached==='boolean'?{cached:r.cached}:{}),
+    ...(researchText.objectives.has(r.why)?{why:text(r.why,200)}:{}),
     originalDigest:/^sha256:[a-f0-9]{64}$/.test(r.digest??r.originalDigest??'')?(r.digest??r.originalDigest):null,
     args:Object.fromEntries(['options','option_type','signals','signal_location','entity_id','entity_ids','location','type'].filter(key=>r.args?.[key]!==undefined).map(key=>[key,Array.isArray(r.args[key])?strings(r.args[key]):text(r.args[key])])),
     evidence:{kind:text(r.evidence?.kind),rows:(Array.isArray(r.evidence?.rows)?r.evidence.rows:[]).slice(0,100).map(row=>({id:text(row.id),name:text(row.name),affinity:number(row.affinity),popularity:number(row.popularity)}))},
@@ -37,7 +68,17 @@ export function publicJudgeSnapshot(source) {
     .filter(event=>event&&typeof event==='object'&&eventTypes.has(event.type)&&Number.isInteger(event.elapsedMs)&&event.elapsedMs>=0)
     .map(event=>({type:event.type,elapsedMs:event.elapsedMs,
       receiptId:receiptIds.has(event.receiptId)?event.receiptId:null,
+      ...(event.type==='stage'&&researchText.stages.has(event.text)?{text:event.text}:{}),
+      ...(event.type==='plan'?{
+        ...(event.text===planReason?{text:planReason}:{}),
+        ...(['llm','rules'].includes(event.by)?{by:event.by}:{}),
+        ...(Array.isArray(event.deep)?{deep:strings(event.deep).filter(name=>researchText.names.has(name)).slice(0,4)}:{}),
+      }:{}),
       feasible:event.type==='memo'?event.feasible===true:undefined}));
+  const linked=trace.filter(event=>event.type==='receipt'&&event.receiptId).map(event=>event.receiptId);
+  const complete=trace.length>0&&trace[0].type==='start'&&trace.at(-1).type==='memo'&&
+    linked.length===receipts.length&&new Set(linked).size===receipts.length&&linked.every(id=>receiptIds.has(id))&&
+    trace.every((event,index)=>index===0||event.elapsedMs>=trace[index-1].elapsedMs);
   const items=preserveRankProvenance(source).map(i=>({id:text(i.id),name:text(i.name),found:i.found===true,
     fit:number(i.fit),rank:number(i.rank),of:number(i.of),identityReceipt:text(i.identityReceipt),
     rankCoverage:i.rankCoverage?{complete:i.rankCoverage.complete===true,returned:number(i.rankCoverage.returned),requested:number(i.rankCoverage.requested)}:undefined,
@@ -47,7 +88,7 @@ export function publicJudgeSnapshot(source) {
     terms:{fee:number(i.terms?.fee),available:i.terms?.available===true,genre:text(i.terms?.genre,60)},
     culturalLinks:(i.culturalLinks??[]).slice(0,10).map(link=>({otherId:text(link.otherId),available:link.available===true,receiptId:text(link.receiptId),sharedTastes:strings(link.sharedTastes)}))}));
   const constraints=fields(original.constraints,['budget','slots','discoveryMin','maxPerGenre','riskTolerance','lockedIds','excludedIds','minimumAverageFit','festivalPolicy']);
-  const snapshot={mock:source.mock===true,receipts,...(trace.length?{trace}:{}),memo:{currency:['GBP','USD','EUR','INR'].includes(source.memo.currency)?source.memo.currency:'GBP',
+  const snapshot={mock:source.mock===true,receipts,...(trace.length?{trace,traceMeta:{complete,linkedReceipts:linked.length,totalReceipts:receipts.length}}:{}),memo:{currency:['GBP','USD','EUR','INR'].includes(source.memo.currency)?source.memo.currency:'GBP',
     exampleBookingTerms:true,input:{city:text(source.memo.input?.city,100),anchors:strings(source.memo.input?.anchors),anchorIds:strings(source.memo.input?.anchorIds)},items,constraints}};
   snapshot.memo.slate=optimizeSlate(items,constraints);
   if(!sameSelection(original.selectedIds,snapshot.memo.slate.selectedIds)||original.score!==snapshot.memo.slate.score)throw fault('This source uses unsupported decision fields. Its public projection would change the result.');
@@ -139,7 +180,8 @@ export function registerJudgeRoutes(app) {
     console.error('Unexpected judge request failure:',error);
     return res.status(500).json({error:'The request could not be completed.'});
   }};
-  app.get('/api/judge/cases',(_req,res)=>res.json({cases:listJudgeCases().map(r=>({id:r.id,title:r.title,city:r.snapshot.memo.input.city,synthetic:r.snapshot.mock,currency:r.snapshot.memo.currency,createdAt:r.createdAt}))}));
+  app.get('/api/judge/cases',(_req,res)=>res.json({cases:listJudgeCases().map(r=>({id:r.id,title:r.title,city:r.snapshot.memo.input.city,synthetic:r.snapshot.mock,
+    recordedTrace:r.snapshot.traceMeta?.complete===true,currency:r.snapshot.memo.currency,createdAt:r.createdAt}))}));
   app.post('/api/judge/cases',handle((req,res)=>{
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
     res.status(201).json(publishJudgeCase(source,req.body?.title));

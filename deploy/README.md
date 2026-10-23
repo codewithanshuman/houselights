@@ -1,9 +1,15 @@
 # Public release inputs
 
-`judge-cases.json` contains four curated projections of the previously recorded
-Manchester, Berlin, New York and Mumbai benchmark campaign. Booking fees and
-availability are illustrative. The first three contain real saved Groq controls;
-Mumbai retains its incomplete-ranking refusal and no model call.
+`judge-cases.json` contains five curated projections: the previously recorded
+Manchester, Berlin, New York and Mumbai benchmark campaign, plus a separate
+2026-10-23 New York provider-backed research run. Booking fees and availability
+are illustrative. The first three contain real saved Groq controls; Mumbai
+retains its incomplete-ranking refusal and no model call. The new New York run
+contains a complete 31-event application trace and 18 linked live-Qloo receipts,
+but no saved comparable first-trial festival LLM control. The frozen shock v2
+study continues to use the original four public cases listed in
+`evals/shock-cohort.json`; the new run is not silently counted as a fifth shock
+study brief without captured re-prompts.
 
 The file is intended for public distribution. It omits private source IDs, raw
 provider responses, model prose, review invitations, commercial documents and

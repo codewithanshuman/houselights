@@ -6437,6 +6437,2108 @@
           "reviewTrial": 1
         }
       }
+    },
+    {
+      "title": "New York: watch a recorded Qloo research run",
+      "snapshot": {
+        "mock": false,
+        "receipts": [
+          {
+            "id": "r1",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:43.665Z",
+            "cached": false,
+            "why": "Confirm “Leon Bridges”",
+            "originalDigest": "sha256:95b88c24a97583735641c05774b2da3496f543591dcba4d99dc7e3fbf12e2445",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "96B907F3-9F2C-4E6E-BCCF-9C9F0173E162",
+                  "name": "Leon Bridges",
+                  "affinity": null,
+                  "popularity": 0.9897540914473485
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r2",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:44.294Z",
+            "cached": false,
+            "why": "Confirm “Michael Kiwanuka”",
+            "originalDigest": "sha256:3090325a712cfdd27956e00ae4b0159e5c6cbe3dd3c6b6f38630a195f200cc9a",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "name": "Michael Kiwanuka",
+                  "affinity": null,
+                  "popularity": 0.9936878186032232
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r3",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:44.903Z",
+            "cached": false,
+            "why": "Confirm “Sault”",
+            "originalDigest": "sha256:aa5e1283d30c3bd799d4d3fadbf2403c009570020b6c6459d0791f2c48676677",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "name": "Sault",
+                  "affinity": null,
+                  "popularity": 0.9787322332841899
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r4",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:45.565Z",
+            "cached": false,
+            "why": "Confirm “Jordan Rakei”",
+            "originalDigest": "sha256:ffb6db684cbfc06bce9b109442032edb2bf03d8dff2ec9086d8dff63d5bb840d",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                  "name": "Jordan Rakei",
+                  "affinity": null,
+                  "popularity": 0.9596337517838407
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r5",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:46.182Z",
+            "cached": false,
+            "why": "Confirm “Khruangbin”",
+            "originalDigest": "sha256:6fb49be7ec45fb0cf9a55696c0a866e6f3b3210e9fa6ed6cf6b05ab2ea254e49",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                  "name": "Khruangbin",
+                  "affinity": null,
+                  "popularity": 0.9919334977446856
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r6",
+            "tool": "describe",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:46.785Z",
+            "cached": false,
+            "why": "Confirm “Hiatus Kaiyote”",
+            "originalDigest": "sha256:266eb5acf042642c525ff6f86cf0c4f58506788b6f99b7c8c20ef45dc8451062",
+            "args": {
+              "type": "artist"
+            },
+            "evidence": {
+              "kind": "describe",
+              "rows": [
+                {
+                  "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+                  "name": "Hiatus Kaiyote",
+                  "affinity": null,
+                  "popularity": 0.9856786691452072
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r7",
+            "tool": "entity_tags",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:47.742Z",
+            "cached": false,
+            "why": "Taste vocabulary associated with the anchor artists",
+            "originalDigest": "sha256:6620fd54053ca9ab4d8fd34f602fb7b266e1fda2c780c51f3926a56759c71ee6",
+            "args": {},
+            "evidence": {
+              "kind": "entity_tags",
+              "rows": [
+                {
+                  "id": "urn:tag:credit_card:place:discover",
+                  "name": "Discover",
+                  "affinity": 1,
+                  "popularity": 0.9999869619097692
+                },
+                {
+                  "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+                  "name": "Identifies as women-owned",
+                  "affinity": 1,
+                  "popularity": 0.9999950518091293
+                },
+                {
+                  "id": "urn:tag:specialty_dish:place:brussels_sprouts",
+                  "name": "Brussels Sprouts",
+                  "affinity": 1,
+                  "popularity": 0.9960663453431947
+                },
+                {
+                  "id": "urn:tag:cost_description:place:inexpensive",
+                  "name": "Inexpensive",
+                  "affinity": 1,
+                  "popularity": 0.9999875117087548
+                },
+                {
+                  "id": "urn:tag:hotel_rating:place:four_star",
+                  "name": "Four Star",
+                  "affinity": 1,
+                  "popularity": 0.9998966377907004
+                },
+                {
+                  "id": "urn:tag:genre:brand:fashion",
+                  "name": "Fashion",
+                  "affinity": 1,
+                  "popularity": 0.9991951728277403
+                },
+                {
+                  "id": "urn:tag:genre:place:restaurant:bar",
+                  "name": "Bar",
+                  "affinity": 1,
+                  "popularity": 0.9999871189951937
+                },
+                {
+                  "id": "urn:tag:keyword:media:african_american",
+                  "name": "african american",
+                  "affinity": 0.9997200970330286,
+                  "popularity": 0.9980537448955621
+                },
+                {
+                  "id": "urn:tag:artist:qloo:retro_inspired",
+                  "name": "Retro-Inspired",
+                  "affinity": 0.99939292117858,
+                  "popularity": 0.9848953724676063
+                },
+                {
+                  "id": "urn:tag:keyword:media:new_york_city",
+                  "name": "new york city",
+                  "affinity": 0.9992955926102323,
+                  "popularity": 0.9985562286852423
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r8",
+            "tool": "recommend",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:51.901Z",
+            "cached": false,
+            "why": "Discover adjacent artists for this city",
+            "originalDigest": "sha256:1f0d185bc4bc14e65a92709b4243f2d562712e10c156c62ef164a8694c2706f6",
+            "args": {
+              "signals": [
+                "96B907F3-9F2C-4E6E-BCCF-9C9F0173E162"
+              ]
+            },
+            "evidence": {
+              "kind": "recommend",
+              "rows": [
+                {
+                  "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "name": "Michael Kiwanuka",
+                  "affinity": 0.9592840607168065,
+                  "popularity": 0.9939740086113678
+                },
+                {
+                  "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                  "name": "Lady Wray",
+                  "affinity": 0.9571253885215387,
+                  "popularity": 0.9107078491896533
+                },
+                {
+                  "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                  "name": "Charlotte Day Wilson",
+                  "affinity": 0.9534525487020068,
+                  "popularity": 0.9523720582741875
+                },
+                {
+                  "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                  "name": "St. Paul & The Broken Bones",
+                  "affinity": 0.9533160691167892,
+                  "popularity": 0.9759484628642956
+                },
+                {
+                  "id": "751653C6-CCFA-4270-A266-97BD959E5FBF",
+                  "name": "Son Little",
+                  "affinity": 0.9514589137870534,
+                  "popularity": 0.934805261191829
+                },
+                {
+                  "id": "BC7F1D4B-4F32-4F7C-B01B-F21E03885A34",
+                  "name": "The Teskey Brothers",
+                  "affinity": 0.9506754226463112,
+                  "popularity": 0.9491739247258977
+                },
+                {
+                  "id": "58EF0268-C035-4AE8-933E-AC0733C2FFF5",
+                  "name": "Brittany Howard",
+                  "affinity": 0.946364449682141,
+                  "popularity": 0.9348019844156525
+                },
+                {
+                  "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
+                  "name": "Durand Jones & The Indications",
+                  "affinity": 0.9431077377381097,
+                  "popularity": 0.9671667027112046
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r9",
+            "tool": "rank",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:53.705Z",
+            "cached": false,
+            "why": "Relative audience fit for this candidate pool and city",
+            "originalDigest": "sha256:4c5cabbd61d0b14956fb1f00477d5c8d68a73fdacbc56596d76d451fbc3b7bc6",
+            "args": {
+              "options": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "57478178-BBBC-49A4-8755-5D942B388316",
+                "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                "AC007829-3D79-438E-9F02-11228C82AD38",
+                "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604"
+              ],
+              "option_type": "artist",
+              "signals": [
+                "96B907F3-9F2C-4E6E-BCCF-9C9F0173E162"
+              ],
+              "signal_location": "New York"
+            },
+            "evidence": {
+              "kind": "rank",
+              "rows": [
+                {
+                  "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "name": "Michael Kiwanuka",
+                  "affinity": 0.9770222376244421,
+                  "popularity": 0.9939740086113678
+                },
+                {
+                  "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                  "name": "Charlotte Day Wilson",
+                  "affinity": 0.9718436658564358,
+                  "popularity": 0.9523720582741875
+                },
+                {
+                  "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                  "name": "Lady Wray",
+                  "affinity": 0.9707438477441362,
+                  "popularity": 0.9107078491896533
+                },
+                {
+                  "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                  "name": "St. Paul & The Broken Bones",
+                  "affinity": 0.9705521798685506,
+                  "popularity": 0.9759484628642956
+                },
+                {
+                  "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "name": "SAULT",
+                  "affinity": 0.9579929179757067,
+                  "popularity": 0.9816172856496864
+                },
+                {
+                  "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                  "name": "Jordan Rakei",
+                  "affinity": 0.9578552904208322,
+                  "popularity": 0.9614159605214007
+                },
+                {
+                  "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                  "name": "Khruangbin",
+                  "affinity": 0.9533889718385528,
+                  "popularity": 0.9920702016528059
+                },
+                {
+                  "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+                  "name": "Hiatus Kaiyote",
+                  "affinity": 0.9476541823444999,
+                  "popularity": 0.9863981020912386
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r10",
+            "tool": "trends",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:54.777Z",
+            "cached": false,
+            "why": "Observed trend direction over the last six months",
+            "originalDigest": "sha256:631bd86fb412421cb34e489b5bbea5f7d6d29a8f6d5cdcb71e30ff174a65ba84",
+            "args": {},
+            "evidence": {
+              "kind": "trends",
+              "rows": [
+                {
+                  "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                  "name": "Charlotte Day Wilson",
+                  "affinity": null,
+                  "popularity": null
+                },
+                {
+                  "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                  "name": "Lady Wray",
+                  "affinity": null,
+                  "popularity": null
+                },
+                {
+                  "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                  "name": "St. Paul & The Broken Bones",
+                  "affinity": null,
+                  "popularity": null
+                },
+                {
+                  "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "name": "Sault",
+                  "affinity": null,
+                  "popularity": null
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r11",
+            "tool": "where_popular",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:55.730Z",
+            "cached": false,
+            "why": "Geographic popularity evidence for Charlotte Day Wilson within New York",
+            "originalDigest": "sha256:5902655646b35a01e801c2bbe203f7c3b313c151b97bb27ac4d9729e2b3e98e6",
+            "args": {},
+            "evidence": {
+              "kind": "where_popular",
+              "rows": [
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 1,
+                  "popularity": 0.9932584269662922
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9977528089887641,
+                  "popularity": 0.9977528089887641
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9955056179775281,
+                  "popularity": 0.9910112359550561
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9932584269662922,
+                  "popularity": 1
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9910112359550561,
+                  "popularity": 0.9955056179775281
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9887640449438202,
+                  "popularity": 0.9887640449438202
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9865168539325843,
+                  "popularity": 0.9865168539325843
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9842696629213483,
+                  "popularity": 0.9842696629213483
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9820224719101124,
+                  "popularity": 0.9820224719101124
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9797752808988764,
+                  "popularity": 0.9595505617977528
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r12",
+            "tool": "compare_audiences",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:56.336Z",
+            "cached": false,
+            "why": "Compare Charlotte Day Wilson and the anchor audience; no net-new percentage inferred",
+            "originalDigest": "sha256:1b0ce94daaf2178297ecce054cabf69c1fef44b7b3f61701c2f1fda37ab13ec6",
+            "args": {},
+            "evidence": {
+              "kind": "compare_audiences",
+              "rows": []
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r13",
+            "tool": "where_popular",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:57.206Z",
+            "cached": false,
+            "why": "Geographic popularity evidence for Lady Wray within New York",
+            "originalDigest": "sha256:18c9e48edaf8673d4ed0f97a82f86cdbd12f84468db25679242669efa67493af",
+            "args": {},
+            "evidence": {
+              "kind": "where_popular",
+              "rows": [
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 1,
+                  "popularity": 0.9871794871794872
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9957264957264957,
+                  "popularity": 0.9829059829059829
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9914529914529915,
+                  "popularity": 0.9743589743589743
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9871794871794872,
+                  "popularity": 0.9487179487179487
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9829059829059829,
+                  "popularity": 0.9572649572649573
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9786324786324786,
+                  "popularity": 0.9957264957264957
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9743589743589743,
+                  "popularity": 0.9786324786324786
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9700854700854701,
+                  "popularity": 1
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9658119658119658,
+                  "popularity": 0.9273504273504274
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9615384615384616,
+                  "popularity": 0.9914529914529915
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r14",
+            "tool": "compare_audiences",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:57.805Z",
+            "cached": false,
+            "why": "Compare Lady Wray and the anchor audience; no net-new percentage inferred",
+            "originalDigest": "sha256:f75e7ecb7129d02fae45fc25ac26d1d142135eb1844b55b59141ea75af4a2402",
+            "args": {},
+            "evidence": {
+              "kind": "compare_audiences",
+              "rows": []
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r15",
+            "tool": "where_popular",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:58.624Z",
+            "cached": false,
+            "why": "Geographic popularity evidence for St. Paul & The Broken Bones within New York",
+            "originalDigest": "sha256:9b0428ee0e30563c4d9a5d31935d3fa53a91e4649b676fb79245224405e095a6",
+            "args": {},
+            "evidence": {
+              "kind": "where_popular",
+              "rows": [
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 1,
+                  "popularity": 0.9734789391575663
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9984399375975039,
+                  "popularity": 0.9984399375975039
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9968798751950078,
+                  "popularity": 1
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9953198127925117,
+                  "popularity": 0.9968798751950078
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9937597503900156,
+                  "popularity": 0.9953198127925117
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9921996879875195,
+                  "popularity": 0.968798751950078
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9906396255850234,
+                  "popularity": 0.9921996879875195
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9890795631825273,
+                  "popularity": 0.9875195007800313
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9875195007800313,
+                  "popularity": 0.9906396255850234
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9859594383775351,
+                  "popularity": 0.9890795631825273
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r16",
+            "tool": "compare_audiences",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:24:59.219Z",
+            "cached": false,
+            "why": "Compare St. Paul & The Broken Bones and the anchor audience; no net-new percentage inferred",
+            "originalDigest": "sha256:197d44db8138aad88e6541e8d6f2ca1e8d89f0f867c80913fe985d1d9f8d7f01",
+            "args": {},
+            "evidence": {
+              "kind": "compare_audiences",
+              "rows": []
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r17",
+            "tool": "where_popular",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:25:00.096Z",
+            "cached": false,
+            "why": "Geographic popularity evidence for Sault within New York",
+            "originalDigest": "sha256:863a8b9ae94fd9540f7615a812bf689aea3d57417579cd4fc536f5729d6b44bd",
+            "args": {},
+            "evidence": {
+              "kind": "where_popular",
+              "rows": [
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 1,
+                  "popularity": 0.9911242603550295
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9970414201183432,
+                  "popularity": 0.9970414201183432
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9940828402366864,
+                  "popularity": 0.9881656804733728
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9911242603550295,
+                  "popularity": 0.985207100591716
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9881656804733728,
+                  "popularity": 0.9822485207100592
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.985207100591716,
+                  "popularity": 0.9940828402366864
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9822485207100592,
+                  "popularity": 1
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9792899408284024,
+                  "popularity": 0.9733727810650887
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9763313609467456,
+                  "popularity": 0.9792899408284024
+                },
+                {
+                  "id": "",
+                  "name": "",
+                  "affinity": 0.9733727810650887,
+                  "popularity": 0.9763313609467456
+                }
+              ]
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          },
+          {
+            "id": "r18",
+            "tool": "compare_audiences",
+            "status": "ok",
+            "source": "qloo",
+            "fetchedAt": "2026-10-23T13:25:00.689Z",
+            "cached": false,
+            "why": "Compare Sault and the anchor audience; no net-new percentage inferred",
+            "originalDigest": "sha256:d897fc399ba42438ac08d9211bdd2ee016ad9e4f89a61ce13655e3b709747bdb",
+            "args": {},
+            "evidence": {
+              "kind": "compare_audiences",
+              "rows": []
+            },
+            "projection": "Public query and row projection. Original digest identifies the saved source receipt, not this reduced object."
+          }
+        ],
+        "trace": [
+          {
+            "type": "start",
+            "elapsedMs": 0,
+            "receiptId": null
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 3,
+            "receiptId": null,
+            "text": "Resolve · confirming artist identities"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 2091,
+            "receiptId": "r1"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 2719,
+            "receiptId": "r2"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 3327,
+            "receiptId": "r3"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 3990,
+            "receiptId": "r4"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 4606,
+            "receiptId": "r5"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 5211,
+            "receiptId": "r6"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 5214,
+            "receiptId": null,
+            "text": "Discover · mapping the room’s taste and adjacent artists"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 6167,
+            "receiptId": "r7"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 10327,
+            "receiptId": "r8"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 10327,
+            "receiptId": null,
+            "text": "Rank · testing the candidate pool against your anchors"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 12131,
+            "receiptId": "r9"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 12131,
+            "receiptId": null,
+            "text": "Plan · allocating the remaining evidence budget"
+          },
+          {
+            "type": "plan",
+            "elapsedMs": 12877,
+            "receiptId": null,
+            "text": "Check leading fit, discovered choices and affordable alternatives within the tool budget.",
+            "by": "llm",
+            "deep": [
+              "Charlotte Day Wilson",
+              "Lady Wray",
+              "St. Paul & The Broken Bones",
+              "Sault"
+            ]
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 13203,
+            "receiptId": "r10"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 13203,
+            "receiptId": null,
+            "text": "Verify · local and audience context for Charlotte Day Wilson"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 14154,
+            "receiptId": "r11"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 14761,
+            "receiptId": "r12"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 14762,
+            "receiptId": null,
+            "text": "Verify · local and audience context for Lady Wray"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 15630,
+            "receiptId": "r13"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 16230,
+            "receiptId": "r14"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 16230,
+            "receiptId": null,
+            "text": "Verify · local and audience context for St. Paul & The Broken Bones"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 17049,
+            "receiptId": "r15"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 17645,
+            "receiptId": "r16"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 17645,
+            "receiptId": null,
+            "text": "Verify · local and audience context for Sault"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 18521,
+            "receiptId": "r17"
+          },
+          {
+            "type": "receipt",
+            "elapsedMs": 19114,
+            "receiptId": "r18"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 19115,
+            "receiptId": null,
+            "text": "Optimize · checking every possible slate against your constraints"
+          },
+          {
+            "type": "stage",
+            "elapsedMs": 19118,
+            "receiptId": null,
+            "text": "Write · assembling the booking brief from verified claim IDs"
+          },
+          {
+            "type": "memo",
+            "elapsedMs": 20473,
+            "receiptId": null,
+            "feasible": true
+          }
+        ],
+        "traceMeta": {
+          "complete": true,
+          "linkedReceipts": 18,
+          "totalReceipts": 18
+        },
+        "memo": {
+          "currency": "USD",
+          "exampleBookingTerms": true,
+          "input": {
+            "city": "New York",
+            "anchors": [
+              "Leon Bridges"
+            ],
+            "anchorIds": [
+              "96B907F3-9F2C-4E6E-BCCF-9C9F0173E162"
+            ]
+          },
+          "items": [
+            {
+              "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "name": "Michael Kiwanuka",
+              "found": false,
+              "fit": 1,
+              "rank": 1,
+              "of": 8,
+              "identityReceipt": "r2",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "no data",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [],
+                "trends": [],
+                "comparison": []
+              },
+              "receipts": [
+                "r2",
+                "r9"
+              ],
+              "terms": {
+                "fee": 6500,
+                "available": true,
+                "genre": "alternative soul"
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+              "name": "Charlotte Day Wilson",
+              "found": true,
+              "fit": 0.8571428571428572,
+              "rank": 2,
+              "of": 8,
+              "identityReceipt": "r8",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "yes",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": true,
+                "trends": false,
+                "comparison": true
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [
+                  "r11"
+                ],
+                "trends": [
+                  "r10"
+                ],
+                "comparison": [
+                  "r12"
+                ]
+              },
+              "receipts": [
+                "r8",
+                "r9",
+                "r11",
+                "r12",
+                "r10"
+              ],
+              "terms": {
+                "fee": null,
+                "available": false,
+                "genre": ""
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+              "name": "Lady Wray",
+              "found": true,
+              "fit": 0.7142857142857143,
+              "rank": 3,
+              "of": 8,
+              "identityReceipt": "r8",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "yes",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": true,
+                "trends": false,
+                "comparison": true
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [
+                  "r13"
+                ],
+                "trends": [
+                  "r10"
+                ],
+                "comparison": [
+                  "r14"
+                ]
+              },
+              "receipts": [
+                "r8",
+                "r9",
+                "r13",
+                "r14",
+                "r10"
+              ],
+              "terms": {
+                "fee": null,
+                "available": false,
+                "genre": ""
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+              "name": "St. Paul & The Broken Bones",
+              "found": true,
+              "fit": 0.5714285714285714,
+              "rank": 4,
+              "of": 8,
+              "identityReceipt": "r8",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "yes",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": true,
+                "trends": false,
+                "comparison": true
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [
+                  "r15"
+                ],
+                "trends": [
+                  "r10"
+                ],
+                "comparison": [
+                  "r16"
+                ]
+              },
+              "receipts": [
+                "r8",
+                "r9",
+                "r15",
+                "r16",
+                "r10"
+              ],
+              "terms": {
+                "fee": null,
+                "available": false,
+                "genre": ""
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "name": "Sault",
+              "found": false,
+              "fit": 0.4285714285714286,
+              "rank": 5,
+              "of": 8,
+              "identityReceipt": "r3",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "yes",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": true,
+                "trends": false,
+                "comparison": true
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [
+                  "r17"
+                ],
+                "trends": [
+                  "r10"
+                ],
+                "comparison": [
+                  "r18"
+                ]
+              },
+              "receipts": [
+                "r3",
+                "r9",
+                "r17",
+                "r18",
+                "r10"
+              ],
+              "terms": {
+                "fee": 7000,
+                "available": true,
+                "genre": "alternative soul"
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "57478178-BBBC-49A4-8755-5D942B388316",
+              "name": "Jordan Rakei",
+              "found": false,
+              "fit": 0.2857142857142857,
+              "rank": 6,
+              "of": 8,
+              "identityReceipt": "r4",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "no data",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [],
+                "trends": [],
+                "comparison": []
+              },
+              "receipts": [
+                "r4",
+                "r9"
+              ],
+              "terms": {
+                "fee": 3500,
+                "available": true,
+                "genre": "alternative soul"
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+              "name": "Khruangbin",
+              "found": false,
+              "fit": 0.1428571428571429,
+              "rank": 7,
+              "of": 8,
+              "identityReceipt": "r5",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "no data",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [],
+                "trends": [],
+                "comparison": []
+              },
+              "receipts": [
+                "r5",
+                "r9"
+              ],
+              "terms": {
+                "fee": 9000,
+                "available": true,
+                "genre": "alternative soul"
+              },
+              "culturalLinks": []
+            },
+            {
+              "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+              "name": "Hiatus Kaiyote",
+              "found": false,
+              "fit": 0,
+              "rank": 8,
+              "of": 8,
+              "identityReceipt": "r6",
+              "rankCoverage": {
+                "complete": true,
+                "returned": 8,
+                "requested": 8
+              },
+              "local": "no data",
+              "momentum": "unknown",
+              "evidence": {
+                "rank": true,
+                "local": false,
+                "trends": false,
+                "comparison": false
+              },
+              "evidenceReceipts": {
+                "rank": [
+                  "r9"
+                ],
+                "local": [],
+                "trends": [],
+                "comparison": []
+              },
+              "receipts": [
+                "r6",
+                "r9"
+              ],
+              "terms": {
+                "fee": 5500,
+                "available": true,
+                "genre": "alternative soul"
+              },
+              "culturalLinks": []
+            }
+          ],
+          "constraints": {
+            "budget": 14500,
+            "slots": 2,
+            "discoveryMin": 0,
+            "maxPerGenre": 2,
+            "riskTolerance": 50,
+            "lockedIds": [],
+            "excludedIds": []
+          },
+          "slate": {
+            "version": "1.0",
+            "method": "exact-enumeration",
+            "status": "optimal",
+            "feasible": true,
+            "selectedIds": [
+              "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+            ],
+            "totalFee": 13500,
+            "remainingBudget": 1000,
+            "score": 67.053571,
+            "objectiveBreakdown": {
+              "fit": 71.428571,
+              "momentum": 0,
+              "local": 1,
+              "genreBreadth": 0,
+              "discovery": 0,
+              "concentrationPenalty": -4,
+              "riskPenalty": -1.375,
+              "total": 67.053571
+            },
+            "checkedCount": 28,
+            "feasibleCount": 8,
+            "constraints": {
+              "budget": 14500,
+              "slots": 2,
+              "discoveryMin": 0,
+              "maxPerGenre": 2,
+              "riskTolerance": 50,
+              "lockedIds": [],
+              "excludedIds": []
+            },
+            "policy": {
+              "description": "Exact subset search using explicit policy points; scores are neither probabilities nor revenue or attendance forecasts.",
+              "fitScale": "0–1 relative affinity index, counted only when rank evidence is present; not calibrated demand.",
+              "discoveryRule": "A discovered act has found:true: it was surfaced outside the original buyer shortlist. This is not a popularity or net-new-audience claim.",
+              "missingFeeRule": "An act with no valid buyer-entered fee cannot enter a bookable slate. Money is rounded to cents.",
+              "missingFitRule": "Unsupported or absent fit contributes zero affinity points and increases the evidence penalty. Any selected act without fit evidence makes the result provisional.",
+              "genreRule": "Genres are buyer-entered planning categories. Unknown genres earn no breadth reward and cannot establish a genre concentration.",
+              "riskRule": "Risk tolerance only scales the penalty for incomplete evidence; it does not estimate commercial risk.",
+              "evidenceRiskWeights": {
+                "rank": 0.6,
+                "local": 0.15,
+                "trends": 0.15,
+                "comparison": 0.1
+              },
+              "aggregation": "Fit, momentum, local support and discovery are averages across slots. Genre breadth and repeated-genre pairs are normalized across the slate.",
+              "tieBreak": "Higher unrounded score, then lower total fee, then lexicographic candidate IDs.",
+              "weights": {
+                "fit": 100,
+                "risingMomentum": 3,
+                "coolingMomentum": -2,
+                "localSupport": 2,
+                "genreBreadth": 2,
+                "discovery": 1,
+                "concentration": 4,
+                "missingEvidence": 10
+              }
+            },
+            "reasons": [
+              "Checked all 28 exact-size combinations; 8 satisfy every booking constraint.",
+              "This slate has the highest declared policy score among all feasible combinations.",
+              "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+            ],
+            "confidence": {
+              "level": "supported",
+              "supportedFitCount": 2,
+              "totalCount": 2,
+              "missingFitIds": [],
+              "notes": [
+                "Some supporting local, trend or comparison evidence is absent; the objective exposes the resulting evidence penalty."
+              ]
+            },
+            "diagnostics": {
+              "invalidInputs": [],
+              "candidateExclusions": [
+                {
+                  "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                  "name": "Charlotte Day Wilson",
+                  "reasons": [
+                    "No valid buyer-entered fee.",
+                    "Availability is not confirmed."
+                  ]
+                },
+                {
+                  "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                  "name": "Lady Wray",
+                  "reasons": [
+                    "No valid buyer-entered fee.",
+                    "Availability is not confirmed."
+                  ]
+                },
+                {
+                  "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                  "name": "St. Paul & The Broken Bones",
+                  "reasons": [
+                    "No valid buyer-entered fee.",
+                    "Availability is not confirmed."
+                  ]
+                }
+              ],
+              "constraintImpacts": [
+                {
+                  "constraint": "availability",
+                  "blockedCount": 18
+                },
+                {
+                  "constraint": "fees",
+                  "blockedCount": 18
+                },
+                {
+                  "constraint": "budget",
+                  "blockedCount": 2
+                }
+              ],
+              "nearestSlates": [],
+              "relaxations": {
+                "minimumBudget": 9000,
+                "additionalBudget": 0,
+                "maximumDiscovery": 0
+              }
+            },
+            "frontier": [
+              {
+                "selectedIds": [
+                  "57478178-BBBC-49A4-8755-5D942B388316",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "totalFee": 9000,
+                "knownFeeSubtotal": 9000,
+                "remainingBudget": 5500,
+                "score": 8.285714,
+                "objectiveBreakdown": {
+                  "fit": 14.285714,
+                  "momentum": 0,
+                  "local": 0,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -2,
+                  "total": 8.285714
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": []
+              },
+              {
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "totalFee": 10000,
+                "knownFeeSubtotal": 10000,
+                "remainingBudget": 4500,
+                "score": 58.285714,
+                "objectiveBreakdown": {
+                  "fit": 64.285714,
+                  "momentum": 0,
+                  "local": 0,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -2,
+                  "total": 58.285714
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": []
+              },
+              {
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "totalFee": 13500,
+                "knownFeeSubtotal": 13500,
+                "remainingBudget": 1000,
+                "score": 67.053571,
+                "objectiveBreakdown": {
+                  "fit": 71.428571,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -1.375,
+                  "total": 67.053571
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": []
+              }
+            ],
+            "alternatives": [
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "57478178-BBBC-49A4-8755-5D942B388316",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "totalFee": 10000,
+                "knownFeeSubtotal": 10000,
+                "remainingBudget": 4500,
+                "score": 58.285714,
+                "objectiveBreakdown": {
+                  "fit": 64.285714,
+                  "momentum": 0,
+                  "local": 0,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -2,
+                  "total": 58.285714
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": [],
+                "scoreDelta": -8.767857,
+                "costDelta": -3500,
+                "reason": "Swap Sault for Jordan Rakei: -8.77 policy points; -3500.00 in fees. All constraints remain satisfied."
+              },
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "AC007829-3D79-438E-9F02-11228C82AD38",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "totalFee": 12000,
+                "knownFeeSubtotal": 12000,
+                "remainingBudget": 2500,
+                "score": 44,
+                "objectiveBreakdown": {
+                  "fit": 50,
+                  "momentum": 0,
+                  "local": 0,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -2,
+                  "total": 44
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": [],
+                "scoreDelta": -23.053571,
+                "costDelta": -1500,
+                "reason": "Swap Sault for Hiatus Kaiyote: -23.05 policy points; -1500.00 in fees. All constraints remain satisfied."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "57478178-BBBC-49A4-8755-5D942B388316",
+                "selectedIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "57478178-BBBC-49A4-8755-5D942B388316"
+                ],
+                "totalFee": 10500,
+                "knownFeeSubtotal": 10500,
+                "remainingBudget": 4000,
+                "score": 31.339286,
+                "objectiveBreakdown": {
+                  "fit": 35.714286,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -1.375,
+                  "total": 31.339286
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": [],
+                "scoreDelta": -35.714286,
+                "costDelta": -3000,
+                "reason": "Swap Michael Kiwanuka for Jordan Rakei: -35.71 policy points; -3000.00 in fees. All constraints remain satisfied."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "AC007829-3D79-438E-9F02-11228C82AD38",
+                "selectedIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "AC007829-3D79-438E-9F02-11228C82AD38"
+                ],
+                "totalFee": 12500,
+                "knownFeeSubtotal": 12500,
+                "remainingBudget": 2000,
+                "score": 17.053571,
+                "objectiveBreakdown": {
+                  "fit": 21.428571,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -1.375,
+                  "total": 17.053571
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": true,
+                "violations": [],
+                "scoreDelta": -50,
+                "costDelta": -1000,
+                "reason": "Swap Michael Kiwanuka for Hiatus Kaiyote: -50.00 policy points; -1000.00 in fees. All constraints remain satisfied."
+              },
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 6500,
+                "remainingBudget": null,
+                "score": 92.982143,
+                "objectiveBreakdown": {
+                  "fit": 92.857143,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -1.375,
+                  "total": 92.982143
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Charlotte Day Wilson has no confirmed availability.",
+                  "Charlotte Day Wilson has no valid buyer-entered fee."
+                ],
+                "scoreDelta": 25.928571,
+                "costDelta": null,
+                "reason": "Swap Sault for Charlotte Day Wilson is not bookable: Charlotte Day Wilson has no confirmed availability. Charlotte Day Wilson has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 6500,
+                "remainingBudget": null,
+                "score": 85.839286,
+                "objectiveBreakdown": {
+                  "fit": 85.714286,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -1.375,
+                  "total": 85.839286
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Lady Wray has no confirmed availability.",
+                  "Lady Wray has no valid buyer-entered fee."
+                ],
+                "scoreDelta": 18.785714,
+                "costDelta": null,
+                "reason": "Swap Sault for Lady Wray is not bookable: Lady Wray has no confirmed availability. Lady Wray has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 6500,
+                "remainingBudget": null,
+                "score": 78.696429,
+                "objectiveBreakdown": {
+                  "fit": 78.571429,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -1.375,
+                  "total": 78.696429
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "St. Paul & The Broken Bones has no confirmed availability.",
+                  "St. Paul & The Broken Bones has no valid buyer-entered fee."
+                ],
+                "scoreDelta": 11.642857,
+                "costDelta": null,
+                "reason": "Swap Sault for St. Paul & The Broken Bones is not bookable: St. Paul & The Broken Bones has no confirmed availability. St. Paul & The Broken Bones has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                "selectedIds": [
+                  "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 7000,
+                "remainingBudget": null,
+                "score": 66.035714,
+                "objectiveBreakdown": {
+                  "fit": 64.285714,
+                  "momentum": 0,
+                  "local": 2,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -0.75,
+                  "total": 66.035714
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Charlotte Day Wilson has no confirmed availability.",
+                  "Charlotte Day Wilson has no valid buyer-entered fee."
+                ],
+                "scoreDelta": -1.017857,
+                "costDelta": null,
+                "reason": "Swap Michael Kiwanuka for Charlotte Day Wilson is not bookable: Charlotte Day Wilson has no confirmed availability. Charlotte Day Wilson has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                "selectedIds": [
+                  "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 7000,
+                "remainingBudget": null,
+                "score": 58.892857,
+                "objectiveBreakdown": {
+                  "fit": 57.142857,
+                  "momentum": 0,
+                  "local": 2,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -0.75,
+                  "total": 58.892857
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Lady Wray has no confirmed availability.",
+                  "Lady Wray has no valid buyer-entered fee."
+                ],
+                "scoreDelta": -8.160714,
+                "costDelta": null,
+                "reason": "Swap Michael Kiwanuka for Lady Wray is not bookable: Lady Wray has no confirmed availability. Lady Wray has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                "selectedIds": [
+                  "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+                ],
+                "totalFee": null,
+                "knownFeeSubtotal": 7000,
+                "remainingBudget": null,
+                "score": 51.75,
+                "objectiveBreakdown": {
+                  "fit": 50,
+                  "momentum": 0,
+                  "local": 2,
+                  "genreBreadth": 0,
+                  "discovery": 0.5,
+                  "concentrationPenalty": 0,
+                  "riskPenalty": -0.75,
+                  "total": 51.75
+                },
+                "discoveredCount": 1,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "St. Paul & The Broken Bones has no confirmed availability.",
+                  "St. Paul & The Broken Bones has no valid buyer-entered fee."
+                ],
+                "scoreDelta": -15.303571,
+                "costDelta": null,
+                "reason": "Swap Michael Kiwanuka for St. Paul & The Broken Bones is not bookable: St. Paul & The Broken Bones has no confirmed availability. St. Paul & The Broken Bones has no valid buyer-entered fee."
+              },
+              {
+                "removedId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "addedId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                "selectedIds": [
+                  "368316C7-795A-46AF-8BBC-270F6633BE04",
+                  "BAF6317A-DF94-4C90-92AE-63F86560C21B"
+                ],
+                "totalFee": 15500,
+                "knownFeeSubtotal": 15500,
+                "remainingBudget": -1000,
+                "score": 51.142857,
+                "objectiveBreakdown": {
+                  "fit": 57.142857,
+                  "momentum": 0,
+                  "local": 0,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -2,
+                  "total": 51.142857
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Known fees exceed the budget by 1000.00."
+                ],
+                "scoreDelta": -15.910714,
+                "costDelta": 2000,
+                "reason": "Swap Sault for Khruangbin is not bookable: Known fees exceed the budget by 1000.00."
+              },
+              {
+                "removedId": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "addedId": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                "selectedIds": [
+                  "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                  "BAF6317A-DF94-4C90-92AE-63F86560C21B"
+                ],
+                "totalFee": 16000,
+                "knownFeeSubtotal": 16000,
+                "remainingBudget": -1500,
+                "score": 24.196429,
+                "objectiveBreakdown": {
+                  "fit": 28.571429,
+                  "momentum": 0,
+                  "local": 1,
+                  "genreBreadth": 0,
+                  "discovery": 0,
+                  "concentrationPenalty": -4,
+                  "riskPenalty": -1.375,
+                  "total": 24.196429
+                },
+                "discoveredCount": 0,
+                "genreCount": 1,
+                "feasible": false,
+                "violations": [
+                  "Known fees exceed the budget by 1500.00."
+                ],
+                "scoreDelta": -42.857143,
+                "costDelta": 2500,
+                "reason": "Swap Michael Kiwanuka for Khruangbin is not bookable: Known fees exceed the budget by 1500.00."
+              }
+            ],
+            "baseline": {
+              "label": "First eligible input-order slate, with locks; not a popularity ranking",
+              "selectedIds": [
+                "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+              ],
+              "totalFee": 13500,
+              "knownFeeSubtotal": 13500,
+              "remainingBudget": 1000,
+              "score": 67.053571,
+              "objectiveBreakdown": {
+                "fit": 71.428571,
+                "momentum": 0,
+                "local": 1,
+                "genreBreadth": 0,
+                "discovery": 0,
+                "concentrationPenalty": -4,
+                "riskPenalty": -1.375,
+                "total": 67.053571
+              },
+              "discoveredCount": 0,
+              "genreCount": 1,
+              "feasible": true,
+              "violations": [],
+              "scoreDelta": 0
+            },
+            "candidateAssessments": [
+              {
+                "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+                "name": "Michael Kiwanuka",
+                "eligible": true,
+                "discovery": false,
+                "fee": 6500,
+                "genre": "alternative soul",
+                "fit": 1,
+                "evidence": {
+                  "rank": true,
+                  "local": false,
+                  "trends": false,
+                  "comparison": false
+                },
+                "exclusionReasons": []
+              },
+              {
+                "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+                "name": "Charlotte Day Wilson",
+                "eligible": false,
+                "discovery": true,
+                "fee": null,
+                "genre": null,
+                "fit": 0.8571428571428572,
+                "evidence": {
+                  "rank": true,
+                  "local": true,
+                  "trends": false,
+                  "comparison": true
+                },
+                "exclusionReasons": [
+                  "No valid buyer-entered fee.",
+                  "Availability is not confirmed."
+                ]
+              },
+              {
+                "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+                "name": "Lady Wray",
+                "eligible": false,
+                "discovery": true,
+                "fee": null,
+                "genre": null,
+                "fit": 0.7142857142857143,
+                "evidence": {
+                  "rank": true,
+                  "local": true,
+                  "trends": false,
+                  "comparison": true
+                },
+                "exclusionReasons": [
+                  "No valid buyer-entered fee.",
+                  "Availability is not confirmed."
+                ]
+              },
+              {
+                "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+                "name": "St. Paul & The Broken Bones",
+                "eligible": false,
+                "discovery": true,
+                "fee": null,
+                "genre": null,
+                "fit": 0.5714285714285714,
+                "evidence": {
+                  "rank": true,
+                  "local": true,
+                  "trends": false,
+                  "comparison": true
+                },
+                "exclusionReasons": [
+                  "No valid buyer-entered fee.",
+                  "Availability is not confirmed."
+                ]
+              },
+              {
+                "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+                "name": "Sault",
+                "eligible": true,
+                "discovery": false,
+                "fee": 7000,
+                "genre": "alternative soul",
+                "fit": 0.4285714285714286,
+                "evidence": {
+                  "rank": true,
+                  "local": true,
+                  "trends": false,
+                  "comparison": true
+                },
+                "exclusionReasons": []
+              },
+              {
+                "id": "57478178-BBBC-49A4-8755-5D942B388316",
+                "name": "Jordan Rakei",
+                "eligible": true,
+                "discovery": false,
+                "fee": 3500,
+                "genre": "alternative soul",
+                "fit": 0.2857142857142857,
+                "evidence": {
+                  "rank": true,
+                  "local": false,
+                  "trends": false,
+                  "comparison": false
+                },
+                "exclusionReasons": []
+              },
+              {
+                "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+                "name": "Khruangbin",
+                "eligible": true,
+                "discovery": false,
+                "fee": 9000,
+                "genre": "alternative soul",
+                "fit": 0.1428571428571429,
+                "evidence": {
+                  "rank": true,
+                  "local": false,
+                  "trends": false,
+                  "comparison": false
+                },
+                "exclusionReasons": []
+              },
+              {
+                "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+                "name": "Hiatus Kaiyote",
+                "eligible": true,
+                "discovery": false,
+                "fee": 5500,
+                "genre": "alternative soul",
+                "fit": 0,
+                "evidence": {
+                  "rank": true,
+                  "local": false,
+                  "trends": false,
+                  "comparison": false
+                },
+                "exclusionReasons": []
+              }
+            ],
+            "receiptIds": [
+              "r2",
+              "r9",
+              "r3",
+              "r17",
+              "r18",
+              "r10"
+            ]
+          }
+        }
+      }
     }
   ]
 }

@@ -332,6 +332,8 @@ export function createApp() {
         trace.push({ elapsedMs: Date.now() - startedAt, type: event.type, text: String(event.text || event.reason || '').slice(0, 240),
           receiptId: event.receipt?.id || null, tool: event.receipt?.tool || null, status: event.receipt?.status || null,
           source: event.receipt?.source || null, ms: event.receipt?.ms ?? null, mock: event.type === 'start' ? event.mock === true : undefined,
+          by: event.type === 'plan' ? event.by : undefined,
+          deep: event.type === 'plan' && Array.isArray(event.deep) ? event.deep.slice(0, 4) : undefined,
           feasible: event.type === 'memo' ? event.slate?.feasible === true : undefined });
       }
       res.write(`data: ${JSON.stringify(event)}\n\n`);

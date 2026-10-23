@@ -103,7 +103,7 @@ async function selectCase(id){text($('case-status'),'Loading locked report…');
 async function init(){try{const response=await fetch('/api/experiments/public');if(!response.ok)throw new Error('Published case list unavailable.');const payload=await response.json();window.proofCoverage=payload.coverage;const select=$('case-select');clear(select);
     for(const item of payload.cases){const option=el('option','',`${item.title} · ${item.synthetic?'synthetic':'saved live'}`);option.value=item.id;select.append(option);}
     if(!payload.cases.length){text($('case-status'),'No published cases yet.');return;}
-    const requested=location.hash.slice(1),guided=payload.cases.find(item=>item.id==='bf9b65d52eeff00e0e258917');
+    const requested=location.hash.slice(1),guided=payload.cases.find(item=>item.id==='8be4d03ef4792ca9f1466983');
     const first=payload.cases.some(item=>item.id===requested)?requested:(guided??payload.cases[0]).id;select.value=first;await selectCase(first);
     select.addEventListener('change',()=>selectCase(select.value).catch(error=>text($('case-status'),error.message)));
   }catch(error){text($('case-status'),error.message);}}
