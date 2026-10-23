@@ -10,6 +10,10 @@
   async function request(path,body){const response=await fetch(path,{...(body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw new Error(value.error??'Request failed.');return value;}
   const names=ids=>ids.map(id=>current.snapshot.memo.items.find(i=>i.id===id)?.name??id).join(' + ')||'No feasible lineup';
   const money=value=>value==null?'Unknown':new Intl.NumberFormat('en-GB',{style:'currency',currency:current.snapshot.memo.currency}).format(value);
+  const receiptLink=id=>{
+    const index=current.snapshot.receipts.findIndex(receipt=>receipt.id===id);
+    return index<0?e(id):`<button type="button" class="judge-receipt-link" data-receipt-index="${index}">Receipt ${e(id)}</button>`;
+  };
   function renderAgentTrace(){
     const snapshot=current.snapshot,receipts=snapshot.receipts??[],brief=snapshot.memo.input??{};
     const question=`Which of these ${snapshot.memo.items.length} artists fit ${brief.anchors?.join(' and ')||'the saved audience'} in ${brief.city||'this market'}, within the booking constraints?`;
@@ -27,7 +31,7 @@
         const label=receipt?`${title[kind]??kind} returned`:eventNames[event.type]??'Recorded event';
         const detail=receipt?`${receipt.status} · ${receipt.evidence?.rows?.length??0} projected rows · ${stamp(receipt.fetchedAt)}`:
           event.type==='memo'?`Feasible: ${event.feasible?'yes':'no'}`:'The saved event contains no public explanation of the model’s reasoning.';
-        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(label)}</strong><p>${e(detail)}</p><small>Recorded +${e((event.elapsedMs/1000).toFixed(1))}s${receipt?` · <a href="#judge-receipts">Receipt ${e(receipt.id)}</a>`:''}</small></div></li>`);
+        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(label)}</strong><p>${e(detail)}</p><small>Recorded +${e((event.elapsedMs/1000).toFixed(1))}s${receipt?` · ${receiptLink(receipt.id)}`:''}</small></div></li>`);
       }
     }else{
       const ordered=receipts.map((receipt,index)=>({receipt,index,time:Date.parse(receipt.fetchedAt)}))
@@ -43,7 +47,7 @@
         const times=stamp(first.fetchedAt)+(group.length>1?` to ${stamp(last.fetchedAt)}`:'');
         const gap=index>0?group[0].time-groups[index-1].at(-1).time:0;
         const later=gap>60000?` · ${e(Math.round(gap/1000))}s after the preceding receipt; the case does not establish whether this was the same run.`:'';
-        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(title[first.tool]??first.tool)} · ${e(group.length)} ${group.length===1?'receipt':'receipts'}</strong><p>${e(first.status)} · ${e(rows)} projected evidence rows · ${e(times)}</p><small><a href="#judge-receipts">Receipts ${e(group.map(row=>row.receipt.id).join(', '))}</a> · Recorded completion order; the model’s reason for each call was not saved.${later}</small></div></li>`);
+        steps.push(`<li><span class="agent-step-number">${e(String(index+1).padStart(2,'0'))}</span><div><strong>${e(title[first.tool]??first.tool)} · ${e(group.length)} ${group.length===1?'receipt':'receipts'}</strong><p>${e(first.status)} · ${e(rows)} projected evidence rows · ${e(times)}</p><small>${group.map(row=>receiptLink(row.receipt.id)).join(', ')} · Recorded completion order; the model’s reason for each call was not saved.${later}</small></div></li>`);
       }
     }
     const slate=snapshot.memo.slate;
@@ -60,11 +64,14 @@
     if(!result.qlooOff)return '';
     const original=current.snapshot.memo.slate,updated=result.snapshot.memo.slate,comparison=result.comparison;
     const changedIds=[...new Set([...comparison.removedIds,...comparison.addedIds])];
-    const linked=[...new Set(changedIds.flatMap(id=>Object.values(current.snapshot.memo.items.find(item=>item.id===id)?.evidenceReceipts??{}).flat()))].filter(Boolean);
+    const linked=[...new Set(changedIds.flatMap(id=>Object.values(current.snapshot.memo.items.find(item=>item.id===id)?.evidenceReceipts??{}).flat()))].filter(id=>current.snapshot.receipts.some(receipt=>receipt.id===id));
     const matched=comparison.matchedEvidenceWithdrawal===true;
+    const label=matched?'MATCHED EVIDENCE TEST':'COMBINED-CHANGE REPLAY';
+    const heading=matched?'Same brief. What did Qloo change?':'Evidence and booking inputs changed';
+    const changedLabel=matched?'WITH QLOO EVIDENCE REMOVED':'EVIDENCE REMOVED + OTHER CHANGES';
     const note=matched?'Same candidate pool, fees, availability, scoring policy and booking constraints. Only saved cultural evidence was withdrawn. This tests the optimizer’s dependence on that evidence, not ticket sales or commercial value.':'This experiment also changes booking inputs or withdraws a separate receipt. The lineup difference cannot be attributed to Qloo evidence alone.';
     const change=comparison.changed?`Removed: ${comparison.removedIds.length?e(names(comparison.removedIds)):'none'}. Added: ${comparison.addedIds.length?e(names(comparison.addedIds)):'none'}.`:'Both runs selected the same artists.';
-    return `<section class="judge-evidence-comparison" aria-label="Qloo evidence comparison"><p class="judge-section-label"><span>↳</span> MATCHED EVIDENCE TEST</p><h4>Same brief. What did Qloo change?</h4><div class="judge-evidence-columns"><div><small>WITH SAVED QLOO EVIDENCE</small><strong>${e(names(original.selectedIds))}</strong><span>${e(original.feasible?'Passes constraints':'No feasible selection')} · ${e(money(original.totalFee))} fees</span></div><div><small>WITH QLOO EVIDENCE REMOVED</small><strong>${e(names(updated.selectedIds))}</strong><span>${e(updated.feasible?'Passes constraints':'Explicitly infeasible')} · ${e(money(updated.totalFee))} fees</span></div></div><p><strong>${e(comparison.changed?'Selection changed.':'Selection unchanged.')}</strong> ${change}</p><p class="judge-comparison-limit">${e(note)}</p>${linked.length?`<p class="judge-comparison-limit">Changed artists have links to saved receipts ${e(linked.slice(0,6).join(', '))}${linked.length>6?' and more':''}. Inspect them below or use Proof Lab to test individual signals; a link alone does not establish which signal caused the change.</p>`:''}</section>`;
+    return `<section class="judge-evidence-comparison" aria-label="Qloo evidence comparison"><p class="judge-section-label"><span>↳</span> ${label}</p><h4>${heading}</h4><div class="judge-evidence-columns"><div><small>WITH SAVED QLOO EVIDENCE</small><strong>${e(names(original.selectedIds))}</strong><span>${e(original.feasible?'Passes constraints':'No feasible selection')} · ${e(money(original.totalFee))} fees</span></div><div><small>${changedLabel}</small><strong>${e(names(updated.selectedIds))}</strong><span>${e(updated.feasible?'Passes constraints':'Explicitly infeasible')} · ${e(money(updated.totalFee))} fees</span></div></div><p><strong>${e(comparison.changed?'Selection changed.':'Selection unchanged.')}</strong> ${change}</p><p class="judge-comparison-limit">${e(note)}</p>${linked.length?`<p class="judge-comparison-limit">Saved receipts for changed artists: ${linked.slice(0,6).map(receiptLink).join(', ')}${linked.length>6?' and more':''}. A receipt link alone does not establish which signal caused the change; use Proof Lab to test individual signals.</p>`:''}</section>`;
   }
   function renderResult(){
     const {snapshot,proof,comparison}=result,slate=snapshot.memo.slate;
@@ -105,6 +112,15 @@
     }catch(error){say(error.message);}finally{busy=false;$('judge-case').disabled=false;document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select').forEach(b=>b.disabled=false);}
   }
   $('judge-form').onsubmit=event=>{event.preventDefault();void experiment();};$('judge-reset').onclick=()=>{reset();say('Published baseline restored.');};
+  $('judge-workspace').addEventListener('click',event=>{
+    const link=event.target.closest('[data-receipt-index]');
+    if(!link)return;
+    const detail=$('judge-receipts').children[Number(link.dataset.receiptIndex)];
+    if(!detail)return;
+    detail.open=true;
+    detail.querySelector('summary')?.focus({preventScroll:true});
+    detail.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  });
   $('judge-tight-budget').onclick=()=>{reset();$('judge-budget').value=Math.floor(current.snapshot.memo.slate.totalFee*.9);void experiment(true);};
   $('judge-qloo-compare').onclick=()=>{reset();$('judge-qloo-off').checked=true;void experiment(true);};
   $('judge-rank-challenge').onclick=()=>{reset();const id=current.snapshot.memo.items.flatMap(i=>i.evidenceReceipts.rank??[]).find(id=>current.snapshot.receipts.some(r=>r.id===id));if(!id){say('No linked rank receipt is available in this case.');return;}$('judge-withdraw').value=id;void experiment();};
