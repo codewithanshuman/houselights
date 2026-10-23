@@ -1,7 +1,7 @@
 name: Release verification
 on:
   push:
-    branches: [main]
+    branches: [main, development]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -29,6 +29,10 @@ jobs:
           node-version: "24"
       - run: npm ci
       - run: npm test
+      - run: npx playwright install --with-deps chromium
+        if: matrix.runner == 'ubuntu-24.04'
+      - run: npm run test:browser
+        if: matrix.runner == 'ubuntu-24.04'
       - name: Configure container-only fixtures after unit tests
         run: |
           cat >> "$GITHUB_ENV" <<'EOF'
