@@ -1,5 +1,44 @@
 # Sharing an existing Oracle server
 
+## Deployment of 62d4fc2 — 24 October 2026
+
+The public host runs application commit
+`62d4fc2321d4fcab0bb4fbc44e3e93b8bb0124ab` (review 4 corrections), and `/healthz` over public HTTPS reports that release. It replaced `cb9ce4a`, using the same procedure as below.
+
+**Before the switch**
+
+- The online backup `backups/pre-review4-62d4fc2` passed an isolated restore with integrity ok. A copy is held off-host.
+- The release environment, the service list and the livestream PID were saved.
+- The running image was tagged `houselights-shared:pre-review4-62d4fc2`.
+- A rollback drill started that image on the restored database in a separate, loopback-only container. It served all 12 cases and every page with no errors, and was then removed.
+
+**Build and switch**
+
+- The image was built in the capped builder, which was stopped afterwards.
+- Only the application container was recreated. Every other container kept its ID, and the livestream PID was unchanged.
+
+**Checks after the deployment**
+
+- `npm run release:verify` against the public URL passed 83 checks.
+- The deployed `researchOutcome` was called with simulated receipts:
+  - `partial` and `degraded` Qloo answers and timeouts → `partial`.
+  - `ok` and `empty` answers → `complete`.
+  - Before this release, partial and degraded answers produced `complete`.
+- The served workspace code contains the corrected warning and status line.
+- In a real browser at 1366 px and 375 px:
+  - The decision glance, the booking-desk budget cut and the zero-call Autopilot re-plan worked.
+  - The organizer example rendered.
+  - No page overflowed horizontally.
+- An organizer session over HTTPS passed:
+  - Anonymous and wrong-token requests were refused.
+  - Live research completed with 5 of 24 calls, none incomplete.
+  - Zero-call decisions on two revisions, the comparison and both packet formats worked.
+- No table lost rows across the switch. The log had no errors, and the disk was 95% full (2.5 GB free).
+
+**Not verified:** a real partial answer from Qloo (none occurred), load from concurrent users, and a VM reboot.
+
+**Rollback:** tag `houselights-shared:pre-review4-62d4fc2` as `houselights-shared:local`, set `RELEASE_COMMIT=cb9ce4a8ff7b0fab377826146459c0668a6f9204`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of cb9ce4a — 24 October 2026
 
 The public host now runs application commit
