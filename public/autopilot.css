@@ -104,7 +104,7 @@
 .autopilot-steps { padding-left:22px; display:grid; gap:7px; font-size:13px; line-height:1.55; margin:0 0 12px; }
 .autopilot-packet details { margin-top:6px; font-size:12.5px; }
 .autopilot-packet details ul { padding-left:18px; }
-@media (max-width:1050px) { .autopilot-grid { grid-template-columns:1fr; } .autopilot-pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:1050px) { .autopilot-grid { grid-template-columns:minmax(0,1fr); } .autopilot-pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:780px) {
   .autopilot-controls { display:grid; }
   .autopilot-pipeline { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -124,3 +124,34 @@
 }
 @media print { .autopilot-controls, .autopilot-packet-actions, #autopilot-status { display:none !important; } .autopilot-grid { grid-template-columns:1fr; } }
 #booking-autopilot[aria-busy="true"] #autopilot-output { opacity:.45; pointer-events:none; transition:opacity .2s; }
+/* 2.0 views: strategy comparison, evidence matrix, actions and the organizer example link. */
+.autopilot-compare { width:100%; border-collapse:collapse; font-size:12.5px; background:#fff; margin:0 0 12px; }
+.autopilot-compare caption { text-align:left; font-size:11.5px; color:var(--judge-muted,#615e68); padding:0 0 6px; caption-side:top; }
+.autopilot-compare th, .autopilot-compare td { border:1px solid var(--judge-line,#dedbe5); padding:7px 9px; text-align:left; vertical-align:top; }
+.autopilot-compare thead th { background:#f4f1f8; font-weight:600; font-size:11.5px; }
+.autopilot-compare tbody th { font-weight:600; }
+.autopilot-recommended-row { background:#f8f5fe; }
+.autopilot-measured { color:#22603a; }
+.autopilot-missing { color:#6a6272; }
+.autopilot-prefer { margin-top:6px !important; padding-left:9px; border-left:2px solid #d8cfef; color:#4b4552 !important; }
+.autopilot-definition { margin:6px 0 10px; font-size:12px; }
+.autopilot-definition summary { cursor:pointer; color:#4f3593; font-weight:600; }
+.autopilot-definition p { color:#5b5664; line-height:1.55; margin-top:6px !important; }
+.autopilot-approval { margin-top:6px !important; font:500 11px/1.5 "IBM Plex Mono",monospace; color:#7a5512 !important; }
+.autopilot-action-approval { background:#fbf6ea; color:#7a5512; }
+.autopilot-action-confirm { background:#fcedf0; color:#a33346; }
+.autopilot-action-recommendation { background:#e8f1eb; color:#285a3c; }
+.autopilot-failed { background:#fcedf0 !important; }
+.autopilot-steps li .autopilot-chip { margin-right:6px; }
+.autopilot-example-link { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:12px 0 4px; padding:14px 16px; border:1px solid #d8cfef; border-radius:10px; background:#f8f5fe; color:#2f2a38; text-decoration:none; }
+.autopilot-example-link span:first-child { display:grid; gap:2px; }
+.autopilot-example-link small { font:500 10px/1.4 "IBM Plex Mono",monospace; letter-spacing:.6px; color:#5d429f; }
+.autopilot-example-link strong { font:450 19px/1.3 "Fraunces",Georgia,serif; }
+.autopilot-example-link em { font-style:normal; font-size:12.5px; color:#5b5664; }
+.autopilot-example-link > span:last-child { font-size:22px; color:#7357c8; }
+.autopilot-example-link:hover { background:#efe8fb; }
+.table-scroll { overflow-x:auto; max-width:100%; }
+.autopilot-provisional { margin-top:6px !important; padding:8px 10px; border-radius:6px; background:#fbf6ea; border:1px solid #ecdcb6; color:#5d4410 !important; font-size:12.5px; }
+.autopilot-grid > section, .autopilot-packet, .autopilot-packet details, .autopilot-strategies article { min-width:0; }
+.autopilot-packet code, .autopilot-note code, .autopilot-receipt pre { overflow-wrap:anywhere; word-break:break-all; }
+.workspace-page .panel, .workspace-story > li { min-width:0; }

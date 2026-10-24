@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#F7F6F2">
+  <meta name="description" content="Houselights organizer workspace: create an event brief, research it with Qloo, compare feasible booking strategies and export a decision packet.">
+  <link rel="icon" type="image/png" href="/assets/brand/portal-logo-v2.png"><title>Houselights — organizer workspace</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/theme.css">
+  <link rel="stylesheet" href="/judge.css">
+  <link rel="stylesheet" href="/autopilot.css">
+  <link rel="stylesheet" href="/workspace.css">
+  <script src="/access.js" defer></script>
+  <script src="/autopilot-view.js" defer></script>
+  <script src="/workspace.js" defer></script>
+</head>
+<body class="judge-page workspace-page">
+  <a class="skip-link" href="#main">Skip to the workspace</a>
+  <nav class="judge-nav" aria-label="Main navigation">
+    <a class="judge-brand" href="/judge.html" aria-label="Houselights Booking Desk">
+      <span class="brand-logo-frame"><img class="brand-logo" src="/assets/brand/portal-logo-v2.png" alt="" width="1254" height="1254"></span>
+      <span>Houselights<span class="judge-brand-period">.</span></span>
+    </a>
+    <span class="judge-nav-label">ORGANIZER WORKSPACE</span>
+    <a class="judge-organizer-link" href="/judge.html">Public Booking Desk <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>
+  </nav>
+  <main id="main" class="judge-main workspace-main" tabindex="-1">
+    <header class="workspace-hero">
+      <p class="judge-eyebrow"><span aria-hidden="true"></span> YOUR EVENT. YOUR TERMS. QLOO EVIDENCE.</p>
+      <h1>Plan a new event, <em>end to end.</em></h1>
+      <p class="judge-intro">Write the brief with your own fees and availability. Houselights researches the audience with Qloo, compares feasible bills, stress-tests them and writes a decision packet. Revise the brief and compare decisions without re-running research.</p>
+      <div id="workspace-mode" class="workspace-mode" role="status" aria-live="polite">Checking access…</div>
+    </header>
+
+    <section id="workspace-gate" class="panel workspace-gate" hidden aria-labelledby="gate-title">
+      <div>
+        <h2 id="gate-title">Organizer access</h2>
+        <p>Events contain your fees and plans, so the workspace is private. Enter the organizer token for this server. It stays in this tab's memory and is never put in a URL or export.</p>
+        <form id="gate-form" class="workspace-gate-form">
+          <label for="gate-token">Organizer token</label>
+          <div><input id="gate-token" type="password" autocomplete="off" required minlength="8"><button class="button primary" type="submit">Unlock workspace</button></div>
+          <p id="gate-error" class="workspace-error" role="alert"></p>
+        </form>
+      </div>
+      <div class="workspace-gate-example">
+        <h3>No token?</h3>
+        <p>Watch a recorded organizer session: a brand-new event researched with live Qloo, revised and compared.</p>
+        <a class="button subtle" href="#example">View the recorded example</a>
+      </div>
+    </section>
+
+    <div id="workspace-app" class="workspace-app" hidden>
+      <aside class="workspace-events panel" aria-labelledby="events-title">
+        <div class="workspace-events-head"><h2 id="events-title">Your events</h2><button class="button primary small" type="button" id="new-event">New event</button></div>
+        <ul id="event-list" class="workspace-event-list"></ul>
+        <a class="workspace-example-small" href="#example">Recorded example session ↗</a>
+      </aside>
+      <div class="workspace-detail">
+        <ol class="workspace-steps" aria-label="Workflow">
+          <li><a href="#ws-brief"><span>1</span> Brief</a></li><li><a href="#ws-research"><span>2</span> Qloo research</a></li><li><a href="#ws-decide"><span>3</span> Decide</a></li><li><a href="#ws-history"><span>4</span> Revise &amp; compare</a></li>
+        </ol>
+
+        <section id="ws-brief" class="panel workspace-section" aria-labelledby="brief-title">
+          <div class="workspace-section-head"><div><p class="judge-section-label"><span>1</span> EVENT BRIEF</p><h2 id="brief-title">What are you booking?</h2></div><button class="button subtle small" type="button" id="fill-example">Fill an example brief</button></div>
+          <p class="workspace-hint">Only what you enter is used. Leave a fee empty if you do not know it; Houselights will not invent one.</p>
+          <form id="brief-form" novalidate>
+            <fieldset><legend>The event</legend>
+              <div class="workspace-grid">
+                <label>Event name <input name="name" required maxlength="120" autocomplete="off"></label>
+                <label>City (Qloo market) <input name="city" required maxlength="100" autocomplete="off"></label>
+                <label>Venue <input name="venue" maxlength="120" autocomplete="off"></label>
+                <label>Date <input name="date" type="date"></label>
+                <label class="workspace-wide">Programming direction <input name="direction" maxlength="200" placeholder="e.g. modern soul and jazz crossover"></label>
+                <label class="workspace-wide">Target audience <input name="audience" maxlength="300" placeholder="e.g. 25–40 year-old soul fans in the city"></label>
+                <label class="workspace-wide">Objectives (one per line) <textarea name="objectives" rows="2" maxlength="1000"></textarea></label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Audience reference artists <small>Acts this audience already loves. Qloo measures fit against them. They are not booked.</small></legend>
+              <div class="workspace-grid workspace-grid-3">
+                <label>Reference 1 <input name="anchor0" required maxlength="100" autocomplete="off"></label>
+                <label>Reference 2 <input name="anchor1" maxlength="100" autocomplete="off"></label>
+                <label>Reference 3 <input name="anchor2" maxlength="100" autocomplete="off"></label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Booking constraints</legend>
+              <div class="workspace-grid workspace-grid-4">
+                <label>Artist budget <input name="budget" type="number" min="0" step="1" required></label>
+                <label>Currency <select name="currency"><option>USD</option><option>GBP</option><option>EUR</option><option>INR</option></select></label>
+                <label>Lineup size <input name="slots" type="number" min="1" max="6" step="1" required></label>
+                <label>Max acts per genre <input name="maxPerGenre" type="number" min="1" max="6" step="1"></label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Candidate artists <small>2–8 acts you could book. Lock = must book. Exclude = never book.</small></legend>
+              <div class="table-scroll"><table class="workspace-candidates"><thead><tr><th scope="col">Artist</th><th scope="col">Fee</th><th scope="col">Fee status</th><th scope="col">Availability</th><th scope="col">Genre</th><th scope="col">Lock</th><th scope="col">Exclude</th><th scope="col"><span class="workspace-sr">Remove</span></th></tr></thead><tbody id="candidate-rows"></tbody></table></div>
+              <button class="button subtle small" type="button" id="add-candidate">Add candidate</button>
+            </fieldset>
+            <details class="workspace-commercial"><summary>Optional commercial assumptions <small>(unverified; used only for break-even arithmetic)</small></summary>
+              <div class="workspace-grid workspace-grid-3">
+                <label>Capacity assumption <input name="capacity" type="number" min="1" step="1"></label>
+                <label>Ticket price assumption <input name="ticketPrice" type="number" min="0" step="0.01"></label>
+                <label>Other costs assumption <input name="otherCosts" type="number" min="0" step="1"></label>
+              </div>
+            </details>
+            <div id="revision-note-row" class="workspace-revision" hidden><label>What changed? <input name="note" maxlength="200" placeholder="e.g. budget cut after sponsor withdrew"></label></div>
+            <div class="workspace-actions"><button class="button primary" type="submit" id="brief-submit">Create event</button><p id="brief-error" class="workspace-error" role="alert"></p></div>
+          </form>
+        </section>
+
+        <section id="ws-research" class="panel workspace-section" aria-labelledby="research-title">
+          <p class="judge-section-label"><span>2</span> QLOO RESEARCH</p><h2 id="research-title">Research the audience</h2>
+          <p class="workspace-hint">Resolves every artist, discovers related acts, ranks the pool against your references in this city and checks local and audience evidence. Bounded to at most 24 Qloo workflow calls.</p>
+          <div class="workspace-actions"><button class="button primary" type="button" id="run-research" disabled>Research with Qloo</button></div>
+          <div id="research-output" aria-live="polite"></div>
+        </section>
+
+        <section id="ws-decide" class="panel workspace-section" aria-labelledby="decide-title" aria-busy="false">
+          <p class="judge-section-label"><span>3</span> DECIDE</p><h2 id="decide-title">Let Autopilot build the decision</h2>
+          <p class="workspace-hint">Autopilot spends extra Qloo calls only on questions that could change the bill or justify a booking, then compares strategies and writes the packet.</p>
+          <div class="workspace-decide-controls">
+            <label>Brief revision <select id="decide-revision"></select></label>
+            <label>Extra research <select id="decide-calls"><option value="0">None: plan from saved evidence</option><option value="4">Up to 4 Qloo calls</option><option value="8" selected>Up to 8 Qloo calls</option><option value="12">Up to 12 Qloo calls</option></select></label>
+            <button class="button primary" type="button" id="run-autopilot" disabled>Run Autopilot</button>
+          </div>
+          <div id="decide-output" aria-live="polite"></div>
+        </section>
+
+        <section id="ws-history" class="panel workspace-section" aria-labelledby="history-title">
+          <p class="judge-section-label"><span>4</span> REVISE &amp; COMPARE</p><h2 id="history-title">Decisions over time</h2>
+          <p class="workspace-hint">Edit the brief above and save a revision (fees, availability, budget or locks) to decide again on the same Qloo evidence. Adding a new artist or changing the city needs new research.</p>
+          <div id="history-output"></div>
+        </section>
+      </div>
+    </div>
+
+    <section id="workspace-example" class="workspace-example" hidden aria-labelledby="example-title"></section>
+    <p id="ws-status" class="workspace-status" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>

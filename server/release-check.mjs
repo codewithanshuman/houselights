@@ -1,3 +1,4 @@
+import {PINNED_MANIFESTS} from './autopilot-pins.mjs';
 const round=n=>Math.round(n*100)/100;
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export function releaseOrigin(value,{allowLocal=false}={}) {
@@ -45,7 +46,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('protected-financial-validation',(await request('/api/financial/validation')).status===401);
     record('protected-financial-job',(await request('/api/financial/jobs/000000000000000000000000')).status===401);
     record('protected-proof-experiment',(await request('/api/experiments/000000000000000000000000')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html']){
+    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html','/workspace.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
       if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
@@ -57,6 +58,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
       if(path==='/judge.html')record('unified-booking-desk',page.data.includes('id="booking-evidence"')&&page.data.includes('id="booking-decision-card"')&&page.data.includes('/booking-journey.js'));
       if(path==='/judge.html')record('autopilot-booking-desk',page.data.includes('id="booking-autopilot"')&&page.data.includes('id="autopilot-modes"')&&page.data.includes('/autopilot.js'));
+      if(path==='/workspace.html')record('organizer-workspace-ui',page.data.includes('id="brief-form"')&&page.data.includes('id="workspace-gate"')&&page.data.includes('/workspace.js')&&page.csp.includes("script-src 'self'"));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const bookingScript=await request('/booking-journey.js',{format:'text'});
@@ -69,6 +71,12 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       autopilotRecord.data.run.receipts.every(row=>row.source==='qloo'&&row.originalDigest?.startsWith('sha256:'))&&typeof autopilotRecord.data.run.packet?.markdown==='string');
     const autopilotPacket=await request('/api/autopilot/recorded/packet',{format:'text'});
     record('autopilot-recorded-packet',autopilotPacket.status===200&&autopilotPacket.csp.includes("default-src 'none'")&&autopilotPacket.data.includes('Recorded provider-backed run captured'));
+    record('autopilot-recorded-manifest-pinned',autopilotRecord.data.run?.integrity?.manifestDigest===PINNED_MANIFESTS['public/autopilot-recorded.json']);
+    const example=await request('/workspace-example.json');
+    record('organizer-example-session',example.status===200&&example.data.kind==='recorded-organizer-session'&&example.data.runs?.length===2&&
+      example.data.runs.every(row=>row.run?.integrity?.manifestDigest?.startsWith('sha256:'))&&example.data.research?.receipts?.every(row=>row.source==='qloo'));
+    for(const path of ['/api/events','/api/events/ev_00000000000000000000'])record('private-events:'+path,(await request(path)).status===401);
+    record('private-event-write',(await request('/api/events',{body:{}})).status===401);
     record('autopilot-fresh-run-protected',(await request('/api/judge/cases/8be4d03ef4792ca9f1466983/autopilot/live',{body:{}})).status===401);
     const replication=await request('/recorded-control-study.json');
     record('separate-recorded-control-study',replication.status===200&&replication.data.sourceCaseId==='8be4d03ef4792ca9f1466983'&&

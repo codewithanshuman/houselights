@@ -99,7 +99,9 @@
     if(button.hasAttribute('data-booking-report')){if(result)downloadBrief();return;}
     if(busy)return;
     if(button.hasAttribute('data-booking-budget')){$('judge-budget').value=String(Math.round(record.snapshot.memo.constraints.budget*Number(button.dataset.bookingBudget))/100);pending();}
-    if(button.hasAttribute('data-booking-cancel')){$('judge-reset').click();$('judge-cancel').value=button.dataset.bookingCancel;$('judge-form').requestSubmit();}
+    // Keep the edited budget, locks and exclusions: a cancellation is an extra
+    // shock on the current experiment, not a reset to the published brief.
+    if(button.hasAttribute('data-booking-cancel')){const id=button.dataset.bookingCancel;const lock=document.querySelector(`[data-judge-lock="${CSS.escape(id)}"]`);if(lock)lock.checked=false;$('judge-cancel').value=id;$('judge-form').requestSubmit();}
   });
   document.dispatchEvent(new Event('booking:ready'));
 })();

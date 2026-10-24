@@ -21,12 +21,12 @@ export function accessMiddleware(req, res, next) {
   res.set('Cache-Control', 'no-store');
   const ballot = /^\/api\/reviews\/[\w-]+\/ballot$/.test(req.path);
   const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/(experiment|autopilot)$/.test(req.path);
-  const privateRead = /^\/api\/(pipeline|campaign|studies)(\/|$)/.test(req.path) ||
+  const privateRead = /^\/api\/(pipeline|campaign|studies|events)(\/|$)/.test(req.path) ||
     (req.path.startsWith('/api/experiments') && !/^\/api\/experiments\/public(?:\/|$)/.test(req.path));
   if ((req.method !== 'GET' && req.method !== 'HEAD' && !ballot && !judgeExperiment || privateRead) && !canEdit(req)) return res.status(401).json({ error: 'Organizer access is required. Shared reports are read-only.' });
   const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 864e5);
   const address = hash(req.ip ?? 'unknown').toString('hex');
-  const paid = req.method === 'POST' && (/^\/api\/(memo$|intelligence\/|activation\/)/.test(req.path) || /^\/api\/gm\/[^/]+\/(run|benchmark|season-research)$/.test(req.path) || /^\/api\/judge\/cases\/[a-f0-9]{24}\/autopilot\/live$/.test(req.path));
+  const paid = req.method === 'POST' && (/^\/api\/(memo$|intelligence\/|activation\/)/.test(req.path) || /^\/api\/gm\/[^/]+\/(run|benchmark|season-research)$/.test(req.path) || /^\/api\/judge\/cases\/[a-f0-9]{24}\/autopilot\/live$/.test(req.path) || /^\/api\/events\/[^/]+\/research$/.test(req.path));
   const rules = [{ key: `http:${minute}:${address}`, limit: 180, expires: (minute + 1) * 60000 }];
   if (paid) rules.push({ key: `research:${day}`, limit: 100, expires: (day + 1) * 864e5 }, { key: `research:${minute}:${address}`, limit: 6, expires: (minute + 1) * 60000 });
   if (!consumeQuota(rules, now)) return res.status(429).json({ error: 'Persistent request quota reached. Please try again later.' });

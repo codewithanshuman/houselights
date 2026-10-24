@@ -1,0 +1,88 @@
+/* Organizer workspace. Builds on the Booking Desk identity in judge.css. */
+.workspace-main { padding-bottom:48px !important; }
+.workspace-hero { padding:34px 0 22px; max-width:880px; }
+.workspace-page .workspace-hero h1 { font-size:clamp(34px,4vw,54px); letter-spacing:-1.8px; line-height:1.08; margin-top:14px; }
+.workspace-hero h1 em { color:var(--judge-purple); font-weight:inherit; }
+.workspace-mode { margin-top:16px; display:inline-block; padding:8px 12px; border:1px solid #d8cfef; border-radius:8px; background:#f4f0fb; font:12px/1.5 "IBM Plex Mono",monospace; color:#3f335a; }
+.workspace-synthetic { color:#a33346; }
+.workspace-gate { display:grid; grid-template-columns:1.4fr 1fr; gap:28px; }
+.workspace-gate p { color:#4b4552; font-size:13.5px; line-height:1.65; margin:8px 0 14px !important; }
+.workspace-gate-form > div { display:flex; gap:8px; flex-wrap:wrap; }
+.workspace-gate-form input { flex:1 1 220px; padding:0 12px; }
+.workspace-gate-example { padding:18px; border-radius:10px; background:#fbf6ea; border:1px solid #ecdcb6; }
+.workspace-gate-example .button { text-decoration:none; display:inline-flex; }
+.workspace-app { display:grid; grid-template-columns:minmax(220px,280px) minmax(0,1fr); gap:20px; align-items:start; }
+.workspace-events { position:sticky; top:16px; padding:18px !important; }
+.workspace-events-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+.workspace-events-head h2 { font-size:21px; }
+.workspace-event-list { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.workspace-event { width:100%; display:grid; gap:2px; text-align:left; padding:10px 12px; border:1px solid var(--judge-line); border-radius:8px; background:#fff; cursor:pointer; font:inherit; color:inherit; }
+.workspace-event strong { font-size:13.5px; }
+.workspace-event small { font-size:11.5px; color:var(--judge-muted); }
+.workspace-event:hover, .workspace-event-active { border-color:#7357c8; background:#f8f5fe; }
+.workspace-example-small { display:inline-block; margin-top:12px; font-size:12px; color:#5d429f; }
+.workspace-detail { display:grid; gap:18px; min-width:0; }
+.workspace-steps { list-style:none; display:flex; gap:6px; margin:0; padding:6px; border:1px solid var(--judge-line); border-radius:10px; background:#f7f6f2f5; position:sticky; top:0; z-index:10; overflow-x:auto; }
+.workspace-steps a { display:flex; gap:8px; align-items:center; padding:9px 12px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; color:#51465f; white-space:nowrap; }
+.workspace-steps a span { font:11px "IBM Plex Mono",monospace; color:#77648e; }
+.workspace-steps a:hover { background:#e8e0f4; }
+.workspace-section { scroll-margin-top:70px; min-width:0; }
+.workspace-section h2 { font-size:28px; margin:6px 0 4px !important; }
+.workspace-section-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+.workspace-hint { color:var(--judge-muted); font-size:13px; line-height:1.6; margin:4px 0 14px !important; max-width:760px; }
+.workspace-page fieldset { border:1px solid var(--judge-line); border-radius:10px; padding:12px 14px 14px; margin:0 0 14px; min-width:0; }
+.workspace-page legend { font-weight:600; font-size:13.5px; padding:0 6px; }
+.workspace-page legend small { display:block; font-weight:400; color:var(--judge-muted); font-size:11.5px; }
+.workspace-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 14px; }
+.workspace-grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.workspace-grid-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.workspace-grid label, .workspace-revision label, .workspace-decide-controls label { display:grid; gap:4px; font-size:12.5px; font-weight:500; }
+.workspace-grid input, .workspace-grid select, .workspace-grid textarea, .workspace-revision input, .workspace-decide-controls select { width:100%; padding:0 10px; min-height:40px; }
+.workspace-grid textarea { padding:8px 10px; resize:vertical; }
+.workspace-wide { grid-column:1/-1; }
+.workspace-candidates { width:100%; border-collapse:collapse; font-size:12.5px; min-width:760px; }
+.workspace-candidates th { text-align:left; font-size:11.5px; color:var(--judge-muted); font-weight:600; padding:4px 6px; }
+.workspace-candidates td { padding:4px 6px; vertical-align:middle; }
+.workspace-candidates input:not([type=checkbox]), .workspace-candidates select { width:100%; min-height:38px; padding:0 8px; font-size:13px; }
+.workspace-candidates td:nth-child(1) { min-width:180px; }
+.workspace-candidates input[type=checkbox] { width:18px; height:18px; }
+.workspace-commercial { margin:0 0 14px; border:1px dashed #d7cfe6; border-radius:10px; padding:10px 14px; }
+.workspace-commercial summary { cursor:pointer; font-weight:600; font-size:13px; }
+.workspace-commercial summary small { font-weight:400; color:var(--judge-muted); }
+.workspace-commercial .workspace-grid { margin-top:10px; }
+.workspace-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:6px 0 12px; }
+.workspace-decide-controls { display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:14px; }
+.workspace-decide-controls label { min-width:220px; }
+.workspace-error { color:#a33346; font-size:13px; font-weight:500; }
+.workspace-error:empty { display:none; }
+.workspace-warning { padding:10px 12px; border-radius:8px; background:#fbf6ea; border:1px solid #ecdcb6; color:#5d4410; font-size:13px; margin:0 0 10px !important; }
+.workspace-empty { color:var(--judge-muted); font-size:13px; }
+.workspace-status { position:sticky; bottom:0; margin-top:16px; padding:8px 12px; border-radius:8px; background:#2f2a38; color:#fff; font:12px/1.5 "IBM Plex Mono",monospace; }
+.workspace-status:empty { display:none; }
+.workspace-revisions { padding-left:20px; display:grid; gap:8px; font-size:13px; }
+.workspace-revisions small { color:var(--judge-muted); }
+.workspace-revisions ul { margin:4px 0 0; padding-left:18px; color:#4b4552; }
+.workspace-compare { margin-top:14px; padding:16px; border:1px solid #cfc4dc; border-radius:10px; background:#fcfaf6; }
+.workspace-compare h3 { font-size:21px; margin-bottom:10px; }
+.workspace-compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+.workspace-compare-grid > div { display:grid; gap:2px; padding:12px; border-radius:8px; background:#fff; border:1px solid var(--judge-line); }
+.workspace-compare-grid small { font:500 10px "IBM Plex Mono",monospace; color:#6b5b84; }
+.workspace-compare-grid strong { font:450 18px/1.3 "Fraunces",Georgia,serif; }
+.workspace-compare p { font-size:13px; line-height:1.6; margin:6px 0 !important; }
+.workspace-inline { display:inline-flex; align-items:center; gap:4px; }
+.workspace-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.workspace-story { list-style:none; padding:0; margin:18px 0 0; display:grid; gap:22px; }
+.workspace-story > li > h2 { font-size:26px; display:flex; gap:12px; align-items:baseline; margin-bottom:10px !important; }
+.workspace-story > li > h2 span { font:13px "IBM Plex Mono",monospace; color:#7357c8; }
+.workspace-brief-card h3 { font-size:24px; margin-bottom:6px; }
+.workspace-brief-card p { font-size:13.5px; margin:4px 0 !important; color:#3f3a47; }
+.workspace-example-cta { margin-top:22px !important; font-size:14px; }
+@media (max-width:1050px) { .workspace-app { grid-template-columns:1fr; } .workspace-events { position:static; } .workspace-grid-4 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:640px) {
+  .workspace-gate { grid-template-columns:1fr; }
+  .workspace-grid, .workspace-grid-3, .workspace-grid-4, .workspace-compare-grid { grid-template-columns:1fr; }
+  .workspace-decide-controls label { min-width:0; width:100%; }
+  .workspace-decide-controls .button { width:100%; justify-content:center; }
+  .workspace-section h2 { font-size:24px; }
+}
+@media print { .workspace-events, .workspace-steps, .workspace-actions, .workspace-decide-controls, #ws-brief, #ws-research, .workspace-status { display:none !important; } .workspace-app { display:block; } }

@@ -408,7 +408,7 @@ test('Autopilot replays the recorded provider-backed run without new research an
   await panel.getByRole('button',{name:'Download packet (.md)'}).click();
   const text=readFileSync(await (await downloaded).path(),'utf8');
   expect(text).toContain('Recorded provider-backed run captured');
-  expect(text).toContain('## Next steps');
+  expect(text).toContain('## 10. Next actions');
   expect(autopilotPosts).toEqual([]);
   expect(errors).toEqual([]);
 });
@@ -443,4 +443,110 @@ test('Autopilot plans other briefs from saved evidence and stays usable on a pho
   await expect(panel.getByRole('button',{name:/Recorded live run/})).toHaveCount(0);
   await expect(panel.locator('.autopilot-queue')).toContainText('Ranking');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('a cancellation card keeps an edited budget instead of resetting the experiment', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('[data-booking-cancel]')).toHaveCount(2);
+  await page.getByRole('button',{name:'90%',exact:true}).click();
+  await expect(page.locator('#judge-budget')).toHaveValue('13050');
+  const completed=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/experiment`);
+  await page.locator('[data-booking-cancel]').nth(1).click();
+  const request=(await completed).request(),body=JSON.parse(request.postData());
+  expect(body.budget).toBe(13050);
+  expect(body.cancelId).toBeTruthy();
+  await expect(page.locator('#judge-budget')).toHaveValue('13050');
+  await expect(page.locator('#judge-status')).toContainText('Experiment complete');
+});
+
+test('Autopilot 2.0 compares strategies on common scenarios and links the organizer example', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const panel=page.locator('#booking-autopilot');
+  await expect(panel.locator('.autopilot-banner').first()).toContainText('RECORDED PROVIDER-BACKED RUN');
+  const table=panel.locator('table.autopilot-compare').first();
+  await expect(table.locator('caption')).toContainText('same');
+  await expect(table.locator('tbody tr')).toHaveCount(await panel.locator('.autopilot-strategies article').count());
+  await expect(panel.locator('.autopilot-steps')).toContainText('Needs your approval');
+  await expect(panel.getByRole('link',{name:/See an organizer plan a brand-new event/})).toHaveAttribute('href','/workspace.html#example');
+});
+
+test('the recorded organizer session replays a new event without provider calls', async ({page})=>{
+  const posts=[];page.on('request',request=>{if(request.method()!=='GET')posts.push(request.url());});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(`${origin}/workspace.html#example`);
+  const example=page.locator('#workspace-example');
+  await expect(example.locator('.autopilot-banner').first()).toContainText('RECORDED ORGANIZER SESSION');
+  await expect(example).toContainText('Night Shift Soul Revue');
+  await expect(example).toContainText('The organizer revises the brief');
+  await expect(example.locator('.workspace-compare')).toContainText('The recommended bill changed.');
+  await expect(example.locator('#example-run-1 .autopilot-packet-head h4')).not.toHaveText('');
+  await expect(page.locator('#workspace-app')).toBeHidden();
+  expect(posts).toEqual([]);expect(errors).toEqual([]);
+  await page.setViewportSize({width:375,height:812});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('an organizer unlocks the workspace and completes a new event end to end', async ({page})=>{
+  test.setTimeout(90000);
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(`${origin}/workspace.html`);
+  await expect(page.locator('#workspace-gate')).toBeVisible();
+  await page.getByLabel('Organizer token').fill('wrong-token-value');
+  await page.getByRole('button',{name:'Unlock workspace'}).click();
+  await expect(page.locator('#gate-error')).toContainText('not accepted');
+  await page.getByLabel('Organizer token').fill('local-browser-regression-token-only-00000000');
+  await page.getByRole('button',{name:'Unlock workspace'}).click();
+  await expect(page.locator('#workspace-app')).toBeVisible();
+  await expect(page.locator('#workspace-mode')).toContainText('SYNTHETIC QLOO MODE');
+  await page.getByRole('button',{name:'Fill an example brief'}).click();
+  await page.getByLabel('Event name').fill('Browser Test Night');
+  await page.getByRole('button',{name:'Create event'}).click();
+  await expect(page.locator('#ws-status')).toContainText('Event created');
+  await expect(page.locator('#event-list')).toContainText('Browser Test Night');
+  await page.getByRole('button',{name:'Research with Qloo'}).click();
+  await expect(page.locator('#research-output')).toContainText('SYNTHETIC QLOO DATA',{timeout:30000});
+  await page.getByLabel('Extra research').selectOption('4');
+  await page.getByRole('button',{name:'Run Autopilot'}).click();
+  await expect(page.locator('#decide-output .autopilot-packet-head h4')).not.toHaveText('',{timeout:30000});
+  await expect(page.locator('#decide-output')).toContainText('SYNTHETIC QLOO DATA');
+  await page.locator('#brief-form input[name="budget"]').fill('15000');
+  await page.getByLabel('What changed?').fill('Budget cut');
+  await page.getByRole('button',{name:'Save as revision 2'}).click();
+  await expect(page.locator('#ws-status')).toContainText('Saved revision 2');
+  await page.getByLabel('Extra research').selectOption('0');
+  await page.getByRole('button',{name:'Run Autopilot'}).click();
+  await expect(page.locator('#decide-output')).toContainText('PLANNED FROM SAVED EVIDENCE · REVISION 2',{timeout:30000});
+  await page.locator('[data-compare]').nth(0).check();await page.locator('[data-compare]').nth(1).check();
+  await page.getByRole('button',{name:'Compare the two selected runs'}).click();
+  await expect(page.locator('#compare-output')).toContainText('Artist budget: 22000 → 15000');
+  const downloaded=page.waitForEvent('download');
+  await page.locator('#decide-output').getByRole('button',{name:'Download printable packet (.html)'}).click();
+  const file=readFileSync(await (await downloaded).path(),'utf8');
+  expect(file).toContain('Browser Test Night');expect(file).toContain('Requires human approval');
+  expect(errors).toEqual([]);
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('workspace and desk controls all have accessible names and headings stay in order', async ({page})=>{
+  const audit=()=>page.evaluate(()=>{
+    const unnamed=[...document.querySelectorAll('input:not([type=hidden]),select,textarea,button,a[href]')].filter(el=>el.offsetParent!==null).filter(el=>{
+      const label=el.labels?.length?[...el.labels].map(l=>l.textContent).join(''):'';
+      return !(el.getAttribute('aria-label')||label.trim()||(el.tagName!=='INPUT'&&el.tagName!=='SELECT'&&el.tagName!=='TEXTAREA'&&el.textContent.trim())||el.getAttribute('title'));
+    }).map(el=>el.outerHTML.slice(0,80));
+    const levels=[...document.querySelectorAll('h1,h2,h3,h4')].filter(el=>el.offsetParent!==null).map(el=>Number(el.tagName[1]));
+    const skips=levels.filter((level,index)=>index&&level>levels[index-1]+1).length;
+    return {unnamed,h1:levels.filter(level=>level===1).length,skips};
+  });
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#booking-autopilot .autopilot-banner').first()).toBeVisible();
+  const desk=await audit();expect(desk.unnamed).toEqual([]);expect(desk.h1).toBe(1);
+  await page.goto(`${origin}/workspace.html`);
+  await page.getByLabel('Organizer token').fill('local-browser-regression-token-only-00000000');
+  await page.getByRole('button',{name:'Unlock workspace'}).click();
+  await expect(page.locator('#workspace-app')).toBeVisible();
+  const workspace=await audit();expect(workspace.unnamed).toEqual([]);expect(workspace.h1).toBe(1);expect(workspace.skips).toBe(0);
+  await page.goto(`${origin}/workspace.html#example`);
+  await expect(page.locator('#example-run-1 .autopilot-packet-head h4')).not.toHaveText('');
+  const example=await audit();expect(example.unnamed).toEqual([]);expect(example.h1).toBe(1);
 });
