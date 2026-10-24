@@ -10,6 +10,8 @@ They are decorative artwork, not Qloo evidence or photographs of recommended act
 | Application asset | Supplied filename |
 | --- | --- |
 | `brand/portal-logo-v2.png` | `codex-clipboard-44f9c7c0-42cc-4bc5-83c9-4fda445a4b95.png` |
+| `brand/portal-logo-v2.webp` | Resized (216 px) from `brand/portal-logo-v2.png` for display |
+| `brand/favicon-64.png` | Resized (64 px) from `brand/portal-logo-v2.png` for the favicon |
 | `brand/record.png` | `codex-clipboard-972cc05e-2775-4e43-b0bd-c21efd8123cf.png` |
 | `brand/microphone.png` | `codex-clipboard-62a2907a-cdb3-448c-924d-095423af4542.png` |
 | `brand/disc.webp` | `codex-clipboard-8e049936-7b39-4241-8a90-108722c924c3.png` |
@@ -27,7 +29,7 @@ Arctic Monkeys and “Music Speaks” — were removed from the public project o
 22 October 2026. The code's MIT license does not assert ownership of
 the supplied artwork. The project owner attested permission to publish the
 remaining supplied artwork on 22 October 2026. Fraunces, IBM Plex Sans and IBM Plex Mono are self-hosted
-from Google Fonts; their OFL license files are included in `fonts/`.
+from Google Fonts; their OFL license files are included in `fonts/`. The served `.woff2` files are lossless format conversions of those `.ttf` files (fontTools), with unchanged font names; the `.ttf` originals are kept.
 
 The sharper portal logo replaces the earlier `Minimal Geometric Light Portal Logo.png`; its supplied pixels and transparency are preserved. Interface icons are separately attributed in [icons/README.md](icons/README.md).
 
