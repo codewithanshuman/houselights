@@ -1,6 +1,6 @@
 # Financial Risk Lab: model contract
 
-HouseLights uses a deterministic scenario model to compare hard-feasible concert lineups. It does **not** claim that 10,000 or 100,000 simulations make weak demand assumptions accurate. The public example at `/financial.html` is synthetic, has no Qloo receipts and has no historical financial calibration. The private API accepts saved Qloo sources and compatible audience twins; it never converts a cultural fit score directly into ticket sales.
+Houselights uses a deterministic scenario model to compare hard-feasible concert lineups. It does **not** claim that 10,000 or 100,000 simulations make weak demand assumptions accurate. The public example at `/financial.html` is synthetic, has no Qloo receipts and has no historical financial calibration. The private API accepts saved Qloo sources and compatible audience twins; it never converts a cultural fit score directly into ticket sales.
 
 ## Inputs and lineage
 

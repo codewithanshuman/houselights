@@ -1,7 +1,7 @@
 const $ = id => document.getElementById(id);
 const labels = { rank: 'Audience affinity', local: 'Geographic affinity', trends: 'Cultural trends', comparison: 'Cross-artist affinity' };
 const descriptions = { rank: 'Artist relevance to the audience', local: 'City and area observations', trends: 'Recorded momentum', comparison: 'Relationships between artists' };
-const methods = [ ['llm_only','A','LLM only'], ['constraint_only','B','Constraint only'], ['qloo_ablated','C','Qloo withdrawn'], ['full_houselights','D','Full HouseLights'] ];
+const methods = [ ['llm_only','A','LLM only'], ['constraint_only','B','Constraint only'], ['qloo_ablated','C','Qloo withdrawn'], ['full_houselights','D','Full Houselights'] ];
 let current = null, selectedMask = 15, caseRequest = 0;
 const text = (node, value) => { node.textContent = String(value ?? '—'); return node; };
 const el = (tag, className, value) => { const node = document.createElement(tag); if (className) node.className = className; if (value != null) text(node,value); return node; };
@@ -81,7 +81,7 @@ function renderEvaluation(){const r=current.report,box=$('evaluation-body');clea
   const grid=el('div','eval-grid');grid.append(tile('Published briefs in suite',current.coverage.briefs,`${current.coverage.distinctPools} distinct pools`),
     tile('LLM control',r.methods.llm_only.status),tile('Genuine review judgments',human.submittedJudgments??0),
     tile('Held-out event outcomes',r.independentEvaluation.independentOutcomes.count));box.append(grid);
-  box.append(el('p','notice',human.status==='observed'?`${human.totals.qloo} HouseLights preferences · ${human.totals.control} baseline preferences · ${human.totals.tie} ties · ${human.totals.abstain} abstentions. Decisive denominator: ${human.decisiveDenominator}.`:
+  box.append(el('p','notice',human.status==='observed'?`${human.totals.qloo} Houselights preferences · ${human.totals.control} baseline preferences · ${human.totals.tie} ties · ${human.totals.abstain} abstentions. Decisive denominator: ${human.decisiveDenominator}.`:
     'No linked independent blind judgments. Reviews have not been manufactured or counted from invitations.'));
   box.append(el('p','micro',`Candidate pool: ${r.brief.candidateCount} · ${r.brief.synthetic?'Synthetic evidence':'Saved live evidence'} · ${r.brief.illustrativeTerms?'Illustrative booking terms':'Organizer-supplied terms'}. Four-method findings are descriptive until independently validated.`));
 }

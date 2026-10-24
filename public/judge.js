@@ -168,5 +168,5 @@
   fetch('/shocks-summary.json').then(response=>response.json()).then(data=>{
     const solvable=data.breakdown.solvable,unsolvable=data.breakdown.unsolvable;
     $('judge-shock-teaser').innerHTML=`<strong>${e(solvable.violationResponses)}/${e(solvable.returnedResponses)}</strong><span>re-prompted LLM responses violated a hard constraint on ${e(solvable.shocks)} solvable shocks; Houselights proposed 0</span><small>On ${e(unsolvable.shocks)} shocks with no feasible lineup, Houselights abstained and all ${e(unsolvable.returnedResponses)} LLM responses violated, because the prompt required a lineup. Those are reported separately, not as a like-for-like rate. ${e(data.breakdown.notComparable.shocks)} shocks from briefs without a comparable Qloo ranking are excluded. Zero violations follows from exact constraint enforcement; it does not prove commercial uplift.</small><a href="/evidence.html">Inspect all shocks and limitations ↗</a>`;
-  }).catch(()=>$('judge-shock-teaser').textContent='Shock study unavailable; the live decision room remains usable.');
+  }).catch(()=>$('judge-shock-teaser').textContent='Shock study unavailable; the Booking Desk remains usable.');
 })();

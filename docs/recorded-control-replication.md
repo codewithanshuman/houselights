@@ -8,9 +8,9 @@ This study is separate from the original New York agent recording. Its protocol 
 
 ## Actual result
 
-All three real responses returned Michael Kiwanuka + Jordan Rakei for **US$10,000**, with all hard constraints passing. The original HouseLights selection is Michael Kiwanuka + Sault for **US$13,500**. The first trial is the declared primary result. The LLM selection is **US$3,500 cheaper**. There was one distinct lineup across three returned responses; these are repeated attempts on one brief, not three independent markets.
+All three real responses returned Michael Kiwanuka + Jordan Rakei for **US$10,000**, with all hard constraints passing. The original Houselights selection is Michael Kiwanuka + Sault for **US$13,500**. The first trial is the declared primary result. The LLM selection is **US$3,500 cheaper**. There was one distinct lineup across three returned responses; these are repeated attempts on one brief, not three independent markets.
 
-This does not establish a HouseLights win. Whether the culturally informed policy warrants the additional spend requires independent promoter judgments and event outcomes. Policy points reward the optimizer's own declared objective and cannot answer that question. The shared artist pool already includes Qloo-discovered candidates; this is a selection test, not a discovery-benefit test. Fees and availability are illustrative. Controls were collected after the original Qloo research, and no blind judgments or ticket outcomes were collected.
+This does not establish a Houselights win. Whether the culturally informed policy warrants the additional spend requires independent promoter judgments and event outcomes. Policy points reward the optimizer's own declared objective and cannot answer that question. The shared artist pool already includes Qloo-discovered candidates; this is a selection test, not a discovery-benefit test. Fees and availability are illustrative. Controls were collected after the original Qloo research, and no blind judgments or ticket outcomes were collected.
 
 ## Provenance and replay
 

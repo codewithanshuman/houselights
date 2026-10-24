@@ -1,6 +1,6 @@
-# HouseLights Decision OS — first implementation
+# Houselights Decision OS — first implementation
 
-HouseLights is the AI decision room for live entertainment: cultural research, exact optimization, counterfactual challenges and organizer review around one saved decision. This implementation builds on the existing research agent and booking engine. It does not label deterministic checks as a new free-running LLM agent.
+Houselights is the AI decision room for live entertainment: cultural research, exact optimization, counterfactual challenges and organizer review around one saved decision. This implementation builds on the existing research agent and booking engine. It does not label deterministic checks as a new free-running LLM agent.
 
 ## Decision proof
 
@@ -10,7 +10,7 @@ Three methods share the same pool and booking assumptions:
 
 - **Constraint-only** selects the least expensive feasible slate, then breaks cost ties by candidate ID. Cultural score is displayed only as an after-the-fact diagnostic; it does not choose this baseline.
 - **LLM-only** uses an existing real benchmark generated without Qloo evidence. The proof checks the benchmark brief digest and evaluates its selection again. Missing, invalid, stale and constraint-violating model outputs stay visible. A model is never simulated to fill this column.
-- **HouseLights** uses the existing exhaustive optimizer and its declared planning objective.
+- **Houselights** uses the existing exhaustive optimizer and its declared planning objective.
 
 A Qloo-derived `minimumAverageFit` makes an evidence-free control incomparable under identical constraints. The proof reports that limitation rather than silently removing the floor. All methods may use a pool originally discovered with Qloo, so this comparison does not measure discovery value.
 

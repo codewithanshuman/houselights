@@ -4,14 +4,14 @@ Version: `qloo-proof-v1`. The experiment is a **fixed-pool selection test**. It 
 
 ## Locked input and four arms
 
-Create from an immutable saved HouseLights decision through `POST /api/experiments` with `sourceSnapshotId`. The server freezes the saved candidate identities, fees, availability, terms, original constraints, Qloo receipts, and any saved LLM control. Only the organizer may create, run, read, or export a private experiment. Repeating an identical create request returns the same experiment ID. The input and report have SHA-256 digests; completed results are immutable. An interrupted worker can be explicitly resumed through `POST /api/experiments/:id/run`.
+Create from an immutable saved Houselights decision through `POST /api/experiments` with `sourceSnapshotId`. The server freezes the saved candidate identities, fees, availability, terms, original constraints, Qloo receipts, and any saved LLM control. Only the organizer may create, run, read, or export a private experiment. Repeating an identical create request returns the same experiment ID. The input and report have SHA-256 digests; completed results are immutable. An interrupted worker can be explicitly resumed through `POST /api/experiments/:id/run`.
 
 The arms receive the same frozen artist pool and terms:
 
 1. **LLM only:** reuse the saved, tool-free first-trial model response. It was selected from an allowlisted brief without Qloo ranks or receipts. A missing, stale, failed or invalid response stays missing or invalid; no substitute is generated.
 2. **Constraint only:** choose the least expensive exact-size lineup satisfying the shared operational constraints, with a deterministic ID tie-break.
-3. **Qloo withdrawn:** run the exact HouseLights optimizer after removing all four cultural signal groups and their dependencies.
-4. **Full HouseLights:** run the same optimizer with all saved cultural observations available.
+3. **Qloo withdrawn:** run the exact Houselights optimizer after removing all four cultural signal groups and their dependencies.
+4. **Full Houselights:** run the same optimizer with all saved cultural observations available.
 
 The original policy is preserved by default. If it has a Qloo-derived `minimumAverageFit`, evidence-free arms are **not comparable**. The organizer may explicitly declare `policy: "shared_operational"` when creating a separate evaluation. The removed fit floor and original value are stored in the locked configuration. A saved LLM response from the original policy is then stale until a matching control is collected. The experiment never silently relaxes constraints.
 
@@ -21,7 +21,7 @@ The four groups are `rank`, `local`, `trends`, and `comparison`. The engine runs
 
 The contribution calculation uses exact four-player Shapley weights over a frozen internal diagnostic:
 
-> For each subset of enabled signals, choose a lineup under that subset, then evaluate that selected lineup once on the original full-evidence HouseLights policy score.
+> For each subset of enabled signals, choose a lineup under that subset, then evaluate that selected lineup once on the original full-evidence Houselights policy score.
 
 Contributions explain how evidence changes the **model's decision**, not real-world causal value. If any subset lacks a feasible lineup, attribution is unavailable. Six discrete scoring-weight profiles test whether the full-versus-no-evidence selection difference persists under plausible preference changes. Each changed artist has linked receipt IDs and timestamps for inspection; linkage is not proof that a receipt caused a real-world outcome.
 

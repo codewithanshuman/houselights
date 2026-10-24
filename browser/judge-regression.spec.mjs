@@ -25,14 +25,14 @@ async function freePort() {
 async function ready() {
   const deadline=Date.now()+60000;
   while (Date.now()<deadline) {
-    if (app.exitCode != null) throw new Error(`Local HouseLights exited early: ${output.slice(-1500)}`);
+    if (app.exitCode != null) throw new Error(`Local Houselights exited early: ${output.slice(-1500)}`);
     try {
       const response = await fetch(`${origin}/api/judge/cases`, { signal: AbortSignal.timeout(1000) });
       if (response.ok && (await response.json()).cases.some(row => row.id === caseId)) return;
     } catch { /* Startup is still in progress. */ }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-  throw new Error(`Local HouseLights did not load the saved judge case: ${output.slice(-1500)}`);
+  throw new Error(`Local Houselights did not load the saved judge case: ${output.slice(-1500)}`);
 }
 
 test.beforeAll(async () => {

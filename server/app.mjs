@@ -49,7 +49,7 @@ export function classifyRequestError(error) {
 }
 function sendProcessingError(res, error) {
   const { status, message } = classifyRequestError(error);
-  if (status === 500) console.error('Unexpected HouseLights request failure:', error);
+  if (status === 500) console.error('Unexpected Houselights request failure:', error);
   return res.status(status).json({ error: message });
 }
 
