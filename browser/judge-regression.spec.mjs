@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test, expect } from '@playwright/test';
+import { DatabaseSync } from 'node:sqlite';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const seedManifest=JSON.parse(readFileSync(join(root,'deploy','judge-cases.json'),'utf8'));
@@ -50,6 +51,13 @@ test.beforeAll(async () => {
   app.stdout.on('data', chunk => { output += chunk; });
   app.stderr.on('data', chunk => { output += chunk; });
   await ready();
+});
+
+// As in the unit tests, each case gets its own request budget. A fast runner otherwise
+// exhausts the server's real per-IP quota across the whole suite.
+test.beforeEach(() => {
+  const quotas = new DatabaseSync(join(dataDir, 'houselights.sqlite'));
+  try { quotas.exec('PRAGMA busy_timeout=5000; DELETE FROM quotas;'); } finally { quotas.close(); }
 });
 
 test.afterAll(async () => {
