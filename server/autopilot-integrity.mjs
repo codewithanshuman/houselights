@@ -82,14 +82,18 @@ export function verifyEvidenceContent(run, { sourceReceipts = [], pinnedManifest
   // Every source receipt the manifest lists must be supplied and match; an
   // absent receipt is a failure, never a silent pass.
   const supplied = new Map(sourceReceipts.map(receipt => [receipt.id, receipt]));
+  let sourceReceiptsVerified = 0;
   for (const row of manifest.sourceReceipts) {
     const receipt = supplied.get(row.id);
     if (!receipt) problems.push(`Source receipt ${row.id} listed in the manifest was not supplied, so it could not be verified.`);
     else if (sourceReceiptDigest(receipt) !== row.contentDigest) problems.push(`Source receipt ${row.id} differs from the manifest.`);
+    else sourceReceiptsVerified++;
   }
   if (manifest.decisionInputsDigest !== sha256((run.items ?? []).map(({ id, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms }) => ({ id, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms }))))
     problems.push('The decision inputs (fits, evidence flags, terms) differ from the manifest.');
   if (manifest.decisionDigest !== run.digest) problems.push('The run decision digest differs from the manifest.');
   // pinChecked tells callers whether a self-consistent rewrite could have been caught.
-  return { passed: problems.length === 0, problems, manifestDigest, pinChecked: !!pinnedManifestDigest, sourceReceiptsChecked: manifest.sourceReceipts.length };
+  return { passed: problems.length === 0, problems, manifestDigest, pinChecked: !!pinnedManifestDigest,
+    // Verified counts only receipts that were supplied and matched; expected is what the manifest lists.
+    sourceReceiptsVerified, sourceReceiptsExpected: manifest.sourceReceipts.length };
 }

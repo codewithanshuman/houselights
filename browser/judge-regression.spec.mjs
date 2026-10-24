@@ -551,6 +551,30 @@ test('an organizer unlocks the workspace and completes a new event end to end', 
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
+test('partial organizer research is shown as partial, with the incomplete calls named', async ({page})=>{
+  // Mock Qloo never returns incomplete answers, so the research response is
+  // rewritten to the outcome a timeout plus a partial Qloo answer produces.
+  await page.route('**/api/events/*/research', async route=>{
+    const response=await route.fetch(),body=await response.json();
+    body.research={...body.research,status:'partial',incompleteCalls:[{id:'r11',tool:'rank',status:'error',error:'TIMEOUT'},{id:'r12',tool:'where_popular',status:'partial',error:null}]};
+    await route.fulfill({response,json:body});
+  });
+  await page.goto(`${origin}/workspace.html`);
+  await page.getByLabel('Organizer token').fill('local-browser-regression-token-only-00000000');
+  await page.getByRole('button',{name:'Unlock workspace'}).click();
+  await page.getByRole('button',{name:'Fill an example brief'}).click();
+  await page.getByLabel('Event name').fill('Partial Research Night');
+  await page.getByRole('button',{name:'Create event'}).click();
+  await expect(page.locator('#ws-status')).toContainText('Event created');
+  await page.getByRole('button',{name:'Research with Qloo'}).click();
+  const warning=page.locator('#research-output .workspace-warning[role=alert]').first();
+  await expect(warning).toContainText('Partial research: 2 Qloo call(s) did not return complete evidence (TIMEOUT, partial answer)',{timeout:30000});
+  await expect(warning).toContainText('decisions on it are provisional');
+  await expect(page.locator('#ws-status')).toContainText('Research partial');
+  await expect(page.locator('#ws-status')).not.toContainText('Research complete');
+  await expect(page.getByRole('button',{name:'Run Autopilot'})).toBeEnabled();
+});
+
 test('workspace and desk controls all have accessible names and headings stay in order', async ({page})=>{
   const audit=()=>page.evaluate(()=>{
     const unnamed=[...document.querySelectorAll('input:not([type=hidden]),select,textarea,button,a[href]')].filter(el=>el.offsetParent!==null).filter(el=>{

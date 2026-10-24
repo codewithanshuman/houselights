@@ -131,11 +131,16 @@ test('saved events, research and decisions survive an application restart',async
   }finally{if(child.exitCode==null){child.kill();await once(child,'exit');}rmSync(dataDir,{recursive:true,force:true});}
 });
 
-test('research that lost Qloo calls is labelled partial, never complete',async()=>{
+test('research with any incomplete Qloo call is labelled partial, never complete',async()=>{
   const {researchOutcome}=await import('../server/events-api.mjs');
-  const memo={items:[{},{}]},ok={id:'r1',tool:'describe',status:'ok'};
-  assert.deepEqual(researchOutcome(memo,false,[ok]),{status:'complete',failedCalls:[]});
+  const memo={items:[{},{}]},ok={id:'r1',tool:'describe',status:'ok'},empty={id:'r0',tool:'local',status:'empty'};
+  assert.deepEqual(researchOutcome(memo,false,[ok,empty]),{status:'complete',incompleteCalls:[]},'ok and empty answers are complete evidence');
   const lost=researchOutcome(memo,false,[ok,{id:'r2',tool:'rank',status:'error',evidence:{error:'TIMEOUT'}},{id:'r3',tool:'local',status:'error',evidence:{error:'DEADLINE'}}]);
-  assert.equal(lost.status,'partial');assert.deepEqual(lost.failedCalls.map(row=>row.error),['TIMEOUT','DEADLINE']);
+  assert.equal(lost.status,'partial');assert.deepEqual(lost.incompleteCalls.map(row=>row.error),['TIMEOUT','DEADLINE']);
+  // Regression: a partial or degraded Qloo answer used to leave research 'complete'.
+  for(const status of ['partial','degraded']){
+    const outcome=researchOutcome(memo,false,[ok,{id:'r4',tool:'rank',status,evidence:{}}]);
+    assert.equal(outcome.status,'partial',status);assert.deepEqual(outcome.incompleteCalls,[{id:'r4',tool:'rank',status,error:null}]);
+  }
   assert.equal(researchOutcome(null,false,[ok]).status,'failed');assert.equal(researchOutcome(memo,true,[ok]).status,'failed');
 });

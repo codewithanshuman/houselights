@@ -36,7 +36,7 @@ try {
   const event = createEvent(brief);
   const research = await researchEvent(event);
   console.error(`research: ${research.status}, ${research.callsUsed} calls, unresolved ${research.unresolved.join(', ') || 'none'}`);
-  if (research.status !== 'complete') throw new Error(`Research was ${research.status}, not complete; refusing to publish. ${research.failedCalls?.map(row => `${row.id} ${row.tool} ${row.error}`).join('; ') ?? ''} ${research.errors.join(' ')}`);
+  if (research.status !== 'complete') throw new Error(`Research was ${research.status}, not complete; refusing to publish. ${research.incompleteCalls?.map(row => `${row.id} ${row.tool} ${row.error ?? row.status}`).join('; ') ?? ''} ${research.errors.join(' ')}`);
   if (research.mode !== 'live') throw new Error('Research was not live.');
   const first = await decideEvent(loadEvent(event.id), { revision: 1, maxCalls: 6 });
   console.error(`decision 1: ${first.summary.names.join(' + ')} (${first.callsUsed} calls, ${first.status})`);

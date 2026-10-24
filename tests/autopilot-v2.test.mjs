@@ -133,6 +133,13 @@ test('integrity: decision-relevant tampering is detected by the right check and 
   assert.equal(unsupplied.passed,false);assert.match(unsupplied.problems.join(' '),/listed in the manifest was not supplied/);
   const oneMissing=verifyEvidenceContent(file.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts.slice(1),pinnedManifestDigest:pin});
   assert.equal(oneMissing.passed,false);assert.equal(oneMissing.problems.length,1);
+  // The reported count is what was actually verified, not what the manifest lists.
+  const expected=file.run.integrity.sourceReceipts.length,full=verifyEvidenceContent(file.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts,pinnedManifestDigest:pin});
+  assert.equal(full.passed,true);assert.equal(full.sourceReceiptsVerified,expected);assert.equal(full.sourceReceiptsExpected,expected);
+  assert.equal(unsupplied.sourceReceiptsVerified,0);assert.equal(unsupplied.sourceReceiptsExpected,expected);
+  assert.equal(oneMissing.sourceReceiptsVerified,expected-1);
+  const tampered=structuredClone(loadJudgeCase(NY).snapshot.receipts);tampered[0].summary='edited';
+  assert.equal(verifyEvidenceContent(file.run,{sourceReceipts:tampered,pinnedManifestDigest:pin}).sourceReceiptsVerified,expected-1);
   assert.equal(verifyEvidenceContent(file.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts}).pinChecked,false);
   // Content digests ignore capture timing but nothing else.
   const receipt=file.run.receipts.find(row=>row.tool==='where_popular');assert.equal(receiptContentDigest({...receipt,ms:1}),receiptContentDigest({...receipt,ms:999}));
