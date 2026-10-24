@@ -43,4 +43,30 @@ The [claims audit](claims-audit.md) has every claim, with its reproduction comma
 - [ ] Run the [usability test kit](usability-test-kit.md) with real participants if time allows. Otherwise keep the zero-evidence disclosure.
 - [ ] Enter the public URL, repository, license, description and team details in Devpost, then submit.
 
-The [official rules](https://qloo.devpost.com/rules) and [challenge page](https://qloo.devpost.com/) were checked on 22 October 2026. The listed deadline is 30 October 2026 at 11:45 p.m. EDT (31 October 2026 at 9:15 a.m. India time). Confirm the live Devpost form immediately before submitting, in case its fields have changed.
+## Official rules (re-read 24 October 2026)
+
+- **Submission deadline:** 30 October 2026, 11:45 p.m. ET (31 October, 9:15 a.m. India time).
+- **Judging:** 2–5 November 2026. Winners are announced around 5 November.
+- **After the deadline:** the submission cannot be changed. The project in the Devpost portfolio can be updated. Post-deadline modifications are allowed only for rights, personal-data or inappropriate-content issues.
+- **Availability:** the demo must stay available, free and unrestricted until the judging period ends, and must function as the description says. Keep the live site consistent with the submitted text, and make no substantive changes after 30 October.
+- **Video:** optional ("video and/or text description"). Judges may judge on the text, images and video alone.
+- **License:** must be detectable in the repository's About section. GitHub already detects MIT.
+
+## Blind-review study (needs the owner)
+
+Invitations go only to real people who have agreed to take part. No reviewer has been named, so no study has been created and no invitation has been sent.
+
+To run the study:
+
+1. List at least 5 reviewers. Give each a role: `venue_programmer`, `festival_organizer`, `artist_booker`, `audience_member` or `other`.
+2. Create the study from the 5 briefs whose lineups differ: Berlin, New York, London, Amsterdam and Toronto. The 3 identical pairs can only produce ties; see the [claims audit](claims-audit.md).
+3. Send each person their private link using the [invitation draft](reviewer-invitation-drafts.md).
+4. Set `PUBLIC_STUDY_ID` on the server, so `/evidence.html` shows live counts.
+
+Ballots arriving after 30 October would show on the live page during judging (2–5 November), but they cannot be added to the frozen submission text.
+
+## Single points of failure
+
+- **Uptime monitor:** `.github/workflows/uptime.yml` checks health, live mode, the Booking Desk, the public cases and organizer protection every 30 minutes from GitHub's runners, which are off the VM. GitHub emails the owner when a run fails.
+- **Backups:** every deployment takes an online backup, checks it with an isolated restore (all 24 tables), copies it off-host and rehearses the rollback.
+- **Still single:** one Oracle VM, and the free sslip.io name, which depends on the VM keeping its IP address. A real domain (about USD 10 a year) pointed at the same VM removes the sslip.io dependency, but it needs the owner to buy it. A second host would remove the VM dependency, but is not worth adding a week before judging.

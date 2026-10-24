@@ -94,6 +94,20 @@ Checked on 24 October 2026. I re-checked each significant claim Houselights make
 
 **Status.** Verified. This is a negative finding and is kept as one.
 
+### 9. Optimizer vs booking Qloo's top-k (seeded scenarios)
+
+**Claim.** Where the top-k acts by Qloo rank are bookable, the optimizer chooses differently in 177 of 1,517 scenarios (11.7%) under affinity fit and 0 under ordinal fit. All 177 come from New York, the only brief with a near-tie at the selection boundary. The top-k could not be booked in 2,083 of 3,600 scenarios; the optimizer found the best bookable lineup in 1,380 and reported infeasibility in 703.
+
+**Source.** `results/rank-vs-optimum.md`; reproduce with `node scripts/evaluate-rank-vs-optimum.mjs`.
+
+**Status.** Verified.
+
+**Limit.** The value lies in constraint handling, not in re-ranking Qloo. Fees and availability are illustrative.
+
+### 10. Blind-review pairs
+
+Of the 8 review-eligible briefs, 3 pair identical lineups (Manchester, Los Angeles, São Paulo), because Houselights and the saved LLM control chose the same acts. Only 5 briefs (Berlin, New York, London, Amsterdam, Toronto) can produce a preference; the other 3 can only produce ties.
+
 ## Not established (no evidence exists yet)
 
 | Area | Status |

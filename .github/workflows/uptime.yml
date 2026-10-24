@@ -1,0 +1,33 @@
+name: Public demo uptime
+# Checks the public demo from outside the VM every 30 minutes. A failed run is
+# emailed by GitHub to the account that last changed this schedule. Public
+# repository minutes are free; no secrets are used and nothing is changed.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  ORIGIN: https://houselights.80-225-218-239.sslip.io
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Health, live mode and protection
+        run: |
+          # Responses are captured first: piping curl into grep -q fails under pipefail.
+          body=$(curl -fsS --retry 3 --retry-delay 20 --max-time 20 "$ORIGIN/healthz")
+          echo "$body"
+          for field in '"ok":true' '"mock":false' '"protected":true'; do
+            case "$body" in *"$field"*) ;; *) echo "::error::healthz is missing $field"; exit 1;; esac
+          done
+      - name: Booking Desk, public cases and private routes
+        run: |
+          page=$(curl -fsS --retry 3 --retry-delay 20 --max-time 20 "$ORIGIN/judge.html")
+          case "$page" in *'Booking Desk</title>'*) ;; *) echo "::error::Booking Desk did not load"; exit 1;; esac
+          cases=$(curl -fsS --retry 3 --retry-delay 20 --max-time 20 "$ORIGIN/api/judge/cases")
+          case "$cases" in *'"cases"'*) ;; *) echo "::error::public cases did not load"; exit 1;; esac
+          status=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$ORIGIN/api/events")
+          test "$status" = 401 || { echo "::error::private events returned $status, expected 401"; exit 1; }
