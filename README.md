@@ -1,10 +1,15 @@
 # Houselights
 
-**The AI decision room for live entertainment.** Houselights turns cultural intelligence into a defensible event decision: research the audience, optimize the slate, test which observations matter, challenge weak assumptions, and record the organizer's next step. Its exact slate optimizer and auditable Qloo receipts remain the core.
+**Constraint-correct, auditable booking decisions for live events, with Qloo receipts.** A promoter gives Houselights a brief: city, the artists whose audience they want, candidate acts, fees, availability and booking rules. Houselights uses Qloo audience affinity to rank the candidates, finds the best lineup that satisfies every rule, and links each conclusion to the saved Qloo response behind it.
 
-**For judges (two minutes, no sign-in):** open the [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html). Its first screen shows the recommended booking, why, the main risks, the promoter's decision and **what Qloo changed**: the same optimizer, pool, fees and budget with Qloo evidence on and off. Then try a budget cut. The [claims audit](docs/claims-audit.md) states what is verified and what is not, and the [competition changelog](docs/competition-changelog.md) lists every correction we made to our own claims.
+**The two-minute path** (no sign-in): open the [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html) and follow its four steps.
 
-The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
+1. **The brief.** New York: 2 slots for listeners of Leon Bridges, a $14,500 artist budget and 8 candidates with illustrative fees.
+2. **The optimized slate.** Michael Kiwanuka + Sault ($13,500). Every booking rule passes, and the near-tie and the human decision are shown.
+3. **Withdraw Qloo evidence.** The same optimizer, pool, fees and budget now book Jordan Rakei + Hiatus Kaiyote ($9,000). The decision changes, with zero provider calls.
+4. **Check the receipt.** Open the saved Qloo rank response (`r9 · rank`) behind the change.
+
+**What this shows, and what it doesn't.** Qloo evidence changes the decision in 7 of the 9 briefs with a complete Qloo ranking. When the top acts by Qloo rank can actually be booked, the optimizer usually books them; it chooses differently only at a near-tie. In 3,600 randomized scenarios it differed in 11.7% of such cases, all in one brief. Its main contribution is constraint handling: in 58% of scenarios the top-ranked acts could not be booked, and it either found the best bookable lineup or said none exists ([rank vs optimum](results/rank-vs-optimum.md)). No ticket-sales or profit improvement has been measured, and published fees are illustrative. See the [claims audit](docs/claims-audit.md) and the list of [corrections we made to our own claims](docs/competition-changelog.md).
 
 **Houselights Autopilot 2.0** turns a promoter's brief into a decision packet. The steps:
 

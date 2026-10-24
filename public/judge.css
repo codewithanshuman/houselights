@@ -443,3 +443,10 @@
 
 .decision-glance .glance-qloo{margin:14px 0 0;padding:10px 14px;border-left:3px solid var(--judge-purple);background:var(--judge-lavender);font-size:13px;line-height:1.55}
 .decision-glance .glance-qloo small{display:block;font:600 10px/1.4 "IBM Plex Mono",monospace;letter-spacing:.7px;color:#5d429f;margin-bottom:4px}
+.glance-path{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:14px;counter-reset:none}
+.glance-step{border-left:3px solid var(--judge-line);padding:2px 0 2px 14px;min-width:0}
+.glance-step>small{display:block;font:600 10px/1.4 "IBM Plex Mono",monospace;letter-spacing:.7px;color:#5d429f;margin-bottom:6px}
+.glance-step>p{margin:0 0 8px;font-size:14px;line-height:1.55}
+.glance-step:nth-child(3){border-left-color:var(--judge-purple)}
+.decision-glance .glance-step .glance-qloo{margin:0 0 10px}
+.glance-step .button[disabled]{opacity:.55;cursor:not-allowed}

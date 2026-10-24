@@ -6,19 +6,17 @@ Talent buyers often know the room they want to fill. They still have to turn aud
 
 ## What it does
 
-Houselights helps a promoter decide whom to book, and shows its working.
+Houselights makes constraint-correct, auditable booking decisions with Qloo receipts. A promoter gives it a city, the artists whose audience they want, candidate acts, fees, availability and booking rules. It uses Qloo audience affinity to rank the candidates, finds the best lineup that satisfies every rule, and links each conclusion to the saved Qloo response behind it.
 
-- **Booking Desk (public, no sign-in):** opens on the decision itself. It shows:
-  - which acts to book and at what cost;
-  - why, from Qloo audience affinity;
-  - what could go wrong, such as a near-tie or a cancellation;
-  - what the promoter must decide.
+**The two-minute path.** The public Booking Desk (no sign-in) opens straight into it:
 
-  It also shows what Qloo changed. For the recorded New York brief, the same optimizer, pool, fees and $14,500 budget give:
-  - with Qloo evidence: Michael Kiwanuka + Sault ($13,500);
-  - with the evidence withdrawn: Jordan Rakei + Hiatus Kaiyote ($9,000).
+1. **The brief:** New York, 2 slots for listeners of Leon Bridges, a $14,500 artist budget and 8 candidates.
+2. **The optimized slate:** Michael Kiwanuka + Sault ($13,500), with every booking rule passing, the near-tie flagged and the promoter's decision named.
+3. **Withdraw Qloo evidence:** the same optimizer, pool, fees and budget now book Jordan Rakei + Hiatus Kaiyote ($9,000). The decision changes, with zero provider calls.
+4. **Check the receipt:** open the saved Qloo rank response behind the change.
 
-  Judges can cut the budget, withdraw evidence or cancel an act. Every experiment re-runs the exact optimizer with no provider calls.
+Beyond that path:
+
 - **Autopilot:** given a brief, Autopilot finds the open evidence questions whose answers could change the bill. It spends a bounded number of Qloo calls only on those, compares strategies under one common set of disruption scenarios, and writes an organizer-ready packet. The packet carries receipts, fee and availability status, break points and approval-tagged next steps.
 - **Organizer workspace (private):** create an event, research it with Qloo, revise the brief and compare decisions across revisions. Research that loses Qloo calls, or gets only partial answers, is labelled partial, never complete.
 - **Integrity:** every published record carries content digests and an independently pinned manifest. Records replay under the scoring version that produced them. Qloo responses are unsigned, so provider authenticity is stated as unverifiable.
@@ -35,13 +33,14 @@ Houselights helps a promoter decide whom to book, and shows its working.
 All figures below are reproduced offline by the commands named in the [claims audit](claims-audit.md).
 
 - **Qloo influence (matched):** among the 9 feasible briefs with a complete Qloo ranking, withdrawing the saved Qloo evidence changes the decision in 7. Berlin and São Paulo do not change. Mumbai, Paris and Sydney are excluded because Qloo did not rank every candidate there.
-- **Constraint safety:**
-  - On 77 comparable shocks where a feasible lineup existed, 3 of 231 re-prompted LLM responses (1.3%) violated a hard constraint, against 0 for Houselights.
-  - Houselights enforces constraints by construction, so this demonstrates a design property, not superior judgement.
-  - The 7 shocks with no feasible lineup, where the prompt forced the LLM to violate a constraint, are reported separately.
+- **What the optimizer adds over booking Qloo's top acts:** we ran 3,600 seeded scenarios with varied fees, availability and budgets.
+  - Where Qloo's top-k acts were bookable, the optimizer chose differently in 11.7% of cases, all in the one brief with a near-tie at the selection boundary.
+  - Its main contribution is constraint handling. In 58% of scenarios the top-k could not be booked: it found the best bookable lineup in 1,380 and reported that none exists in 703.
+  - With the older ordinal fit it never differed (0%). We report that too.
+- **Constraint safety (by construction):** an exact optimizer cannot propose a lineup that breaks a hard rule. For comparison, 3 of 231 re-prompted LLM responses (1.3%) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - 329 unit tests and 31 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
+  - 331 unit tests and 31 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 

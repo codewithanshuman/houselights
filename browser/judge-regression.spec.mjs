@@ -96,6 +96,24 @@ test('the judge page leads with one recorded decision, its risk and the human ca
   await expect(glance).toContainText('Qloo publishes no margin of error');await expect(glance).toContainText('not that the bill will sell more tickets');
 });
 
+test('the Booking Desk opens into one path: brief, slate, withdraw Qloo evidence, decision changes, receipt', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  const steps=page.locator('#decision-glance .glance-step');
+  await expect(steps).toHaveCount(4);
+  await expect(steps.nth(0)).toContainText('1 · THE BRIEF');await expect(steps.nth(0)).toContainText('listeners of Leon Bridges');
+  await expect(steps.nth(1).locator('.glance-book strong')).toHaveText('Michael Kiwanuka + Sault');
+  const receipt=page.getByRole('button',{name:'Open the receipt ↓'});
+  await expect(receipt).toBeDisabled();
+  await page.getByRole('button',{name:'Withdraw Qloo evidence and re-run ↓'}).click();
+  const comparison=page.locator('.judge-evidence-comparison');
+  await expect(comparison).toContainText('Selection changed.',{timeout:30000});
+  await expect(comparison.locator('.judge-evidence-columns strong').nth(1)).toHaveText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(receipt).toBeEnabled();
+  await receipt.click();
+  const opened=page.locator('#judge-receipts details[open] summary').first();
+  await expect(opened).toBeFocused();await expect(opened).toContainText('rank');
+});
+
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
   await page.goto(`${origin}/judge.html#${caseId}`);
   await expect(page.locator('#judge-title')).toContainText('New York');
