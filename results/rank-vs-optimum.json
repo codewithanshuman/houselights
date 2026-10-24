@@ -1,0 +1,107 @@
+{
+  "version": "1.0",
+  "seed": 11,
+  "scenariosPerBrief": 400,
+  "providerCalls": 0,
+  "rows": [
+    {
+      "brief": "Manchester: compare all three methods",
+      "scenarios": 400,
+      "topKFeasible": 202,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 198,
+      "optimizerFoundAlternative": 76,
+      "noFeasibleLineup": 122
+    },
+    {
+      "brief": "Berlin: compare all three methods",
+      "scenarios": 400,
+      "topKFeasible": 207,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 193,
+      "optimizerFoundAlternative": 145,
+      "noFeasibleLineup": 48
+    },
+    {
+      "brief": "New York: compare all three methods",
+      "scenarios": 400,
+      "topKFeasible": 198,
+      "differsOrdinal": 0,
+      "differsAffinity": 177,
+      "topKInfeasible": 202,
+      "optimizerFoundAlternative": 180,
+      "noFeasibleLineup": 22
+    },
+    {
+      "brief": "New York: watch a recorded Qloo research run",
+      "scenarios": 400,
+      "topKFeasible": 0,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 400,
+      "optimizerFoundAlternative": 392,
+      "noFeasibleLineup": 8
+    },
+    {
+      "brief": "Illustrative: London alternative bill",
+      "scenarios": 400,
+      "topKFeasible": 179,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 221,
+      "optimizerFoundAlternative": 157,
+      "noFeasibleLineup": 64
+    },
+    {
+      "brief": "Illustrative: Amsterdam electronic bill",
+      "scenarios": 400,
+      "topKFeasible": 183,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 217,
+      "optimizerFoundAlternative": 115,
+      "noFeasibleLineup": 102
+    },
+    {
+      "brief": "Illustrative: Toronto soul and jazz bill",
+      "scenarios": 400,
+      "topKFeasible": 175,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 225,
+      "optimizerFoundAlternative": 119,
+      "noFeasibleLineup": 106
+    },
+    {
+      "brief": "Illustrative: Los Angeles jazz and hip-hop bill",
+      "scenarios": 400,
+      "topKFeasible": 177,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 223,
+      "optimizerFoundAlternative": 141,
+      "noFeasibleLineup": 82
+    },
+    {
+      "brief": "Illustrative: São Paulo independent bill",
+      "scenarios": 400,
+      "topKFeasible": 196,
+      "differsOrdinal": 0,
+      "differsAffinity": 0,
+      "topKInfeasible": 204,
+      "optimizerFoundAlternative": 55,
+      "noFeasibleLineup": 149
+    }
+  ],
+  "totals": {
+    "scenarios": 3600,
+    "topKFeasible": 1517,
+    "differsOrdinal": 0,
+    "differsAffinity": 177,
+    "topKInfeasible": 2083,
+    "optimizerFoundAlternative": 1380,
+    "noFeasibleLineup": 703
+  }
+}

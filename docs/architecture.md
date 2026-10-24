@@ -34,7 +34,7 @@ The run budget counts uncached workflow attempts, including retries. A harness w
 
 ## Exact optimization
 
-The pure optimizer supports up to twelve candidates and checks every combination with exactly the requested number of slots. Hard constraints are total fee budget, confirmed availability, valid fees, required and excluded IDs, minimum discovered acts and maximum acts per known genre. Unknown genres do not receive diversity credit and cannot establish genre concentration. A discovered act means it came from outside the original shortlist, not that it is obscure or attracts a new audience.
+The pure optimizer supports up to 20 candidates and 25,000 combinations, and checks every combination with exactly the requested number of slots. The stress-analysis route (`/api/analyze`) accepts at most 12 candidates. Hard constraints are total fee budget, confirmed availability, valid fees, required and excluded IDs, minimum discovered acts and maximum acts per known genre. Unknown genres do not receive diversity credit and cannot establish genre concentration. A discovered act means it came from outside the original shortlist, not that it is obscure or attracts a new audience.
 
 For a slate of `n` artists, the current policy is:
 

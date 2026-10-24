@@ -35,3 +35,11 @@ test('combined booking constraints: the optimizer matches an independent referen
   }
   assert.ok(checked>500&&infeasible>20,'the generator covers both feasible and infeasible combinations');
 });
+
+test('festival policy rejects briefs too large to rehearse synchronously',()=>{
+  const pool=n=>Array.from({length:n},(_,i)=>({id:'a'+i,name:'A'+i,fit:.5,evidence:{rank:true},terms:{fee:1000,available:true,genre:'g'+i%4}}));
+  const large=optimizeSlate(pool(20),{budget:15000,slots:5,maxPerGenre:3,festivalPolicy:true});
+  assert.equal(large.status,'invalid');assert.match(large.reasons.join(' '),/Festival policy .* at most 2500 combinations/);
+  assert.notEqual(optimizeSlate(pool(12),{budget:15000,slots:5,maxPerGenre:3,festivalPolicy:true}).status,'invalid','12 candidates × 5 slots (792) is allowed');
+  assert.notEqual(optimizeSlate(pool(20),{budget:15000,slots:5,maxPerGenre:3}).status,'invalid','without festival policy the 25,000 limit still applies');
+});

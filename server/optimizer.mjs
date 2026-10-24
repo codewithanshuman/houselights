@@ -2,6 +2,9 @@
 // preferences separate so that every chosen trade-off can be inspected.
 const MAX_CANDIDATES = 20;
 const MAX_COMBINATIONS = 25000;
+// Festival policy rehearses a cancellation for every combination and runs synchronously;
+// 20 candidates × 5 slots took 8 s on a desktop, far longer on the 0.5-CPU public host.
+const MAX_FESTIVAL_COMBINATIONS = 2500;
 const EPSILON = 1e-9;
 const WEIGHTS = Object.freeze({
   fit: 100,
@@ -282,6 +285,7 @@ export function optimizeSlate(candidates, rawConstraints = {}) {
   if (!Array.isArray(candidates)) errors.push('Candidates must be an array.');
   if (input.length > MAX_CANDIDATES) errors.push('Exact optimization supports at most 20 candidates. Narrow the shortlist before optimizing.');
   if (Number.isInteger(constraints.slots) && constraints.slots >= 0 && combinations(input.length, constraints.slots) > MAX_COMBINATIONS) errors.push(`This brief has more than ${MAX_COMBINATIONS} combinations. Reduce the candidate pool or slot count.`);
+  else if (constraints.festivalPolicy && Number.isInteger(constraints.slots) && constraints.slots >= 0 && combinations(input.length, constraints.slots) > MAX_FESTIVAL_COMBINATIONS) errors.push(`Festival policy rehearses every cancellation, so it supports at most ${MAX_FESTIVAL_COMBINATIONS} combinations (for example 12 candidates and 5 slots). This brief has ${combinations(input.length, constraints.slots)}. Narrow the shortlist or turn off festival policy.`);
   const inputIds = [];
   for (const item of input) {
     if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id.trim()) errors.push('Every candidate needs a non-empty string ID.');
