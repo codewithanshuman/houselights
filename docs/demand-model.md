@@ -38,7 +38,7 @@ The private source catalog stores these 40 rows outside the training ledger. `GE
 Reproduce the audit locally with Python 3 (standard library only), then import the private JSON into the selected `DATA_DIR`:
 
 ```powershell
-python scripts/audit-demand-outcomes.py 'C:\Users\anshumanbahekar\Downloads\HouseLights_Real_Event_Outcomes_Master.xlsx' 'C:\Users\anshumanbahekar\Downloads\houselights_verified_concerts.zip' --output artifacts/demand-source-audit.json
+python scripts/audit-demand-outcomes.py 'path\to\HouseLights_Real_Event_Outcomes_Master.xlsx' 'path\to\houselights_verified_concerts.zip' --output artifacts/demand-source-audit.json
 npm run import:outcomes -- artifacts/demand-source-audit.json
 ```
 
