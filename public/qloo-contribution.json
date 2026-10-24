@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "caseId": "8be4d03ef4792ca9f1466983",
+  "casesDigest": "2830536b6dbd71c9a0505291b8f5b72b6d23697bcf0bb51f05ff7e5570eafba4",
+  "method": "judgeExperiment on the seeded public case with saved Qloo evidence on (qlooOff: false) and withdrawn (qlooOff: true); same pool, fees and budget; 0 provider calls.",
+  "budget": 14500,
+  "currency": "USD",
+  "withQloo": {
+    "selectedIds": [
+      "368316C7-795A-46AF-8BBC-270F6633BE04",
+      "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+    ],
+    "names": [
+      "Michael Kiwanuka",
+      "Sault"
+    ],
+    "totalFee": 13500,
+    "feasible": true
+  },
+  "withoutQloo": {
+    "selectedIds": [
+      "57478178-BBBC-49A4-8755-5D942B388316",
+      "AC007829-3D79-438E-9F02-11228C82AD38"
+    ],
+    "names": [
+      "Jordan Rakei",
+      "Hiatus Kaiyote"
+    ],
+    "totalFee": 9000,
+    "feasible": true
+  },
+  "changed": true
+}

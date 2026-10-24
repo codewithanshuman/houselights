@@ -72,6 +72,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const autopilotPacket=await request('/api/autopilot/recorded/packet',{format:'text'});
     record('autopilot-recorded-packet',autopilotPacket.status===200&&autopilotPacket.csp.includes("default-src 'none'")&&autopilotPacket.data.includes('Recorded provider-backed run captured'));
     record('autopilot-recorded-manifest-pinned',autopilotRecord.data.run?.integrity?.manifestDigest===PINNED_MANIFESTS['public/autopilot-recorded.json']);
+    const contribution=await request('/qloo-contribution.json');
+    record('qloo-contribution-published',contribution.status===200&&contribution.data?.caseId===autopilotRecord.data?.caseId&&Array.isArray(contribution.data?.withQloo?.names)&&Array.isArray(contribution.data?.withoutQloo?.names));
     const example=await request('/workspace-example.json');
     record('organizer-example-session',example.status===200&&example.data.kind==='recorded-organizer-session'&&example.data.runs?.length===2&&
       example.data.runs.every(row=>row.run?.integrity?.manifestDigest?.startsWith('sha256:'))&&example.data.research?.receipts?.every(row=>row.source==='qloo'&&row.status!=='error'));

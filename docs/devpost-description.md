@@ -41,7 +41,7 @@ All figures below are reproduced offline by the commands named in the [claims au
   - The 7 shocks with no feasible lineup, where the prompt forced the LLM to violate a constraint, are reported separately.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - 328 unit tests and 31 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
+  - 329 unit tests and 31 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 

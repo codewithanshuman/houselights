@@ -28,6 +28,7 @@
     "reproduce:qloo-proof": "node scripts/reproduce-qloo-proof.mjs",
     "capture:autopilot": "node --env-file-if-exists=.env scripts/capture-autopilot.mjs",
     "reproduce:autopilot": "node scripts/reproduce-autopilot.mjs",
+    "build:qloo-contribution": "node scripts/build-qloo-contribution.mjs",
     "evaluate:autopilot": "node scripts/evaluate-autopilot.mjs",
     "evaluate:research-policy": "node scripts/evaluate-research-policy.mjs",
     "capture:workspace-example": "node --env-file-if-exists=.env scripts/capture-workspace-example.mjs",

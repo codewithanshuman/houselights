@@ -30,18 +30,20 @@
     }));
     void qlooContribution(file);
   }).catch(()=>{box.textContent='The recorded decision could not be loaded. The Booking Desk below still works.';});
-  // A matched comparison from the existing zero-call experiment route: same case,
-  // pool, fees and budget, with saved Qloo evidence on and then withdrawn.
+  // A matched comparison: the same zero-call judgeExperiment the Booking Desk runs,
+  // with saved Qloo evidence on and withdrawn (same case, pool, fees and budget).
+  // It is published as a static file, checked by tests/qloo-contribution.test.mjs,
+  // so page views do not spend the shared per-minute experiment quota.
   async function qlooContribution(file){
     const line=document.getElementById('glance-qloo');if(!line||!file.caseId)return;
-    const run=async qlooOff=>{const response=await fetch(`/api/judge/cases/${encodeURIComponent(file.caseId)}/experiment`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({qlooOff}),signal:AbortSignal.timeout(20000)});if(!response.ok)throw new Error();const body=await response.json(),memo=body.snapshot.memo;return {ids:[...(memo.slate.selectedIds??[])].sort().join(),names:(memo.slate.selectedIds??[]).map(id=>memo.items.find(item=>item.id===id)?.name??id),fee:memo.slate.totalFee,budget:memo.constraints.budget,currency:memo.currency??file.run.currency};};
     try{
-      const [on,off]=await Promise.all([run(false),run(true)]);
-      const money=value=>value==null?'—':new Intl.NumberFormat('en-US',{style:'currency',currency:on.currency||'USD',maximumFractionDigits:0}).format(value);
-      const bill=row=>row.names.length?`${row.names.join(' + ')} (${money(row.fee)})`:'no feasible bill';
-      line.querySelector('span').innerHTML=on.ids===off.ids
-        ?`Same pool, fees and ${e(money(on.budget))} budget: the optimizer books ${e(bill(on))} with or without Qloo evidence. Qloo did not change this bill.`
-        :`Same pool, fees and ${e(money(on.budget))} budget: with Qloo evidence the optimizer books <strong>${e(bill(on))}</strong>; with it withdrawn, <strong>${e(bill(off))}</strong>. Qloo changed the bill. This shows influence on the decision, not more ticket sales.`;
+      const response=await fetch('/qloo-contribution.json',{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error();
+      const result=await response.json();if(result.caseId!==file.caseId)throw new Error();
+      const money=value=>value==null?'—':new Intl.NumberFormat('en-US',{style:'currency',currency:result.currency||file.run.currency||'USD',maximumFractionDigits:0}).format(value);
+      const bill=row=>row.names.length?`${row.names.join(' + ')} (${money(row.totalFee)})`:'no feasible bill';
+      line.querySelector('span').innerHTML=!result.changed
+        ?`Same pool, fees and ${e(money(result.budget))} budget: the optimizer books ${e(bill(result.withQloo))} with or without Qloo evidence. Qloo did not change this bill.`
+        :`Same pool, fees and ${e(money(result.budget))} budget: with Qloo evidence the optimizer books <strong>${e(bill(result.withQloo))}</strong>; with it withdrawn, <strong>${e(bill(result.withoutQloo))}</strong>. Qloo changed the bill. This shows influence on the decision, not more ticket sales.`;
     }catch{line.querySelector('span').textContent='The with/without-Qloo comparison could not be loaded. Use "Turn off Qloo evidence" in the Booking Desk below.';}
   }
 })();

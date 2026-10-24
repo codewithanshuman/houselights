@@ -74,12 +74,15 @@ test.afterAll(async () => {
 
 test('the judge page leads with one recorded decision, its risk and the human call, before any mechanics', async ({ page }) => {
   const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
+  const experimentPosts=[];page.on('request',request=>{if(request.method()==='POST'&&/\/experiment$/.test(request.url()))experimentPosts.push(request.url());});
   await page.goto(`${origin}/judge.html`);
   const glance=page.locator('#decision-glance');
   await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
   await expect(glance).toContainText('WATCH OUT');await expect(glance).toContainText('YOUR CALL');
   await expect(glance).toContainText('Qloo affinity is cultural fit, not ticket demand');
-  // The Qloo contribution is a matched zero-call comparison: same case, pool, fees and budget.
+  // The Qloo contribution is a matched zero-call comparison (same case, pool, fees and
+  // budget), served statically so page views spend none of the shared experiment quota.
+  expect(experimentPosts).toEqual([]);
   await expect(glance.locator('#glance-qloo')).toContainText(/Same pool, fees and \$[\d,]+ budget: with Qloo evidence the optimizer books .+; with it withdrawn, .+\. Qloo changed the bill\./);
   await expect(glance.locator('#glance-qloo')).toContainText('not more ticket sales');
   await expect(glance.locator('.glance-grid')).not.toContainText('policy points');
