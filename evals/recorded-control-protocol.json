@@ -1,0 +1,29 @@
+{
+  "version": "recorded-control-replication-v1",
+  "declaredAt": "2026-10-24T04:00:08.084Z",
+  "sourceCaseId": "8be4d03ef4792ca9f1466983",
+  "publicSnapshotDigest": "sha256:e8adf45636ca6799e181e45fc1085e4df25daca7ad625d3f711baa459c683492",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "trials": 3,
+  "reviewTrial": 1,
+  "maxCompletionTokensPerTrial": 4096,
+  "maximumProviderRequests": 3,
+  "additionalQlooCalls": 0,
+  "temperature": 0,
+  "scope": "New non-contemporaneous fixed-pool replication. Controls collected after the original research; no original evidence or public case is replaced.",
+  "selectionRule": "Retain every attempted response, failure and interruption. Trial one is the predeclared comparison; no repair or best-of selection.",
+  "metrics": [
+    "selectedIds",
+    "hardConstraintViolations",
+    "plannedFees",
+    "sameSelectionAsHouseLights",
+    "providerUsage"
+  ],
+  "limitations": [
+    "The shared pool includes Qloo-discovered candidates; this tests selection, not discovery.",
+    "Artist fees and availability are illustrative.",
+    "No independent human judgments or ticket outcomes.",
+    "Policy points cannot prove superiority on their own objective."
+  ]
+}
