@@ -1,6 +1,52 @@
 # Sharing an existing Oracle server
 
-## Current deployment — 22 October 2026
+## Deployment of cb9ce4a — 24 October 2026
+
+The public host now runs application commit
+`cb9ce4a8ff7b0fab377826146459c0668a6f9204`, and `/healthz` over public HTTPS reports that release. It replaced `c5028158`.
+
+**Before the switch**
+
+- An online SQLite backup passed an isolated restore: 22 tables, integrity ok. A copy is held off-host.
+- The release environment and the service list were saved.
+- The running image was tagged `houselights-shared:pre-audit-cb9ce4a`.
+- A rollback drill started that image on the restored database in a separate, loopback-only container. It served all cases and pages with no errors, and was then removed.
+
+**Build and switch**
+
+- The image was built in the existing capped builder (0.5 CPU / 2 GiB), which was stopped afterwards.
+- Only the application container was recreated. Every other container kept its ID, and the livestream process ID was unchanged.
+
+**Checks after the deployment**
+
+- `npm run release:verify` against the public URL passed 83 checks.
+- HTTPS uses a Let's Encrypt certificate, valid until 18 January 2027, and HTTP redirects to HTTPS.
+- In a real browser at 1366 px and 375 px:
+  - The decision glance, the booking-desk budget cut and the zero-call Autopilot re-plan all worked.
+  - The organizer example rendered.
+  - No page overflowed horizontally, and there were no console errors.
+- An organizer session over HTTPS passed:
+  - It created an event and ran live research: complete, 16 of 24 Qloo calls, none failed.
+  - Zero-call decisions on two revisions, the comparison, and Markdown and HTML packets all worked. The HTML packet has a strict CSP.
+  - Anonymous and wrong-token requests were refused.
+- No table lost rows across the switch.
+
+**Not verified**
+
+- Partial labelling with a real Qloo failure: Qloo answered every call during the check. Partial labelling is covered by unit tests and by the earlier local captures, where Qloo failed.
+- Load from concurrent users.
+- A VM reboot.
+
+**Rollback**
+
+1. Tag `houselights-shared:pre-audit-cb9ce4a` as `houselights-shared:local`.
+2. Set `RELEASE_COMMIT=c5028158e7c6cf7094fe03b2ee609d3ada15decf`.
+3. Check out that commit.
+4. Run `up --no-build -d houselights` with both Compose files.
+
+If the data must also be restored, use `backups/pre-audit-cb9ce4a`.
+
+## Deployment — 22 October 2026
 
 [Houselights is publicly available](https://houselights.80-225-218-239.sslip.io)
 from the existing Ubuntu 22.04 ARM A1 VM with 2 OCPUs and 12 GB RAM. The

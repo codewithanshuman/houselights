@@ -88,5 +88,5 @@ The [drawbacks audit response](drawbacks-audit-response.md) has the full map. In
 - Fees, availability, venue size and ticket prices in both published examples are illustrative inputs.
 - No promoter or judge has evaluated a packet. No ticketing outcome validates any decision.
 - Workspace research is `partial` whenever a Qloo call fails. Two recapture attempts on 24 October lost `where_popular` and `compare_audiences` calls to timeouts, so the published workspace example is still the earlier, complete capture. It used ordinal ranks, and the page says so.
-- The public host still runs the previous release. The hosted workspace needs the organizer token and has not been exercised on that host.
+- `cb9ce4a` was deployed to the public host on 24 October. An organizer workspace session (create, live research, decide, revise, compare, packets) passed there; see the [deployment record](shared-oracle-host.md#deployment-of-cb9ce4a--24-october-2026).
 - Worst-case CPU (12 candidates, 3 slots, 16 research rounds) is about 4–6 s spread across provider calls, and about 1 s for planning.

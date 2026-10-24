@@ -70,7 +70,7 @@ On 24 October Qloo's location and audience-comparison tools timed out repeatedly
 
 | Audit item | Status | What would close it |
 |---|---|---|
-| Latest code on the live host (P0) | The host still reports release `c5028158`, which predates the Booking Desk, Autopilot and the workspace. | Deploying the verified `development` commit, with the owner's explicit approval, then running `npm run release:verify` against the host. Not done. |
+| Latest code on the live host (P0) | **Closed, 24 October.** `cb9ce4a` is deployed and the public host reports that commit. The deployment record is in [shared Oracle host](shared-oracle-host.md#deployment-of-cb9ce4a--24-october-2026). | Repeat `npm run release:verify` after every deployment. |
 | External usability and booking-value feedback (P1) | Zero sessions. | Run the [usability test kit](usability-test-kit.md) with at least five first-time users and two working bookers. Publish every result, including failures. |
 | Real-world booking advantage | None established. | Prospective decisions paired with real ticketing outcomes (`npm run import:outcomes`). The paid-tickets model stays disabled until its holdout gates pass. |
 | Cultural fit ≠ ticket demand | A permanent limitation of the evidence. It is stated on every packet and on the glance card. | Calibration against real outcomes, as above. |
