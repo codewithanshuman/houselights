@@ -440,3 +440,6 @@
 .glance-glossary dl{display:grid;grid-template-columns:minmax(120px,180px) minmax(0,1fr);gap:6px 14px;margin:10px 0 0}.glance-glossary dt{font-weight:600}.glance-glossary dd{margin:0;color:#4b4552}
 @media(max-width:900px){.glance-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.glance-grid,.glance-glossary dl{grid-template-columns:1fr}.decision-glance{padding:18px}.judge-page .decision-glance h2{font-size:25px}}
+
+.decision-glance .glance-qloo{margin:14px 0 0;padding:10px 14px;border-left:3px solid var(--judge-purple);background:var(--judge-lavender);font-size:13px;line-height:1.55}
+.decision-glance .glance-qloo small{display:block;font:600 10px/1.4 "IBM Plex Mono",monospace;letter-spacing:.7px;color:#5d429f;margin-bottom:4px}

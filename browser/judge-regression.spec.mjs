@@ -79,6 +79,10 @@ test('the judge page leads with one recorded decision, its risk and the human ca
   await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
   await expect(glance).toContainText('WATCH OUT');await expect(glance).toContainText('YOUR CALL');
   await expect(glance).toContainText('Qloo affinity is cultural fit, not ticket demand');
+  // The Qloo contribution is a matched zero-call comparison: same case, pool, fees and budget.
+  await expect(glance.locator('#glance-qloo')).toContainText(/Same pool, fees and \$[\d,]+ budget: with Qloo evidence the optimizer books .+; with it withdrawn, .+\. Qloo changed the bill\./);
+  await expect(glance.locator('#glance-qloo')).toContainText('not more ticket sales');
+  await expect(glance.locator('.glance-grid')).not.toContainText('policy points');
   const order=await page.evaluate(()=>{const g=document.getElementById('decision-glance'),a=document.getElementById('booking-autopilot');return !!a&&!!(g.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING);});
   expect(order).toBe(true);
   await glance.locator('summary',{hasText:/glossary|terms/i}).first().click();
