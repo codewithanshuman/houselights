@@ -1,11 +1,11 @@
 {
   "version": "judge-evaluation-audit-v1",
-  "sourceManifestDigest": "sha256:599bd19e848a8100c6ed6247de7bdf804dde990abb9eed052b42f9b2600fb464",
-  "cases": 5,
-  "cities": 4,
-  "shocks": 54,
-  "feasibleDecisions": 52,
-  "explicitInfeasibilities": 2,
+  "sourceManifestDigest": "sha256:2830536b6dbd71c9a0505291b8f5b72b6d23697bcf0bb51f05ff7e5570eafba4",
+  "cases": 12,
+  "cities": 11,
+  "shocks": 135,
+  "feasibleDecisions": 116,
+  "explicitInfeasibilities": 19,
   "houselightsViolations": 0,
   "reviewEligible": [
     {
@@ -19,10 +19,37 @@
     {
       "caseId": "bf9b65d52eeff00e0e258917",
       "title": "New York: compare all three methods"
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "title": "Illustrative: London alternative bill"
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "title": "Illustrative: Amsterdam electronic bill"
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "title": "Illustrative: Toronto soul and jazz bill"
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "title": "Illustrative: Los Angeles jazz and hip-hop bill"
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "title": "Illustrative: São Paulo independent bill"
     }
   ],
   "genuineReviewJudgments": 0,
   "observedSalesOutcomes": 0,
+  "baselineInfeasibleCases": [
+    {
+      "caseId": "fb9ed16d2e0fe1204a084159",
+      "title": "Illustrative: Paris crossover bill",
+      "status": "explicit_baseline_infeasibility"
+    }
+  ],
   "rows": [
     {
       "caseId": "4986d98dcd8ac838aed3874a",
@@ -1499,10 +1526,2439 @@
       },
       "matchedInputs": true,
       "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 10350
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 9200
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 900,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 8050
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 2050,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "cancel-02245FE3-FCE1-49BB-8258-09780BBD6043",
+      "patch": {
+        "cancelId": "02245FE3-FCE1-49BB-8258-09780BBD6043"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "fee-15-02245FE3-FCE1-49BB-8258-09780BBD6043",
+      "patch": {
+        "feeIncreaseId": "02245FE3-FCE1-49BB-8258-09780BBD6043"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "unavailable-02245FE3-FCE1-49BB-8258-09780BBD6043",
+      "patch": {
+        "unavailableId": "02245FE3-FCE1-49BB-8258-09780BBD6043"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "4FEE60D9-338D-4150-84E2-B0FF0E3C8754",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "cancel-132F123E-6250-47F5-8A67-4C32F867C1A4",
+      "patch": {
+        "cancelId": "132F123E-6250-47F5-8A67-4C32F867C1A4"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "fee-15-132F123E-6250-47F5-8A67-4C32F867C1A4",
+      "patch": {
+        "feeIncreaseId": "132F123E-6250-47F5-8A67-4C32F867C1A4"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "unavailable-132F123E-6250-47F5-8A67-4C32F867C1A4",
+      "patch": {
+        "unavailableId": "132F123E-6250-47F5-8A67-4C32F867C1A4"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "cancel-4505AC24-7CBF-485D-81A0-8B2325884B59",
+      "patch": {
+        "cancelId": "4505AC24-7CBF-485D-81A0-8B2325884B59"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "fee-15-4505AC24-7CBF-485D-81A0-8B2325884B59",
+      "patch": {
+        "feeIncreaseId": "4505AC24-7CBF-485D-81A0-8B2325884B59"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "unavailable-4505AC24-7CBF-485D-81A0-8B2325884B59",
+      "patch": {
+        "unavailableId": "4505AC24-7CBF-485D-81A0-8B2325884B59"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "cancel-0117E811-005C-425F-8EC2-DA8DCC88B83D",
+      "patch": {
+        "cancelId": "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "fee-15-0117E811-005C-425F-8EC2-DA8DCC88B83D",
+      "patch": {
+        "feeIncreaseId": "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "db92acb6bc97815f501fd525",
+      "shockId": "unavailable-0117E811-005C-425F-8EC2-DA8DCC88B83D",
+      "patch": {
+        "unavailableId": "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "4505AC24-7CBF-485D-81A0-8B2325884B59"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "02245FE3-FCE1-49BB-8258-09780BBD6043",
+          "132F123E-6250-47F5-8A67-4C32F867C1A4",
+          "0117E811-005C-425F-8EC2-DA8DCC88B83D"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 9900
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 400,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 8800
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 1500,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 7700
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 2600,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "cancel-D43A50C6-754B-444E-9289-57EBE9146279",
+      "patch": {
+        "cancelId": "D43A50C6-754B-444E-9289-57EBE9146279"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "fee-15-D43A50C6-754B-444E-9289-57EBE9146279",
+      "patch": {
+        "feeIncreaseId": "D43A50C6-754B-444E-9289-57EBE9146279"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "unavailable-D43A50C6-754B-444E-9289-57EBE9146279",
+      "patch": {
+        "unavailableId": "D43A50C6-754B-444E-9289-57EBE9146279"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "cancel-FE621495-2EFD-4180-9FB1-A214944F461F",
+      "patch": {
+        "cancelId": "FE621495-2EFD-4180-9FB1-A214944F461F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "fee-15-FE621495-2EFD-4180-9FB1-A214944F461F",
+      "patch": {
+        "feeIncreaseId": "FE621495-2EFD-4180-9FB1-A214944F461F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "unavailable-FE621495-2EFD-4180-9FB1-A214944F461F",
+      "patch": {
+        "unavailableId": "FE621495-2EFD-4180-9FB1-A214944F461F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "cancel-65FCD990-E052-41E9-A0D4-C9782C26458E",
+      "patch": {
+        "cancelId": "65FCD990-E052-41E9-A0D4-C9782C26458E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "fee-15-65FCD990-E052-41E9-A0D4-C9782C26458E",
+      "patch": {
+        "feeIncreaseId": "65FCD990-E052-41E9-A0D4-C9782C26458E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "unavailable-65FCD990-E052-41E9-A0D4-C9782C26458E",
+      "patch": {
+        "unavailableId": "65FCD990-E052-41E9-A0D4-C9782C26458E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "cancel-B527E1BB-A47C-4389-BFC9-A39F88B23F3A",
+      "patch": {
+        "cancelId": "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "fee-15-B527E1BB-A47C-4389-BFC9-A39F88B23F3A",
+      "patch": {
+        "feeIncreaseId": "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "114d2b336b3c490668347b6f",
+      "shockId": "unavailable-B527E1BB-A47C-4389-BFC9-A39F88B23F3A",
+      "patch": {
+        "unavailableId": "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "FE621495-2EFD-4180-9FB1-A214944F461F",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D43A50C6-754B-444E-9289-57EBE9146279",
+          "65FCD990-E052-41E9-A0D4-C9782C26458E",
+          "B527E1BB-A47C-4389-BFC9-A39F88B23F3A"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 9000
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 8000
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 500,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 7000
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 1500,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "cancel-5304D6CF-3D23-462E-B334-AB217641CA61",
+      "patch": {
+        "cancelId": "5304D6CF-3D23-462E-B334-AB217641CA61"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "fee-15-5304D6CF-3D23-462E-B334-AB217641CA61",
+      "patch": {
+        "feeIncreaseId": "5304D6CF-3D23-462E-B334-AB217641CA61"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "unavailable-5304D6CF-3D23-462E-B334-AB217641CA61",
+      "patch": {
+        "unavailableId": "5304D6CF-3D23-462E-B334-AB217641CA61"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "cancel-57970D7A-5D86-401A-8BE4-961DAEC943E4",
+      "patch": {
+        "cancelId": "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "fee-15-57970D7A-5D86-401A-8BE4-961DAEC943E4",
+      "patch": {
+        "feeIncreaseId": "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "unavailable-57970D7A-5D86-401A-8BE4-961DAEC943E4",
+      "patch": {
+        "unavailableId": "57970D7A-5D86-401A-8BE4-961DAEC943E4"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "cancel-D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+      "patch": {
+        "cancelId": "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "fee-15-D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+      "patch": {
+        "feeIncreaseId": "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "unavailable-D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+      "patch": {
+        "unavailableId": "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "cancel-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "cancelId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "5304D6CF-3D23-462E-B334-AB217641CA61",
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "fee-15-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "feeIncreaseId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "5304D6CF-3D23-462E-B334-AB217641CA61",
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "7ec443cf93aeb03a3420b15c",
+      "shockId": "unavailable-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "unavailableId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "5304D6CF-3D23-462E-B334-AB217641CA61",
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "D160AC30-5EF7-4AF3-B8AF-B4AA01E9B63E",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 13050
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 950,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 11600
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 2400,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 10150
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 3850,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "cancel-A5481928-B60E-4C34-8725-9325AA7B91DF",
+      "patch": {
+        "cancelId": "A5481928-B60E-4C34-8725-9325AA7B91DF"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "fee-15-A5481928-B60E-4C34-8725-9325AA7B91DF",
+      "patch": {
+        "feeIncreaseId": "A5481928-B60E-4C34-8725-9325AA7B91DF"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 175,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "unavailable-A5481928-B60E-4C34-8725-9325AA7B91DF",
+      "patch": {
+        "unavailableId": "A5481928-B60E-4C34-8725-9325AA7B91DF"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "cancel-823E245F-17E1-49B2-95F8-255130700E2B",
+      "patch": {
+        "cancelId": "823E245F-17E1-49B2-95F8-255130700E2B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "fee-15-823E245F-17E1-49B2-95F8-255130700E2B",
+      "patch": {
+        "feeIncreaseId": "823E245F-17E1-49B2-95F8-255130700E2B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 325,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "unavailable-823E245F-17E1-49B2-95F8-255130700E2B",
+      "patch": {
+        "unavailableId": "823E245F-17E1-49B2-95F8-255130700E2B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "cancel-AC007829-3D79-438E-9F02-11228C82AD38",
+      "patch": {
+        "cancelId": "AC007829-3D79-438E-9F02-11228C82AD38"
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "fee-15-AC007829-3D79-438E-9F02-11228C82AD38",
+      "patch": {
+        "feeIncreaseId": "AC007829-3D79-438E-9F02-11228C82AD38"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 100,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bd5dcf92a2e2619de42d4b9d",
+      "shockId": "unavailable-AC007829-3D79-438E-9F02-11228C82AD38",
+      "patch": {
+        "unavailableId": "AC007829-3D79-438E-9F02-11228C82AD38"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "294CF67E-3032-43AC-9D1C-9D3182E92E97",
+          "A2209515-2E4C-413D-AE69-3E5F19324F9A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "A5481928-B60E-4C34-8725-9325AA7B91DF",
+          "823E245F-17E1-49B2-95F8-255130700E2B",
+          "AC007829-3D79-438E-9F02-11228C82AD38"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 8100
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 7200
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 600,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 6300
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 1500,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "cancel-0292E531-FB50-490A-AD80-97B5918C66BA",
+      "patch": {
+        "cancelId": "0292E531-FB50-490A-AD80-97B5918C66BA"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "fee-15-0292E531-FB50-490A-AD80-97B5918C66BA",
+      "patch": {
+        "feeIncreaseId": "0292E531-FB50-490A-AD80-97B5918C66BA"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "unavailable-0292E531-FB50-490A-AD80-97B5918C66BA",
+      "patch": {
+        "unavailableId": "0292E531-FB50-490A-AD80-97B5918C66BA"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "cancel-CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+      "patch": {
+        "cancelId": "CF08E3C4-EB35-4264-8C68-2458EF359D5C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "fee-15-CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+      "patch": {
+        "feeIncreaseId": "CF08E3C4-EB35-4264-8C68-2458EF359D5C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "unavailable-CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+      "patch": {
+        "unavailableId": "CF08E3C4-EB35-4264-8C68-2458EF359D5C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "cancel-D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+      "patch": {
+        "cancelId": "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "fee-15-D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+      "patch": {
+        "feeIncreaseId": "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "42c9f14630b3458ffbdb17d2",
+      "shockId": "unavailable-D132117D-A15B-40F1-A4B8-9D1E9BAAF034",
+      "patch": {
+        "unavailableId": "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "41BC3B9A-0019-41BF-B181-153A4BBE2E49"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "0292E531-FB50-490A-AD80-97B5918C66BA",
+          "CF08E3C4-EB35-4264-8C68-2458EF359D5C",
+          "D132117D-A15B-40F1-A4B8-9D1E9BAAF034"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 9900
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 8800
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 7700
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "cancel-061CE350-5D95-49F0-8C09-3D13B2E2D056",
+      "patch": {
+        "cancelId": "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "fee-15-061CE350-5D95-49F0-8C09-3D13B2E2D056",
+      "patch": {
+        "feeIncreaseId": "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "8E87EB51-B623-4642-A54D-0EE494C11CBF",
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "unavailable-061CE350-5D95-49F0-8C09-3D13B2E2D056",
+      "patch": {
+        "unavailableId": "061CE350-5D95-49F0-8C09-3D13B2E2D056"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "8E87EB51-B623-4642-A54D-0EE494C11CBF",
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "cancel-F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+      "patch": {
+        "cancelId": "F5B3711E-7F17-408A-9806-0D0CD4FE105E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "fee-15-F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+      "patch": {
+        "feeIncreaseId": "F5B3711E-7F17-408A-9806-0D0CD4FE105E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "unavailable-F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+      "patch": {
+        "unavailableId": "F5B3711E-7F17-408A-9806-0D0CD4FE105E"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "cancel-C48CA16C-ECA8-4228-8F21-673ECC4E823A",
+      "patch": {
+        "cancelId": "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056",
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "fee-15-C48CA16C-ECA8-4228-8F21-673ECC4E823A",
+      "patch": {
+        "feeIncreaseId": "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "061CE350-5D95-49F0-8C09-3D13B2E2D056",
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "22df6fa52aa06808a8415002",
+      "shockId": "unavailable-C48CA16C-ECA8-4228-8F21-673ECC4E823A",
+      "patch": {
+        "unavailableId": "C48CA16C-ECA8-4228-8F21-673ECC4E823A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "8E87EB51-B623-4642-A54D-0EE494C11CBF",
+          "F5B3711E-7F17-408A-9806-0D0CD4FE105E",
+          "6D067F1D-39F0-4F1B-88FB-DC14530806B8"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
     }
   ],
   "limitations": [
-    "Dependent stress replays of five saved briefs, not additional independent markets.",
+    "Dependent stress replays of the published saved briefs, not additional independent markets. Baseline infeasibility is retained separately because there is no selected act to shock.",
     "Zero proposed-lineup violations follows from an exact constraint optimizer; explicit infeasibility is reported separately.",
     "Static LLM selections are not re-prompted under shocks. No fresh LLM superiority comparison is made.",
     "New recorded case has no matched first-trial LLM control. Review eligibility excludes it and incomplete controls.",

@@ -27,6 +27,7 @@
     "reproduce:shocks": "node --env-file-if-exists=.env scripts/reproduce-shocks.mjs",
     "reproduce:qloo-proof": "node scripts/reproduce-qloo-proof.mjs",
     "verify:recorded-source": "node scripts/verify-recorded-source.mjs",
+    "reproduce:market-coverage": "node scripts/capture-market-coverage.mjs",
     "reproduce:recorded-control": "node scripts/capture-recorded-control.mjs",
     "audit:judge-evaluation": "node scripts/audit-judge-evaluation.mjs",
     "release:verify": "node scripts/verify-release.mjs",

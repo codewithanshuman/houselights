@@ -1,0 +1,47 @@
+{
+  "version": "market-coverage-v1",
+  "protocolDigest": "sha256:a2f0102f343a7360e42490ed50936ffe04fb148f1a81bdbc66b75fb097db4f8a",
+  "plannedBriefs": 7,
+  "capturedBriefs": 7,
+  "qlooWorkflows": 138,
+  "modelRequests": 5,
+  "reservedTokens": 30774,
+  "cases": [
+    {
+      "city": "London",
+      "status": "published_candidate",
+      "control": "compared"
+    },
+    {
+      "city": "Paris",
+      "status": "incomplete_rank_candidate",
+      "control": "not_comparable"
+    },
+    {
+      "city": "Amsterdam",
+      "status": "published_candidate",
+      "control": "compared"
+    },
+    {
+      "city": "Toronto",
+      "status": "published_candidate",
+      "control": "compared"
+    },
+    {
+      "city": "Los Angeles",
+      "status": "published_candidate",
+      "control": "compared"
+    },
+    {
+      "city": "São Paulo",
+      "status": "published_candidate",
+      "control": "compared"
+    },
+    {
+      "city": "Sydney",
+      "status": "incomplete_rank_candidate",
+      "control": "not_comparable"
+    }
+  ],
+  "limitation": "Illustrative curated planning inputs with genuine Qloo responses; not independently sampled organizer requests, contracts, judgments or event outcomes."
+}

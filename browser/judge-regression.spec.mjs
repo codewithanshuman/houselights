@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { test, expect } from '@playwright/test';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const seedManifest=JSON.parse(readFileSync(join(root,'deploy','judge-cases.json'),'utf8'));
+const seededCaseCount=seedManifest.cases.length;
 const caseId = 'bf9b65d52eeff00e0e258917';
 const tracedCaseId = '8be4d03ef4792ca9f1466983';
 let app, dataDir, origin, output = '';
@@ -113,7 +115,7 @@ test('anonymous visitor can follow the homepage challenge through proof and limi
   await page.getByRole('link', { name: 'Evidence & limits' }).first().click();
   await expect(page).toHaveURL(/\/evidence\.html$/);
   await expect(page.locator('#review-status')).toContainText('0 completed reviewers');
-  await expect(page.locator('#agent-trace-status')).toContainText('1 of 5 public cases have a complete saved application-event sequence');
+  await expect(page.locator('#agent-trace-status')).toContainText(`1 of ${seededCaseCount} public cases have a complete saved application-event sequence`);
   await expect(page.locator('#agent-trace-link')).toBeVisible();
 });
 
@@ -366,4 +368,19 @@ test('separate later LLM replication retains all trials and makes the cheaper co
   expect(await study.textContent()).not.toMatch(/PRIVATE-|Bearer |requestId|responseId/);
   await page.setViewportSize({width:320,height:800});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('infeasible Paris brief preserves the missing evidence and supports an explicit budget increase', async ({page})=>{
+  const row=seedManifest.cases.find(row=>row.snapshot.memo.input.city==='Paris');
+  const catalog=await (await page.request.get(origin+'/api/judge/cases')).json();
+  const selected=catalog.cases.find(item=>item.title===row.title);
+  await page.goto(`${origin}/judge.html#${selected.id}`);
+  await expect(page.locator('.booking-verdict')).toHaveText('NO FEASIBLE BOOKING');
+  await expect(page.locator('.booking-decision-metrics')).toContainText('No selection');
+  await expect(page.locator('#judge-tight-budget')).toBeDisabled();
+  await page.getByRole('button',{name:'125%',exact:true}).click();
+  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await expect(page.locator('.booking-verdict')).toHaveText('FEASIBLE PLANNING OPTION');
+  await expect(page.locator('#booking-decision-card')).toContainText('Evidence state: blocked');
+  await expect(page.locator('#booking-signal-lab')).toContainText('not ticket demand');
 });

@@ -8,7 +8,7 @@ The brief has one anchor, five offered artists and three Qloo-discovered candida
 
 The earlier Manchester, Berlin, New York and Mumbai cases remain published with their saved Qloo receipts and controls. They have no model-step event log; the interface labels their receipt-completion display accordingly. The new recorded case has no comparable saved first-trial festival LLM control. The frozen shock v2 benchmark remains scoped to the original four real-evidence cases and two labeled synthetic cases through `evals/shock-cohort.json`; it does not count the new case without three captured re-prompts per shock.
 
-To replay the fixed-pool evidence comparison offline, run `npm run reproduce:qloo-proof`. To check the anonymous judge path and receipt navigation locally, run `npm run test:browser`. The current proof suite covers five distinct saved briefs in four cities; it has no genuine blind judgments or held-out ticket outcomes. The 12-brief target is still unmet.
+To replay the fixed-pool evidence comparison offline, run `npm run reproduce:qloo-proof`. To check the anonymous judge path and receipt navigation locally, run `npm run test:browser`. The current proof suite covers 12 distinct saved planning briefs across 11 cities, including seven explicitly illustrative market probes. The distinct-input coverage target is met; independently sampled organizer requests, genuine blind judgments and held-out ticket outcomes remain absent. See [market coverage](market-coverage.md) and the [separate later LLM replication](recorded-control-replication.md).
 
 
 ## Repeatable retained-source verification

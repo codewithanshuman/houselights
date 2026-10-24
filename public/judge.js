@@ -125,7 +125,7 @@
       $('judge-candidates').innerHTML=`<div class="table-scroll"><table class="gm-table"><thead><tr><th>Artist</th><th>Illustrative fee</th><th>Saved rank (before changes)</th><th>Lock</th><th>Exclude</th></tr></thead><tbody>${memo.items.map(i=>`<tr><td>${e(i.name)}</td><td>${e(money(i.terms.fee))}</td><td>${i.evidence.rank?e(i.rank??i.fit):'Unknown'}</td><td><input type="checkbox" data-judge-lock="${e(i.id)}" aria-label="Lock ${e(i.name)}"></td><td><input type="checkbox" data-judge-exclude="${e(i.id)}" aria-label="Exclude ${e(i.name)}"></td></tr>`).join('')}</tbody></table></div>`;
       $('judge-receipts').innerHTML=record.snapshot.receipts.map(r=>`<details><summary>${e(r.id)} · ${e(r.tool)} · ${e(r.status)}</summary><pre>${e(JSON.stringify(r,null,2))}</pre></details>`).join('');
       renderAgentTrace();renderQlooPreview();$('judge-proof-link').href='/proof-lab.html#'+encodeURIComponent(record.id);
-      reset();$('judge-workspace').hidden=false;history.replaceState(null,'','#'+id);say('Ready. Each experiment uses the same saved pool.');
+      reset();$('judge-tight-budget').disabled=!memo.slate.feasible;$('judge-tight-budget').title=memo.slate.feasible?'':'No feasible original lineup has a cost to cut below.';$('judge-workspace').hidden=false;history.replaceState(null,'','#'+id);say('Ready. Each experiment uses the same saved pool.');
     }catch(error){if(sequence===loadSequence){say(error.message);$('judge-qloo-preview').textContent='The saved comparison could not be loaded.';}}
   }
   async function experiment(scrollToProof=false){
@@ -136,7 +136,7 @@
       const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
       result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();notify('completed');say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
       if(scrollToProof)$('judge-proof-title').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-    }catch(error){notify('failed');say(`${error.message} The previous result is still displayed; no new experiment completed.`);}finally{busy=false;$('judge-case').disabled=false;controls.forEach(control=>control.disabled=false);notify();}
+    }catch(error){notify('failed');say(`${error.message} The previous result is still displayed; no new experiment completed.`);}finally{busy=false;$('judge-case').disabled=false;controls.forEach(control=>control.disabled=false);$('judge-tight-budget').disabled=!current.snapshot.memo.slate.feasible;notify();}
   }
   $('judge-form').onsubmit=event=>{event.preventDefault();void experiment();};$('judge-reset').onclick=()=>{reset();say('Published baseline restored.');};
   $('judge-workspace').addEventListener('click',event=>{

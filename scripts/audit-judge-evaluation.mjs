@@ -13,10 +13,11 @@ try{
   db=(await import('../server/database.mjs')).db;
   const manifest=JSON.parse(readFileSync('deploy/judge-cases.json','utf8'));
   const cases=manifest.cases.map(row=>publishJudgeCase(row.snapshot,row.title));
-  const rows=[],reviewEligible=[];
+  const rows=[],reviewEligible=[],baselineInfeasibleCases=[];
   const originalDigest=JSON.stringify(manifest);
   for(const record of cases){
     if(record.methods.llm.comparable&&!record.snapshot.mock)reviewEligible.push({caseId:record.id,title:record.title});
+    if(!record.snapshot.memo.slate.feasible){baselineInfeasibleCases.push({caseId:record.id,title:record.title,status:'explicit_baseline_infeasibility'});continue;}
     for(const shock of enumerateShocks(record)){
       const replay=judgeExperiment(record,shock.patch,{lightweight:true}),snapshot=replay.snapshot;
       const original=record.snapshot;
@@ -50,8 +51,8 @@ try{
     shocks:rows.length,feasibleDecisions:rows.filter(row=>row.houselights.status==='selection').length,
     explicitInfeasibilities:rows.filter(row=>row.houselights.status==='explicit_infeasibility').length,
     houselightsViolations:rows.reduce((n,row)=>n+row.houselights.violations.length,0),reviewEligible,
-    genuineReviewJudgments:0,observedSalesOutcomes:0,rows,
-    limitations:['Dependent stress replays of five saved briefs, not additional independent markets.',
+    genuineReviewJudgments:0,observedSalesOutcomes:0,baselineInfeasibleCases,rows,
+    limitations:['Dependent stress replays of the published saved briefs, not additional independent markets. Baseline infeasibility is retained separately because there is no selected act to shock.',
       'Zero proposed-lineup violations follows from an exact constraint optimizer; explicit infeasibility is reported separately.',
       'Static LLM selections are not re-prompted under shocks. No fresh LLM superiority comparison is made.',
       'New recorded case has no matched first-trial LLM control. Review eligibility excludes it and incomplete controls.',
