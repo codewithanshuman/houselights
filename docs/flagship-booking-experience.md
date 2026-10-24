@@ -2,6 +2,10 @@
 
 The public judge page now connects a saved brief, recorded Qloo research, a local signal laboratory, interactive booking constraints and a promoter decision report in one continuous workflow. It retains the existing optimizer, authentication boundaries, public source records and exact experiment endpoints.
 
+## Autopilot (October 2026)
+
+Step 03 of the desk is now [Houselights Autopilot](autopilot.md). It shows the recorded provider-backed run for the New York brief, plans any published brief from saved evidence with zero provider calls, and offers organizer-only fresh runs. Each mode carries its own provenance banner. The original research trace, signal lab, simulator and decision board are unchanged.
+
 ## Product changes
 
 - A sticky five-step journey connects the brief, AI research, cultural proof, booking challenge and final decision. Original art and organizer tools remain available.
