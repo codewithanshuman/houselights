@@ -1,4 +1,4 @@
-# Houselights submission checklist (updated 24 October 2026)
+# Houselights submission checklist (updated 24 October 2026, after deploying bd376df)
 
 - **Public demo:** the [Houselights Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html).
 - **Public source:** the [GitHub repository](https://github.com/codewithanshuman/houselights).
@@ -34,8 +34,12 @@ The [claims audit](claims-audit.md) has every claim, with its reproduction comma
 - [x] Live Qloo and Groq transport checks, recorded in [live validation](live-validation.md).
 - [x] Artwork provenance recorded in [SOURCES](../public/assets/SOURCES.md).
 - [x] On 22 October 2026 the organizer attested to entrant eligibility and to permission to publish the supplied artwork. This is an organizer statement, not independent verification.
-- [ ] **The GitHub default branch is `main`, which is still at `c502815` (23 October).** All later work exists only on `development`, so judges reading the repository see the older code. Merging needs the owner's decision.
-- [ ] Optional: set the GitHub repository description and homepage link (both are empty).
+- [x] The GitHub default branch `main` was fast-forwarded on 24 October to the deployed, verified commit `bd376df`. It was at `e7dd977`. Nothing was overwritten.
+- [x] Production disk cleaned on 24 October: 95% → 78% full. Only old Houselights images were removed; every backup and the recent rollback images were kept.
+- [ ] Set the GitHub repository description and homepage link (both are empty). This needs the owner's signed-in account: open **Settings → About** on the repository page.
+  - **Description:** Booking decisions for live events, grounded in Qloo cultural evidence: an exact lineup optimizer, receipts for every claim, and honest limits.
+  - **Website:** https://houselights.80-225-218-239.sslip.io/judge.html
+  - **Topics:** qloo, hackathon, live-events, booking, optimization, decision-support
 - [ ] Run the [usability test kit](usability-test-kit.md) with real participants if time allows. Otherwise keep the zero-evidence disclosure.
 - [ ] Enter the public URL, repository, license, description and team details in Devpost, then submit.
 

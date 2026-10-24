@@ -1,5 +1,30 @@
 # Sharing an existing Oracle server
 
+## Deployment of bd376df — 24 October 2026
+
+The public host runs `bd376df6285ddb1665a06f4826926e2ff939bf18`, the competition-quality milestone, and `/healthz` over public HTTPS reports that release. The same procedure as below was used:
+
+- **Before the switch:** backups `pre-milestone-6da1532` and `pre-bd376df` were verified and copied off-host. Rollback drills ran on both previous images. Only the application container was recreated, and every other container and the livestream PID were unchanged.
+
+`6da1532` was live briefly before `bd376df`. On `6da1532`, the first-screen with/without-Qloo comparison used the shared experiment quota and fell back to "could not be loaded" once that quota was spent. `bd376df` serves the comparison as a static file instead.
+
+**Checks after the deployment**
+
+- `npm run release:verify` passed 84 checks, including the new `qloo-contribution-published` check.
+- Anonymous reads and writes, wrong tokens and the live Autopilot route are all refused.
+- The deployed `researchOutcome` labels `partial` and `degraded` Qloo answers and timeouts as partial.
+- In a real browser, the comparison loaded while my IP's experiment quota was exhausted.
+- The log shows no errors.
+
+**Disk cleanup (authorized by the owner)**
+
+- **Removed:** 12 old `houselights-shared:pre-*` tags and 10 untagged Houselights builds, matched by the image's `/app` and `node server/index.mjs` signature.
+- **Kept:** `local`, `pre-bd376df`, `pre-milestone-6da1532`, `pre-review4-62d4fc2`, `pre-audit-cb9ce4a` and every database backup.
+- **Not touched:** the StudyLion images and containers.
+- **Disk use:** 95% before the cleanup, 78% after it, and 81% after the build.
+
+**Rollback:** tag `houselights-shared:pre-bd376df` as `houselights-shared:local`, set `RELEASE_COMMIT=6da153287a8c608609c403b7c34d15e6d23a582c`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 62d4fc2 — 24 October 2026
 
 The public host runs application commit
