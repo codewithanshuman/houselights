@@ -352,3 +352,18 @@ test('signal switches retain keyboard focus and expose their pressed state', asy
   await expect(page.locator('#booking-decision')).toBeFocused();
   expect(new URL(page.url()).hash).toBe(`#${tracedCaseId}`);
 });
+
+test('separate later LLM replication retains all trials and makes the cheaper control visible', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const study=page.locator('#booking-independent-study');
+  await expect(study).toContainText('3 / 3 declared attempts retained');
+  await expect(study).toContainText('Michael Kiwanuka + Jordan Rakei');
+  await expect(study).toContainText('US$3,500 cheaper');
+  await expect(study).toContainText('does not replace the original run');
+  await study.locator('summary').click();
+  await expect(study.locator('tbody tr')).toHaveCount(3);
+  await expect(study.locator('pre')).toContainText('responseDigest');
+  expect(await study.textContent()).not.toMatch(/PRIVATE-|Bearer |requestId|responseId/);
+  await page.setViewportSize({width:320,height:800});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

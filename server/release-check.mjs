@@ -60,6 +60,10 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     }
     const bookingScript=await request('/booking-journey.js',{format:'text'});
     record('booking-desk-script',bookingScript.status===200&&bookingScript.data.includes('booking:state')&&bookingScript.data.includes('data-booking-signal'));
+    const replication=await request('/recorded-control-study.json');
+    record('separate-recorded-control-study',replication.status===200&&replication.data.sourceCaseId==='8be4d03ef4792ca9f1466983'&&
+      replication.data.reviewTrial===1&&replication.data.trials?.length===3&&replication.data.independentOutcomeEvidence===false&&
+      replication.data.trials.every(row=>row.generation?.toolsAllowed===false&&row.generation?.httpStatus===200));
     const financialDemo=await request('/financial-demo.json');
     record('published-financial-scenario',financialDemo.status===200&&financialDemo.data.label?.includes('SYNTHETIC')&&
       financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5&&

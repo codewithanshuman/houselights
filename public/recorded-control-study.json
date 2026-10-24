@@ -1,0 +1,131 @@
+{
+  "version": "recorded-control-replication-v1",
+  "protocolDigest": "sha256:a3a3f3e5fa293b207601a20823a2d7f594f0c012917cb72b449a6067ceaa7e9b",
+  "sourceCaseId": "8be4d03ef4792ca9f1466983",
+  "publicSnapshotDigest": "sha256:e8adf45636ca6799e181e45fc1085e4df25daca7ad625d3f711baa459c683492",
+  "declaredAt": "2026-10-24T04:00:08.084Z",
+  "reviewTrial": 1,
+  "plannedTrials": 3,
+  "attemptedTrials": 3,
+  "unattemptedTrials": 0,
+  "briefDigest": "sha256:1dcda557aac374846b3015e09a91c7e5ddd77127e35f1170346e21a6ad8686c3",
+  "currency": "USD",
+  "houselights": {
+    "selectedIds": [
+      "368316C7-795A-46AF-8BBC-270F6633BE04",
+      "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+    ],
+    "plannedFees": 13500,
+    "feasible": true
+  },
+  "trials": [
+    {
+      "index": 1,
+      "status": "feasible",
+      "available": true,
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "feasible": true,
+      "violations": [],
+      "plannedFees": 10000,
+      "sameSelectionAsHouseLights": false,
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "startedAt": "2026-10-24T04:01:04.770Z",
+        "httpStatus": 200,
+        "latencyMs": 1334,
+        "toolsAllowed": false,
+        "promptDigest": "sha256:c6399ec0024e78039c6d9b10f0109a925456b62337df4d5e183b40ce3258e42a",
+        "requestDigest": "sha256:60f7a09c7dbe480e29d299844ef28a09d913cfbecdfb11ccdab843ee1fdbbd8f",
+        "responseDigest": "sha256:cada91814d5a5d94453784e4295ea8aca9c9998031bc598fea383db659c4d40c",
+        "usage": {
+          "prompt_tokens": 661,
+          "completion_tokens": 272,
+          "total_tokens": 933
+        }
+      },
+      "comparisonEligible": true
+    },
+    {
+      "index": 2,
+      "status": "feasible",
+      "available": true,
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "feasible": true,
+      "violations": [],
+      "plannedFees": 10000,
+      "sameSelectionAsHouseLights": false,
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "startedAt": "2026-10-24T04:01:06.158Z",
+        "httpStatus": 200,
+        "latencyMs": 1128,
+        "toolsAllowed": false,
+        "promptDigest": "sha256:c6399ec0024e78039c6d9b10f0109a925456b62337df4d5e183b40ce3258e42a",
+        "requestDigest": "sha256:60f7a09c7dbe480e29d299844ef28a09d913cfbecdfb11ccdab843ee1fdbbd8f",
+        "responseDigest": "sha256:1b6dba152c0b8695013773ffd8030a3b013f0746e4a1f4e8f5e14527293237ea",
+        "usage": {
+          "prompt_tokens": 661,
+          "completion_tokens": 296,
+          "total_tokens": 957
+        }
+      },
+      "comparisonEligible": false
+    },
+    {
+      "index": 3,
+      "status": "feasible",
+      "available": true,
+      "selectedIds": [
+        "368316C7-795A-46AF-8BBC-270F6633BE04",
+        "57478178-BBBC-49A4-8755-5D942B388316"
+      ],
+      "feasible": true,
+      "violations": [],
+      "plannedFees": 10000,
+      "sameSelectionAsHouseLights": false,
+      "generation": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "mode": "live",
+        "status": "ok",
+        "startedAt": "2026-10-24T04:01:07.343Z",
+        "httpStatus": 200,
+        "latencyMs": 909,
+        "toolsAllowed": false,
+        "promptDigest": "sha256:c6399ec0024e78039c6d9b10f0109a925456b62337df4d5e183b40ce3258e42a",
+        "requestDigest": "sha256:60f7a09c7dbe480e29d299844ef28a09d913cfbecdfb11ccdab843ee1fdbbd8f",
+        "responseDigest": "sha256:d6bff801ac223734616df92832502e8f7745ce173c71afeaf689572d2a1e1d26",
+        "usage": {
+          "prompt_tokens": 661,
+          "completion_tokens": 286,
+          "total_tokens": 947
+        }
+      },
+      "comparisonEligible": false
+    }
+  ],
+  "scope": "New non-contemporaneous fixed-pool replication. Controls collected after the original research; no original evidence or public case is replaced.",
+  "selectionRule": "Retain every attempted response, failure and interruption. Trial one is the predeclared comparison; no repair or best-of selection.",
+  "limitations": [
+    "The shared pool includes Qloo-discovered candidates; this tests selection, not discovery.",
+    "Artist fees and availability are illustrative.",
+    "No independent human judgments or ticket outcomes.",
+    "Policy points cannot prove superiority on their own objective."
+  ],
+  "genuineReviewerJudgments": 0,
+  "observedTicketOutcomes": 0,
+  "additionalQlooCalls": 0,
+  "independentOutcomeEvidence": false
+}
