@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#F7F6F2">
-  <meta name="description" content="Explore a Houselights event decision. Change a budget, cancel an artist, and inspect the evidence behind the optimized lineup.">
+  <meta name="description" content="Give Houselights Autopilot an event brief: it researches the evidence gaps that matter with Qloo, builds feasible booking strategies, stress-tests them and writes a decision packet.">
   <link rel="icon" type="image/png" href="/assets/brand/portal-logo-v2.png"><title>Houselights — try a decision</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/gm.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/judge.css">
+  <link rel="stylesheet" href="/autopilot.css">
   <script src="/judge.js" defer></script>
   <script src="/booking-journey.js" defer></script>
+  <script src="/autopilot.js" defer></script>
 </head>
 <body class="judge-page">
   <a class="skip-link" href="#judge-case" data-judge-scroll>Skip to the experiment</a>
@@ -29,7 +31,7 @@
         <p class="judge-eyebrow"><span aria-hidden="true"></span> LIVE ENTERTAINMENT. CONSIDERED.</p>
         <h1>Great nights.<br><em>Defensible decisions.</em></h1>
         <p class="judge-intro">A great recommendation still has to fit the room, the budget and the bill. Follow cultural research into an exact booking decision, then put it under pressure.</p>
-        <a class="judge-hero-link" href="#judge-case" data-judge-scroll>Try the booking challenge <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a>
+        <a class="judge-hero-link" href="#booking-autopilot" data-judge-scroll>Watch Autopilot plan a booking <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a> <a class="judge-hero-link" href="#judge-case" data-judge-scroll>Try the booking challenge <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a>
       </div>
       <div class="judge-hero-art" aria-hidden="true">
         <span class="judge-art-orbit"></span>
@@ -43,7 +45,7 @@
       </div>
     </header>
     <nav class="booking-path" aria-label="Booking journey">
-      <a href="#booking-brief"><span>01</span> The brief</a><a href="#booking-research"><span>02</span> AI research</a><a href="#booking-evidence"><span>03</span> Cultural proof</a><a href="#judge-form"><span>04</span> Challenge it</a><a href="#booking-decision"><span>05</span> Your decision</a>
+      <a href="#booking-brief"><span>01</span> The brief</a><a href="#booking-research"><span>02</span> Original research</a><a href="#booking-autopilot"><span>03</span> Autopilot</a><a href="#booking-evidence"><span>04</span> Cultural proof</a><a href="#judge-form"><span>05</span> Challenge it</a><a href="#booking-decision"><span>06</span> Your decision</a>
       <span class="booking-replay">RECORDED RESEARCH · LIVE CALCULATION</span>
     </nav>
     <section class="judge-break-panel" aria-labelledby="judge-break-title"><div><p class="judge-eyebrow">THE 60-SECOND PATH</p><h2 id="judge-break-title">Can this concert survive a budget cut?</h2><p>Watch a saved provider-backed New York research run, then tighten the budget. Compare the same brief with its cultural evidence removed. Replays make no new provider calls.</p><a class="judge-hero-link" href="#judge-case" data-judge-scroll>Start the guided path <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a></div><div id="judge-qloo-preview" aria-live="polite">Loading the matched evidence test…</div></section>
@@ -74,6 +76,13 @@
         <div class="judge-baseline-footnote"><span class="judge-note-mark" aria-hidden="true">↳</span><p id="judge-terms"></p></div>
       </section>
       <section id="booking-research" class="panel judge-agent-panel" aria-labelledby="judge-agent-title"><p class="judge-section-label"><span>↳</span> RECORDED EVIDENCE TIMELINE</p><h2 id="judge-agent-title">From research to decision</h2><p class="judge-section-intro">Recorded application events show the actual research sequence where available. Older cases show only receipt completion order. Neither view invents the agent’s reasoning or makes a new provider call.</p><div id="booking-research-cards"></div><div id="judge-agent-trace"></div></section>
+      <section id="booking-autopilot" class="panel autopilot-panel" aria-labelledby="autopilot-title" aria-busy="false">
+        <div class="booking-panel-heading"><div><p class="judge-section-label"><span>03</span> HOUSELIGHTS AUTOPILOT</p><h2 id="autopilot-title">Brief in. Defensible decision out.</h2><p>The agent lists every unanswered question about this booking and tests each one against the exact optimizer. It spends Qloo calls only where an answer could change a bill or is needed to justify one, then builds strategies, stress-tests them and writes the packet.</p></div><span class="booking-scope">BOUNDED · RECEIPT-BACKED</span></div>
+        <div class="autopilot-controls"><div id="autopilot-modes" role="group" aria-label="Autopilot run source"></div><div class="autopilot-replan"><label for="autopilot-budget">Artist budget for a new plan</label><div><input id="autopilot-budget" type="number" min="0" max="1000000000" step="1"><button type="button" class="button subtle" id="autopilot-replan">Re-plan at this budget</button></div></div></div>
+        <p id="autopilot-fresh-note" class="autopilot-note"></p>
+        <p id="autopilot-status" role="status" aria-live="polite"></p>
+        <div id="autopilot-output"></div>
+      </section>
       <section id="booking-evidence" class="panel booking-evidence" aria-labelledby="booking-evidence-title">
         <div class="booking-panel-heading"><div><p class="judge-section-label"><span>03</span> THE CULTURAL DIFFERENCE</p><h2 id="booking-evidence-title">Take the evidence away.</h2><p>Same artists. Same terms. Change the signals and inspect what the policy chooses.</p></div><span class="booking-scope">FIXED ORIGINAL BRIEF</span></div>
         <div id="booking-signal-lab" aria-live="polite">Loading the locked evidence comparison…</div>

@@ -56,10 +56,20 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#8be4d03ef4792ca9f1466983'));
       if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
       if(path==='/judge.html')record('unified-booking-desk',page.data.includes('id="booking-evidence"')&&page.data.includes('id="booking-decision-card"')&&page.data.includes('/booking-journey.js'));
+      if(path==='/judge.html')record('autopilot-booking-desk',page.data.includes('id="booking-autopilot"')&&page.data.includes('id="autopilot-modes"')&&page.data.includes('/autopilot.js'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const bookingScript=await request('/booking-journey.js',{format:'text'});
     record('booking-desk-script',bookingScript.status===200&&bookingScript.data.includes('booking:state')&&bookingScript.data.includes('data-booking-signal'));
+    const autopilotScript=await request('/autopilot.js',{format:'text'});
+    record('autopilot-script',autopilotScript.status===200&&autopilotScript.data.includes('data-autopilot-mode')&&autopilotScript.data.includes('RECORDED PROVIDER-BACKED RUN'));
+    const autopilotRecord=await request('/autopilot-recorded.json');
+    record('autopilot-recorded-run',autopilotRecord.status===200&&autopilotRecord.data.kind==='recorded-provider-backed-autopilot-run'&&
+      autopilotRecord.data.caseId==='8be4d03ef4792ca9f1466983'&&autopilotRecord.data.run?.receipts?.length===autopilotRecord.data.providerCalls&&
+      autopilotRecord.data.run.receipts.every(row=>row.source==='qloo'&&row.originalDigest?.startsWith('sha256:'))&&typeof autopilotRecord.data.run.packet?.markdown==='string');
+    const autopilotPacket=await request('/api/autopilot/recorded/packet',{format:'text'});
+    record('autopilot-recorded-packet',autopilotPacket.status===200&&autopilotPacket.csp.includes("default-src 'none'")&&autopilotPacket.data.includes('Recorded provider-backed run captured'));
+    record('autopilot-fresh-run-protected',(await request('/api/judge/cases/8be4d03ef4792ca9f1466983/autopilot/live',{body:{}})).status===401);
     const replication=await request('/recorded-control-study.json');
     record('separate-recorded-control-study',replication.status===200&&replication.data.sourceCaseId==='8be4d03ef4792ca9f1466983'&&
       replication.data.reviewTrial===1&&replication.data.trials?.length===3&&replication.data.independentOutcomeEvidence===false&&
@@ -116,6 +126,9 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       record('genuine-recorded-agent-run',b.snapshot?.mock===false&&meta?.complete===true&&
         events[0]?.type==='start'&&events.at(-1)?.type==='memo'&&events.some(event=>event.type==='plan'&&event.by==='llm'&&event.deep?.length>0)&&
         links.length===b.snapshot.receipts.length&&b.snapshot.receipts.every(receipt=>receipt.source==='qloo'));
+      const plan=await request(path+'/autopilot',{body:{}});
+      record('autopilot-planning-replay',plan.status===200&&plan.data.providerCalls===0&&plan.data.persisted===false&&plan.data.mode==='planning'&&
+        plan.data.receipts?.length===0&&plan.data.packet?.recommendation?.selectedIds?.length===b.snapshot.memo.constraints.slots);
       const off=await request(path+'/experiment',{body:{qlooOff:true}});
       record('matched-qloo-evidence-replay',off.status===200&&off.data.comparison?.matchedEvidenceWithdrawal===true&&
         off.data.providerCalls===0&&off.data.persisted===false&&

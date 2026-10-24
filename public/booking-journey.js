@@ -13,7 +13,7 @@
   const activate=target=>{target?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});target?.focus({preventScroll:true});};
   document.querySelectorAll('.booking-path a').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();const target=$(link.getAttribute('href').slice(1));if(target){target.tabIndex=-1;activate(target);}}));
   const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){document.querySelectorAll('.booking-path a').forEach(link=>{if(link.getAttribute('href')==='#'+entry.target.id)link.setAttribute('aria-current','step');else link.removeAttribute('aria-current');});}},{rootMargin:'-10% 0px -55% 0px'});
-  for(const id of ['booking-brief','booking-research','booking-evidence','judge-form','booking-decision'])observer.observe($(id));
+  for(const id of ['booking-brief','booking-research','booking-autopilot','booking-evidence','judge-form','booking-decision'])observer.observe($(id));
   function pending(){
     draft=true;
     const budget=Number($('judge-budget').value),slider=$('booking-budget-range');

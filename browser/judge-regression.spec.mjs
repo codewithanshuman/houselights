@@ -384,3 +384,63 @@ test('infeasible Paris brief preserves the missing evidence and supports an expl
   await expect(page.locator('#booking-decision-card')).toContainText('Evidence state: blocked');
   await expect(page.locator('#booking-signal-lab')).toContainText('not ticket demand');
 });
+
+test('Autopilot replays the recorded provider-backed run without new research and opens its receipts', async ({page})=>{
+  const errors=[],autopilotPosts=[];page.on('pageerror',error=>errors.push(error.message));
+  page.on('request',request=>{if(request.method()==='POST'&&request.url().includes('/autopilot'))autopilotPosts.push(request.url());});
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const panel=page.locator('#booking-autopilot');
+  await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED PROVIDER-BACKED RUN');
+  await expect(panel.locator('.autopilot-banner')).toContainText('This page made no new provider calls');
+  await expect(panel.getByRole('button',{name:/Recorded live run/})).toHaveAttribute('aria-pressed','true');
+  await expect(panel.getByRole('button',{name:/Run fresh research/})).toHaveCount(0);
+  await expect(panel.locator('#autopilot-fresh-note')).toContainText('organizer-only');
+  await expect(panel.locator('.autopilot-timeline')).toContainText('Does the audience ranking hold without the New York location signal?');
+  await expect(panel.locator('.autopilot-vulnerabilities')).toContainText('Without the New York location signal');
+  await expect(panel.locator('.autopilot-packet-head h4')).toHaveText('Michael Kiwanuka + Sault');
+  await expect(panel.locator('.autopilot-verdict')).toContainText('did not change');
+  await panel.locator('.autopilot-justification').getByRole('button',{name:'Receipt a2'}).click();
+  await expect(panel.locator('#autopilot-receipt-a2')).toHaveAttribute('open','');
+  await expect(panel.locator('#autopilot-receipt-a2 pre')).toContainText('"source": "qloo"');
+  await panel.locator('.autopilot-justification').getByRole('button',{name:'Receipt r9'}).first().click();
+  await expect(page.locator('#judge-receipts details[open]')).toHaveCount(1);
+  const downloaded=page.waitForEvent('download');
+  await panel.getByRole('button',{name:'Download packet (.md)'}).click();
+  const text=readFileSync(await (await downloaded).path(),'utf8');
+  expect(text).toContain('Recorded provider-backed run captured');
+  expect(text).toContain('## Next steps');
+  expect(autopilotPosts).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('Autopilot planning replay re-plans a changed budget with zero provider calls', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const panel=page.locator('#booking-autopilot');
+  await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED');
+  await panel.locator('#autopilot-budget').fill('12150');
+  const planned=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/autopilot`);
+  await panel.getByRole('button',{name:'Re-plan at this budget'}).click();
+  const body=await (await planned).json();
+  expect(body.providerCalls).toBe(0);
+  await expect(panel.locator('.autopilot-banner')).toContainText('PLANNING REPLAY');
+  await expect(panel.locator('.autopilot-banner')).toContainText('Brief changed from the published case');
+  await expect(panel.locator('.autopilot-packet-head h4')).toHaveText('Michael Kiwanuka + Jordan Rakei');
+  await expect(panel.locator('.autopilot-queue')).toContainText('Research the agent would run next');
+  await expect(panel.locator('.autopilot-skipped summary')).toContainText('Questions the agent chose not to research');
+  await panel.getByRole('button',{name:/Recorded live run/}).click();
+  await expect(panel.locator('.autopilot-packet-head h4')).toHaveText('Michael Kiwanuka + Sault');
+});
+
+test('Autopilot plans other briefs from saved evidence and stays usable on a phone', async ({page})=>{
+  await page.setViewportSize({width:375,height:812});
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#booking-autopilot .autopilot-banner')).toContainText('RECORDED');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.locator('#judge-case').selectOption({label:'Mumbai: why a comparison is unavailable'});
+  await expect(page.locator('#judge-title')).toContainText('Mumbai');
+  const panel=page.locator('#booking-autopilot');
+  await expect(panel.locator('.autopilot-banner')).toContainText('PLANNING REPLAY');
+  await expect(panel.getByRole('button',{name:/Recorded live run/})).toHaveCount(0);
+  await expect(panel.locator('.autopilot-queue')).toContainText('Ranking');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
