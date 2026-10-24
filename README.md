@@ -6,6 +6,7 @@ The buyer supplies the city, artists representing the room's audience, offers, f
 
 **Houselights Autopilot 2.0** turns a promoter's brief into a decision packet. The steps:
 
+- Fit uses Qloo's own affinity scores rather than ordinal ranks. Near-ties within 0.002 are flagged and re-checked, and briefs whose Qloo ranking is incomplete are marked not comparable.
 - Every open evidence question is tested against the exact optimizer, jointly as well as alone. A second signal that only matters in combination is no longer missed.
 - Qloo calls are spent only where an answer could change a bill within the call budget, or is needed to justify a booked act.
 - Feasible strategies are compared under one common set of disruption scenarios: cultural fit, lower cost, more robust, ranked-only and location-free. Backups are named for every act.
@@ -25,7 +26,7 @@ The [Financial Risk Lab](docs/financial-model.md) at `/financial.html` compares 
 
 [Audience Twin](docs/audience-twin.md) adds bounded Qloo rank research for organizer-defined taste seeds, deterministic clustering, synthetic weighted scenario profiles, overlap-aware lineup coverage, price and competition sensitivity, exact-slate scenario optimization and prospective event-total validation. Its weights and purchase behavior are assumptions, not Qloo demographics or an observed customer audience.
 
-The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and three captured tool-free Groq re-prompts per shock, including clearly labeled synthetic 10- and 12-candidate stress cases. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups. The [single demo path](docs/judge-demo.md) shows the live execution trace, one changed decision and the stress result.
+The [deterministic shock replay](results/shocks.md) compares exact re-optimization, a fixed saved LLM lineup and three captured tool-free Groq re-prompts per shock, including clearly labeled synthetic 10- and 12-candidate stress cases. On the 77 comparable shocks where a feasible lineup exists, 3 of 231 re-prompted LLM responses (1.3%) violated a hard constraint, against 0 for Houselights. The 7 unsolvable shocks, where the prompt forced a lineup, and Mumbai's non-comparable shocks are reported separately. `npm run reproduce:shocks` rebuilds the table offline from the saved fixture. Infeasible cases and missing controls remain visible rather than receiving substitute lineups. The [single demo path](docs/judge-demo.md) shows the live execution trace, one changed decision and the stress result.
 
 ## Run locally
 

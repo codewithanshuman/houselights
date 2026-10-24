@@ -1,11 +1,11 @@
 {
   "version": "1.0",
   "kind": "recorded-organizer-session",
-  "capturedAt": "2026-10-24T08:01:27.656Z",
-  "completedAt": "2026-10-24T08:01:53.746Z",
+  "capturedAt": "2026-10-24T10:06:13.983Z",
+  "completedAt": "2026-10-24T10:06:44.300Z",
   "environment": {
     "node": "v24.21.0",
-    "commit": "176859c37cffd3ff7f455bd6dfbae661ca494976",
+    "commit": "e806aa072e6ffe3c0e18406686dc2c558fe35e37",
     "qlooHost": "hackathon.api.qloo.com",
     "llm": "off (rule-planned research)",
     "harness": "0.1.26"
@@ -13,14 +13,14 @@
   "providerCalls": 26,
   "disclosure": "A brand-new event created through the organizer workspace functions for this demonstration. Fees, availability, venue size and ticket price were typed as illustrative inputs, not real quotes. Qloo research and Autopilot calls were live.",
   "event": {
-    "id": "ev_4ad435a97be05deba3f5",
+    "id": "ev_84ea0270397fb40df75c",
     "name": "Night Shift Soul Revue",
     "city": "Chicago",
     "date": "2027-04-16",
     "revisions": [
       {
         "revision": 1,
-        "createdAt": "2026-10-24T08:01:27.662Z",
+        "createdAt": "2026-10-24T10:06:13.987Z",
         "note": "Created",
         "brief": {
           "name": "Night Shift Soul Revue",
@@ -118,7 +118,7 @@
       },
       {
         "revision": 2,
-        "createdAt": "2026-10-24T08:01:53.475Z",
+        "createdAt": "2026-10-24T10:06:43.990Z",
         "note": "Sponsor cut the artist budget to $15,000; Masego quote received",
         "brief": {
           "name": "Night Shift Soul Revue",
@@ -220,14 +220,14 @@
         ]
       }
     ],
-    "createdAt": "2026-10-24T08:01:27.662Z",
-    "updatedAt": "2026-10-24T08:01:53.586Z",
+    "createdAt": "2026-10-24T10:06:13.987Z",
+    "updatedAt": "2026-10-24T10:06:44.119Z",
     "research": {
       "revision": 1,
       "mode": "live",
       "status": "complete",
-      "startedAt": "2026-10-24T08:01:27.664Z",
-      "completedAt": "2026-10-24T08:01:48.441Z",
+      "startedAt": "2026-10-24T10:06:13.989Z",
+      "completedAt": "2026-10-24T10:06:39.087Z",
       "callsUsed": 20,
       "callBudget": 22,
       "unresolved": [],
@@ -281,7 +281,7 @@
       ],
       "receipts": 26,
       "augmentedBy": [
-        "run_548e65bae01503af"
+        "run_1ec22d01ca70d3df"
       ],
       "items": [
         {
@@ -441,9 +441,9 @@
     },
     "runs": [
       {
-        "id": "run_548e65bae01503af",
+        "id": "run_1ec22d01ca70d3df",
         "revision": 1,
-        "createdAt": "2026-10-24T08:01:53.465Z",
+        "createdAt": "2026-10-24T10:06:43.976Z",
         "mode": "live",
         "status": "complete",
         "callsUsed": 6,
@@ -463,9 +463,9 @@
         }
       },
       {
-        "id": "run_40e965ebaf24e1b0",
+        "id": "run_dc003fbf5cf469f6",
         "revision": 2,
-        "createdAt": "2026-10-24T08:01:53.584Z",
+        "createdAt": "2026-10-24T10:06:44.117Z",
         "mode": "planning",
         "status": "complete",
         "callsUsed": 0,
@@ -486,7 +486,7 @@
       }
     ],
     "latestDecision": {
-      "runId": "run_40e965ebaf24e1b0",
+      "runId": "run_dc003fbf5cf469f6",
       "revision": 2,
       "names": [
         "masego",
@@ -510,9 +510,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 2192,
-        "fetchedAt": "2026-10-24T08:01:29.857Z",
-        "originalDigest": "sha256:dfa21862048728a744c3c7515973cc8b00780e48425fa106c36269f5cf97bd68",
+        "ms": 2218,
+        "fetchedAt": "2026-10-24T10:06:16.206Z",
+        "originalDigest": "sha256:b194968cb5054fe7a5d6f37c7aaa4574a589ea43dbe4699972fa561f358d1b7e",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -536,9 +536,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 673,
-        "fetchedAt": "2026-10-24T08:01:30.531Z",
-        "originalDigest": "sha256:4151ae99073d76b8dfea8a82298ead52d4a69e01962e0eaff1b62b304658f250",
+        "ms": 637,
+        "fetchedAt": "2026-10-24T10:06:16.845Z",
+        "originalDigest": "sha256:2272d52a4eb318d159a09c7439819a214d279f58c24a7f4e5942de6bd78b8f30",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -562,9 +562,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 619,
-        "fetchedAt": "2026-10-24T08:01:31.151Z",
-        "originalDigest": "sha256:ecdfb779f1fa986bff675e11b91998f527b0b3f2a7c89d3bfe66f75cd441c053",
+        "ms": 761,
+        "fetchedAt": "2026-10-24T10:06:17.605Z",
+        "originalDigest": "sha256:1520dd0efc1100b6fed2fccc3a1f27e2dd062bb097a96a94097dcc12e83228bb",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -588,9 +588,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 619,
-        "fetchedAt": "2026-10-24T08:01:31.770Z",
-        "originalDigest": "sha256:05682636d1f3feafd45e356be398b222b5f3bf0d2387db3fdf1615541a47f545",
+        "ms": 656,
+        "fetchedAt": "2026-10-24T10:06:18.262Z",
+        "originalDigest": "sha256:8de7e146b0694ae0f04229b6df7c3fd584b3e1a5bc970c57abac34bb74c124f1",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -614,9 +614,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 622,
-        "fetchedAt": "2026-10-24T08:01:32.392Z",
-        "originalDigest": "sha256:b47ecb1aedc686c7f63b54266caeca3961a9accb19fa05521ba27c5f87a6051b",
+        "ms": 642,
+        "fetchedAt": "2026-10-24T10:06:18.905Z",
+        "originalDigest": "sha256:9b524a18d5b57f1e4f44357d98329bdbfddee115e91ffe3417aea7c7180254a6",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -640,9 +640,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 623,
-        "fetchedAt": "2026-10-24T08:01:33.015Z",
-        "originalDigest": "sha256:debff5b51af8517533220988a9d0425dc085e97cf38d5e8fc07d29817e035c25",
+        "ms": 639,
+        "fetchedAt": "2026-10-24T10:06:19.544Z",
+        "originalDigest": "sha256:17ea886c44f0e956da614218da042488b5825c632986e47ea6b2e9d5d6eeedea",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -666,9 +666,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 662,
-        "fetchedAt": "2026-10-24T08:01:33.677Z",
-        "originalDigest": "sha256:20da86863060cd51cf07e079cf68ffb53d73491d671aba53ec571ddb4bd300dd",
+        "ms": 635,
+        "fetchedAt": "2026-10-24T10:06:20.179Z",
+        "originalDigest": "sha256:72f3f9b55e159042547d57c1a3d60f18c887ca13e5380c1c10aec90301f28774",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -692,9 +692,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 640,
-        "fetchedAt": "2026-10-24T08:01:34.316Z",
-        "originalDigest": "sha256:56d0739bc067c6112d09d692b981b9e1cde0142378fc24d1dfb4cc8e6d720698",
+        "ms": 634,
+        "fetchedAt": "2026-10-24T10:06:20.814Z",
+        "originalDigest": "sha256:dc64cb5ba0f568ee2d917cffd66e665f914d9916498a2fdbbee0b3946c94742b",
         "evidence": {
           "kind": "describe",
           "total": 1,
@@ -722,9 +722,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 2224,
-        "fetchedAt": "2026-10-24T08:01:36.542Z",
-        "originalDigest": "sha256:86d2b08372a0bbc55e9b6cca04bcd4c36381eaeda6b97c50ac2b7052d6e44747",
+        "ms": 2826,
+        "fetchedAt": "2026-10-24T10:06:23.639Z",
+        "originalDigest": "sha256:629e2126d1207a7bf6a58e3dfec3503881d5048b574ceca6782eb82efdd4a4e5",
         "evidence": {
           "kind": "entity_tags",
           "total": 10,
@@ -808,9 +808,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 3785,
-        "fetchedAt": "2026-10-24T08:01:40.327Z",
-        "originalDigest": "sha256:a38960eb93bf54a60b91d107d0c88ed5d3d3283075dce501874f152068bf4bd4",
+        "ms": 4551,
+        "fetchedAt": "2026-10-24T10:06:28.190Z",
+        "originalDigest": "sha256:eacd64d68a7183e386c6359f898e89cbefc0ac92e209e647bab7203fa3905dcf",
         "evidence": {
           "kind": "recommend",
           "total": 8,
@@ -893,9 +893,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 1789,
-        "fetchedAt": "2026-10-24T08:01:42.117Z",
-        "originalDigest": "sha256:308c5a6c20e5ec21ee8f9d6be766785acaa98da295e3df0709e9703047c11603",
+        "ms": 5289,
+        "fetchedAt": "2026-10-24T10:06:33.479Z",
+        "originalDigest": "sha256:8d7f321adfd8c84a2fdcbee8f761a3d6a05f25feaad56053f580ea287605691d",
         "evidence": {
           "kind": "rank",
           "total": 7,
@@ -964,9 +964,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 844,
-        "fetchedAt": "2026-10-24T08:01:42.962Z",
-        "originalDigest": "sha256:aa597bc1535d43c5a258aa07d67be13074073134eb94ed83281d330ceab1082e",
+        "ms": 332,
+        "fetchedAt": "2026-10-24T10:06:33.812Z",
+        "originalDigest": "sha256:fa833789929dd779ca9460091ce2652c963900944e0597b6df84e7d579cd0b15",
         "evidence": {
           "kind": "trends",
           "total": 4,
@@ -1008,9 +1008,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 893,
-        "fetchedAt": "2026-10-24T08:01:43.856Z",
-        "originalDigest": "sha256:5bf0b2ab68320132019b06289af1436e3db7517f0fa801c0c193cd852eb0ee76",
+        "ms": 900,
+        "fetchedAt": "2026-10-24T10:06:34.713Z",
+        "originalDigest": "sha256:acc049d2b6b98d55314a25f34b4c2ea73308a715716c68f96930360dfc276511",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1077,9 +1077,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 675,
-        "fetchedAt": "2026-10-24T08:01:44.531Z",
-        "originalDigest": "sha256:d45bafaf3a22eddf644ff5fd0ddd7c100831c3c2153e02cb83de5fd1d5a18275",
+        "ms": 667,
+        "fetchedAt": "2026-10-24T10:06:35.380Z",
+        "originalDigest": "sha256:4cc156df9b48e710e4f5dc50d9a1468815c4e19936fcdaa5e87174236e15e4d3",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -1116,9 +1116,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 706,
-        "fetchedAt": "2026-10-24T08:01:45.239Z",
-        "originalDigest": "sha256:6bb67b8d6e97a5b4317bd8c568cab1e61b4d6bc20c0c74f02d8a2f080f3036f8",
+        "ms": 610,
+        "fetchedAt": "2026-10-24T10:06:35.990Z",
+        "originalDigest": "sha256:59d1a94b32d4aebc8ad6b26464c68be4316368c2fab8ec65a83fb16a1f392153",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1185,9 +1185,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 607,
-        "fetchedAt": "2026-10-24T08:01:45.845Z",
-        "originalDigest": "sha256:83a475297a371f81458aa754c9922351bc48b62d83f2c98a5b9a00fb4c4f1fc7",
+        "ms": 623,
+        "fetchedAt": "2026-10-24T10:06:36.612Z",
+        "originalDigest": "sha256:8c352cd7386392569362ff9ed7abf9d18f86942c859ac759d3e9dbd3de7c4f1d",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -1224,9 +1224,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 571,
-        "fetchedAt": "2026-10-24T08:01:46.415Z",
-        "originalDigest": "sha256:0db8464ec1515e6931f159d848c87fb13a438217b52bf49bf9edb6402912b452",
+        "ms": 565,
+        "fetchedAt": "2026-10-24T10:06:37.179Z",
+        "originalDigest": "sha256:727fd67bbebfe01644ab931245ded87d92ce2fa0d8c5ffa7db23aae1db4c68f1",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1293,9 +1293,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 720,
-        "fetchedAt": "2026-10-24T08:01:47.135Z",
-        "originalDigest": "sha256:1edffcd83ca75996cbf2859a517b90d0aa4fa74a87784a2bb00d945b9897225b",
+        "ms": 633,
+        "fetchedAt": "2026-10-24T10:06:37.812Z",
+        "originalDigest": "sha256:a9c0c8438db09c3829db20b9b0e54e6e87577fff9704b1fa84b99ebf64b00117",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -1332,9 +1332,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 542,
-        "fetchedAt": "2026-10-24T08:01:47.680Z",
-        "originalDigest": "sha256:e717c2b24b088fe52231d32ce83a61ba4ba169a0e262ab28dcfe7030361cc0b4",
+        "ms": 580,
+        "fetchedAt": "2026-10-24T10:06:38.393Z",
+        "originalDigest": "sha256:7493543219082c5dc631afe1ddae187f27663df61249143b569009c8852741bc",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1401,9 +1401,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 735,
-        "fetchedAt": "2026-10-24T08:01:48.414Z",
-        "originalDigest": "sha256:baf7e569343d60aaa07b15736fd0b326b2b7ddfc9641bb08092152be88ce5b00",
+        "ms": 657,
+        "fetchedAt": "2026-10-24T10:06:39.049Z",
+        "originalDigest": "sha256:b841cec0d872f5bfbd30cca1fcb57826039c7087afd5e5c8486ab0b98fd6b0c2",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -1448,9 +1448,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 340,
-        "fetchedAt": "2026-10-24T08:01:48.940Z",
-        "originalDigest": "sha256:d5d808dca0b9aa03d3b016a4bc8c892b2ff0c06e57291c48b69750c39ddfe1f5",
+        "ms": 359,
+        "fetchedAt": "2026-10-24T10:06:39.552Z",
+        "originalDigest": "sha256:645ab84cdc049ce9dd53179963379abd99c8a78a6b3fbe5a5992ee96e5b6d0c0",
         "evidence": {
           "kind": "rank",
           "total": 3,
@@ -1482,25 +1482,30 @@
         "args": {
           "entity_type": "artist",
           "entities": [
+            "90B63651-2F34-4597-8075-69F9C405CF83",
             "A5481928-B60E-4C34-8725-9325AA7B91DF",
-            "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
-            "90B63651-2F34-4597-8075-69F9C405CF83"
+            "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
           ],
           "start_date": "2026-04-27",
           "end_date": "2026-10-24"
         },
-        "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for Thundercat?",
+        "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for masego?",
         "status": "ok",
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 1396,
-        "fetchedAt": "2026-10-24T08:01:50.433Z",
-        "originalDigest": "sha256:f68309deade097f2919fc08471c3cfb86f6263bda1119034efe2c7b382ae0131",
+        "ms": 1454,
+        "fetchedAt": "2026-10-24T10:06:41.048Z",
+        "originalDigest": "sha256:e8a4758b8fbe4f6c4ebe9a6525e92eb9eb2b7ab974e1e2c048b89675545ab253",
         "evidence": {
           "kind": "trends",
           "total": 3,
           "rows": [
+            {
+              "id": "90B63651-2F34-4597-8075-69F9C405CF83",
+              "name": "masego",
+              "direction": "unknown"
+            },
             {
               "id": "A5481928-B60E-4C34-8725-9325AA7B91DF",
               "name": "Thundercat",
@@ -1509,11 +1514,6 @@
             {
               "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
               "name": "Durand Jones & The Indications",
-              "direction": "unknown"
-            },
-            {
-              "id": "90B63651-2F34-4597-8075-69F9C405CF83",
-              "name": "masego",
               "direction": "unknown"
             }
           ]
@@ -1533,9 +1533,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 582,
-        "fetchedAt": "2026-10-24T08:01:51.021Z",
-        "originalDigest": "sha256:4d1466f396dd782d17cda06f9b3270dd5c72602eb1d91338be81418f66376b18",
+        "ms": 619,
+        "fetchedAt": "2026-10-24T10:06:41.675Z",
+        "originalDigest": "sha256:5b0504cd6d610298ec877a9a47749379f731be54c57993f7730f74ab1d7ba45b",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1597,9 +1597,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 634,
-        "fetchedAt": "2026-10-24T08:01:51.743Z",
-        "originalDigest": "sha256:a04e02f635a9d669bd6bf56e1e756883a82795b179ae00f0818fb5bc5fa6980c",
+        "ms": 613,
+        "fetchedAt": "2026-10-24T10:06:42.331Z",
+        "originalDigest": "sha256:7057d08eae570128c612fcc1cfbf70e10f587ea8f0cff2247a63852b94bb9c8e",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1661,9 +1661,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 679,
-        "fetchedAt": "2026-10-24T08:01:52.590Z",
-        "originalDigest": "sha256:d37c6c3b2c12f14b9699b2cdac1ef0c75f53609f9aa40a20a061d307a2304785",
+        "ms": 680,
+        "fetchedAt": "2026-10-24T10:06:43.151Z",
+        "originalDigest": "sha256:8cf1d471b882526eba94c89578de41027a0489e16e97fd99a1b0e8bf09082c8a",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -1730,9 +1730,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 627,
-        "fetchedAt": "2026-10-24T08:01:53.324Z",
-        "originalDigest": "sha256:fb088005cfe569a8ee6276a8b337b7825ee91844e50bef377a95837be3c0cde4",
+        "ms": 662,
+        "fetchedAt": "2026-10-24T10:06:43.863Z",
+        "originalDigest": "sha256:ee917c9391d73e014634f222aded0943baea332d52ae9afb7650ddc7f4c800c7",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -1759,9 +1759,9 @@
   },
   "runs": [
     {
-      "id": "run_548e65bae01503af",
+      "id": "run_1ec22d01ca70d3df",
       "revision": 1,
-      "createdAt": "2026-10-24T08:01:53.465Z",
+      "createdAt": "2026-10-24T10:06:43.976Z",
       "mode": "live",
       "status": "complete",
       "callsUsed": 6,
@@ -1796,6 +1796,28 @@
           "excludedIds": []
         },
         "briefChanged": false,
+        "fitBasis": "ordinal-rank",
+        "ties": {
+          "band": 0.002,
+          "groups": [],
+          "restsOnNearTie": false
+        },
+        "comparability": {
+          "comparable": false,
+          "returned": 7,
+          "requested": 9,
+          "unrankedIds": [
+            "90B63651-2F34-4597-8075-69F9C405CF83",
+            "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+            "A5481928-B60E-4C34-8725-9325AA7B91DF",
+            "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
+          ],
+          "reason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+        },
+        "ordinalStartIds": [
+          "90B63651-2F34-4597-8075-69F9C405CF83",
+          "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7"
+        ],
         "budget": {
           "maxCalls": 6,
           "reserveForStress": 2,
@@ -1864,7 +1886,7 @@
         ],
         "events": [
           {
-            "at": 16,
+            "at": 25,
             "type": "frame",
             "text": "Brief: 2 slots for listeners of Leon Bridges, Erykah Badu in Chicago, $22,000 artist budget, 9 candidates. Starting decision: masego + Thee Sacred Souls.",
             "selectedIds": [
@@ -1875,10 +1897,10 @@
             "briefChanged": false
           },
           {
-            "at": 146,
+            "at": 85,
             "type": "questions",
             "phase": "decision",
-            "text": "20 evidence questions identified: 2 could change the decision, 1 test the ranking, 5 justify booked acts, 2 need more calls than the budget allows, 0 cannot change any strategy, 6 are blocked by missing commercial inputs or identities, 4 already answered by saved receipts.",
+            "text": "20 evidence questions identified: 5 could change the decision, 1 test the ranking, 4 justify booked acts, 0 need more calls than the budget allows, 0 cannot change any strategy, 6 are blocked by missing commercial inputs or identities, 4 already answered by saved receipts.",
             "questions": [
               {
                 "id": "rank",
@@ -1888,6 +1910,63 @@
                 "tool": "rank",
                 "question": "Can every bookable candidate be ranked against Leon Bridges, Erykah Badu in Chicago?",
                 "why": "Relative audience fit carries 100 policy points per slot and 9 candidates have no comparable rank. With 6 feasible lineups, the order can change the choice."
+              },
+              {
+                "id": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
+                "kind": "trends",
+                "itemId": "90B63651-2F34-4597-8075-69F9C405CF83",
+                "name": "masego",
+                "tool": "trends",
+                "question": "Does Qloo return an interpretable recent trend direction for masego?",
+                "tier": "material",
+                "why": "If this came back as \"rising\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat.",
+                "context": "primary",
+                "joint": false,
+                "challenger": [
+                  "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+                  "A5481928-B60E-4C34-8725-9325AA7B91DF"
+                ],
+                "partners": [],
+                "callsNeeded": 1,
+                "priority": 0.75
+              },
+              {
+                "id": "local:A5481928-B60E-4C34-8725-9325AA7B91DF",
+                "kind": "local",
+                "itemId": "A5481928-B60E-4C34-8725-9325AA7B91DF",
+                "name": "Thundercat",
+                "tool": "where_popular",
+                "question": "Is there Qloo geographic evidence for Thundercat in Chicago?",
+                "tier": "material",
+                "why": "If this came back as \"local evidence returned\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat.",
+                "context": "primary",
+                "joint": false,
+                "challenger": [
+                  "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+                  "A5481928-B60E-4C34-8725-9325AA7B91DF"
+                ],
+                "partners": [],
+                "callsNeeded": 1,
+                "priority": 0.5
+              },
+              {
+                "id": "comparison:A5481928-B60E-4C34-8725-9325AA7B91DF",
+                "kind": "comparison",
+                "itemId": "A5481928-B60E-4C34-8725-9325AA7B91DF",
+                "name": "Thundercat",
+                "tool": "compare_audiences",
+                "question": "How does Thundercat's audience compare with the anchor audience?",
+                "tier": "material",
+                "why": "If this came back as \"comparison returned\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat.",
+                "context": "primary",
+                "joint": false,
+                "challenger": [
+                  "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+                  "A5481928-B60E-4C34-8725-9325AA7B91DF"
+                ],
+                "partners": [],
+                "callsNeeded": 1,
+                "priority": 0.5
               },
               {
                 "id": "trends:A5481928-B60E-4C34-8725-9325AA7B91DF",
@@ -1952,19 +2031,6 @@
                 "priority": 2
               },
               {
-                "id": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
-                "kind": "trends",
-                "itemId": "90B63651-2F34-4597-8075-69F9C405CF83",
-                "name": "masego",
-                "tool": "trends",
-                "question": "Does Qloo return an interpretable recent trend direction for masego?",
-                "tier": "justification",
-                "why": "masego is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it.",
-                "context": "primary",
-                "callsNeeded": 1,
-                "priority": 2
-              },
-              {
                 "id": "local:EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
                 "kind": "local",
                 "itemId": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
@@ -1989,30 +2055,6 @@
                 "context": "primary",
                 "callsNeeded": 1,
                 "priority": 1
-              },
-              {
-                "id": "local:A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "kind": "local",
-                "itemId": "A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "name": "Thundercat",
-                "tool": "where_popular",
-                "question": "Is there Qloo geographic evidence for Thundercat in Chicago?",
-                "tier": "deferred",
-                "why": "Could change the recommended decision to Thee Sacred Souls + Thundercat only together with 1 other answer(s): 1 call(s) needed but 4 remain in this phase, so a partial answer cannot change the decision.",
-                "context": "primary",
-                "callsNeeded": 1
-              },
-              {
-                "id": "comparison:A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "kind": "comparison",
-                "itemId": "A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "name": "Thundercat",
-                "tool": "compare_audiences",
-                "question": "How does Thundercat's audience compare with the anchor audience?",
-                "tier": "deferred",
-                "why": "Could change the recommended decision to Thee Sacred Souls + Thundercat only together with 1 other answer(s): 1 call(s) needed but 4 remain in this phase, so a partial answer cannot change the decision.",
-                "context": "primary",
-                "callsNeeded": 1
               },
               {
                 "id": "local:08F8E7D7-0E32-47F8-A2B3-80D2EC5885AA",
@@ -2121,7 +2163,7 @@
             ]
           },
           {
-            "at": 150,
+            "at": 95,
             "type": "action",
             "phase": "decision",
             "round": 1,
@@ -2133,7 +2175,7 @@
             "why": "Relative audience fit carries 100 policy points per slot and 9 candidates have no comparable rank. With 6 feasible lineups, the order can change the choice."
           },
           {
-            "at": 492,
+            "at": 457,
             "type": "observation",
             "phase": "decision",
             "round": 1,
@@ -2144,7 +2186,7 @@
             "text": "Ranking returned 3/4 bookable candidates [a1-1]; comparable fit remains unknown and no order was substituted."
           },
           {
-            "at": 492,
+            "at": 457,
             "type": "reevaluate",
             "phase": "decision",
             "round": 1,
@@ -2156,19 +2198,19 @@
             "text": "Re-optimized: masego + Thee Sacred Souls remains the best feasible bill."
           },
           {
-            "at": 589,
+            "at": 496,
             "type": "action",
             "phase": "decision",
             "round": 2,
-            "questionId": "trends:A5481928-B60E-4C34-8725-9325AA7B91DF",
+            "questionId": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
             "tier": "material",
             "tool": "trends",
             "joint": false,
-            "text": "Does Qloo return an interpretable recent trend direction for Thundercat? (batched for Thundercat, Durand Jones & The Indications, masego)",
+            "text": "Does Qloo return an interpretable recent trend direction for masego? (batched for masego, Thundercat, Durand Jones & The Indications)",
             "why": "If this came back as \"rising\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat."
           },
           {
-            "at": 1986,
+            "at": 1951,
             "type": "observation",
             "phase": "decision",
             "round": 2,
@@ -2176,10 +2218,10 @@
             "tool": "trends",
             "status": "ok",
             "cached": false,
-            "text": "Trend data for Thundercat carried no interpretable direction [a1-2]. Trend data for Durand Jones & The Indications carried no interpretable direction [a1-2]. Trend data for masego carried no interpretable direction [a1-2]."
+            "text": "Trend data for masego carried no interpretable direction [a1-2]. Trend data for Thundercat carried no interpretable direction [a1-2]. Trend data for Durand Jones & The Indications carried no interpretable direction [a1-2]."
           },
           {
-            "at": 1986,
+            "at": 1951,
             "type": "reevaluate",
             "phase": "decision",
             "round": 2,
@@ -2191,7 +2233,7 @@
             "text": "Re-optimized: masego + Thee Sacred Souls remains the best feasible bill."
           },
           {
-            "at": 1990,
+            "at": 1957,
             "type": "action",
             "phase": "decision",
             "round": 3,
@@ -2203,7 +2245,7 @@
             "why": "If this came back as \"local evidence returned\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat."
           },
           {
-            "at": 2573,
+            "at": 2578,
             "type": "observation",
             "phase": "decision",
             "round": 3,
@@ -2214,7 +2256,7 @@
             "text": "10 geographic rows returned for Thundercat within Chicago [a1-3]."
           },
           {
-            "at": 2573,
+            "at": 2579,
             "type": "reevaluate",
             "phase": "decision",
             "round": 3,
@@ -2226,7 +2268,7 @@
             "text": "Re-optimized: the decision changed from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat."
           },
           {
-            "at": 2660,
+            "at": 2620,
             "type": "action",
             "phase": "decision",
             "round": 4,
@@ -2238,7 +2280,7 @@
             "why": "If this came back as \"local evidence returned\", the recommended decision would change from Thee Sacred Souls + Thundercat to masego + Thee Sacred Souls."
           },
           {
-            "at": 3295,
+            "at": 3236,
             "type": "observation",
             "phase": "decision",
             "round": 4,
@@ -2249,7 +2291,7 @@
             "text": "10 geographic rows returned for masego within Chicago [a1-4]."
           },
           {
-            "at": 3295,
+            "at": 3236,
             "type": "reevaluate",
             "phase": "decision",
             "round": 4,
@@ -2261,14 +2303,14 @@
             "text": "Re-optimized: the decision changed from Thee Sacred Souls + Thundercat to masego + Thee Sacred Souls."
           },
           {
-            "at": 3371,
+            "at": 3270,
             "type": "stop",
             "phase": "decision",
             "reason": "budget_exhausted",
             "text": "Stopped: 4 Qloo workflow call(s) allowed for this phase are spent; 3 decision-relevant question(s) remain open."
           },
           {
-            "at": 3432,
+            "at": 3335,
             "type": "strategies",
             "text": "2 distinct feasible strategies: Strongest cultural fit · Best among acts Qloo could rank (masego + Thee Sacred Souls); Lower-cost alternative (Thee Sacred Souls + Durand Jones & The Indications).",
             "strategyIds": [
@@ -2277,13 +2319,13 @@
             ]
           },
           {
-            "at": 3432,
+            "at": 3335,
             "type": "stress",
             "text": "15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.",
             "vulnerabilities": 4
           },
           {
-            "at": 3445,
+            "at": 3354,
             "type": "followup",
             "text": "Stress tests named fallback bills. 4 open evidence question(s) concern them or remain from the decision phase.",
             "questions": [
@@ -2353,7 +2395,7 @@
             ]
           },
           {
-            "at": 3460,
+            "at": 3373,
             "type": "action",
             "phase": "stress-followup",
             "round": 5,
@@ -2365,7 +2407,7 @@
             "why": "If this came back as \"local evidence returned\", the Thee Sacred Souls cancels would change from masego + Thundercat to masego + Durand Jones & The Indications."
           },
           {
-            "at": 4141,
+            "at": 4055,
             "type": "observation",
             "phase": "stress-followup",
             "round": 5,
@@ -2376,7 +2418,7 @@
             "text": "10 geographic rows returned for Durand Jones & The Indications within Chicago [a1-5]."
           },
           {
-            "at": 4141,
+            "at": 4055,
             "type": "reevaluate",
             "phase": "stress-followup",
             "round": 5,
@@ -2388,7 +2430,7 @@
             "text": "Re-optimized: masego + Thee Sacred Souls remains the best feasible bill."
           },
           {
-            "at": 4249,
+            "at": 4103,
             "type": "action",
             "phase": "stress-followup",
             "round": 6,
@@ -2400,7 +2442,7 @@
             "why": "If this came back as \"comparison returned\", the recommended decision would change from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat."
           },
           {
-            "at": 4876,
+            "at": 4767,
             "type": "observation",
             "phase": "stress-followup",
             "round": 6,
@@ -2411,7 +2453,7 @@
             "text": "Audience comparison with the anchors returned for Thundercat [a1-6]; shared tastes include Jazz, Guitar, Piano, Rhythmic. It does not measure shared ticket buyers."
           },
           {
-            "at": 4876,
+            "at": 4767,
             "type": "reevaluate",
             "phase": "stress-followup",
             "round": 6,
@@ -2423,21 +2465,21 @@
             "text": "Re-optimized: the decision changed from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat."
           },
           {
-            "at": 4950,
+            "at": 4803,
             "type": "stop",
             "phase": "stress-followup",
             "reason": "budget_exhausted",
             "text": "Stopped: 6 Qloo workflow call(s) allowed for this phase are spent; 2 decision-relevant question(s) remain open."
           },
           {
-            "at": 4993,
+            "at": 4844,
             "type": "reevaluate",
             "phase": "stress-followup",
             "changed": true,
             "text": "Follow-up evidence changed 1 cancellation fallback(s)."
           },
           {
-            "at": 5013,
+            "at": 4874,
             "type": "packet",
             "text": "Decision packet ready: Thee Sacred Souls + Thundercat; 7 next actions."
           }
@@ -2465,9 +2507,9 @@
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 340,
-            "fetchedAt": "2026-10-24T08:01:48.940Z",
-            "originalDigest": "sha256:d5d808dca0b9aa03d3b016a4bc8c892b2ff0c06e57291c48b69750c39ddfe1f5",
+            "ms": 359,
+            "fetchedAt": "2026-10-24T10:06:39.552Z",
+            "originalDigest": "sha256:645ab84cdc049ce9dd53179963379abd99c8a78a6b3fbe5a5992ee96e5b6d0c0",
             "evidence": {
               "kind": "rank",
               "total": 3,
@@ -2499,25 +2541,30 @@
             "args": {
               "entity_type": "artist",
               "entities": [
+                "90B63651-2F34-4597-8075-69F9C405CF83",
                 "A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
-                "90B63651-2F34-4597-8075-69F9C405CF83"
+                "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
               ],
               "start_date": "2026-04-27",
               "end_date": "2026-10-24"
             },
-            "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for Thundercat?",
+            "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for masego?",
             "status": "ok",
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 1396,
-            "fetchedAt": "2026-10-24T08:01:50.433Z",
-            "originalDigest": "sha256:f68309deade097f2919fc08471c3cfb86f6263bda1119034efe2c7b382ae0131",
+            "ms": 1454,
+            "fetchedAt": "2026-10-24T10:06:41.048Z",
+            "originalDigest": "sha256:e8a4758b8fbe4f6c4ebe9a6525e92eb9eb2b7ab974e1e2c048b89675545ab253",
             "evidence": {
               "kind": "trends",
               "total": 3,
               "rows": [
+                {
+                  "id": "90B63651-2F34-4597-8075-69F9C405CF83",
+                  "name": "masego",
+                  "direction": "unknown"
+                },
                 {
                   "id": "A5481928-B60E-4C34-8725-9325AA7B91DF",
                   "name": "Thundercat",
@@ -2526,11 +2573,6 @@
                 {
                   "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
                   "name": "Durand Jones & The Indications",
-                  "direction": "unknown"
-                },
-                {
-                  "id": "90B63651-2F34-4597-8075-69F9C405CF83",
-                  "name": "masego",
                   "direction": "unknown"
                 }
               ]
@@ -2550,9 +2592,9 @@
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 582,
-            "fetchedAt": "2026-10-24T08:01:51.021Z",
-            "originalDigest": "sha256:4d1466f396dd782d17cda06f9b3270dd5c72602eb1d91338be81418f66376b18",
+            "ms": 619,
+            "fetchedAt": "2026-10-24T10:06:41.675Z",
+            "originalDigest": "sha256:5b0504cd6d610298ec877a9a47749379f731be54c57993f7730f74ab1d7ba45b",
             "evidence": {
               "kind": "where_popular",
               "total": 10,
@@ -2614,9 +2656,9 @@
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 634,
-            "fetchedAt": "2026-10-24T08:01:51.743Z",
-            "originalDigest": "sha256:a04e02f635a9d669bd6bf56e1e756883a82795b179ae00f0818fb5bc5fa6980c",
+            "ms": 613,
+            "fetchedAt": "2026-10-24T10:06:42.331Z",
+            "originalDigest": "sha256:7057d08eae570128c612fcc1cfbf70e10f587ea8f0cff2247a63852b94bb9c8e",
             "evidence": {
               "kind": "where_popular",
               "total": 10,
@@ -2678,9 +2720,9 @@
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 679,
-            "fetchedAt": "2026-10-24T08:01:52.590Z",
-            "originalDigest": "sha256:d37c6c3b2c12f14b9699b2cdac1ef0c75f53609f9aa40a20a061d307a2304785",
+            "ms": 680,
+            "fetchedAt": "2026-10-24T10:06:43.151Z",
+            "originalDigest": "sha256:8cf1d471b882526eba94c89578de41027a0489e16e97fd99a1b0e8bf09082c8a",
             "evidence": {
               "kind": "where_popular",
               "total": 10,
@@ -2747,9 +2789,9 @@
             "source": "qloo",
             "cached": false,
             "attempts": 1,
-            "ms": 627,
-            "fetchedAt": "2026-10-24T08:01:53.324Z",
-            "originalDigest": "sha256:fb088005cfe569a8ee6276a8b337b7825ee91844e50bef377a95837be3c0cde4",
+            "ms": 662,
+            "fetchedAt": "2026-10-24T10:06:43.863Z",
+            "originalDigest": "sha256:ee917c9391d73e014634f222aded0943baea332d52ae9afb7650ddc7f4c800c7",
             "evidence": {
               "kind": "compare_audiences",
               "total": 0,
@@ -2793,11 +2835,16 @@
           {
             "round": 2,
             "phase": "decision",
-            "questionId": "trends:A5481928-B60E-4C34-8725-9325AA7B91DF",
+            "questionId": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
             "receiptId": "a1-2",
             "tool": "trends",
             "status": "ok",
             "results": [
+              {
+                "questionId": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
+                "state": "uninterpretable",
+                "text": "Trend data for masego carried no interpretable direction [a1-2]."
+              },
               {
                 "questionId": "trends:A5481928-B60E-4C34-8725-9325AA7B91DF",
                 "state": "uninterpretable",
@@ -2807,11 +2854,6 @@
                 "questionId": "trends:EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
                 "state": "uninterpretable",
                 "text": "Trend data for Durand Jones & The Indications carried no interpretable direction [a1-2]."
-              },
-              {
-                "questionId": "trends:90B63651-2F34-4597-8075-69F9C405CF83",
-                "state": "uninterpretable",
-                "text": "Trend data for masego carried no interpretable direction [a1-2]."
               }
             ],
             "decisionChanged": false
@@ -3426,8 +3468,8 @@
               "outcome": "repaired",
               "droppedId": "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
               "selectedIds": [
-                "A5481928-B60E-4C34-8725-9325AA7B91DF",
-                "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
+                "90B63651-2F34-4597-8075-69F9C405CF83",
+                "A5481928-B60E-4C34-8725-9325AA7B91DF"
               ]
             },
             {
@@ -3601,8 +3643,8 @@
             "cancellationCoverage": 2,
             "cancellationCount": 2,
             "criticalDependencyCount": 0,
-            "feasibleSlateCount": 6,
-            "robustSlateDiffersFromBaseline": true
+            "feasibleSlateCount": null,
+            "robustSlateDiffersFromBaseline": false
           },
           "cancellations": [
             {
@@ -3859,7 +3901,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "5474D63B-EDFC-4350-8FB5-C8D80C0D4A62",
@@ -3901,7 +3945,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF",
@@ -3943,7 +3989,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "90B63651-2F34-4597-8075-69F9C405CF83",
@@ -3981,7 +4029,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
@@ -4023,7 +4073,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "A5481928-B60E-4C34-8725-9325AA7B91DF",
@@ -4063,7 +4115,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "08F8E7D7-0E32-47F8-A2B3-80D2EC5885AA",
@@ -4099,7 +4153,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
@@ -4137,7 +4193,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "0B183D3C-E890-4699-9D49-A225E720A5B3",
@@ -4173,11 +4231,13 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           }
         ],
         "interpretation": "Deterministic research policy over the exact optimizer. Policy points are an internal objective, not ticket demand, attendance or revenue. Fees and availability are buyer inputs.",
-        "digest": "sha256:b65ef70917dce5c6f0c540a3f61e16b701bf710d98667deeddd53215052d81d1",
+        "digest": "sha256:b7b1d90d3784c5762e73b8e911b8f3a1bd7f93b9f54e4c1ec3109d9bd6caf97a",
         "integrity": {
           "version": "2.0",
           "algorithm": "sha256",
@@ -4185,128 +4245,128 @@
           "receipts": [
             {
               "id": "a1-1",
-              "contentDigest": "sha256:400bb27b2a2d6fb3bd21f4eb5d063fa2d40ed365873b3ecbfdabc28c2252f669",
-              "originalDigest": "sha256:d5d808dca0b9aa03d3b016a4bc8c892b2ff0c06e57291c48b69750c39ddfe1f5"
+              "contentDigest": "sha256:9e6b3b8f45a6fb92d2ebde7ad17f85f0c43aa9abfb1b72cbb3f32e8fd96053c8",
+              "originalDigest": "sha256:645ab84cdc049ce9dd53179963379abd99c8a78a6b3fbe5a5992ee96e5b6d0c0"
             },
             {
               "id": "a1-2",
-              "contentDigest": "sha256:28941d59f35bf9fbd82affe37163f2d542da9375311bfd2f376c25356936afec",
-              "originalDigest": "sha256:f68309deade097f2919fc08471c3cfb86f6263bda1119034efe2c7b382ae0131"
+              "contentDigest": "sha256:9b90718d666eff370286fc0049ce65ec56187773a78772fae49a4d26be324599",
+              "originalDigest": "sha256:e8a4758b8fbe4f6c4ebe9a6525e92eb9eb2b7ab974e1e2c048b89675545ab253"
             },
             {
               "id": "a1-3",
-              "contentDigest": "sha256:1444b01dba3326495fc8cec97d36ab371777a09b28ffe3f99eb5784d2015ed93",
-              "originalDigest": "sha256:4d1466f396dd782d17cda06f9b3270dd5c72602eb1d91338be81418f66376b18"
+              "contentDigest": "sha256:98ffd769036aa143fb5a75f05c30015c4c9244930665e584af77cf48c1981501",
+              "originalDigest": "sha256:5b0504cd6d610298ec877a9a47749379f731be54c57993f7730f74ab1d7ba45b"
             },
             {
               "id": "a1-4",
-              "contentDigest": "sha256:eb1a1cb3101809d62d5ac0f63fd81faa6b96a3f053ac6c81604fe837b56f75c0",
-              "originalDigest": "sha256:a04e02f635a9d669bd6bf56e1e756883a82795b179ae00f0818fb5bc5fa6980c"
+              "contentDigest": "sha256:685bb6db2d7caf7fa6ea4a0f0a52be7370e8552df6cc5db6a71713fefaafe78a",
+              "originalDigest": "sha256:7057d08eae570128c612fcc1cfbf70e10f587ea8f0cff2247a63852b94bb9c8e"
             },
             {
               "id": "a1-5",
-              "contentDigest": "sha256:6ae348ffefe4f4b8d2e48bfce4e3ba9def4a00755314d4371542adc7e301cc50",
-              "originalDigest": "sha256:d37c6c3b2c12f14b9699b2cdac1ef0c75f53609f9aa40a20a061d307a2304785"
+              "contentDigest": "sha256:c944dd2c44a17ec62070610cc771811527800a264ee192b15f4a2892bfea8aab",
+              "originalDigest": "sha256:8cf1d471b882526eba94c89578de41027a0489e16e97fd99a1b0e8bf09082c8a"
             },
             {
               "id": "a1-6",
-              "contentDigest": "sha256:4ea5893e57c226ca1c69dd65c2746f8e64295e2f35f52bd2756567134bd7c5f3",
-              "originalDigest": "sha256:fb088005cfe569a8ee6276a8b337b7825ee91844e50bef377a95837be3c0cde4"
+              "contentDigest": "sha256:e93eee1802c5ddebe19edafcc91da8bdda851e05237c1863b34837dbac904d6b",
+              "originalDigest": "sha256:ee917c9391d73e014634f222aded0943baea332d52ae9afb7650ddc7f4c800c7"
             }
           ],
           "sourceReceipts": [
             {
               "id": "r1",
-              "contentDigest": "sha256:374766e306aec9d57663d149830ff1e5bb09e4b1cf85f6334bcc1f507085a5fc"
+              "contentDigest": "sha256:abd5eafeb57973b872101c4f398a079c4ebed393edc3bd0a20c43bcfd72439b7"
             },
             {
               "id": "r2",
-              "contentDigest": "sha256:1c9961f51f5e39dbc2ce71a57bd02d0315386bc8b1109cec242a214b1ef45050"
+              "contentDigest": "sha256:22f223ea6c84b6142e2844b616b8a70d9e5bd512386f0f67cbc31220faad6e62"
             },
             {
               "id": "r3",
-              "contentDigest": "sha256:b82b23062d8a39b6aded4f1ee083f6fac97d94ef05c89cf7e305baae2920533d"
+              "contentDigest": "sha256:66226be6ca4ef9d6d3763a0287309179a3a3c27ec7dea73c3393cafdc61f0aae"
             },
             {
               "id": "r4",
-              "contentDigest": "sha256:8c10ff766c43c90c797b891bf603614a68560436d3f1b68b74ee87ee27398dd5"
+              "contentDigest": "sha256:db4543e21c6424f56c9c2df1abff591c8f2f7f7758045b734977363ffe6d957d"
             },
             {
               "id": "r5",
-              "contentDigest": "sha256:5ffd12fe5c096c4ac722064360a1986f37039f67f22ddabbfe755e17e240c72c"
+              "contentDigest": "sha256:0bd6279769b5aa16c17da8890d1e452374c92f287d1fe230c593cc2c3f918b00"
             },
             {
               "id": "r6",
-              "contentDigest": "sha256:a50490dedc38bbd0157435ff8121f30f43908a81cace76a060d8a4da658a1ffe"
+              "contentDigest": "sha256:52f62ed060f96908d59723502c0678e358bfbff7603e8042cc99927a249273b0"
             },
             {
               "id": "r7",
-              "contentDigest": "sha256:c54dc7c5ef2e3813e300366e32d0f416e8108a6b121d895dcfe82d593c90bf6d"
+              "contentDigest": "sha256:bcea5af47c9d33e10092f4a333bfda65ddae3aeab4cebcbb58a06d7f21a0caa1"
             },
             {
               "id": "r8",
-              "contentDigest": "sha256:a5fdef78b91ec1526be04df90a8dab9bbda606b2732eb1cc83d116b3222cb843"
+              "contentDigest": "sha256:e0c80465dfc6e60908d46572d12dc8995080aec38f22bbc69c36365978a358c9"
             },
             {
               "id": "r9",
-              "contentDigest": "sha256:8a1f4402793c40f55286ed6aec88e8d0b2d2224d9a0c71a8e3d9980311fa1b85"
+              "contentDigest": "sha256:061fb5af3be838cd8b06c1705d8081b156f773a7311ca32ec9842f763f4cf279"
             },
             {
               "id": "r10",
-              "contentDigest": "sha256:ade78a45207e8bb4e56d266808ee7303e15aa10e7c87edccc59fa069c8f4d7ab"
+              "contentDigest": "sha256:2798259a73dafe2167525dd134111f0d20e949aef3b1115f36eca6f6fc4b03db"
             },
             {
               "id": "r11",
-              "contentDigest": "sha256:8dab17d2e0b06b9bcde6d5cebefb2129693043d73dfc6b17147432ba81ecd168"
+              "contentDigest": "sha256:d9575dbdc4e6faedada188bb7acabf3526b4401169db7865d3840d9e637a4522"
             },
             {
               "id": "r12",
-              "contentDigest": "sha256:77381df2702de71149316382149d71f8108c97a3e27cb3a3448db07326ae47c7"
+              "contentDigest": "sha256:4a07b8dcc2dc9970a74a29b81b8ef8f49b11de530bba85c199b388fd4f7c7eec"
             },
             {
               "id": "r13",
-              "contentDigest": "sha256:8c000711b57b148799ae70985bcce350c1786f386f5db4a92ad1450b14ea97bd"
+              "contentDigest": "sha256:d4c3733eacbd7e7cc8c03eadd7d14be927b95c49569ac8c3c668a3f77deb88d3"
             },
             {
               "id": "r14",
-              "contentDigest": "sha256:e41acf7de031ab1abf7dff611a8cc5b0e10b6e51de98506bc7b3f769ce76854c"
+              "contentDigest": "sha256:817923b18e154bb4bc35889722f73119eb60e0b17d50251750b57d6006b6787b"
             },
             {
               "id": "r15",
-              "contentDigest": "sha256:2b6f0efd56dc3e84a8b76041a49ca2d6cc358d9487ff362d6d31488bf4e1e591"
+              "contentDigest": "sha256:69517b7c516289f63c38a99f36a2e5af9e28040e47f1dbaff401e9556f212715"
             },
             {
               "id": "r16",
-              "contentDigest": "sha256:c516775aeba9e1eb3cac18aa457f97a2067f79b172b61345e198431742097fb2"
+              "contentDigest": "sha256:7f9da15ddcf76226fe965ce534157bfcbea465ee3eddc90dd1cd6c9a402ff840"
             },
             {
               "id": "r17",
-              "contentDigest": "sha256:3c27d8782d8390c2cee280dd67e2a5acc890090975081d55a302f0f504e2fa6e"
+              "contentDigest": "sha256:d14f0d3c61ebd5d6bdae9f37b3592fef21d5e116b0636dc2f2b7299ef458a7e2"
             },
             {
               "id": "r18",
-              "contentDigest": "sha256:04f94083b09f3a623e487b9279c5189d641c90a16db73b838dc8ebdceeb27498"
+              "contentDigest": "sha256:2b47d4e849194ebdcaff01e5193ef487928bea7fdf5c9c5f95c6c180171b9fa4"
             },
             {
               "id": "r19",
-              "contentDigest": "sha256:3f6b31f500ae4857b32f5142fb1de27eadf4ede434924282e8345c4ee1742e19"
+              "contentDigest": "sha256:2e17547dc0c45398f1bb7f63d5ff83fd572daec3c323b7ea7134bbd9378604a5"
             },
             {
               "id": "r20",
-              "contentDigest": "sha256:8cda3e54122f6069830dc24c63f0071c8f239a4bd031788f8be22bab0b41f7a3"
+              "contentDigest": "sha256:3430ce2f505085b28faac3eeb50bd460590dce60eb3cee5cca1dc30df0c91757"
             }
           ],
           "decisionInputsDigest": "sha256:c2dfa34ebc1d8f2e6e52822bbe99459cc6b81bf5f431d1600b53ca99b1abd21f",
-          "decisionDigest": "sha256:b65ef70917dce5c6f0c540a3f61e16b701bf710d98667deeddd53215052d81d1",
+          "decisionDigest": "sha256:b7b1d90d3784c5762e73b8e911b8f3a1bd7f93b9f54e4c1ec3109d9bd6caf97a",
           "providerProvenance": "Not cryptographically verifiable: Qloo responses are unsigned. originalDigest values are application hashes computed when each response was received.",
-          "manifestDigest": "sha256:a70adc32f7c6aa235ad82739ffa0ac1b85ce5ed6e1c8ba8544388c4ae8545206"
+          "manifestDigest": "sha256:bc0a0619102e4b7e295bedacda2eab4b6c46574096c2a39847d967803b06d4c4"
         },
         "packet": {
           "version": "2.0",
           "title": "Night Shift Soul Revue booking decision",
           "mode": "live",
           "status": "complete",
-          "generatedAt": "2026-10-24T08:01:53.460Z",
+          "generatedAt": "2026-10-24T10:06:43.968Z",
           "currency": "USD",
           "brief": {
             "name": "Night Shift Soul Revue",
@@ -4336,7 +4396,8 @@
           },
           "recommendation": {
             "provisional": true,
-            "provisionalReason": "Thee Sacred Souls + Thundercat have no comparable Qloo rank, so cultural fit is unknown for part of this bill.",
+            "provisionalReason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.",
+            "restsOnNearTie": false,
             "strategyId": "cultural-fit",
             "selectedIds": [
               "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
@@ -4381,7 +4442,7 @@
                         "tool": "where_popular",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:47.680Z",
+                        "fetchedAt": "2026-10-24T10:06:38.393Z",
                         "new": false
                       }
                     ]
@@ -4394,7 +4455,7 @@
                         "tool": "compare_audiences",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:48.414Z",
+                        "fetchedAt": "2026-10-24T10:06:39.049Z",
                         "new": false
                       }
                     ]
@@ -4422,7 +4483,7 @@
                         "tool": "where_popular",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:51.021Z",
+                        "fetchedAt": "2026-10-24T10:06:41.675Z",
                         "new": true
                       }
                     ]
@@ -4435,7 +4496,7 @@
                         "tool": "compare_audiences",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:53.324Z",
+                        "fetchedAt": "2026-10-24T10:06:43.863Z",
                         "new": true
                       }
                     ]
@@ -4948,6 +5009,25 @@
               "why": "Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls."
             }
           ],
+          "fitBasis": "ordinal-rank",
+          "comparability": {
+            "comparable": false,
+            "returned": 7,
+            "requested": 9,
+            "unrankedIds": [
+              "90B63651-2F34-4597-8075-69F9C405CF83",
+              "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+              "A5481928-B60E-4C34-8725-9325AA7B91DF",
+              "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
+            ],
+            "reason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+          },
+          "ordinalComparison": null,
+          "ties": {
+            "band": 0.002,
+            "restsOnNearTie": false,
+            "groups": []
+          },
           "robustness": {
             "summary": "15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.",
             "vulnerabilities": [
@@ -5128,159 +5208,159 @@
               "tool": "rank",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:42.117Z",
+              "fetchedAt": "2026-10-24T10:06:33.479Z",
               "new": false,
-              "contentDigest": "sha256:8dab17d2e0b06b9bcde6d5cebefb2129693043d73dfc6b17147432ba81ecd168"
+              "contentDigest": "sha256:d9575dbdc4e6faedada188bb7acabf3526b4401169db7865d3840d9e637a4522"
             },
             {
               "id": "r13",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:43.856Z",
+              "fetchedAt": "2026-10-24T10:06:34.713Z",
               "new": false,
-              "contentDigest": "sha256:8c000711b57b148799ae70985bcce350c1786f386f5db4a92ad1450b14ea97bd"
+              "contentDigest": "sha256:d4c3733eacbd7e7cc8c03eadd7d14be927b95c49569ac8c3c668a3f77deb88d3"
             },
             {
               "id": "r12",
               "tool": "trends",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:42.962Z",
+              "fetchedAt": "2026-10-24T10:06:33.812Z",
               "new": false,
-              "contentDigest": "sha256:77381df2702de71149316382149d71f8108c97a3e27cb3a3448db07326ae47c7"
+              "contentDigest": "sha256:4a07b8dcc2dc9970a74a29b81b8ef8f49b11de530bba85c199b388fd4f7c7eec"
             },
             {
               "id": "r14",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:44.531Z",
+              "fetchedAt": "2026-10-24T10:06:35.380Z",
               "new": false,
-              "contentDigest": "sha256:e41acf7de031ab1abf7dff611a8cc5b0e10b6e51de98506bc7b3f769ce76854c"
+              "contentDigest": "sha256:817923b18e154bb4bc35889722f73119eb60e0b17d50251750b57d6006b6787b"
             },
             {
               "id": "r15",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:45.239Z",
+              "fetchedAt": "2026-10-24T10:06:35.990Z",
               "new": false,
-              "contentDigest": "sha256:2b6f0efd56dc3e84a8b76041a49ca2d6cc358d9487ff362d6d31488bf4e1e591"
+              "contentDigest": "sha256:69517b7c516289f63c38a99f36a2e5af9e28040e47f1dbaff401e9556f212715"
             },
             {
               "id": "r16",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:45.845Z",
+              "fetchedAt": "2026-10-24T10:06:36.612Z",
               "new": false,
-              "contentDigest": "sha256:c516775aeba9e1eb3cac18aa457f97a2067f79b172b61345e198431742097fb2"
+              "contentDigest": "sha256:7f9da15ddcf76226fe965ce534157bfcbea465ee3eddc90dd1cd6c9a402ff840"
             },
             {
               "id": "r17",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:46.415Z",
+              "fetchedAt": "2026-10-24T10:06:37.179Z",
               "new": false,
-              "contentDigest": "sha256:3c27d8782d8390c2cee280dd67e2a5acc890090975081d55a302f0f504e2fa6e"
+              "contentDigest": "sha256:d14f0d3c61ebd5d6bdae9f37b3592fef21d5e116b0636dc2f2b7299ef458a7e2"
             },
             {
               "id": "r18",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:47.135Z",
+              "fetchedAt": "2026-10-24T10:06:37.812Z",
               "new": false,
-              "contentDigest": "sha256:04f94083b09f3a623e487b9279c5189d641c90a16db73b838dc8ebdceeb27498"
+              "contentDigest": "sha256:2b47d4e849194ebdcaff01e5193ef487928bea7fdf5c9c5f95c6c180171b9fa4"
             },
             {
               "id": "a1-4",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:51.743Z",
+              "fetchedAt": "2026-10-24T10:06:42.331Z",
               "new": true,
-              "contentDigest": "sha256:eb1a1cb3101809d62d5ac0f63fd81faa6b96a3f053ac6c81604fe837b56f75c0"
+              "contentDigest": "sha256:685bb6db2d7caf7fa6ea4a0f0a52be7370e8552df6cc5db6a71713fefaafe78a"
             },
             {
               "id": "r19",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:47.680Z",
+              "fetchedAt": "2026-10-24T10:06:38.393Z",
               "new": false,
-              "contentDigest": "sha256:3f6b31f500ae4857b32f5142fb1de27eadf4ede434924282e8345c4ee1742e19"
+              "contentDigest": "sha256:2e17547dc0c45398f1bb7f63d5ff83fd572daec3c323b7ea7134bbd9378604a5"
             },
             {
               "id": "r20",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:48.414Z",
+              "fetchedAt": "2026-10-24T10:06:39.049Z",
               "new": false,
-              "contentDigest": "sha256:8cda3e54122f6069830dc24c63f0071c8f239a4bd031788f8be22bab0b41f7a3"
+              "contentDigest": "sha256:3430ce2f505085b28faac3eeb50bd460590dce60eb3cee5cca1dc30df0c91757"
             },
             {
               "id": "a1-3",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:51.021Z",
+              "fetchedAt": "2026-10-24T10:06:41.675Z",
               "new": true,
-              "contentDigest": "sha256:1444b01dba3326495fc8cec97d36ab371777a09b28ffe3f99eb5784d2015ed93"
+              "contentDigest": "sha256:98ffd769036aa143fb5a75f05c30015c4c9244930665e584af77cf48c1981501"
             },
             {
               "id": "a1-6",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:53.324Z",
+              "fetchedAt": "2026-10-24T10:06:43.863Z",
               "new": true,
-              "contentDigest": "sha256:4ea5893e57c226ca1c69dd65c2746f8e64295e2f35f52bd2756567134bd7c5f3"
+              "contentDigest": "sha256:e93eee1802c5ddebe19edafcc91da8bdda851e05237c1863b34837dbac904d6b"
             },
             {
               "id": "a1-5",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:52.590Z",
+              "fetchedAt": "2026-10-24T10:06:43.151Z",
               "new": true,
-              "contentDigest": "sha256:6ae348ffefe4f4b8d2e48bfce4e3ba9def4a00755314d4371542adc7e301cc50"
+              "contentDigest": "sha256:c944dd2c44a17ec62070610cc771811527800a264ee192b15f4a2892bfea8aab"
             },
             {
               "id": "a1-1",
               "tool": "rank",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:48.940Z",
+              "fetchedAt": "2026-10-24T10:06:39.552Z",
               "new": true,
-              "contentDigest": "sha256:400bb27b2a2d6fb3bd21f4eb5d063fa2d40ed365873b3ecbfdabc28c2252f669"
+              "contentDigest": "sha256:9e6b3b8f45a6fb92d2ebde7ad17f85f0c43aa9abfb1b72cbb3f32e8fd96053c8"
             },
             {
               "id": "a1-2",
               "tool": "trends",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:50.433Z",
+              "fetchedAt": "2026-10-24T10:06:41.048Z",
               "new": true,
-              "contentDigest": "sha256:28941d59f35bf9fbd82affe37163f2d542da9375311bfd2f376c25356936afec"
+              "contentDigest": "sha256:9b90718d666eff370286fc0049ce65ec56187773a78772fae49a4d26be324599"
             }
           ],
           "integrity": {
-            "manifestDigest": "sha256:a70adc32f7c6aa235ad82739ffa0ac1b85ce5ed6e1c8ba8544388c4ae8545206",
+            "manifestDigest": "sha256:bc0a0619102e4b7e295bedacda2eab4b6c46574096c2a39847d967803b06d4c4",
             "statement": "Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned."
           },
           "limits": "Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.",
-          "markdown": "# Night Shift Soul Revue — Houselights decision packet\nFresh research with live Qloo calls. Generated 2026-10-24T08:01:53.460Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: Chicago · Venue: 700-capacity club (illustrative) · Date: 2027-04-16\n- Programming direction: Modern soul with a jazz-funk edge\n- Target audience: 25–40 year-old soul and R&B fans who follow Leon Bridges and Erykah Badu\n- Audience reference artists (Qloo anchors): Leon Bridges, Erykah Badu\n- Objectives: Fill a 700-capacity room; Book one act the audience is likely to discover\n- 2 slots · $22,000 artist budget · max 2 per genre · 9 candidates\n\n## 2. Recommendation (for human approval)\n**Thee Sacred Souls + Thundercat** — $17,500 planned artist fees, $4,500 unallocated, 0.25 policy points.\n**Provisional:** Thee Sacred Souls + Thundercat have no comparable Qloo rank, so cultural fit is unknown for part of this bill.\nRecommended: it maximizes the declared cultural-fit objective and continues in 23/23 disruption scenarios.\n- **Thee Sacred Souls** · $5,500 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [r19]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r20]\n- **Thundercat** · $12,000 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [a1-3]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [a1-6]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit | Thee Sacred Souls + Thundercat | $17,500 | — | 23/23 | 19 | 50% |\n| Lower-cost alternative · Most robust under disruption · Best among acts Qloo could rank | masego + Thee Sacred Souls | $14,500 | −$3,000, −0.25 pts | 23/23 | 21 | 38% |\n- **Strongest cultural fit:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Recommended: it maximizes the declared cultural-fit objective and continues in 23/23 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption · Best among acts Qloo could rank:** Best policy score among cheaper bills: saves $3,000 for 0.25 policy points. Continues in 23/23 disruption scenarios (21 unchanged) versus 23/23 (19 unchanged) for the recommendation. Qloo returned no rank for Durand Jones & The Indications [a1-1]. Excluding it and using the returned order, this is the optimizer's choice. Prefer it if the $3,000 saving matters more than the cultural-fit gap, or if the artist budget may fall below $17,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.25 policy points for that resilience. Prefer it if you want every booked act backed by a Qloo audience rank.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- Thee Sacred Souls: 1) Thundercat + Durand Jones & The Indications ($19,000, 0 pts); 2) masego + Thundercat ($21,000, 0 pts)\n- Thundercat: 1) masego + Thee Sacred Souls ($14,500, 0 pts); 2) Thee Sacred Souls + Durand Jones & The Indications ($12,500, -6 pts)\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| Thee Sacred Souls | $5,500 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Thundercat | $12,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n| masego | $9,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Durand Jones & The Indications | $7,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $17,500 of $22,000; $4,500 unallocated.\n- Thee Sacred Souls's fee can rise to $10,000 (+81.82%) before this bill exceeds the budget; above that the plan becomes Thundercat + Durand Jones & The Indications.\n- Thundercat's fee can rise to $16,500 (+37.5%) before this bill exceeds the budget; above that the plan becomes masego + Thee Sacred Souls.\n- The bill survives budget cuts down to $17,500 (20.45% below the brief); below that the plan becomes masego + Thee Sacred Souls at $14,500.\n- Commercial assumptions (promoter-entered, unverified): capacity 700, ticket price $55, other costs $9,000. Break-even: 482 paid tickets (68.86% of capacity). Arithmetic on assumptions, not a sales forecast.\n\n## 7. Cultural evidence and research\nResearch changed the decision from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat (local:A5481928-B60E-4C34-8725-9325AA7B91DF via a1-3; local:90B63651-2F34-4597-8075-69F9C405CF83 via a1-4; comparison:A5481928-B60E-4C34-8725-9325AA7B91DF via a1-6).\n6 research action(s), 6/6 Qloo workflow calls. Stop: budget_exhausted; stress follow-up: budget_exhausted.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| Thee Sacred Souls | recommended | Missing: no comparable rank | Measured [r19] | Measured [r20] | Missing: researched, no interpretable result [r12] |\n| Thundercat | recommended | Missing: no comparable rank | Measured [a1-3] | Measured [a1-6] | Missing: researched, no interpretable result [a1-2] |\n| masego | alternative | Missing: no comparable rank | Measured [a1-4] | Missing: open question | Missing: researched, no interpretable result [a1-2] |\n| Durand Jones & The Indications | backup | Missing: no comparable rank | Measured [a1-5] | Missing: open question | Missing: researched, no interpretable result [a1-2] |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.\n- dependency: Without Qloo evidence the optimizer would choose masego + Thee Sacred Souls. The recommendation rests on the cultural receipts listed in this packet.\n- moderate: If Thee Sacred Souls becomes unavailable, replace with Durand Jones & The Indications: Thundercat + Durand Jones & The Indications at $19,000 (-0.25 policy points, +$1,500).\n- moderate: If Thundercat becomes unavailable, replace with masego: masego + Thee Sacred Souls at $14,500 (-0.25 policy points, −$3,000).\n\n## 9. Remaining uncertainties\n- How does masego's audience compare with the anchor audience? — open (justification). masego appears in a feasible alternative strategy; this evidence supports comparing it.\n- How does Durand Jones & The Indications's audience compare with the anchor audience? — open (fallback). Durand Jones & The Indications is in the bill under \"budget below $14,500\". No result changes that fallback, but the promoter would book it without this evidence.\n- Does Qloo return an interpretable recent trend direction for D'Angelo? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Nao? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Is there Qloo geographic evidence for D'Angelo in Chicago? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Is there Qloo geographic evidence for Nao in Chicago? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does D'Angelo's audience compare with the anchor audience? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does Nao's audience compare with the anchor audience? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Can every bookable candidate be ranked against Leon Bridges, Erykah Badu in Chicago? — researched: incomplete. Ranking returned 3/4 bookable candidates [a1-1]; comparable fit remains unknown and no order was substituted.\n- Does Qloo return an interpretable recent trend direction for Lianne La Havas? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Lianne La Havas.\n- Does Qloo return an interpretable recent trend direction for masego? — researched: uninterpretable. Trend data for masego carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Thundercat? — researched: uninterpretable. Trend data for Thundercat carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Cleo Sol? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Cleo Sol.\n- Does Qloo return an interpretable recent trend direction for Durand Jones & The Indications? — researched: uninterpretable. Trend data for Durand Jones & The Indications carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Jill Scott? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Jill Scott.\n- Does Qloo return an interpretable recent trend direction for Thee Sacred Souls? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls.\n- Confirm: Thee Sacred Souls: fee $5,500 (estimate); availability assumed.\n- Confirm: Thundercat: fee $12,000 (estimate); availability assumed.\n- Confirm: masego: fee $9,000 (estimate); availability assumed.\n- Confirm: Durand Jones & The Indications: fee $7,000 (estimate); availability assumed.\n\n## 10. Next actions\n1. [Requires human approval] Approve Thee Sacred Souls + Thundercat as the planning bill ($17,500 against $22,000) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Thee Sacred Souls and Thundercat; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate Thee Sacred Souls at or below $10,000; above that the bill changes to Thundercat + Durand Jones & The Indications.\n4. [Recommendation] Negotiate Thundercat at or below $16,500; above that the bill changes to masego + Thee Sacred Souls.\n5. [Confirm with agent] Pre-clear Durand Jones & The Indications as the backup for Thee Sacred Souls: confirm availability and fee.\n6. [Confirm with agent] Pre-clear masego as the backup for Thundercat: confirm availability and fee.\n7. [Requires human approval] Decide whether to keep Durand Jones & The Indications in contention: Qloo returned no rank for this act against your reference artists [a1-1], so the recommendation is provisional. The \"best among ranked acts\" strategy shows the bill without it.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are promoter-entered inputs; their status (quoted, estimate, assumed) is shown in section 5.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r11 | rank | ok | qloo | 2026-10-24T08:01:42.117Z | sha256:8dab17d2e0b0… |\n| r13 | where_popular | ok | qloo | 2026-10-24T08:01:43.856Z | sha256:8c000711b57b… |\n| r12 | trends | ok | qloo | 2026-10-24T08:01:42.962Z | sha256:77381df2702d… |\n| r14 | compare_audiences | ok | qloo | 2026-10-24T08:01:44.531Z | sha256:e41acf7de031… |\n| r15 | where_popular | ok | qloo | 2026-10-24T08:01:45.239Z | sha256:2b6f0efd56dc… |\n| r16 | compare_audiences | ok | qloo | 2026-10-24T08:01:45.845Z | sha256:c516775aeba9… |\n| r17 | where_popular | ok | qloo | 2026-10-24T08:01:46.415Z | sha256:3c27d8782d83… |\n| r18 | compare_audiences | ok | qloo | 2026-10-24T08:01:47.135Z | sha256:04f94083b09f… |\n| a1-4 | where_popular | ok | qloo | 2026-10-24T08:01:51.743Z | sha256:eb1a1cb31018… |\n| r19 | where_popular | ok | qloo | 2026-10-24T08:01:47.680Z | sha256:3f6b31f500ae… |\n| r20 | compare_audiences | ok | qloo | 2026-10-24T08:01:48.414Z | sha256:8cda3e54122f… |\n| a1-3 | where_popular | ok | qloo | 2026-10-24T08:01:51.021Z | sha256:1444b01dba33… |\n| a1-6 | compare_audiences | ok | qloo | 2026-10-24T08:01:53.324Z | sha256:4ea5893e57c2… |\n| a1-5 | where_popular | ok | qloo | 2026-10-24T08:01:52.590Z | sha256:6ae348ffefe4… |\n| a1-1 | rank | ok | qloo | 2026-10-24T08:01:48.940Z | sha256:400bb27b2a2d… |\n| a1-2 | trends | ok | qloo | 2026-10-24T08:01:50.433Z | sha256:28941d59f35b… |\nIntegrity: manifest sha256:a70adc32f7c6aa235ad82739ffa0ac1b85ce5ed6e1c8ba8544388c4ae8545206. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
+          "markdown": "# Night Shift Soul Revue — Houselights decision packet\nFresh research with live Qloo calls. Generated 2026-10-24T10:06:43.968Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: Chicago · Venue: 700-capacity club (illustrative) · Date: 2027-04-16\n- Programming direction: Modern soul with a jazz-funk edge\n- Target audience: 25–40 year-old soul and R&B fans who follow Leon Bridges and Erykah Badu\n- Audience reference artists (Qloo anchors): Leon Bridges, Erykah Badu\n- Objectives: Fill a 700-capacity room; Book one act the audience is likely to discover\n- 2 slots · $22,000 artist budget · max 2 per genre · 9 candidates\n\n## 2. Recommendation (for human approval)\n**Thee Sacred Souls + Thundercat** — $17,500 planned artist fees, $4,500 unallocated, 0.25 policy points.\n**Provisional:** Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.\nRecommended: it maximizes the declared cultural-fit objective and continues in 23/23 disruption scenarios.\n- Not comparable: Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.\n- **Thee Sacred Souls** · $5,500 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [r19]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r20]\n- **Thundercat** · $12,000 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [a1-3]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [a1-6]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit | Thee Sacred Souls + Thundercat | $17,500 | — | 23/23 | 19 | 50% |\n| Lower-cost alternative · Most robust under disruption · Best among acts Qloo could rank | masego + Thee Sacred Souls | $14,500 | −$3,000, −0.25 pts | 23/23 | 21 | 38% |\n- **Strongest cultural fit:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Recommended: it maximizes the declared cultural-fit objective and continues in 23/23 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption · Best among acts Qloo could rank:** Best policy score among cheaper bills: saves $3,000 for 0.25 policy points. Continues in 23/23 disruption scenarios (21 unchanged) versus 23/23 (19 unchanged) for the recommendation. Qloo returned no rank for Durand Jones & The Indications [a1-1]. Excluding it and using the returned order, this is the optimizer's choice. Prefer it if the $3,000 saving matters more than the cultural-fit gap, or if the artist budget may fall below $17,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.25 policy points for that resilience. Prefer it if you want every booked act backed by a Qloo audience rank.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- Thee Sacred Souls: 1) Thundercat + Durand Jones & The Indications ($19,000, 0 pts); 2) masego + Thundercat ($21,000, 0 pts)\n- Thundercat: 1) masego + Thee Sacred Souls ($14,500, 0 pts); 2) Thee Sacred Souls + Durand Jones & The Indications ($12,500, -6 pts)\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| Thee Sacred Souls | $5,500 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Thundercat | $12,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n| masego | $9,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Durand Jones & The Indications | $7,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $17,500 of $22,000; $4,500 unallocated.\n- Thee Sacred Souls's fee can rise to $10,000 (+81.82%) before this bill exceeds the budget; above that the plan becomes Thundercat + Durand Jones & The Indications.\n- Thundercat's fee can rise to $16,500 (+37.5%) before this bill exceeds the budget; above that the plan becomes masego + Thee Sacred Souls.\n- The bill survives budget cuts down to $17,500 (20.45% below the brief); below that the plan becomes masego + Thee Sacred Souls at $14,500.\n- Commercial assumptions (promoter-entered, unverified): capacity 700, ticket price $55, other costs $9,000. Break-even: 482 paid tickets (68.86% of capacity). Arithmetic on assumptions, not a sales forecast.\n\n## 7. Cultural evidence and research\nFit basis: ordinal rank positions (Qloo affinity scores unavailable).\nResearch changed the decision from masego + Thee Sacred Souls to Thee Sacred Souls + Thundercat (local:A5481928-B60E-4C34-8725-9325AA7B91DF via a1-3; local:90B63651-2F34-4597-8075-69F9C405CF83 via a1-4; comparison:A5481928-B60E-4C34-8725-9325AA7B91DF via a1-6).\n6 research action(s), 6/6 Qloo workflow calls. Stop: budget_exhausted; stress follow-up: budget_exhausted.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| Thee Sacred Souls | recommended | Missing: no comparable rank | Measured [r19] | Measured [r20] | Missing: researched, no interpretable result [r12] |\n| Thundercat | recommended | Missing: no comparable rank | Measured [a1-3] | Measured [a1-6] | Missing: researched, no interpretable result [a1-2] |\n| masego | alternative | Missing: no comparable rank | Measured [a1-4] | Missing: open question | Missing: researched, no interpretable result [a1-2] |\n| Durand Jones & The Indications | backup | Missing: no comparable rank | Measured [a1-5] | Missing: open question | Missing: researched, no interpretable result [a1-2] |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.\n- dependency: Without Qloo evidence the optimizer would choose masego + Thee Sacred Souls. The recommendation rests on the cultural receipts listed in this packet.\n- moderate: If Thee Sacred Souls becomes unavailable, replace with Durand Jones & The Indications: Thundercat + Durand Jones & The Indications at $19,000 (-0.25 policy points, +$1,500).\n- moderate: If Thundercat becomes unavailable, replace with masego: masego + Thee Sacred Souls at $14,500 (-0.25 policy points, −$3,000).\n\n## 9. Remaining uncertainties\n- How does masego's audience compare with the anchor audience? — open (justification). masego appears in a feasible alternative strategy; this evidence supports comparing it.\n- How does Durand Jones & The Indications's audience compare with the anchor audience? — open (fallback). Durand Jones & The Indications is in the bill under \"budget below $14,500\". No result changes that fallback, but the promoter would book it without this evidence.\n- Does Qloo return an interpretable recent trend direction for D'Angelo? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Nao? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Is there Qloo geographic evidence for D'Angelo in Chicago? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Is there Qloo geographic evidence for Nao in Chicago? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does D'Angelo's audience compare with the anchor audience? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does Nao's audience compare with the anchor audience? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Can every bookable candidate be ranked against Leon Bridges, Erykah Badu in Chicago? — researched: incomplete. Ranking returned 3/4 bookable candidates [a1-1]; comparable fit remains unknown and no order was substituted.\n- Does Qloo return an interpretable recent trend direction for Lianne La Havas? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Lianne La Havas.\n- Does Qloo return an interpretable recent trend direction for masego? — researched: uninterpretable. Trend data for masego carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Thundercat? — researched: uninterpretable. Trend data for Thundercat carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Cleo Sol? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Cleo Sol.\n- Does Qloo return an interpretable recent trend direction for Durand Jones & The Indications? — researched: uninterpretable. Trend data for Durand Jones & The Indications carried no interpretable direction [a1-2].\n- Does Qloo return an interpretable recent trend direction for Jill Scott? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Jill Scott.\n- Does Qloo return an interpretable recent trend direction for Thee Sacred Souls? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls.\n- Confirm: Thee Sacred Souls: fee $5,500 (estimate); availability assumed.\n- Confirm: Thundercat: fee $12,000 (estimate); availability assumed.\n- Confirm: masego: fee $9,000 (estimate); availability assumed.\n- Confirm: Durand Jones & The Indications: fee $7,000 (estimate); availability assumed.\n\n## 10. Next actions\n1. [Requires human approval] Approve Thee Sacred Souls + Thundercat as the planning bill ($17,500 against $22,000) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Thee Sacred Souls and Thundercat; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate Thee Sacred Souls at or below $10,000; above that the bill changes to Thundercat + Durand Jones & The Indications.\n4. [Recommendation] Negotiate Thundercat at or below $16,500; above that the bill changes to masego + Thee Sacred Souls.\n5. [Confirm with agent] Pre-clear Durand Jones & The Indications as the backup for Thee Sacred Souls: confirm availability and fee.\n6. [Confirm with agent] Pre-clear masego as the backup for Thundercat: confirm availability and fee.\n7. [Requires human approval] Decide whether to keep Durand Jones & The Indications in contention: Qloo returned no rank for this act against your reference artists [a1-1], so the recommendation is provisional. The \"best among ranked acts\" strategy shows the bill without it.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are promoter-entered inputs; their status (quoted, estimate, assumed) is shown in section 5.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r11 | rank | ok | qloo | 2026-10-24T10:06:33.479Z | sha256:d9575dbdc4e6… |\n| r13 | where_popular | ok | qloo | 2026-10-24T10:06:34.713Z | sha256:d4c3733eacbd… |\n| r12 | trends | ok | qloo | 2026-10-24T10:06:33.812Z | sha256:4a07b8dcc2dc… |\n| r14 | compare_audiences | ok | qloo | 2026-10-24T10:06:35.380Z | sha256:817923b18e15… |\n| r15 | where_popular | ok | qloo | 2026-10-24T10:06:35.990Z | sha256:69517b7c5162… |\n| r16 | compare_audiences | ok | qloo | 2026-10-24T10:06:36.612Z | sha256:7f9da15ddcf7… |\n| r17 | where_popular | ok | qloo | 2026-10-24T10:06:37.179Z | sha256:d14f0d3c61eb… |\n| r18 | compare_audiences | ok | qloo | 2026-10-24T10:06:37.812Z | sha256:2b47d4e84919… |\n| a1-4 | where_popular | ok | qloo | 2026-10-24T10:06:42.331Z | sha256:685bb6db2d7c… |\n| r19 | where_popular | ok | qloo | 2026-10-24T10:06:38.393Z | sha256:2e17547dc0c4… |\n| r20 | compare_audiences | ok | qloo | 2026-10-24T10:06:39.049Z | sha256:3430ce2f5050… |\n| a1-3 | where_popular | ok | qloo | 2026-10-24T10:06:41.675Z | sha256:98ffd769036a… |\n| a1-6 | compare_audiences | ok | qloo | 2026-10-24T10:06:43.863Z | sha256:e93eee1802c5… |\n| a1-5 | where_popular | ok | qloo | 2026-10-24T10:06:43.151Z | sha256:c944dd2c44a1… |\n| a1-1 | rank | ok | qloo | 2026-10-24T10:06:39.552Z | sha256:9e6b3b8f45a6… |\n| a1-2 | trends | ok | qloo | 2026-10-24T10:06:41.048Z | sha256:9b90718d666e… |\nIntegrity: manifest sha256:bc0a0619102e4b7e295bedacda2eab4b6c46574096c2a39847d967803b06d4c4. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
         }
       }
     },
     {
-      "id": "run_40e965ebaf24e1b0",
+      "id": "run_dc003fbf5cf469f6",
       "revision": 2,
-      "createdAt": "2026-10-24T08:01:53.584Z",
+      "createdAt": "2026-10-24T10:06:44.117Z",
       "mode": "planning",
       "status": "complete",
       "callsUsed": 0,
@@ -5315,6 +5395,28 @@
           "excludedIds": []
         },
         "briefChanged": false,
+        "fitBasis": "ordinal-rank",
+        "ties": {
+          "band": 0.002,
+          "groups": [],
+          "restsOnNearTie": false
+        },
+        "comparability": {
+          "comparable": false,
+          "returned": 7,
+          "requested": 9,
+          "unrankedIds": [
+            "90B63651-2F34-4597-8075-69F9C405CF83",
+            "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+            "A5481928-B60E-4C34-8725-9325AA7B91DF",
+            "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
+          ],
+          "reason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+        },
+        "ordinalStartIds": [
+          "90B63651-2F34-4597-8075-69F9C405CF83",
+          "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7"
+        ],
         "budget": {
           "maxCalls": 0,
           "reserveForStress": 0,
@@ -5341,7 +5443,7 @@
         ],
         "events": [
           {
-            "at": 0,
+            "at": 2,
             "type": "frame",
             "text": "Brief: 2 slots for listeners of Leon Bridges, Erykah Badu in Chicago, $15,000 artist budget, 9 candidates. Starting decision: masego + Thee Sacred Souls.",
             "selectedIds": [
@@ -5352,7 +5454,7 @@
             "briefChanged": false
           },
           {
-            "at": 29,
+            "at": 34,
             "type": "questions",
             "phase": "decision",
             "text": "16 evidence questions identified: 0 could change the decision, 1 test the ranking, 4 justify booked acts, 0 need more calls than the budget allows, 1 cannot change any strategy, 6 are blocked by missing commercial inputs or identities, 4 already answered by saved receipts.",
@@ -5531,29 +5633,29 @@
             ]
           },
           {
-            "at": 31,
+            "at": 37,
             "type": "stop",
             "phase": "decision",
             "reason": "planning_only",
             "text": "No provider calls in this mode. 5 question(s) would be researched next, in the order listed."
           },
           {
-            "at": 74,
+            "at": 76,
             "type": "strategies",
-            "text": "2 distinct feasible strategies: Strongest cultural fit (masego + Thee Sacred Souls); Lower-cost alternative · Most robust under disruption (Thee Sacred Souls + Durand Jones & The Indications).",
+            "text": "2 distinct feasible strategies: Strongest cultural fit · Best among acts Qloo could rank (masego + Thee Sacred Souls); Lower-cost alternative · Most robust under disruption (Thee Sacred Souls + Durand Jones & The Indications).",
             "strategyIds": [
               "cultural-fit",
               "lower-cost"
             ]
           },
           {
-            "at": 74,
+            "at": 76,
             "type": "stress",
             "text": "15 contingency scenarios: the plan adapts feasibly in 11; 1/2 cancellations have a clean replacement; 1 critical vulnerabilities.",
             "vulnerabilities": 8
           },
           {
-            "at": 82,
+            "at": 83,
             "type": "followup",
             "text": "Stress tests named fallback bills. 5 open evidence question(s) concern them or remain from the decision phase.",
             "questions": [
@@ -5617,16 +5719,16 @@
             ]
           },
           {
-            "at": 88,
+            "at": 90,
             "type": "stop",
             "phase": "stress-followup",
             "reason": "planning_only",
             "text": "No provider calls in this mode. 5 question(s) would be researched next, in the order listed."
           },
           {
-            "at": 101,
+            "at": 113,
             "type": "packet",
-            "text": "Decision packet ready: masego + Thee Sacred Souls; 6 next actions."
+            "text": "Decision packet ready: masego + Thee Sacred Souls; 7 next actions."
           }
         ],
         "receipts": [],
@@ -5811,9 +5913,10 @@
             {
               "id": "cultural-fit",
               "labels": [
-                "Strongest cultural fit"
+                "Strongest cultural fit",
+                "Best among acts Qloo could rank"
               ],
-              "label": "Strongest cultural fit",
+              "label": "Strongest cultural fit · Best among acts Qloo could rank",
               "selectedIds": [
                 "90B63651-2F34-4597-8075-69F9C405CF83",
                 "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7"
@@ -5853,7 +5956,7 @@
                 }
               ],
               "evidenceCompleteness": 0.38,
-              "rationale": "Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model.",
+              "rationale": "Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Qloo returned no rank for Durand Jones & The Indications [a1-1]. Excluding it and using the returned order, this is the optimizer's choice.",
               "preferWhen": "Recommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios."
             },
             {
@@ -6363,8 +6466,8 @@
             "cancellationCoverage": 1,
             "cancellationCount": 2,
             "criticalDependencyCount": 1,
-            "feasibleSlateCount": 2,
-            "robustSlateDiffersFromBaseline": true
+            "feasibleSlateCount": null,
+            "robustSlateDiffersFromBaseline": false
           },
           "cancellations": [
             {
@@ -6605,7 +6708,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "5474D63B-EDFC-4350-8FB5-C8D80C0D4A62",
@@ -6647,7 +6752,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "B9CDE427-563E-474D-A3AD-8BFBCDB31ADF",
@@ -6689,7 +6796,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "90B63651-2F34-4597-8075-69F9C405CF83",
@@ -6727,7 +6836,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
@@ -6769,7 +6880,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "A5481928-B60E-4C34-8725-9325AA7B91DF",
@@ -6809,7 +6922,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "08F8E7D7-0E32-47F8-A2B3-80D2EC5885AA",
@@ -6845,7 +6960,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
@@ -6883,7 +7000,9 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           },
           {
             "id": "0B183D3C-E890-4699-9D49-A225E720A5B3",
@@ -6919,11 +7038,13 @@
               "complete": false,
               "returned": 7,
               "requested": 9
-            }
+            },
+            "affinity": null,
+            "fitBasis": null
           }
         ],
         "interpretation": "Deterministic research policy over the exact optimizer. Policy points are an internal objective, not ticket demand, attendance or revenue. Fees and availability are buyer inputs.",
-        "digest": "sha256:e771fa5b1abfc3f46bc08a92eedff3d2b528a36d165c88c84e6c6ac98276e9ae",
+        "digest": "sha256:0e8d09cafdfc9fe3b0fdce50362aa47e30ca28ef091a1fa6e7b41067e2008cb3",
         "integrity": {
           "version": "2.0",
           "algorithm": "sha256",
@@ -6932,120 +7053,120 @@
           "sourceReceipts": [
             {
               "id": "r1",
-              "contentDigest": "sha256:374766e306aec9d57663d149830ff1e5bb09e4b1cf85f6334bcc1f507085a5fc"
+              "contentDigest": "sha256:abd5eafeb57973b872101c4f398a079c4ebed393edc3bd0a20c43bcfd72439b7"
             },
             {
               "id": "r2",
-              "contentDigest": "sha256:1c9961f51f5e39dbc2ce71a57bd02d0315386bc8b1109cec242a214b1ef45050"
+              "contentDigest": "sha256:22f223ea6c84b6142e2844b616b8a70d9e5bd512386f0f67cbc31220faad6e62"
             },
             {
               "id": "r3",
-              "contentDigest": "sha256:b82b23062d8a39b6aded4f1ee083f6fac97d94ef05c89cf7e305baae2920533d"
+              "contentDigest": "sha256:66226be6ca4ef9d6d3763a0287309179a3a3c27ec7dea73c3393cafdc61f0aae"
             },
             {
               "id": "r4",
-              "contentDigest": "sha256:8c10ff766c43c90c797b891bf603614a68560436d3f1b68b74ee87ee27398dd5"
+              "contentDigest": "sha256:db4543e21c6424f56c9c2df1abff591c8f2f7f7758045b734977363ffe6d957d"
             },
             {
               "id": "r5",
-              "contentDigest": "sha256:5ffd12fe5c096c4ac722064360a1986f37039f67f22ddabbfe755e17e240c72c"
+              "contentDigest": "sha256:0bd6279769b5aa16c17da8890d1e452374c92f287d1fe230c593cc2c3f918b00"
             },
             {
               "id": "r6",
-              "contentDigest": "sha256:a50490dedc38bbd0157435ff8121f30f43908a81cace76a060d8a4da658a1ffe"
+              "contentDigest": "sha256:52f62ed060f96908d59723502c0678e358bfbff7603e8042cc99927a249273b0"
             },
             {
               "id": "r7",
-              "contentDigest": "sha256:c54dc7c5ef2e3813e300366e32d0f416e8108a6b121d895dcfe82d593c90bf6d"
+              "contentDigest": "sha256:bcea5af47c9d33e10092f4a333bfda65ddae3aeab4cebcbb58a06d7f21a0caa1"
             },
             {
               "id": "r8",
-              "contentDigest": "sha256:a5fdef78b91ec1526be04df90a8dab9bbda606b2732eb1cc83d116b3222cb843"
+              "contentDigest": "sha256:e0c80465dfc6e60908d46572d12dc8995080aec38f22bbc69c36365978a358c9"
             },
             {
               "id": "r9",
-              "contentDigest": "sha256:8a1f4402793c40f55286ed6aec88e8d0b2d2224d9a0c71a8e3d9980311fa1b85"
+              "contentDigest": "sha256:061fb5af3be838cd8b06c1705d8081b156f773a7311ca32ec9842f763f4cf279"
             },
             {
               "id": "r10",
-              "contentDigest": "sha256:ade78a45207e8bb4e56d266808ee7303e15aa10e7c87edccc59fa069c8f4d7ab"
+              "contentDigest": "sha256:2798259a73dafe2167525dd134111f0d20e949aef3b1115f36eca6f6fc4b03db"
             },
             {
               "id": "r11",
-              "contentDigest": "sha256:8dab17d2e0b06b9bcde6d5cebefb2129693043d73dfc6b17147432ba81ecd168"
+              "contentDigest": "sha256:d9575dbdc4e6faedada188bb7acabf3526b4401169db7865d3840d9e637a4522"
             },
             {
               "id": "r12",
-              "contentDigest": "sha256:77381df2702de71149316382149d71f8108c97a3e27cb3a3448db07326ae47c7"
+              "contentDigest": "sha256:4a07b8dcc2dc9970a74a29b81b8ef8f49b11de530bba85c199b388fd4f7c7eec"
             },
             {
               "id": "r13",
-              "contentDigest": "sha256:8c000711b57b148799ae70985bcce350c1786f386f5db4a92ad1450b14ea97bd"
+              "contentDigest": "sha256:d4c3733eacbd7e7cc8c03eadd7d14be927b95c49569ac8c3c668a3f77deb88d3"
             },
             {
               "id": "r14",
-              "contentDigest": "sha256:e41acf7de031ab1abf7dff611a8cc5b0e10b6e51de98506bc7b3f769ce76854c"
+              "contentDigest": "sha256:817923b18e154bb4bc35889722f73119eb60e0b17d50251750b57d6006b6787b"
             },
             {
               "id": "r15",
-              "contentDigest": "sha256:2b6f0efd56dc3e84a8b76041a49ca2d6cc358d9487ff362d6d31488bf4e1e591"
+              "contentDigest": "sha256:69517b7c516289f63c38a99f36a2e5af9e28040e47f1dbaff401e9556f212715"
             },
             {
               "id": "r16",
-              "contentDigest": "sha256:c516775aeba9e1eb3cac18aa457f97a2067f79b172b61345e198431742097fb2"
+              "contentDigest": "sha256:7f9da15ddcf76226fe965ce534157bfcbea465ee3eddc90dd1cd6c9a402ff840"
             },
             {
               "id": "r17",
-              "contentDigest": "sha256:3c27d8782d8390c2cee280dd67e2a5acc890090975081d55a302f0f504e2fa6e"
+              "contentDigest": "sha256:d14f0d3c61ebd5d6bdae9f37b3592fef21d5e116b0636dc2f2b7299ef458a7e2"
             },
             {
               "id": "r18",
-              "contentDigest": "sha256:04f94083b09f3a623e487b9279c5189d641c90a16db73b838dc8ebdceeb27498"
+              "contentDigest": "sha256:2b47d4e849194ebdcaff01e5193ef487928bea7fdf5c9c5f95c6c180171b9fa4"
             },
             {
               "id": "r19",
-              "contentDigest": "sha256:3f6b31f500ae4857b32f5142fb1de27eadf4ede434924282e8345c4ee1742e19"
+              "contentDigest": "sha256:2e17547dc0c45398f1bb7f63d5ff83fd572daec3c323b7ea7134bbd9378604a5"
             },
             {
               "id": "r20",
-              "contentDigest": "sha256:8cda3e54122f6069830dc24c63f0071c8f239a4bd031788f8be22bab0b41f7a3"
+              "contentDigest": "sha256:3430ce2f505085b28faac3eeb50bd460590dce60eb3cee5cca1dc30df0c91757"
             },
             {
               "id": "a1-1",
-              "contentDigest": "sha256:29f6ba59b6146915999ccd87d00c7b0ae475c978bdb2428af480da359bbeb0e3"
+              "contentDigest": "sha256:ef6e744d30dfbdec2dcfc9e23d4b978d6771b6322b40e23a1603fbf8bf56bf4c"
             },
             {
               "id": "a1-2",
-              "contentDigest": "sha256:3ac2becc1e2226f60e84ab7df51141d4076f38679053026de0d669caa5e95a2f"
+              "contentDigest": "sha256:7bd74942ae6e58fd262c686619512cbaf14dcc933abf7ef87c5bcd078cd1e63c"
             },
             {
               "id": "a1-3",
-              "contentDigest": "sha256:ffcd4dba1c07d635cc23ed4942c8070eef08d4b4ea33872b842d0e7dab437864"
+              "contentDigest": "sha256:53e452d1d3d2486f4efacc3d36fe26b28a66f2e3d1eac72c329870fb1dc5dc45"
             },
             {
               "id": "a1-4",
-              "contentDigest": "sha256:38f6a297d4b03c7976514bb458c666358debb99ba1b5f3e01714656832608396"
+              "contentDigest": "sha256:4d4ea2d9d799b25e04a1534e7de4bb5c478b7dc379b1b9afa29ca3566df73507"
             },
             {
               "id": "a1-5",
-              "contentDigest": "sha256:d0ea385a85d1ad871401320d4406b1a32dea1d2a9e63e792497c97e68042601d"
+              "contentDigest": "sha256:eb6ec2a5e8ea9135e73dd552b2b6cf476fa97be1b67916cc03b23ba64bb90d41"
             },
             {
               "id": "a1-6",
-              "contentDigest": "sha256:f5db07ec23864b9c2cd514d70d0effd4754e2fcca40b22e6672904c4249da9db"
+              "contentDigest": "sha256:e4aaf0f4ef1672f3353b9dbf6e5e13045f0811c7612cc7fee72d19c1e6470265"
             }
           ],
           "decisionInputsDigest": "sha256:6b549bc90f8908d586391605b8c565275cc6974a53e9d9372b4756a36ffe2183",
-          "decisionDigest": "sha256:e771fa5b1abfc3f46bc08a92eedff3d2b528a36d165c88c84e6c6ac98276e9ae",
+          "decisionDigest": "sha256:0e8d09cafdfc9fe3b0fdce50362aa47e30ca28ef091a1fa6e7b41067e2008cb3",
           "providerProvenance": "Not cryptographically verifiable: Qloo responses are unsigned. originalDigest values are application hashes computed when each response was received.",
-          "manifestDigest": "sha256:c76d4ecbaf92cca30c591283ec384dec0bc14cea7221bc2678a4d5a24a3b8458"
+          "manifestDigest": "sha256:fab9a01f94d5dd2f6d6648f341d6934c86c1dae39cd3d7559902b6da3759880f"
         },
         "packet": {
           "version": "2.0",
           "title": "Night Shift Soul Revue booking decision",
           "mode": "planning",
           "status": "complete",
-          "generatedAt": "2026-10-24T08:01:53.580Z",
+          "generatedAt": "2026-10-24T10:06:44.111Z",
           "currency": "USD",
           "brief": {
             "name": "Night Shift Soul Revue",
@@ -7075,7 +7196,8 @@
           },
           "recommendation": {
             "provisional": true,
-            "provisionalReason": "masego + Thee Sacred Souls have no comparable Qloo rank, so cultural fit is unknown for part of this bill.",
+            "provisionalReason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.",
+            "restsOnNearTie": false,
             "strategyId": "cultural-fit",
             "selectedIds": [
               "90B63651-2F34-4597-8075-69F9C405CF83",
@@ -7120,7 +7242,7 @@
                         "tool": "where_popular",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:51.743Z",
+                        "fetchedAt": "2026-10-24T10:06:42.331Z",
                         "new": false
                       }
                     ]
@@ -7148,7 +7270,7 @@
                         "tool": "where_popular",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:47.680Z",
+                        "fetchedAt": "2026-10-24T10:06:38.393Z",
                         "new": false
                       }
                     ]
@@ -7161,7 +7283,7 @@
                         "tool": "compare_audiences",
                         "status": "ok",
                         "source": "qloo",
-                        "fetchedAt": "2026-10-24T08:01:48.414Z",
+                        "fetchedAt": "2026-10-24T10:06:39.049Z",
                         "new": false
                       }
                     ]
@@ -7174,7 +7296,7 @@
           "strategies": [
             {
               "id": "cultural-fit",
-              "label": "Strongest cultural fit",
+              "label": "Strongest cultural fit · Best among acts Qloo could rank",
               "names": [
                 "masego",
                 "Thee Sacred Souls"
@@ -7200,7 +7322,7 @@
                 "total": 2
               },
               "evidenceCompleteness": 0.38,
-              "rationale": "Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model.",
+              "rationale": "Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Qloo returned no rank for Durand Jones & The Indications [a1-1]. Excluding it and using the returned order, this is the optimizer's choice.",
               "preferWhen": "Recommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios."
             },
             {
@@ -7584,6 +7706,25 @@
               "why": "Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls."
             }
           ],
+          "fitBasis": "ordinal-rank",
+          "comparability": {
+            "comparable": false,
+            "returned": 7,
+            "requested": 9,
+            "unrankedIds": [
+              "90B63651-2F34-4597-8075-69F9C405CF83",
+              "FC07BE09-ED83-46BD-AFB1-D5C58D84BDA7",
+              "A5481928-B60E-4C34-8725-9325AA7B91DF",
+              "EF70B8D5-9AFE-49E5-959A-88CF198DAD48"
+            ],
+            "reason": "Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+          },
+          "ordinalComparison": null,
+          "ties": {
+            "band": 0.002,
+            "restsOnNearTie": false,
+            "groups": []
+          },
           "robustness": {
             "summary": "15 contingency scenarios: the plan adapts feasibly in 11; 1/2 cancellations have a clean replacement; 1 critical vulnerabilities.",
             "vulnerabilities": [
@@ -7766,6 +7907,11 @@
               "priority": 6,
               "type": "recommendation",
               "text": "No clean backup exists for Thee Sacred Souls; quote additional candidates before committing."
+            },
+            {
+              "priority": 7,
+              "type": "approval",
+              "text": "Decide whether to keep Durand Jones & The Indications in contention: Qloo returned no rank for this act against your reference artists [a1-1], so the recommendation is provisional. The \"best among ranked acts\" strategy shows the bill without it."
             }
           ],
           "nextSteps": [
@@ -7774,7 +7920,8 @@
             "Negotiate masego at or below $9,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.",
             "Negotiate Thee Sacred Souls at or below $5,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.",
             "Pre-clear Durand Jones & The Indications as the backup for masego: confirm availability and fee.",
-            "No clean backup exists for Thee Sacred Souls; quote additional candidates before committing."
+            "No clean backup exists for Thee Sacred Souls; quote additional candidates before committing.",
+            "Decide whether to keep Durand Jones & The Indications in contention: Qloo returned no rank for this act against your reference artists [a1-1], so the recommendation is provisional. The \"best among ranked acts\" strategy shows the bill without it."
           ],
           "receiptIndex": [
             {
@@ -7782,134 +7929,134 @@
               "tool": "rank",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:42.117Z",
+              "fetchedAt": "2026-10-24T10:06:33.479Z",
               "new": false,
-              "contentDigest": "sha256:8dab17d2e0b06b9bcde6d5cebefb2129693043d73dfc6b17147432ba81ecd168"
+              "contentDigest": "sha256:d9575dbdc4e6faedada188bb7acabf3526b4401169db7865d3840d9e637a4522"
             },
             {
               "id": "r13",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:43.856Z",
+              "fetchedAt": "2026-10-24T10:06:34.713Z",
               "new": false,
-              "contentDigest": "sha256:8c000711b57b148799ae70985bcce350c1786f386f5db4a92ad1450b14ea97bd"
+              "contentDigest": "sha256:d4c3733eacbd7e7cc8c03eadd7d14be927b95c49569ac8c3c668a3f77deb88d3"
             },
             {
               "id": "r12",
               "tool": "trends",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:42.962Z",
+              "fetchedAt": "2026-10-24T10:06:33.812Z",
               "new": false,
-              "contentDigest": "sha256:77381df2702de71149316382149d71f8108c97a3e27cb3a3448db07326ae47c7"
+              "contentDigest": "sha256:4a07b8dcc2dc9970a74a29b81b8ef8f49b11de530bba85c199b388fd4f7c7eec"
             },
             {
               "id": "r14",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:44.531Z",
+              "fetchedAt": "2026-10-24T10:06:35.380Z",
               "new": false,
-              "contentDigest": "sha256:e41acf7de031ab1abf7dff611a8cc5b0e10b6e51de98506bc7b3f769ce76854c"
+              "contentDigest": "sha256:817923b18e154bb4bc35889722f73119eb60e0b17d50251750b57d6006b6787b"
             },
             {
               "id": "r15",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:45.239Z",
+              "fetchedAt": "2026-10-24T10:06:35.990Z",
               "new": false,
-              "contentDigest": "sha256:2b6f0efd56dc3e84a8b76041a49ca2d6cc358d9487ff362d6d31488bf4e1e591"
+              "contentDigest": "sha256:69517b7c516289f63c38a99f36a2e5af9e28040e47f1dbaff401e9556f212715"
             },
             {
               "id": "r16",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:45.845Z",
+              "fetchedAt": "2026-10-24T10:06:36.612Z",
               "new": false,
-              "contentDigest": "sha256:c516775aeba9e1eb3cac18aa457f97a2067f79b172b61345e198431742097fb2"
+              "contentDigest": "sha256:7f9da15ddcf76226fe965ce534157bfcbea465ee3eddc90dd1cd6c9a402ff840"
             },
             {
               "id": "r17",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:46.415Z",
+              "fetchedAt": "2026-10-24T10:06:37.179Z",
               "new": false,
-              "contentDigest": "sha256:3c27d8782d8390c2cee280dd67e2a5acc890090975081d55a302f0f504e2fa6e"
+              "contentDigest": "sha256:d14f0d3c61ebd5d6bdae9f37b3592fef21d5e116b0636dc2f2b7299ef458a7e2"
             },
             {
               "id": "r18",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:47.135Z",
+              "fetchedAt": "2026-10-24T10:06:37.812Z",
               "new": false,
-              "contentDigest": "sha256:04f94083b09f3a623e487b9279c5189d641c90a16db73b838dc8ebdceeb27498"
+              "contentDigest": "sha256:2b47d4e849194ebdcaff01e5193ef487928bea7fdf5c9c5f95c6c180171b9fa4"
             },
             {
               "id": "a1-4",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:51.743Z",
+              "fetchedAt": "2026-10-24T10:06:42.331Z",
               "new": false,
-              "contentDigest": "sha256:38f6a297d4b03c7976514bb458c666358debb99ba1b5f3e01714656832608396"
+              "contentDigest": "sha256:4d4ea2d9d799b25e04a1534e7de4bb5c478b7dc379b1b9afa29ca3566df73507"
             },
             {
               "id": "r19",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:47.680Z",
+              "fetchedAt": "2026-10-24T10:06:38.393Z",
               "new": false,
-              "contentDigest": "sha256:3f6b31f500ae4857b32f5142fb1de27eadf4ede434924282e8345c4ee1742e19"
+              "contentDigest": "sha256:2e17547dc0c45398f1bb7f63d5ff83fd572daec3c323b7ea7134bbd9378604a5"
             },
             {
               "id": "r20",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:48.414Z",
+              "fetchedAt": "2026-10-24T10:06:39.049Z",
               "new": false,
-              "contentDigest": "sha256:8cda3e54122f6069830dc24c63f0071c8f239a4bd031788f8be22bab0b41f7a3"
+              "contentDigest": "sha256:3430ce2f505085b28faac3eeb50bd460590dce60eb3cee5cca1dc30df0c91757"
             },
             {
               "id": "a1-3",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:51.021Z",
+              "fetchedAt": "2026-10-24T10:06:41.675Z",
               "new": false,
-              "contentDigest": "sha256:ffcd4dba1c07d635cc23ed4942c8070eef08d4b4ea33872b842d0e7dab437864"
+              "contentDigest": "sha256:53e452d1d3d2486f4efacc3d36fe26b28a66f2e3d1eac72c329870fb1dc5dc45"
             },
             {
               "id": "a1-6",
               "tool": "compare_audiences",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:53.324Z",
+              "fetchedAt": "2026-10-24T10:06:43.863Z",
               "new": false,
-              "contentDigest": "sha256:f5db07ec23864b9c2cd514d70d0effd4754e2fcca40b22e6672904c4249da9db"
+              "contentDigest": "sha256:e4aaf0f4ef1672f3353b9dbf6e5e13045f0811c7612cc7fee72d19c1e6470265"
             },
             {
               "id": "a1-5",
               "tool": "where_popular",
               "status": "ok",
               "source": "qloo",
-              "fetchedAt": "2026-10-24T08:01:52.590Z",
+              "fetchedAt": "2026-10-24T10:06:43.151Z",
               "new": false,
-              "contentDigest": "sha256:d0ea385a85d1ad871401320d4406b1a32dea1d2a9e63e792497c97e68042601d"
+              "contentDigest": "sha256:eb6ec2a5e8ea9135e73dd552b2b6cf476fa97be1b67916cc03b23ba64bb90d41"
             }
           ],
           "integrity": {
-            "manifestDigest": "sha256:c76d4ecbaf92cca30c591283ec384dec0bc14cea7221bc2678a4d5a24a3b8458",
+            "manifestDigest": "sha256:fab9a01f94d5dd2f6d6648f341d6934c86c1dae39cd3d7559902b6da3759880f",
             "statement": "Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned."
           },
           "limits": "Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.",
-          "markdown": "# Night Shift Soul Revue — Houselights decision packet\nPlanning from saved evidence — no new Qloo calls. Generated 2026-10-24T08:01:53.580Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: Chicago · Venue: 700-capacity club (illustrative) · Date: 2027-04-16\n- Programming direction: Modern soul with a jazz-funk edge\n- Target audience: 25–40 year-old soul and R&B fans who follow Leon Bridges and Erykah Badu\n- Audience reference artists (Qloo anchors): Leon Bridges, Erykah Badu\n- Objectives: Fill a 700-capacity room; Book one act the audience is likely to discover\n- 2 slots · $15,000 artist budget · max 2 per genre · 9 candidates\n\n## 2. Recommendation (for human approval)\n**masego + Thee Sacred Souls** — $15,000 planned artist fees, $0 unallocated, 0 policy points.\n**Provisional:** masego + Thee Sacred Souls have no comparable Qloo rank, so cultural fit is unknown for part of this bill.\nRecommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios.\n- **masego** · $9,500 (Quoted by agent (promoter-entered); availability: Confirmed (promoter-entered))\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [a1-4]\n- **Thee Sacred Souls** · $5,500 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [r19]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r20]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit | masego + Thee Sacred Souls | $15,000 | — | 19/23 | 8 | 38% |\n| Lower-cost alternative · Most robust under disruption | Thee Sacred Souls + Durand Jones & The Indications | $12,500 | −$2,500, −6 pts | 19/23 | 18 | 38% |\n- **Strongest cultural fit:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Recommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption:** Best policy score among cheaper bills: saves $2,500 for 6 policy points. Continues in 19/23 disruption scenarios (18 unchanged) versus 19/23 (8 unchanged) for the recommendation. Prefer it if the $2,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $15,000. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 6 policy points for that resilience.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- masego: 1) Thee Sacred Souls + Durand Jones & The Indications ($12,500, -6 pts)\n- Thee Sacred Souls: no feasible replacement keeps the other acts\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| masego | $9,500 | Quoted by agent (promoter-entered) | Confirmed (promoter-entered) | No |\n| Thee Sacred Souls | $5,500 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Durand Jones & The Indications | $7,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $15,000 of $15,000; $0 unallocated.\n- masego's fee can rise to $9,500 (+0%) before this bill exceeds the budget; above that the plan becomes Thee Sacred Souls + Durand Jones & The Indications.\n- Thee Sacred Souls's fee can rise to $5,500 (+0%) before this bill exceeds the budget; above that the plan becomes Thee Sacred Souls + Durand Jones & The Indications.\n- The bill survives budget cuts down to $15,000 (0% below the brief); below that the plan becomes Thee Sacred Souls + Durand Jones & The Indications at $12,500.\n- Commercial assumptions (promoter-entered, unverified): capacity 700, ticket price $55, other costs $9,000. Break-even: 437 paid tickets (62.43% of capacity). Arithmetic on assumptions, not a sales forecast.\n\n## 7. Cultural evidence and research\nPlanning mode: no research was executed; the open questions are listed in priority order.\n0 research action(s), 0/0 Qloo workflow calls. Stop: planning_only; stress follow-up: planning_only.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| masego | recommended | Missing: no comparable rank | Measured [a1-4] | Missing: open question | Missing: open question |\n| Thee Sacred Souls | recommended | Missing: no comparable rank | Measured [r19] | Measured [r20] | Missing: researched, no interpretable result [r12] |\n| Durand Jones & The Indications | alternative | Missing: no comparable rank | Measured [a1-5] | Missing: open question | Missing: open question |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 11; 1/2 cancellations have a clean replacement; 1 critical vulnerabilities.\n- critical: If Thee Sacred Souls becomes unavailable, no replacement satisfies the brief while keeping the other booked acts.\n- high: A 5% budget cut ($14,250) changes the plan to Thee Sacred Souls + Durand Jones & The Indications at $12,500.\n- high: Under a 10% budget cut with 15% higher quotes, no lineup satisfies the brief.\n- moderate: If masego becomes unavailable, replace with Durand Jones & The Indications: Thee Sacred Souls + Durand Jones & The Indications at $12,500 (-6 policy points, −$2,500).\n- moderate: A 10% quote increase for masego changes the plan to Thee Sacred Souls + Durand Jones & The Indications.\n- moderate: A 10% quote increase for Thee Sacred Souls changes the plan to Thee Sacred Souls + Durand Jones & The Indications.\n- moderate: masego still lacks geographic or audience-comparison evidence; their cultural justification relies mainly on rank.\n- survived: Withdrawing all Qloo evidence leaves the same bill: the choice is driven by fees and constraints, and Qloo evidence validates rather than changes it.\n\n## 9. Remaining uncertainties\n- Can every bookable candidate be ranked against Leon Bridges, Erykah Badu in Chicago? — open (ranking). Relative audience fit carries 100 policy points per slot and 9 candidates have no comparable rank. With 2 feasible lineups, the order can change the choice.\n- How does masego's audience compare with the anchor audience? — open (justification). masego is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it.\n- Does Qloo return an interpretable recent trend direction for masego? — open (justification). masego is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it.\n- How does Durand Jones & The Indications's audience compare with the anchor audience? — open (justification). Durand Jones & The Indications appears in a feasible alternative strategy; this evidence supports comparing it.\n- Does Qloo return an interpretable recent trend direction for Durand Jones & The Indications? — open (justification). Durand Jones & The Indications appears in a feasible alternative strategy; this evidence supports comparing it.\n- Does Qloo return an interpretable recent trend direction for Thundercat? — immaterial. Tested every combination of possible results: Thundercat's trends evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Is there Qloo geographic evidence for D'Angelo in Chicago? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Is there Qloo geographic evidence for Nao in Chicago? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does D'Angelo's audience compare with the anchor audience? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does Nao's audience compare with the anchor audience? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for D'Angelo? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for Nao? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for Lianne La Havas? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Lianne La Havas.\n- Does Qloo return an interpretable recent trend direction for Cleo Sol? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Cleo Sol.\n- Does Qloo return an interpretable recent trend direction for Jill Scott? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Jill Scott.\n- Does Qloo return an interpretable recent trend direction for Thee Sacred Souls? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls.\n- Confirm: Thee Sacred Souls: fee $5,500 (estimate); availability assumed.\n- Confirm: Durand Jones & The Indications: fee $7,000 (estimate); availability assumed.\n\n## 10. Next actions\n1. [Requires human approval] Approve masego + Thee Sacred Souls as the planning bill ($15,000 against $15,000) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Thee Sacred Souls; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate masego at or below $9,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.\n4. [Recommendation] Negotiate Thee Sacred Souls at or below $5,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.\n5. [Confirm with agent] Pre-clear Durand Jones & The Indications as the backup for masego: confirm availability and fee.\n6. [Recommendation] No clean backup exists for Thee Sacred Souls; quote additional candidates before committing.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are promoter-entered inputs; their status (quoted, estimate, assumed) is shown in section 5.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r11 | rank | ok | qloo | 2026-10-24T08:01:42.117Z | sha256:8dab17d2e0b0… |\n| r13 | where_popular | ok | qloo | 2026-10-24T08:01:43.856Z | sha256:8c000711b57b… |\n| r12 | trends | ok | qloo | 2026-10-24T08:01:42.962Z | sha256:77381df2702d… |\n| r14 | compare_audiences | ok | qloo | 2026-10-24T08:01:44.531Z | sha256:e41acf7de031… |\n| r15 | where_popular | ok | qloo | 2026-10-24T08:01:45.239Z | sha256:2b6f0efd56dc… |\n| r16 | compare_audiences | ok | qloo | 2026-10-24T08:01:45.845Z | sha256:c516775aeba9… |\n| r17 | where_popular | ok | qloo | 2026-10-24T08:01:46.415Z | sha256:3c27d8782d83… |\n| r18 | compare_audiences | ok | qloo | 2026-10-24T08:01:47.135Z | sha256:04f94083b09f… |\n| a1-4 | where_popular | ok | qloo | 2026-10-24T08:01:51.743Z | sha256:38f6a297d4b0… |\n| r19 | where_popular | ok | qloo | 2026-10-24T08:01:47.680Z | sha256:3f6b31f500ae… |\n| r20 | compare_audiences | ok | qloo | 2026-10-24T08:01:48.414Z | sha256:8cda3e54122f… |\n| a1-3 | where_popular | ok | qloo | 2026-10-24T08:01:51.021Z | sha256:ffcd4dba1c07… |\n| a1-6 | compare_audiences | ok | qloo | 2026-10-24T08:01:53.324Z | sha256:f5db07ec2386… |\n| a1-5 | where_popular | ok | qloo | 2026-10-24T08:01:52.590Z | sha256:d0ea385a85d1… |\nIntegrity: manifest sha256:c76d4ecbaf92cca30c591283ec384dec0bc14cea7221bc2678a4d5a24a3b8458. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
+          "markdown": "# Night Shift Soul Revue — Houselights decision packet\nPlanning from saved evidence — no new Qloo calls. Generated 2026-10-24T10:06:44.111Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: Chicago · Venue: 700-capacity club (illustrative) · Date: 2027-04-16\n- Programming direction: Modern soul with a jazz-funk edge\n- Target audience: 25–40 year-old soul and R&B fans who follow Leon Bridges and Erykah Badu\n- Audience reference artists (Qloo anchors): Leon Bridges, Erykah Badu\n- Objectives: Fill a 700-capacity room; Book one act the audience is likely to discover\n- 2 slots · $15,000 artist budget · max 2 per genre · 9 candidates\n\n## 2. Recommendation (for human approval)\n**masego + Thee Sacred Souls** — $15,000 planned artist fees, $0 unallocated, 0 policy points.\n**Provisional:** Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.\nRecommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios.\n- Not comparable: Qloo ranked 7 of 9 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.\n- **masego** · $9,500 (Quoted by agent (promoter-entered); availability: Confirmed (promoter-entered))\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [a1-4]\n- **Thee Sacred Souls** · $5,500 (Promoter estimate; availability: Assumed for planning — confirm)\n  - No comparable audience rank; fit is unknown.\n  - Qloo returned geographic popularity rows within Chicago. [r19]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r20]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit · Best among acts Qloo could rank | masego + Thee Sacred Souls | $15,000 | — | 19/23 | 8 | 38% |\n| Lower-cost alternative · Most robust under disruption | Thee Sacred Souls + Durand Jones & The Indications | $12,500 | −$2,500, −6 pts | 19/23 | 18 | 38% |\n- **Strongest cultural fit · Best among acts Qloo could rank:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Qloo returned no rank for Durand Jones & The Indications [a1-1]. Excluding it and using the returned order, this is the optimizer's choice. Recommended: it maximizes the declared cultural-fit objective and continues in 19/23 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption:** Best policy score among cheaper bills: saves $2,500 for 6 policy points. Continues in 19/23 disruption scenarios (18 unchanged) versus 19/23 (8 unchanged) for the recommendation. Prefer it if the $2,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $15,000. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 6 policy points for that resilience.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- masego: 1) Thee Sacred Souls + Durand Jones & The Indications ($12,500, -6 pts)\n- Thee Sacred Souls: no feasible replacement keeps the other acts\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| masego | $9,500 | Quoted by agent (promoter-entered) | Confirmed (promoter-entered) | No |\n| Thee Sacred Souls | $5,500 | Promoter estimate | Assumed for planning — confirm | Yes |\n| Durand Jones & The Indications | $7,000 | Promoter estimate | Assumed for planning — confirm | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $15,000 of $15,000; $0 unallocated.\n- masego's fee can rise to $9,500 (+0%) before this bill exceeds the budget; above that the plan becomes Thee Sacred Souls + Durand Jones & The Indications.\n- Thee Sacred Souls's fee can rise to $5,500 (+0%) before this bill exceeds the budget; above that the plan becomes Thee Sacred Souls + Durand Jones & The Indications.\n- The bill survives budget cuts down to $15,000 (0% below the brief); below that the plan becomes Thee Sacred Souls + Durand Jones & The Indications at $12,500.\n- Commercial assumptions (promoter-entered, unverified): capacity 700, ticket price $55, other costs $9,000. Break-even: 437 paid tickets (62.43% of capacity). Arithmetic on assumptions, not a sales forecast.\n\n## 7. Cultural evidence and research\nFit basis: ordinal rank positions (Qloo affinity scores unavailable).\nPlanning mode: no research was executed; the open questions are listed in priority order.\n0 research action(s), 0/0 Qloo workflow calls. Stop: planning_only; stress follow-up: planning_only.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| masego | recommended | Missing: no comparable rank | Measured [a1-4] | Missing: open question | Missing: open question |\n| Thee Sacred Souls | recommended | Missing: no comparable rank | Measured [r19] | Measured [r20] | Missing: researched, no interpretable result [r12] |\n| Durand Jones & The Indications | alternative | Missing: no comparable rank | Measured [a1-5] | Missing: open question | Missing: open question |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 11; 1/2 cancellations have a clean replacement; 1 critical vulnerabilities.\n- critical: If Thee Sacred Souls becomes unavailable, no replacement satisfies the brief while keeping the other booked acts.\n- high: A 5% budget cut ($14,250) changes the plan to Thee Sacred Souls + Durand Jones & The Indications at $12,500.\n- high: Under a 10% budget cut with 15% higher quotes, no lineup satisfies the brief.\n- moderate: If masego becomes unavailable, replace with Durand Jones & The Indications: Thee Sacred Souls + Durand Jones & The Indications at $12,500 (-6 policy points, −$2,500).\n- moderate: A 10% quote increase for masego changes the plan to Thee Sacred Souls + Durand Jones & The Indications.\n- moderate: A 10% quote increase for Thee Sacred Souls changes the plan to Thee Sacred Souls + Durand Jones & The Indications.\n- moderate: masego still lacks geographic or audience-comparison evidence; their cultural justification relies mainly on rank.\n- survived: Withdrawing all Qloo evidence leaves the same bill: the choice is driven by fees and constraints, and Qloo evidence validates rather than changes it.\n\n## 9. Remaining uncertainties\n- Can every bookable candidate be ranked against Leon Bridges, Erykah Badu in Chicago? — open (ranking). Relative audience fit carries 100 policy points per slot and 9 candidates have no comparable rank. With 2 feasible lineups, the order can change the choice.\n- How does masego's audience compare with the anchor audience? — open (justification). masego is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it.\n- Does Qloo return an interpretable recent trend direction for masego? — open (justification). masego is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it.\n- How does Durand Jones & The Indications's audience compare with the anchor audience? — open (justification). Durand Jones & The Indications appears in a feasible alternative strategy; this evidence supports comparing it.\n- Does Qloo return an interpretable recent trend direction for Durand Jones & The Indications? — open (justification). Durand Jones & The Indications appears in a feasible alternative strategy; this evidence supports comparing it.\n- Does Qloo return an interpretable recent trend direction for Thundercat? — immaterial. Tested every combination of possible results: Thundercat's trends evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Is there Qloo geographic evidence for D'Angelo in Chicago? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Is there Qloo geographic evidence for Nao in Chicago? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does D'Angelo's audience compare with the anchor audience? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- How does Nao's audience compare with the anchor audience? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for D'Angelo? — blocked. D'Angelo has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for Nao? — blocked. Nao has no confirmed or assumed availability and a known fee. Qloo evidence cannot make the act bookable; request a quote first.\n- Does Qloo return an interpretable recent trend direction for Lianne La Havas? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Lianne La Havas.\n- Does Qloo return an interpretable recent trend direction for Cleo Sol? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Cleo Sol.\n- Does Qloo return an interpretable recent trend direction for Jill Scott? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Jill Scott.\n- Does Qloo return an interpretable recent trend direction for Thee Sacred Souls? — researched: uninterpretable. Saved receipt r12 returned trend data without an interpretable direction for Thee Sacred Souls.\n- Confirm: Thee Sacred Souls: fee $5,500 (estimate); availability assumed.\n- Confirm: Durand Jones & The Indications: fee $7,000 (estimate); availability assumed.\n\n## 10. Next actions\n1. [Requires human approval] Approve masego + Thee Sacred Souls as the planning bill ($15,000 against $15,000) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Thee Sacred Souls; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate masego at or below $9,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.\n4. [Recommendation] Negotiate Thee Sacred Souls at or below $5,500; above that the bill changes to Thee Sacred Souls + Durand Jones & The Indications.\n5. [Confirm with agent] Pre-clear Durand Jones & The Indications as the backup for masego: confirm availability and fee.\n6. [Recommendation] No clean backup exists for Thee Sacred Souls; quote additional candidates before committing.\n7. [Requires human approval] Decide whether to keep Durand Jones & The Indications in contention: Qloo returned no rank for this act against your reference artists [a1-1], so the recommendation is provisional. The \"best among ranked acts\" strategy shows the bill without it.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are promoter-entered inputs; their status (quoted, estimate, assumed) is shown in section 5.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r11 | rank | ok | qloo | 2026-10-24T10:06:33.479Z | sha256:d9575dbdc4e6… |\n| r13 | where_popular | ok | qloo | 2026-10-24T10:06:34.713Z | sha256:d4c3733eacbd… |\n| r12 | trends | ok | qloo | 2026-10-24T10:06:33.812Z | sha256:4a07b8dcc2dc… |\n| r14 | compare_audiences | ok | qloo | 2026-10-24T10:06:35.380Z | sha256:817923b18e15… |\n| r15 | where_popular | ok | qloo | 2026-10-24T10:06:35.990Z | sha256:69517b7c5162… |\n| r16 | compare_audiences | ok | qloo | 2026-10-24T10:06:36.612Z | sha256:7f9da15ddcf7… |\n| r17 | where_popular | ok | qloo | 2026-10-24T10:06:37.179Z | sha256:d14f0d3c61eb… |\n| r18 | compare_audiences | ok | qloo | 2026-10-24T10:06:37.812Z | sha256:2b47d4e84919… |\n| a1-4 | where_popular | ok | qloo | 2026-10-24T10:06:42.331Z | sha256:4d4ea2d9d799… |\n| r19 | where_popular | ok | qloo | 2026-10-24T10:06:38.393Z | sha256:2e17547dc0c4… |\n| r20 | compare_audiences | ok | qloo | 2026-10-24T10:06:39.049Z | sha256:3430ce2f5050… |\n| a1-3 | where_popular | ok | qloo | 2026-10-24T10:06:41.675Z | sha256:53e452d1d3d2… |\n| a1-6 | compare_audiences | ok | qloo | 2026-10-24T10:06:43.863Z | sha256:e4aaf0f4ef16… |\n| a1-5 | where_popular | ok | qloo | 2026-10-24T10:06:43.151Z | sha256:eb6ec2a5e8ea… |\nIntegrity: manifest sha256:fab9a01f94d5dd2f6d6648f341d6934c86c1dae39cd3d7559902b6da3759880f. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
         }
       }
     }
@@ -7917,9 +8064,9 @@
   "comparison": {
     "runs": [
       {
-        "id": "run_548e65bae01503af",
+        "id": "run_1ec22d01ca70d3df",
         "revision": 1,
-        "createdAt": "2026-10-24T08:01:53.465Z",
+        "createdAt": "2026-10-24T10:06:43.976Z",
         "mode": "live",
         "status": "complete",
         "names": [
@@ -7934,9 +8081,9 @@
         "budget": 22000
       },
       {
-        "id": "run_40e965ebaf24e1b0",
+        "id": "run_dc003fbf5cf469f6",
         "revision": 2,
-        "createdAt": "2026-10-24T08:01:53.584Z",
+        "createdAt": "2026-10-24T10:06:44.117Z",
         "mode": "planning",
         "status": "complete",
         "names": [
@@ -8005,7 +8152,7 @@
       ],
       [
         {
-          "label": "Strongest cultural fit",
+          "label": "Strongest cultural fit · Best among acts Qloo could rank",
           "names": [
             "masego",
             "Thee Sacred Souls"

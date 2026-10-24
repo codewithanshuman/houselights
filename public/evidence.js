@@ -7,8 +7,9 @@
     $('shock-headline').textContent = data.headline;
     $('shock-method').textContent = data.methodology;
     $('shock-limits').textContent = data.note;
-    $('shock-stats').innerHTML = `<span><strong>${e(data.summary.houselights.shocks)}</strong> deterministic shocks</span><span><strong>${e(data.summary.houselights.abstained)}</strong> explicit infeasibilities</span><span><strong>${e(data.summary.repromptedLlm.respondedTrials)}</strong> returned LLM responses</span>`;
-    $('shock-rows').innerHTML = data.rows.map(row => `<tr><td>${e(row.caseTitle)}${row.caseTitle.startsWith('SYNTHETIC')?' · synthetic':' · saved Qloo case'}</td><td>${e(row.shock)}</td><td>${e(row.houselights.status)} · ${e(row.houselights.violations)} violations</td><td>${e(row.reprompted.failures)}/${e(row.reprompted.returned)} violating responses</td></tr>`).join('');
+    const b = data.breakdown, rate = group => group.violationRate == null ? '—' : `${(group.violationRate * 100).toFixed(1)}%`;
+    $('shock-stats').innerHTML = [b.solvable, b.unsolvable, b.overall, b.notComparable].map(group => `<span><strong>${e(group.violationResponses)}/${e(group.returnedResponses)}</strong> ${e(group.label)} (${e(group.shocks)} shocks, LLM violation rate ${e(rate(group))})</span>`).join('') + `<p>${e(b.unsolvable.note)} ${e(b.overall.note)} ${e(b.notComparable.note)}</p>`;
+    $('shock-rows').innerHTML = data.rows.map(row => `<tr><td>${e(row.caseTitle)}${row.caseTitle.startsWith('SYNTHETIC')?' · synthetic':' · saved Qloo case'}</td><td>${e(row.shock)}</td><td>${e(row.houselights.status)} · ${e(row.houselights.violations)} violations</td><td>${e(row.reprompted.failures)}/${e(row.reprompted.returned)} violating responses${row.rankComparable===false?' · not comparable (incomplete Qloo ranking)':row.solvable===false?' · no feasible lineup exists':''}</td></tr>`).join('');
   }).catch(error => $('shock-headline').textContent = error.message);
   read('/api/judge/cases').then(data => {
     const cases=data.cases??[],complete=cases.filter(row=>row.recordedTrace===true);

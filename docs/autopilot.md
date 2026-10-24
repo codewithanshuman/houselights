@@ -25,6 +25,21 @@ Reused, not rebuilt:
 | Failures | Error envelopes only. | Transport exceptions and client disconnects are recorded as failures, not evidence. Runs are marked `partial` with stop reason `provider_unavailable` or `interrupted`. |
 | Packet | Markdown. | Structured packet rendered to Markdown and print-ready HTML with tables (section list below). |
 
+## Qloo affinity scores, near-ties and comparability
+
+**Fit uses real Qloo scores.** Qloo's rank tool returns an affinity score for every ranked entity. Ordinal positions turn a 0.0001 affinity gap into a full rank step: in a five-act pool, one step is 25 fit points per slot. Fit is now `(affinity − lowest) / (highest − lowest)` across the ranked pool. Ordinal position is used only when a score is missing. This applies to Autopilot, the organizer workspace and new research (`server/affinity.mjs`, `buildMemo`).
+
+**Near-ties are declared and checked.** Candidates whose scores differ by less than **0.002** form a near-tie group. The decision is re-optimized with each group given equal fit. If the bill changes, the packet raises a high-severity "near-tie decides the bill" finding and an approval action. Qloo publishes no score uncertainty, and repeated live captures returned identical scores, so the band is a declared sensitivity threshold, not a noise estimate.
+
+**What the real scores changed:**
+- *New York: compare all three methods.* Sault and Jordan Rakei differ by 0.0001. The ordinal bill Kiwanuka + Sault becomes Kiwanuka + Rakei under affinity.
+- *Recorded New York run.* After research the bill is still Kiwanuka + Sault, but it rests on the same 0.00014 near-tie. Treated as tied, it would be Kiwanuka + Rakei, $3,500 cheaper. The packet asks the organizer to decide.
+- Near-ties with no effect on the bill are disclosed for Berlin, Amsterdam and São Paulo.
+
+**Comparability.** A comparison is supported only when every bookable act has a rank from one complete Qloo query. **Mumbai** (4 of 5 ranked), **Paris** (2 of 5) and **Sydney** (5 of 6) fail this test, as does the recorded Chicago example (Qloo omitted Durand Jones & The Indications). They are excluded from the shock-study comparison, the Proof Lab's comparative LLM statistics and the 12-brief audit. Their packets say "Not comparable", and the desk's Qloo preview no longer claims a Qloo effect for them.
+
+**Frozen studies are not re-scored.** The shock cohort, the Qloo Proof Lab reports and the published simulator baselines were locked before this change, and keep their original ordinal fit. Their reports now add comparability and near-tie columns computed from the saved scores. The Proof Lab shows which published bills would differ under affinity; New York: compare is the only one.
+
 ## Integrity: what is verified and what is not
 
 `verifyRecordedAutopilot(file, { pinnedManifestDigest })` reports three separate properties:

@@ -3,12 +3,12 @@
   "kind": "recorded-provider-backed-autopilot-run",
   "caseId": "8be4d03ef4792ca9f1466983",
   "caseTitle": "New York: watch a recorded Qloo research run",
-  "capturedAt": "2026-10-24T07:42:13.552Z",
-  "completedAt": "2026-10-24T07:42:31.776Z",
-  "clockStart": 1792827733552,
+  "capturedAt": "2026-10-24T10:03:51.825Z",
+  "completedAt": "2026-10-24T10:04:00.942Z",
+  "clockStart": 1792836231825,
   "environment": {
     "node": "v24.21.0",
-    "commit": "176859c37cffd3ff7f455bd6dfbae661ca494976",
+    "commit": "e806aa072e6ffe3c0e18406686dc2c558fe35e37",
     "dirtyWorkingTree": true,
     "qlooHost": "hackathon.api.qloo.com",
     "harness": "0.1.26",
@@ -33,6 +33,68 @@
       "excludedIds": []
     },
     "briefChanged": false,
+    "fitBasis": "qloo-affinity",
+    "ties": {
+      "band": 0.002,
+      "groups": [
+        {
+          "ids": [
+            "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+            "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+            "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604"
+          ],
+          "names": [
+            "Charlotte Day Wilson",
+            "Lady Wray",
+            "St. Paul & The Broken Bones"
+          ],
+          "spread": 0.0012914859878851992,
+          "scores": [
+            0.9718436658564358,
+            0.9707438477441362,
+            0.9705521798685506
+          ],
+          "affectsBill": false,
+          "changesBill": false,
+          "tiedSelectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+          ]
+        },
+        {
+          "ids": [
+            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ],
+          "names": [
+            "Sault",
+            "Jordan Rakei"
+          ],
+          "spread": 0.00013762755487456424,
+          "scores": [
+            0.9579929179757067,
+            0.9578552904208322
+          ],
+          "affectsBill": true,
+          "changesBill": true,
+          "tiedSelectedIds": [
+            "368316C7-795A-46AF-8BBC-270F6633BE04",
+            "57478178-BBBC-49A4-8755-5D942B388316"
+          ]
+        }
+      ],
+      "restsOnNearTie": true
+    },
+    "comparability": {
+      "comparable": true,
+      "reason": null,
+      "returned": 8,
+      "requested": 8
+    },
+    "ordinalStartIds": [
+      "368316C7-795A-46AF-8BBC-270F6633BE04",
+      "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+    ],
     "budget": {
       "maxCalls": 10,
       "reserveForStress": 3,
@@ -52,16 +114,16 @@
           "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
         ],
         "feasible": true,
-        "score": 67.053571,
+        "score": 63.227009,
         "totalFee": 13500,
         "cause": null
       }
     ],
     "events": [
       {
-        "at": 58,
+        "at": 25,
         "type": "frame",
-        "text": "Brief: 2 slots for listeners of Leon Bridges in New York, $14,500 artist budget, 8 candidates. Starting decision: Michael Kiwanuka + Sault.",
+        "text": "Brief: 2 slots for listeners of Leon Bridges in New York, $14,500 artist budget, 8 candidates. Starting decision: Michael Kiwanuka + Sault. Fit uses Qloo affinity scores [r9].",
         "selectedIds": [
           "368316C7-795A-46AF-8BBC-270F6633BE04",
           "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
@@ -70,11 +132,30 @@
         "briefChanged": false
       },
       {
-        "at": 555,
+        "at": 61,
         "type": "questions",
         "phase": "decision",
-        "text": "17 evidence questions identified: 0 could change the decision, 1 test the ranking, 6 justify booked acts, 0 need more calls than the budget allows, 6 cannot change any strategy, 0 are blocked by missing commercial inputs or identities, 4 already answered by saved receipts.",
+        "text": "17 evidence questions identified: 1 could change the decision, 1 test the ranking, 5 justify booked acts, 0 need more calls than the budget allows, 6 cannot change any strategy, 0 are blocked by missing commercial inputs or identities, 4 already answered by saved receipts.",
         "questions": [
+          {
+            "id": "trends:57478178-BBBC-49A4-8755-5D942B388316",
+            "kind": "trends",
+            "itemId": "57478178-BBBC-49A4-8755-5D942B388316",
+            "name": "Jordan Rakei",
+            "tool": "trends",
+            "question": "Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
+            "tier": "material",
+            "why": "If this came back as \"rising\", the recommended decision would change from Michael Kiwanuka + Sault to Michael Kiwanuka + Jordan Rakei.",
+            "context": "primary",
+            "joint": false,
+            "challenger": [
+              "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "57478178-BBBC-49A4-8755-5D942B388316"
+            ],
+            "partners": [],
+            "callsNeeded": 1,
+            "priority": 0.5
+          },
           {
             "id": "crosscheck",
             "kind": "crosscheck",
@@ -82,7 +163,7 @@
             "tier": "robustness",
             "tool": "rank",
             "question": "Does the audience ranking hold without the New York location signal?",
-            "why": "Rank evidence decides the bill (decision margin 8.77 policy points). A second, location-free ranking of the same pool shows whether the choice depends on the city signal."
+            "why": "Rank evidence decides the bill (decision margin 1.86 policy points). A second, location-free ranking of the same pool shows whether the choice depends on the city signal."
           },
           {
             "id": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
@@ -130,6 +211,7 @@
             "tier": "justification",
             "why": "Jordan Rakei appears in a feasible alternative strategy; this evidence supports comparing it.",
             "context": "primary",
+            "callsNeeded": 1,
             "priority": 1
           },
           {
@@ -142,18 +224,7 @@
             "tier": "justification",
             "why": "Jordan Rakei appears in a feasible alternative strategy; this evidence supports comparing it.",
             "context": "primary",
-            "priority": 1
-          },
-          {
-            "id": "trends:57478178-BBBC-49A4-8755-5D942B388316",
-            "kind": "trends",
-            "itemId": "57478178-BBBC-49A4-8755-5D942B388316",
-            "name": "Jordan Rakei",
-            "tool": "trends",
-            "question": "Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
-            "tier": "justification",
-            "why": "Jordan Rakei appears in a feasible alternative strategy; this evidence supports comparing it.",
-            "context": "primary",
+            "callsNeeded": 1,
             "priority": 1
           },
           {
@@ -263,30 +334,30 @@
         ]
       },
       {
-        "at": 564,
+        "at": 65,
         "type": "action",
         "phase": "decision",
         "round": 1,
-        "questionId": "crosscheck",
-        "tier": "robustness",
-        "tool": "rank",
+        "questionId": "trends:57478178-BBBC-49A4-8755-5D942B388316",
+        "tier": "material",
+        "tool": "trends",
         "joint": false,
-        "text": "Does the audience ranking hold without the New York location signal?",
-        "why": "Rank evidence decides the bill (decision margin 8.77 policy points). A second, location-free ranking of the same pool shows whether the choice depends on the city signal."
+        "text": "Does Qloo return an interpretable recent trend direction for Jordan Rakei? (batched for Jordan Rakei, Michael Kiwanuka)",
+        "why": "If this came back as \"rising\", the recommended decision would change from Michael Kiwanuka + Sault to Michael Kiwanuka + Jordan Rakei."
       },
       {
-        "at": 8522,
+        "at": 3422,
         "type": "observation",
         "phase": "decision",
         "round": 1,
         "receiptId": "a1",
-        "tool": "rank",
+        "tool": "trends",
         "status": "ok",
         "cached": false,
-        "text": "Location-free ranking [a1] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
+        "text": "Trend data for Jordan Rakei carried no interpretable direction [a1]. Trend data for Michael Kiwanuka carried no interpretable direction [a1]."
       },
       {
-        "at": 8523,
+        "at": 3423,
         "type": "reevaluate",
         "phase": "decision",
         "round": 1,
@@ -298,10 +369,45 @@
         "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
       },
       {
-        "at": 8725,
+        "at": 3433,
         "type": "action",
         "phase": "decision",
         "round": 2,
+        "questionId": "crosscheck",
+        "tier": "robustness",
+        "tool": "rank",
+        "joint": false,
+        "text": "Does the audience ranking hold without the New York location signal?",
+        "why": "Rank evidence decides the bill (decision margin 1.86 policy points). A second, location-free ranking of the same pool shows whether the choice depends on the city signal."
+      },
+      {
+        "at": 5520,
+        "type": "observation",
+        "phase": "decision",
+        "round": 2,
+        "receiptId": "a2",
+        "tool": "rank",
+        "status": "ok",
+        "cached": false,
+        "text": "Location-free ranking [a2] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
+      },
+      {
+        "at": 5520,
+        "type": "reevaluate",
+        "phase": "decision",
+        "round": 2,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ],
+        "changed": false,
+        "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
+      },
+      {
+        "at": 5562,
+        "type": "action",
+        "phase": "decision",
+        "round": 3,
         "questionId": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
         "tier": "justification",
         "tool": "where_popular",
@@ -310,21 +416,21 @@
         "why": "Michael Kiwanuka is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it."
       },
       {
-        "at": 9777,
+        "at": 6473,
         "type": "observation",
         "phase": "decision",
-        "round": 2,
-        "receiptId": "a2",
+        "round": 3,
+        "receiptId": "a3",
         "tool": "where_popular",
         "status": "ok",
         "cached": false,
-        "text": "10 geographic rows returned for Michael Kiwanuka within New York [a2]."
+        "text": "10 geographic rows returned for Michael Kiwanuka within New York [a3]."
       },
       {
-        "at": 9777,
+        "at": 6474,
         "type": "reevaluate",
         "phase": "decision",
-        "round": 2,
+        "round": 3,
         "selectedIds": [
           "368316C7-795A-46AF-8BBC-270F6633BE04",
           "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
@@ -333,10 +439,10 @@
         "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
       },
       {
-        "at": 10023,
+        "at": 6524,
         "type": "action",
         "phase": "decision",
-        "round": 3,
+        "round": 4,
         "questionId": "comparison:368316C7-795A-46AF-8BBC-270F6633BE04",
         "tier": "justification",
         "tool": "compare_audiences",
@@ -345,53 +451,18 @@
         "why": "Michael Kiwanuka is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it."
       },
       {
-        "at": 12471,
-        "type": "observation",
-        "phase": "decision",
-        "round": 3,
-        "receiptId": "a3",
-        "tool": "compare_audiences",
-        "status": "ok",
-        "cached": false,
-        "text": "Audience comparison with the anchors returned for Michael Kiwanuka [a3]; shared tastes include Drums, Spirituals, Moderate, United States. It does not measure shared ticket buyers."
-      },
-      {
-        "at": 12472,
-        "type": "reevaluate",
-        "phase": "decision",
-        "round": 3,
-        "selectedIds": [
-          "368316C7-795A-46AF-8BBC-270F6633BE04",
-          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
-        ],
-        "changed": false,
-        "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
-      },
-      {
-        "at": 12733,
-        "type": "action",
-        "phase": "decision",
-        "round": 4,
-        "questionId": "trends:368316C7-795A-46AF-8BBC-270F6633BE04",
-        "tier": "justification",
-        "tool": "trends",
-        "joint": false,
-        "text": "Does Qloo return an interpretable recent trend direction for Michael Kiwanuka? (batched for Michael Kiwanuka, Jordan Rakei)",
-        "why": "Michael Kiwanuka is booked in the recommended bill. No result can change the selection, but the packet's cultural justification is incomplete without it."
-      },
-      {
-        "at": 16046,
+        "at": 7165,
         "type": "observation",
         "phase": "decision",
         "round": 4,
         "receiptId": "a4",
-        "tool": "trends",
+        "tool": "compare_audiences",
         "status": "ok",
         "cached": false,
-        "text": "Trend data for Michael Kiwanuka carried no interpretable direction [a4]. Trend data for Jordan Rakei carried no interpretable direction [a4]."
+        "text": "Audience comparison with the anchors returned for Michael Kiwanuka [a4]; shared tastes include Drums, Spirituals, Moderate, United States. It does not measure shared ticket buyers."
       },
       {
-        "at": 16046,
+        "at": 7166,
         "type": "reevaluate",
         "phase": "decision",
         "round": 4,
@@ -403,7 +474,7 @@
         "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
       },
       {
-        "at": 16049,
+        "at": 7203,
         "type": "action",
         "phase": "decision",
         "round": 5,
@@ -415,7 +486,7 @@
         "why": "Jordan Rakei appears in a feasible alternative strategy; this evidence supports comparing it."
       },
       {
-        "at": 16964,
+        "at": 8084,
         "type": "observation",
         "phase": "decision",
         "round": 5,
@@ -426,7 +497,7 @@
         "text": "10 geographic rows returned for Jordan Rakei within New York [a5]."
       },
       {
-        "at": 16964,
+        "at": 8084,
         "type": "reevaluate",
         "phase": "decision",
         "round": 5,
@@ -438,7 +509,7 @@
         "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
       },
       {
-        "at": 17088,
+        "at": 8139,
         "type": "action",
         "phase": "decision",
         "round": 6,
@@ -450,7 +521,7 @@
         "why": "Jordan Rakei appears in a feasible alternative strategy; this evidence supports comparing it."
       },
       {
-        "at": 17778,
+        "at": 8793,
         "type": "observation",
         "phase": "decision",
         "round": 6,
@@ -461,7 +532,7 @@
         "text": "Audience comparison with the anchors returned for Jordan Rakei [a6]; shared tastes include Gospel, Moderate, Drums, Spirituals. It does not measure shared ticket buyers."
       },
       {
-        "at": 17778,
+        "at": 8793,
         "type": "reevaluate",
         "phase": "decision",
         "round": 6,
@@ -473,14 +544,14 @@
         "text": "Re-optimized: Michael Kiwanuka + Sault remains the best feasible bill."
       },
       {
-        "at": 17886,
+        "at": 8829,
         "type": "stop",
         "phase": "decision",
         "reason": "exhausted",
         "text": "Stopped: every decision-relevant question was attempted. 2 answer(s) returned errors or no usable evidence; those gaps stay open and nothing was substituted."
       },
       {
-        "at": 17969,
+        "at": 8886,
         "type": "strategies",
         "text": "2 distinct feasible strategies: Strongest cultural fit (Michael Kiwanuka + Sault); Lower-cost alternative · Most robust under disruption · Preferred without the city signal (Michael Kiwanuka + Jordan Rakei).",
         "strategyIds": [
@@ -489,27 +560,64 @@
         ]
       },
       {
-        "at": 17970,
+        "at": 8886,
         "type": "stress",
         "text": "15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.",
         "vulnerabilities": 5
       },
       {
-        "at": 17996,
+        "at": 8912,
         "type": "stop",
         "phase": "stress-followup",
         "reason": "not_needed",
         "text": "Stress tests named 3 act(s) across fallback bills; none has an open, researchable evidence gap, so no follow-up call is needed."
       },
       {
-        "at": 18157,
+        "at": 9047,
         "type": "packet",
-        "text": "Decision packet ready: Michael Kiwanuka + Sault; 10 next actions."
+        "text": "Decision packet ready: Michael Kiwanuka + Sault; 11 next actions."
       }
     ],
     "receipts": [
       {
         "id": "a1",
+        "tool": "trends",
+        "args": {
+          "entity_type": "artist",
+          "entities": [
+            "57478178-BBBC-49A4-8755-5D942B388316",
+            "368316C7-795A-46AF-8BBC-270F6633BE04"
+          ],
+          "start_date": "2026-04-27",
+          "end_date": "2026-10-24"
+        },
+        "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
+        "status": "ok",
+        "source": "qloo",
+        "cached": false,
+        "attempts": 1,
+        "ms": 3353,
+        "fetchedAt": "2026-10-24T10:03:55.244Z",
+        "originalDigest": "sha256:04761ce913a7507965b869c4eddf7c0f6f9d27ea98ac0822d627d2135d97260b",
+        "evidence": {
+          "kind": "trends",
+          "total": 2,
+          "rows": [
+            {
+              "id": "57478178-BBBC-49A4-8755-5D942B388316",
+              "name": "Jordan Rakei",
+              "direction": "unknown"
+            },
+            {
+              "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+              "name": "Michael Kiwanuka",
+              "direction": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "a2",
         "tool": "rank",
         "args": {
           "options": [
@@ -532,9 +640,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 7953,
-        "fetchedAt": "2026-10-24T07:42:22.076Z",
-        "originalDigest": "sha256:699d146b414e6da6b32cc61e2b1dd180c96055336265ee37e3fb17be9765fc82",
+        "ms": 2082,
+        "fetchedAt": "2026-10-24T10:03:57.344Z",
+        "originalDigest": "sha256:b027f4508a50fbb6c73c92cdf64e6902406e08323d4bb55cb3d208759d6badc1",
         "evidence": {
           "kind": "rank",
           "total": 8,
@@ -591,7 +699,7 @@
         }
       },
       {
-        "id": "a2",
+        "id": "a3",
         "tool": "where_popular",
         "args": {
           "entity": "368316C7-795A-46AF-8BBC-270F6633BE04",
@@ -604,9 +712,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 1049,
-        "fetchedAt": "2026-10-24T07:42:23.334Z",
-        "originalDigest": "sha256:f9d83468bcf856bbcf5fc9f6e6f340cb03aa95769a8355963bb4fc77e1bcb2ec",
+        "ms": 910,
+        "fetchedAt": "2026-10-24T10:03:58.299Z",
+        "originalDigest": "sha256:3d0ee72d9226c5d854e58ef26ac36d7b4a04be6ab28f6d8cb6f6db32fd8b37fc",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -655,7 +763,7 @@
         }
       },
       {
-        "id": "a3",
+        "id": "a4",
         "tool": "compare_audiences",
         "args": {
           "group_a": [
@@ -672,9 +780,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 2446,
-        "fetchedAt": "2026-10-24T07:42:26.028Z",
-        "originalDigest": "sha256:279517caa75307e7bdb185227f7060997ce84eb2e67857dc623cb9b65f994cdc",
+        "ms": 640,
+        "fetchedAt": "2026-10-24T10:03:58.990Z",
+        "originalDigest": "sha256:c673af97d3b12ce8e443bcd4fcefdc7b3c8a8d9b41c80f3f72c59b6988fd8a60",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -698,43 +806,6 @@
         }
       },
       {
-        "id": "a4",
-        "tool": "trends",
-        "args": {
-          "entity_type": "artist",
-          "entities": [
-            "368316C7-795A-46AF-8BBC-270F6633BE04",
-            "57478178-BBBC-49A4-8755-5D942B388316"
-          ],
-          "start_date": "2026-04-27",
-          "end_date": "2026-10-24"
-        },
-        "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for Michael Kiwanuka?",
-        "status": "ok",
-        "source": "qloo",
-        "cached": false,
-        "attempts": 1,
-        "ms": 3311,
-        "fetchedAt": "2026-10-24T07:42:29.604Z",
-        "originalDigest": "sha256:cfb8bf0a83c5c14c3cefa3ba7d71df016606007a857589e994b00647029810e5",
-        "evidence": {
-          "kind": "trends",
-          "total": 2,
-          "rows": [
-            {
-              "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
-              "name": "Michael Kiwanuka",
-              "direction": "unknown"
-            },
-            {
-              "id": "57478178-BBBC-49A4-8755-5D942B388316",
-              "name": "Jordan Rakei",
-              "direction": "unknown"
-            }
-          ]
-        }
-      },
-      {
         "id": "a5",
         "tool": "where_popular",
         "args": {
@@ -748,9 +819,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 913,
-        "fetchedAt": "2026-10-24T07:42:30.522Z",
-        "originalDigest": "sha256:72e1c9969c281f2a86fdb09dd5df2591ff027e6fe7338b21360315084d067d1c",
+        "ms": 880,
+        "fetchedAt": "2026-10-24T10:03:59.910Z",
+        "originalDigest": "sha256:5ea5bf2b1cad51c3546a3f5fc678a0fae0aeb4878d2cf5a47f9480b24af2da10",
         "evidence": {
           "kind": "where_popular",
           "total": 10,
@@ -816,9 +887,9 @@
         "source": "qloo",
         "cached": false,
         "attempts": 1,
-        "ms": 689,
-        "fetchedAt": "2026-10-24T07:42:31.336Z",
-        "originalDigest": "sha256:ca627b94370a48bc3527ee71bfd9f3251d54d8e88269f79d6e5a6123c0d1e404",
+        "ms": 646,
+        "fetchedAt": "2026-10-24T10:04:00.611Z",
+        "originalDigest": "sha256:9b916d483d7b42603383b866da939fbc70fcb5cca1830938af29f4ad2aa3ceea",
         "evidence": {
           "kind": "compare_audiences",
           "total": 0,
@@ -846,15 +917,20 @@
       {
         "round": 1,
         "phase": "decision",
-        "questionId": "crosscheck",
+        "questionId": "trends:57478178-BBBC-49A4-8755-5D942B388316",
         "receiptId": "a1",
-        "tool": "rank",
+        "tool": "trends",
         "status": "ok",
         "results": [
           {
-            "questionId": "crosscheck",
-            "state": "resolved",
-            "text": "Location-free ranking [a1] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
+            "questionId": "trends:57478178-BBBC-49A4-8755-5D942B388316",
+            "state": "uninterpretable",
+            "text": "Trend data for Jordan Rakei carried no interpretable direction [a1]."
+          },
+          {
+            "questionId": "trends:368316C7-795A-46AF-8BBC-270F6633BE04",
+            "state": "uninterpretable",
+            "text": "Trend data for Michael Kiwanuka carried no interpretable direction [a1]."
           }
         ],
         "decisionChanged": false
@@ -862,15 +938,15 @@
       {
         "round": 2,
         "phase": "decision",
-        "questionId": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
+        "questionId": "crosscheck",
         "receiptId": "a2",
-        "tool": "where_popular",
+        "tool": "rank",
         "status": "ok",
         "results": [
           {
-            "questionId": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
+            "questionId": "crosscheck",
             "state": "resolved",
-            "text": "10 geographic rows returned for Michael Kiwanuka within New York [a2]."
+            "text": "Location-free ranking [a2] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
           }
         ],
         "decisionChanged": false
@@ -878,15 +954,15 @@
       {
         "round": 3,
         "phase": "decision",
-        "questionId": "comparison:368316C7-795A-46AF-8BBC-270F6633BE04",
+        "questionId": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
         "receiptId": "a3",
-        "tool": "compare_audiences",
+        "tool": "where_popular",
         "status": "ok",
         "results": [
           {
-            "questionId": "comparison:368316C7-795A-46AF-8BBC-270F6633BE04",
+            "questionId": "local:368316C7-795A-46AF-8BBC-270F6633BE04",
             "state": "resolved",
-            "text": "Audience comparison with the anchors returned for Michael Kiwanuka [a3]; shared tastes include Drums, Spirituals, Moderate, United States. It does not measure shared ticket buyers."
+            "text": "10 geographic rows returned for Michael Kiwanuka within New York [a3]."
           }
         ],
         "decisionChanged": false
@@ -894,20 +970,15 @@
       {
         "round": 4,
         "phase": "decision",
-        "questionId": "trends:368316C7-795A-46AF-8BBC-270F6633BE04",
+        "questionId": "comparison:368316C7-795A-46AF-8BBC-270F6633BE04",
         "receiptId": "a4",
-        "tool": "trends",
+        "tool": "compare_audiences",
         "status": "ok",
         "results": [
           {
-            "questionId": "trends:368316C7-795A-46AF-8BBC-270F6633BE04",
-            "state": "uninterpretable",
-            "text": "Trend data for Michael Kiwanuka carried no interpretable direction [a4]."
-          },
-          {
-            "questionId": "trends:57478178-BBBC-49A4-8755-5D942B388316",
-            "state": "uninterpretable",
-            "text": "Trend data for Jordan Rakei carried no interpretable direction [a4]."
+            "questionId": "comparison:368316C7-795A-46AF-8BBC-270F6633BE04",
+            "state": "resolved",
+            "text": "Audience comparison with the anchors returned for Michael Kiwanuka [a4]; shared tastes include Drums, Spirituals, Moderate, United States. It does not measure shared ticket buyers."
           }
         ],
         "decisionChanged": false
@@ -1016,7 +1087,7 @@
         "tier": "done",
         "tool": "rank",
         "question": "Does the audience ranking hold without the New York location signal?",
-        "why": "Location-free ranking [a1] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
+        "why": "Location-free ranking [a2] would select Michael Kiwanuka + Jordan Rakei instead; the recommendation depends on the New York location signal."
       },
       {
         "id": "trends:368316C7-795A-46AF-8BBC-270F6633BE04",
@@ -1026,8 +1097,8 @@
         "tool": "trends",
         "question": "Does Qloo return an interpretable recent trend direction for Michael Kiwanuka?",
         "tier": "done",
-        "why": "Trend data for Michael Kiwanuka carried no interpretable direction [a4].",
-        "receiptId": "a4"
+        "why": "Trend data for Michael Kiwanuka carried no interpretable direction [a1].",
+        "receiptId": "a1"
       },
       {
         "id": "trends:57478178-BBBC-49A4-8755-5D942B388316",
@@ -1037,8 +1108,8 @@
         "tool": "trends",
         "question": "Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
         "tier": "done",
-        "why": "Trend data for Jordan Rakei carried no interpretable direction [a4].",
-        "receiptId": "a4"
+        "why": "Trend data for Jordan Rakei carried no interpretable direction [a1].",
+        "receiptId": "a1"
       },
       {
         "id": "trends:57970D7A-5D86-401A-8BE4-961DAEC943E4",
@@ -1100,7 +1171,7 @@
           ],
           "totalFee": 13500,
           "headroom": 1000,
-          "score": 68.678571,
+          "score": 64.852009,
           "scoreGap": 0,
           "feeDelta": 0,
           "robustness": {
@@ -1109,7 +1180,7 @@
             "failed": 0,
             "continued": 27,
             "total": 27,
-            "worstScore": 32.96
+            "worstScore": 32.22
           },
           "cancellationCoverage": {
             "covered": 2,
@@ -1153,8 +1224,8 @@
           ],
           "totalFee": 10000,
           "headroom": 4500,
-          "score": 61.535714,
-          "scoreGap": 7.14,
+          "score": 64.617694,
+          "scoreGap": 0.23,
           "feeDelta": -3500,
           "robustness": {
             "held": 25,
@@ -1162,7 +1233,7 @@
             "failed": 0,
             "continued": 27,
             "total": 27,
-            "worstScore": 32.96
+            "worstScore": 32.22
           },
           "cancellationCoverage": {
             "covered": 2,
@@ -1189,8 +1260,8 @@
             }
           ],
           "evidenceCompleteness": 0.75,
-          "rationale": "Best policy score among cheaper bills: saves $3,500 for 7.14 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a1].",
-          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 7.14 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
+          "rationale": "Best policy score among cheaper bills: saves $3,500 for 0.23 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a2].",
+          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.23 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
         }
       ],
       "robustNote": null,
@@ -1323,7 +1394,7 @@
                 "57478178-BBBC-49A4-8755-5D942B388316"
               ],
               "totalFee": 10500,
-              "score": 32.964286
+              "score": 32.219703
             },
             {
               "replacementIds": [
@@ -1334,7 +1405,7 @@
                 "AC007829-3D79-438E-9F02-11228C82AD38"
               ],
               "totalFee": 12500,
-              "score": 17.053571
+              "score": 13.227009
             }
           ]
         },
@@ -1350,7 +1421,7 @@
                 "57478178-BBBC-49A4-8755-5D942B388316"
               ],
               "totalFee": 10000,
-              "score": 61.535714
+              "score": 64.617694
             },
             {
               "replacementIds": [
@@ -1373,7 +1444,7 @@
             "AC007829-3D79-438E-9F02-11228C82AD38"
           ],
           "totalFee": 9000,
-          "score": 9.910714
+          "score": 12.992694
         },
         {
           "selectedIds": [
@@ -1381,7 +1452,7 @@
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "totalFee": 10000,
-          "score": 61.535714
+          "score": 64.617694
         },
         {
           "selectedIds": [
@@ -1389,12 +1460,12 @@
             "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
           ],
           "totalFee": 13500,
-          "score": 68.678571
+          "score": 64.852009
         }
       ],
       "margin": {
         "feasibleCount": 8,
-        "points": 7.14,
+        "points": 0.23,
         "runnerUpIds": [
           "368316C7-795A-46AF-8BBC-270F6633BE04",
           "57478178-BBBC-49A4-8755-5D942B388316"
@@ -1581,7 +1652,7 @@
           "replacementIds": [
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
-          "text": "If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-35.71 policy points, −$3,000)."
+          "text": "If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-32.63 policy points, −$3,000)."
         },
         {
           "type": "budget_cut",
@@ -1591,12 +1662,12 @@
         {
           "type": "cultural_specification",
           "severity": "high",
-          "receiptId": "a1",
+          "receiptId": "a2",
           "selectedIds": [
             "368316C7-795A-46AF-8BBC-270F6633BE04",
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
-          "text": "Without the New York location signal, Qloo's ranking [a1] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill."
+          "text": "Without the New York location signal, Qloo's ranking [a2] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill."
         },
         {
           "type": "missing_evidence",
@@ -1610,7 +1681,7 @@
           "replacementIds": [
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
-          "text": "If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-7.14 policy points, −$3,500)."
+          "text": "If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-0.23 policy points, −$3,500)."
         }
       ],
       "breakpoints": [
@@ -1720,8 +1791,8 @@
         "cancellationCoverage": 2,
         "cancellationCount": 2,
         "criticalDependencyCount": 0,
-        "feasibleSlateCount": 8,
-        "robustSlateDiffersFromBaseline": true
+        "feasibleSlateCount": null,
+        "robustSlateDiffersFromBaseline": false
       },
       "cancellations": [
         {
@@ -1735,7 +1806,7 @@
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "totalFee": 10500,
-          "scoreDelta": -35.71
+          "scoreDelta": -32.63
         },
         {
           "canceledId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
@@ -1748,7 +1819,7 @@
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "totalFee": 10000,
-          "scoreDelta": -7.14
+          "scoreDelta": -0.23
         }
       ],
       "budgetCuts": [
@@ -1937,7 +2008,7 @@
       ]
     },
     "crossCheck": {
-      "receiptId": "a1",
+      "receiptId": "a2",
       "complete": true,
       "agrees": false,
       "selectedIds": [
@@ -1982,11 +2053,11 @@
             "r9"
           ],
           "local": [
-            "a2"
+            "a3"
           ],
           "trends": [],
           "comparison": [
-            "a3"
+            "a4"
           ]
         },
         "terms": {
@@ -1998,13 +2069,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9770222376244421,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
         "name": "Charlotte Day Wilson",
         "found": true,
-        "fit": 0.8571428571428572,
+        "fit": 0.8236665070722894,
         "rank": 2,
         "of": 8,
         "local": "yes",
@@ -2038,13 +2111,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9718436658564358,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
         "name": "Lady Wray",
         "found": true,
-        "fit": 0.7142857142857143,
+        "fit": 0.7862170368293383,
         "rank": 3,
         "of": 8,
         "local": "yes",
@@ -2078,13 +2153,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9707438477441362,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
         "name": "St. Paul & The Broken Bones",
         "found": true,
-        "fit": 0.5714285714285714,
+        "fit": 0.7796906300326114,
         "rank": 4,
         "of": 8,
         "local": "yes",
@@ -2118,13 +2195,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9705521798685506,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
         "name": "Sault",
         "found": false,
-        "fit": 0.4285714285714286,
+        "fit": 0.352040185591314,
         "rank": 5,
         "of": 8,
         "local": "yes",
@@ -2158,13 +2237,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9579929179757067,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "57478178-BBBC-49A4-8755-5D942B388316",
         "name": "Jordan Rakei",
         "found": false,
-        "fit": 0.2857142857142857,
+        "fit": 0.3473538843172708,
         "rank": 6,
         "of": 8,
         "local": "yes",
@@ -2196,13 +2277,15 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9578552904208322,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
         "name": "Khruangbin",
         "found": false,
-        "fit": 0.1428571428571429,
+        "fit": 0.19527304206518495,
         "rank": 7,
         "of": 8,
         "local": "no data",
@@ -2230,7 +2313,9 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9533889718385528,
+        "fitBasis": "qloo-affinity"
       },
       {
         "id": "AC007829-3D79-438E-9F02-11228C82AD38",
@@ -2264,11 +2349,13 @@
           "complete": true,
           "returned": 8,
           "requested": 8
-        }
+        },
+        "affinity": 0.9476541823444999,
+        "fitBasis": "qloo-affinity"
       }
     ],
     "interpretation": "Deterministic research policy over the exact optimizer. Policy points are an internal objective, not ticket demand, attendance or revenue. Fees and availability are buyer inputs.",
-    "digest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e",
+    "digest": "sha256:aa21aaed3b0922be98a8c7ed6009e60534dd7f232044061cd3e8fe09dc5257e8",
     "integrity": {
       "version": "2.0",
       "algorithm": "sha256",
@@ -2276,33 +2363,33 @@
       "receipts": [
         {
           "id": "a1",
-          "contentDigest": "sha256:755b966f9453a804348ce28dfd4af01b65c5d84377f49935e4c0be07f40f9712",
-          "originalDigest": "sha256:699d146b414e6da6b32cc61e2b1dd180c96055336265ee37e3fb17be9765fc82"
+          "contentDigest": "sha256:24aa691068b87d674f1d9d6bd29028eb13501a27d7ef79c3e3566950b743929b",
+          "originalDigest": "sha256:04761ce913a7507965b869c4eddf7c0f6f9d27ea98ac0822d627d2135d97260b"
         },
         {
           "id": "a2",
-          "contentDigest": "sha256:f4fe18907cfaec2900e232d35e618ea6fa58cbebd44c2b1ccd8676bc4ac13928",
-          "originalDigest": "sha256:f9d83468bcf856bbcf5fc9f6e6f340cb03aa95769a8355963bb4fc77e1bcb2ec"
+          "contentDigest": "sha256:4bcc36d6eeaff2c61f0ad2e58933c3f304c9e3d718e24fd10a7ed8b7d1418236",
+          "originalDigest": "sha256:b027f4508a50fbb6c73c92cdf64e6902406e08323d4bb55cb3d208759d6badc1"
         },
         {
           "id": "a3",
-          "contentDigest": "sha256:c90870f188b8573319c22489e0c1c7ed110f7fb9514643730316d596a5fee8f5",
-          "originalDigest": "sha256:279517caa75307e7bdb185227f7060997ce84eb2e67857dc623cb9b65f994cdc"
+          "contentDigest": "sha256:bffb9385f57568af008334c5ed7fe7a2386ff63fed4e4917238f18911f9bc2dd",
+          "originalDigest": "sha256:3d0ee72d9226c5d854e58ef26ac36d7b4a04be6ab28f6d8cb6f6db32fd8b37fc"
         },
         {
           "id": "a4",
-          "contentDigest": "sha256:f18570c268ea75ef2a578dc25b10b5faaa7377ea6ae6c04fbbd686c2d67dad3c",
-          "originalDigest": "sha256:cfb8bf0a83c5c14c3cefa3ba7d71df016606007a857589e994b00647029810e5"
+          "contentDigest": "sha256:cf693d4e1e3b33c765d997c44791839711efb8b7bea13bec6c3092cdf89b4209",
+          "originalDigest": "sha256:c673af97d3b12ce8e443bcd4fcefdc7b3c8a8d9b41c80f3f72c59b6988fd8a60"
         },
         {
           "id": "a5",
-          "contentDigest": "sha256:f71c7582e9794dea1f458f38bb8965bc80b4a11b22ba07328df6422570f7403d",
-          "originalDigest": "sha256:72e1c9969c281f2a86fdb09dd5df2591ff027e6fe7338b21360315084d067d1c"
+          "contentDigest": "sha256:e67aa251b882b2b4cab509bc2bc07ea6777e0b965a1bbc77edd9570e80721b70",
+          "originalDigest": "sha256:5ea5bf2b1cad51c3546a3f5fc678a0fae0aeb4878d2cf5a47f9480b24af2da10"
         },
         {
           "id": "a6",
-          "contentDigest": "sha256:19f3518f3580ae3b0eab008a3e835b674cf6c65fcce5c17c6238485f0a972d4f",
-          "originalDigest": "sha256:ca627b94370a48bc3527ee71bfd9f3251d54d8e88269f79d6e5a6123c0d1e404"
+          "contentDigest": "sha256:8aa43cd1e5e7fbefe5216c8893baa8010d3b497d93832744343e9b3442c679fb",
+          "originalDigest": "sha256:9b916d483d7b42603383b866da939fbc70fcb5cca1830938af29f4ad2aa3ceea"
         }
       ],
       "sourceReceipts": [
@@ -2379,17 +2466,17 @@
           "contentDigest": "sha256:b5c45f9b9f5804b82e98b1e4b86fb8a4e32d6320baa62ca43e48cf3d9e0e62a3"
         }
       ],
-      "decisionInputsDigest": "sha256:91724058b218d4a59a5e7a277be13b89cde1e6074be0c9cde4127ad08052dc76",
-      "decisionDigest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e",
+      "decisionInputsDigest": "sha256:5991d3cf0ba356be37da4693591c5fb1327644548944a003bc62e7df20e3ec56",
+      "decisionDigest": "sha256:aa21aaed3b0922be98a8c7ed6009e60534dd7f232044061cd3e8fe09dc5257e8",
       "providerProvenance": "Not cryptographically verifiable: Qloo responses are unsigned. originalDigest values are application hashes computed when each response was received.",
-      "manifestDigest": "sha256:06ca905464d63eb7166f96f545ef417b5b253e9a8e59b056f554b9889401fe65"
+      "manifestDigest": "sha256:6fc210099402fd98ae6d2873b33aba3e066dde9b94f3ca69ee675118a635175c"
     },
     "packet": {
       "version": "2.0",
       "title": "New York booking decision",
       "mode": "live",
       "status": "complete",
-      "generatedAt": "2026-10-24T07:42:31.705Z",
+      "generatedAt": "2026-10-24T10:04:00.865Z",
       "currency": "USD",
       "brief": {
         "name": null,
@@ -2414,6 +2501,9 @@
         "briefChanged": false
       },
       "recommendation": {
+        "provisional": false,
+        "provisionalReason": null,
+        "restsOnNearTie": true,
         "strategyId": "cultural-fit",
         "selectedIds": [
           "368316C7-795A-46AF-8BBC-270F6633BE04",
@@ -2425,14 +2515,14 @@
         ],
         "totalFee": 13500,
         "headroom": 1000,
-        "policyScore": 68.68,
+        "policyScore": 64.85,
         "robustness": {
           "held": 15,
           "repaired": 12,
           "failed": 0,
           "continued": 27,
           "total": 27,
-          "worstScore": 32.96
+          "worstScore": 32.22
         },
         "status": "optimal",
         "why": "Recommended: it maximizes the declared cultural-fit objective and continues in 27/27 disruption scenarios.",
@@ -2447,7 +2537,7 @@
             "needsConfirmation": true,
             "claims": [
               {
-                "text": "Ranks 1 of 8 candidates against Leon Bridges in New York. Relative order, not demand.",
+                "text": "Qloo affinity 0.9770 with Leon Bridges in New York (1 of 8 candidates). Relative cultural fit, not demand.",
                 "receipts": [
                   {
                     "id": "r9",
@@ -2463,11 +2553,11 @@
                 "text": "Qloo returned geographic popularity rows within New York.",
                 "receipts": [
                   {
-                    "id": "a2",
+                    "id": "a3",
                     "tool": "where_popular",
                     "status": "ok",
                     "source": "qloo",
-                    "fetchedAt": "2026-10-24T07:42:23.334Z",
+                    "fetchedAt": "2026-10-24T10:03:58.299Z",
                     "new": true
                   }
                 ]
@@ -2476,11 +2566,11 @@
                 "text": "An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers.",
                 "receipts": [
                   {
-                    "id": "a3",
+                    "id": "a4",
                     "tool": "compare_audiences",
                     "status": "ok",
                     "source": "qloo",
-                    "fetchedAt": "2026-10-24T07:42:26.028Z",
+                    "fetchedAt": "2026-10-24T10:03:58.990Z",
                     "new": true
                   }
                 ]
@@ -2497,7 +2587,7 @@
             "needsConfirmation": true,
             "claims": [
               {
-                "text": "Ranks 5 of 8 candidates against Leon Bridges in New York. Relative order, not demand.",
+                "text": "Qloo affinity 0.9580 with Leon Bridges in New York (5 of 8 candidates). Relative cultural fit, not demand.",
                 "receipts": [
                   {
                     "id": "r9",
@@ -2553,7 +2643,7 @@
             "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
           ],
           "totalFee": 13500,
-          "score": 68.678571,
+          "score": 64.852009,
           "scoreGap": 0,
           "feeDelta": 0,
           "robustness": {
@@ -2562,7 +2652,7 @@
             "failed": 0,
             "continued": 27,
             "total": 27,
-            "worstScore": 32.96
+            "worstScore": 32.22
           },
           "cancellationCoverage": {
             "covered": 2,
@@ -2584,8 +2674,8 @@
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "totalFee": 10000,
-          "score": 61.535714,
-          "scoreGap": 7.14,
+          "score": 64.617694,
+          "scoreGap": 0.23,
           "feeDelta": -3500,
           "robustness": {
             "held": 25,
@@ -2593,15 +2683,15 @@
             "failed": 0,
             "continued": 27,
             "total": 27,
-            "worstScore": 32.96
+            "worstScore": 32.22
           },
           "cancellationCoverage": {
             "covered": 2,
             "total": 2
           },
           "evidenceCompleteness": 0.75,
-          "rationale": "Best policy score among cheaper bills: saves $3,500 for 7.14 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a1].",
-          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 7.14 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
+          "rationale": "Best policy score among cheaper bills: saves $3,500 for 0.23 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a2].",
+          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.23 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
         }
       ],
       "alternatives": [
@@ -2617,7 +2707,7 @@
             "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "totalFee": 10000,
-          "scoreGap": 7.14,
+          "scoreGap": 0.23,
           "feeDelta": -3500,
           "robustness": {
             "held": 25,
@@ -2625,10 +2715,10 @@
             "failed": 0,
             "continued": 27,
             "total": 27,
-            "worstScore": 32.96
+            "worstScore": 32.22
           },
-          "tradeoff": "Best policy score among cheaper bills: saves $3,500 for 7.14 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a1].",
-          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 7.14 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
+          "tradeoff": "Best policy score among cheaper bills: saves $3,500 for 0.23 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a2].",
+          "preferWhen": "Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.23 policy points for that resilience. Prefer it if the audience is not mainly local to New York."
         }
       ],
       "robustNote": null,
@@ -2652,7 +2742,7 @@
                 "57478178-BBBC-49A4-8755-5D942B388316"
               ],
               "totalFee": 10500,
-              "score": 32.964286,
+              "score": 32.219703,
               "names": [
                 "Sault",
                 "Jordan Rakei"
@@ -2667,7 +2757,7 @@
                 "AC007829-3D79-438E-9F02-11228C82AD38"
               ],
               "totalFee": 12500,
-              "score": 17.053571,
+              "score": 13.227009,
               "names": [
                 "Sault",
                 "Hiatus Kaiyote"
@@ -2688,7 +2778,7 @@
                 "57478178-BBBC-49A4-8755-5D942B388316"
               ],
               "totalFee": 10000,
-              "score": 61.535714,
+              "score": 64.617694,
               "names": [
                 "Michael Kiwanuka",
                 "Jordan Rakei"
@@ -2846,9 +2936,9 @@
           "followup": "not_needed"
         },
         "decisionChanged": false,
-        "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 7.14 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.",
+        "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 0.23 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.",
         "crossCheck": {
-          "receiptId": "a1",
+          "receiptId": "a2",
           "complete": true,
           "agrees": false,
           "selectedIds": [
@@ -2881,7 +2971,7 @@
           "role": "recommended",
           "cells": {
             "rank": {
-              "label": "Measured: 1/8",
+              "label": "Measured: affinity 0.9770, 1/8",
               "receipts": [
                 "r9"
               ]
@@ -2889,19 +2979,19 @@
             "local": {
               "label": "Measured",
               "receipts": [
-                "a2"
+                "a3"
               ]
             },
             "comparison": {
               "label": "Measured",
               "receipts": [
-                "a3"
+                "a4"
               ]
             },
             "trends": {
               "label": "Missing: researched, no interpretable result",
               "receipts": [
-                "a4"
+                "a1"
               ]
             }
           }
@@ -2912,7 +3002,7 @@
           "role": "recommended",
           "cells": {
             "rank": {
-              "label": "Measured: 5/8",
+              "label": "Measured: affinity 0.9580, 5/8",
               "receipts": [
                 "r9"
               ]
@@ -2943,7 +3033,7 @@
           "role": "alternative",
           "cells": {
             "rank": {
-              "label": "Measured: 6/8",
+              "label": "Measured: affinity 0.9579, 6/8",
               "receipts": [
                 "r9"
               ]
@@ -2963,7 +3053,7 @@
             "trends": {
               "label": "Missing: researched, no interpretable result",
               "receipts": [
-                "a4"
+                "a1"
               ]
             }
           }
@@ -2974,7 +3064,7 @@
           "role": "backup",
           "cells": {
             "rank": {
-              "label": "Measured: 8/8",
+              "label": "Measured: affinity 0.9477, 8/8",
               "receipts": [
                 "r9"
               ]
@@ -3035,13 +3125,13 @@
           "question": "Does Qloo return an interpretable recent trend direction for Michael Kiwanuka?",
           "artistId": "368316C7-795A-46AF-8BBC-270F6633BE04",
           "status": "researched: uninterpretable",
-          "why": "Trend data for Michael Kiwanuka carried no interpretable direction [a4]."
+          "why": "Trend data for Michael Kiwanuka carried no interpretable direction [a1]."
         },
         {
           "question": "Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
           "artistId": "57478178-BBBC-49A4-8755-5D942B388316",
           "status": "researched: uninterpretable",
-          "why": "Trend data for Jordan Rakei carried no interpretable direction [a4]."
+          "why": "Trend data for Jordan Rakei carried no interpretable direction [a1]."
         },
         {
           "question": "Does Qloo return an interpretable recent trend direction for Charlotte Day Wilson?",
@@ -3068,9 +3158,48 @@
           "why": "Saved receipt r10 returned trend data without an interpretable direction for Lady Wray."
         }
       ],
+      "fitBasis": "qloo-affinity",
+      "comparability": {
+        "comparable": true,
+        "reason": null,
+        "returned": 8,
+        "requested": 8
+      },
+      "ordinalComparison": null,
+      "ties": {
+        "band": 0.002,
+        "restsOnNearTie": true,
+        "groups": [
+          {
+            "names": [
+              "Sault",
+              "Jordan Rakei"
+            ],
+            "spread": 0.00013762755487456424,
+            "scores": [
+              0.9579929179757067,
+              0.9578552904208322
+            ],
+            "changesBill": true,
+            "tiedNames": [
+              "Michael Kiwanuka",
+              "Jordan Rakei"
+            ]
+          }
+        ]
+      },
       "robustness": {
         "summary": "15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.",
         "vulnerabilities": [
+          {
+            "type": "near_tie",
+            "severity": "high",
+            "ids": [
+              "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+              "57478178-BBBC-49A4-8755-5D942B388316"
+            ],
+            "text": "The bill rests on a near-tie: Sault, Jordan Rakei are within 0.0001 Qloo affinity of each other (band 0.002). Treating them as tied gives Michael Kiwanuka + Jordan Rakei."
+          },
           {
             "type": "artist_unavailable",
             "severity": "high",
@@ -3078,7 +3207,7 @@
             "replacementIds": [
               "57478178-BBBC-49A4-8755-5D942B388316"
             ],
-            "text": "If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-35.71 policy points, −$3,000)."
+            "text": "If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-32.63 policy points, −$3,000)."
           },
           {
             "type": "budget_cut",
@@ -3088,12 +3217,12 @@
           {
             "type": "cultural_specification",
             "severity": "high",
-            "receiptId": "a1",
+            "receiptId": "a2",
             "selectedIds": [
               "368316C7-795A-46AF-8BBC-270F6633BE04",
               "57478178-BBBC-49A4-8755-5D942B388316"
             ],
-            "text": "Without the New York location signal, Qloo's ranking [a1] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill."
+            "text": "Without the New York location signal, Qloo's ranking [a2] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill."
           },
           {
             "type": "missing_evidence",
@@ -3107,7 +3236,7 @@
             "replacementIds": [
               "57478178-BBBC-49A4-8755-5D942B388316"
             ],
-            "text": "If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-7.14 policy points, −$3,500)."
+            "text": "If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-0.23 policy points, −$3,500)."
           }
         ],
         "breakpoints": [
@@ -3282,20 +3411,25 @@
         {
           "priority": 7,
           "type": "approval",
-          "text": "Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a1] supports Michael Kiwanuka + Jordan Rakei."
+          "text": "Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a2] supports Michael Kiwanuka + Jordan Rakei."
         },
         {
           "priority": 8,
-          "type": "recommendation",
-          "text": "Request a quote from Charlotte Day Wilson (rank 2/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Charlotte Day Wilson. This is a hypothetical ceiling, not a quote."
+          "type": "approval",
+          "text": "Choose between near-tied acts: The bill rests on a near-tie: Sault, Jordan Rakei are within 0.0001 Qloo affinity of each other (band 0.002). Treating them as tied gives Michael Kiwanuka + Jordan Rakei. Qloo scores cannot separate them; decide on fee, availability or programming fit."
         },
         {
           "priority": 9,
           "type": "recommendation",
-          "text": "Request a quote from Lady Wray (rank 3/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Lady Wray. This is a hypothetical ceiling, not a quote."
+          "text": "Request a quote from Charlotte Day Wilson (rank 2/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Charlotte Day Wilson. This is a hypothetical ceiling, not a quote."
         },
         {
           "priority": 10,
+          "type": "recommendation",
+          "text": "Request a quote from Lady Wray (rank 3/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Lady Wray. This is a hypothetical ceiling, not a quote."
+        },
+        {
+          "priority": 11,
           "type": "recommendation",
           "text": "Request a quote from St. Paul & The Broken Bones (rank 4/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + St. Paul & The Broken Bones. This is a hypothetical ceiling, not a quote."
         }
@@ -3307,7 +3441,8 @@
         "Negotiate Sault at or below $8,000; above that the bill changes to Michael Kiwanuka + Jordan Rakei.",
         "Pre-clear Jordan Rakei as the backup for Michael Kiwanuka: confirm availability and fee.",
         "Pre-clear Jordan Rakei as the backup for Sault: confirm availability and fee.",
-        "Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a1] supports Michael Kiwanuka + Jordan Rakei.",
+        "Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a2] supports Michael Kiwanuka + Jordan Rakei.",
+        "Choose between near-tied acts: The bill rests on a near-tie: Sault, Jordan Rakei are within 0.0001 Qloo affinity of each other (band 0.002). Treating them as tied gives Michael Kiwanuka + Jordan Rakei. Qloo scores cannot separate them; decide on fee, availability or programming fit.",
         "Request a quote from Charlotte Day Wilson (rank 2/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Charlotte Day Wilson. This is a hypothetical ceiling, not a quote.",
         "Request a quote from Lady Wray (rank 3/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Lady Wray. This is a hypothetical ceiling, not a quote.",
         "Request a quote from St. Paul & The Broken Bones (rank 4/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + St. Paul & The Broken Bones. This is a hypothetical ceiling, not a quote."
@@ -3323,22 +3458,22 @@
           "contentDigest": "sha256:bc1d39a6f029e5d4758d4a68a780eb63de6cc47fd13ed159d006f2f4e05a2cb8"
         },
         {
-          "id": "a2",
+          "id": "a3",
           "tool": "where_popular",
           "status": "ok",
           "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:23.334Z",
+          "fetchedAt": "2026-10-24T10:03:58.299Z",
           "new": true,
-          "contentDigest": "sha256:f4fe18907cfaec2900e232d35e618ea6fa58cbebd44c2b1ccd8676bc4ac13928"
+          "contentDigest": "sha256:bffb9385f57568af008334c5ed7fe7a2386ff63fed4e4917238f18911f9bc2dd"
         },
         {
-          "id": "a3",
+          "id": "a4",
           "tool": "compare_audiences",
           "status": "ok",
           "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:26.028Z",
+          "fetchedAt": "2026-10-24T10:03:58.990Z",
           "new": true,
-          "contentDigest": "sha256:c90870f188b8573319c22489e0c1c7ed110f7fb9514643730316d596a5fee8f5"
+          "contentDigest": "sha256:cf693d4e1e3b33c765d997c44791839711efb8b7bea13bec6c3092cdf89b4209"
         },
         {
           "id": "r11",
@@ -3426,44 +3561,44 @@
           "tool": "where_popular",
           "status": "ok",
           "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:30.522Z",
+          "fetchedAt": "2026-10-24T10:03:59.910Z",
           "new": true,
-          "contentDigest": "sha256:f71c7582e9794dea1f458f38bb8965bc80b4a11b22ba07328df6422570f7403d"
+          "contentDigest": "sha256:e67aa251b882b2b4cab509bc2bc07ea6777e0b965a1bbc77edd9570e80721b70"
         },
         {
           "id": "a6",
           "tool": "compare_audiences",
           "status": "ok",
           "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:31.336Z",
+          "fetchedAt": "2026-10-24T10:04:00.611Z",
           "new": true,
-          "contentDigest": "sha256:19f3518f3580ae3b0eab008a3e835b674cf6c65fcce5c17c6238485f0a972d4f"
+          "contentDigest": "sha256:8aa43cd1e5e7fbefe5216c8893baa8010d3b497d93832744343e9b3442c679fb"
         },
         {
           "id": "a1",
-          "tool": "rank",
-          "status": "ok",
-          "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:22.076Z",
-          "new": true,
-          "contentDigest": "sha256:755b966f9453a804348ce28dfd4af01b65c5d84377f49935e4c0be07f40f9712"
-        },
-        {
-          "id": "a4",
           "tool": "trends",
           "status": "ok",
           "source": "qloo",
-          "fetchedAt": "2026-10-24T07:42:29.604Z",
+          "fetchedAt": "2026-10-24T10:03:55.244Z",
           "new": true,
-          "contentDigest": "sha256:f18570c268ea75ef2a578dc25b10b5faaa7377ea6ae6c04fbbd686c2d67dad3c"
+          "contentDigest": "sha256:24aa691068b87d674f1d9d6bd29028eb13501a27d7ef79c3e3566950b743929b"
+        },
+        {
+          "id": "a2",
+          "tool": "rank",
+          "status": "ok",
+          "source": "qloo",
+          "fetchedAt": "2026-10-24T10:03:57.344Z",
+          "new": true,
+          "contentDigest": "sha256:4bcc36d6eeaff2c61f0ad2e58933c3f304c9e3d718e24fd10a7ed8b7d1418236"
         }
       ],
       "integrity": {
-        "manifestDigest": "sha256:06ca905464d63eb7166f96f545ef417b5b253e9a8e59b056f554b9889401fe65",
+        "manifestDigest": "sha256:6fc210099402fd98ae6d2873b33aba3e066dde9b94f3ca69ee675118a635175c",
         "statement": "Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned."
       },
       "limits": "Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.",
-      "markdown": "# Houselights decision packet\nFresh research with live Qloo calls. Generated 2026-10-24T07:42:31.705Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: New York\n- Audience reference artists (Qloo anchors): Leon Bridges\n- 2 slots · $14,500 artist budget · max 2 per genre · 8 candidates\n\n## 2. Recommendation (for human approval)\n**Michael Kiwanuka + Sault** — $13,500 planned artist fees, $1,000 unallocated, 68.68 policy points.\nRecommended: it maximizes the declared cultural-fit objective and continues in 27/27 disruption scenarios.\n- **Michael Kiwanuka** · $6,500 (Illustrative demo value; availability: Illustrative demo value)\n  - Ranks 1 of 8 candidates against Leon Bridges in New York. Relative order, not demand. [r9]\n  - Qloo returned geographic popularity rows within New York. [a2]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [a3]\n- **Sault** · $7,000 (Illustrative demo value; availability: Illustrative demo value)\n  - Ranks 5 of 8 candidates against Leon Bridges in New York. Relative order, not demand. [r9]\n  - Qloo returned geographic popularity rows within New York. [r17]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r18]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit | Michael Kiwanuka + Sault | $13,500 | — | 27/27 | 15 | 75% |\n| Lower-cost alternative · Most robust under disruption · Preferred without the city signal | Michael Kiwanuka + Jordan Rakei | $10,000 | −$3,500, −7.14 pts | 27/27 | 25 | 75% |\n- **Strongest cultural fit:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Recommended: it maximizes the declared cultural-fit objective and continues in 27/27 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption · Preferred without the city signal:** Best policy score among cheaper bills: saves $3,500 for 7.14 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a1]. Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 7.14 policy points for that resilience. Prefer it if the audience is not mainly local to New York.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- Michael Kiwanuka: 1) Sault + Jordan Rakei ($10,500, 32.964286 pts); 2) Sault + Hiatus Kaiyote ($12,500, 17.053571 pts)\n- Sault: 1) Michael Kiwanuka + Jordan Rakei ($10,000, 61.535714 pts); 2) Michael Kiwanuka + Hiatus Kaiyote ($12,000, 45.625 pts)\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| Michael Kiwanuka | $6,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Sault | $7,000 | Illustrative demo value | Illustrative demo value | Yes |\n| Jordan Rakei | $3,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Hiatus Kaiyote | $5,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Charlotte Day Wilson | — | Unknown — quote needed | Not confirmed | Yes |\n| Lady Wray | — | Unknown — quote needed | Not confirmed | Yes |\n| St. Paul & The Broken Bones | — | Unknown — quote needed | Not confirmed | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $13,500 of $14,500; $1,000 unallocated.\n- Michael Kiwanuka's fee can rise to $7,500 (+15.38%) before this bill exceeds the budget; above that the plan becomes Michael Kiwanuka + Jordan Rakei.\n- Sault's fee can rise to $8,000 (+14.29%) before this bill exceeds the budget; above that the plan becomes Michael Kiwanuka + Jordan Rakei.\n- The bill survives budget cuts down to $13,500 (6.9% below the brief); below that the plan becomes Michael Kiwanuka + Jordan Rakei at $10,000.\n- No ticket price or capacity was entered; no break-even is calculated.\n\n## 7. Cultural evidence and research\n6 research action(s) returned; the decision did not change because the winning margin is 7.14 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.\n6 research action(s), 6/10 Qloo workflow calls. Stop: exhausted; stress follow-up: not_needed.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| Michael Kiwanuka | recommended | Measured: 1/8 [r9] | Measured [a2] | Measured [a3] | Missing: researched, no interpretable result [a4] |\n| Sault | recommended | Measured: 5/8 [r9] | Measured [r17] | Measured [r18] | Missing: researched, no interpretable result [r10] |\n| Jordan Rakei | alternative | Measured: 6/8 [r9] | Measured [a5] | Measured [a6] | Missing: researched, no interpretable result [a4] |\n| Hiatus Kaiyote | backup | Measured: 8/8 [r9] | Missing: not researched (could not change a strategy) | Missing: not researched (could not change a strategy) | Missing: not researched (could not change a strategy) |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.\n- high: If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-35.71 policy points, −$3,000).\n- high: A 10% budget cut ($13,050) changes the plan to Michael Kiwanuka + Jordan Rakei at $10,000.\n- high: Without the New York location signal, Qloo's ranking [a1] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill.\n- dependency: Without Qloo evidence the optimizer would choose Jordan Rakei + Hiatus Kaiyote. The recommendation rests on the cultural receipts listed in this packet.\n- moderate: If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-7.14 policy points, −$3,500).\n\n## 9. Remaining uncertainties\n- Is there Qloo geographic evidence for Hiatus Kaiyote in New York? — immaterial. Tested every combination of possible results: Hiatus Kaiyote's local evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Is there Qloo geographic evidence for Khruangbin in New York? — immaterial. Tested every combination of possible results: Khruangbin's local evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- How does Hiatus Kaiyote's audience compare with the anchor audience? — immaterial. Tested every combination of possible results: Hiatus Kaiyote's comparison evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- How does Khruangbin's audience compare with the anchor audience? — immaterial. Tested every combination of possible results: Khruangbin's comparison evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Does Qloo return an interpretable recent trend direction for Hiatus Kaiyote? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Khruangbin? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Michael Kiwanuka? — researched: uninterpretable. Trend data for Michael Kiwanuka carried no interpretable direction [a4].\n- Does Qloo return an interpretable recent trend direction for Jordan Rakei? — researched: uninterpretable. Trend data for Jordan Rakei carried no interpretable direction [a4].\n- Does Qloo return an interpretable recent trend direction for Charlotte Day Wilson? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Charlotte Day Wilson.\n- Does Qloo return an interpretable recent trend direction for St. Paul & The Broken Bones? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for St. Paul & The Broken Bones.\n- Does Qloo return an interpretable recent trend direction for Sault? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Sault.\n- Does Qloo return an interpretable recent trend direction for Lady Wray? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Lady Wray.\n- Confirm: Michael Kiwanuka: fee $6,500 (illustrative); availability illustrative.\n- Confirm: Sault: fee $7,000 (illustrative); availability illustrative.\n- Confirm: Jordan Rakei: fee $3,500 (illustrative); availability illustrative.\n- Confirm: Hiatus Kaiyote: fee $5,500 (illustrative); availability illustrative.\n\n## 10. Next actions\n1. [Requires human approval] Approve Michael Kiwanuka + Sault as the planning bill ($13,500 against $14,500) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Michael Kiwanuka and Sault; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate Michael Kiwanuka at or below $7,500; above that the bill changes to Michael Kiwanuka + Jordan Rakei.\n4. [Recommendation] Negotiate Sault at or below $8,000; above that the bill changes to Michael Kiwanuka + Jordan Rakei.\n5. [Confirm with agent] Pre-clear Jordan Rakei as the backup for Michael Kiwanuka: confirm availability and fee.\n6. [Confirm with agent] Pre-clear Jordan Rakei as the backup for Sault: confirm availability and fee.\n7. [Requires human approval] Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a1] supports Michael Kiwanuka + Jordan Rakei.\n8. [Recommendation] Request a quote from Charlotte Day Wilson (rank 2/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Charlotte Day Wilson. This is a hypothetical ceiling, not a quote.\n9. [Recommendation] Request a quote from Lady Wray (rank 3/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Lady Wray. This is a hypothetical ceiling, not a quote.\n10. [Recommendation] Request a quote from St. Paul & The Broken Bones (rank 4/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + St. Paul & The Broken Bones. This is a hypothetical ceiling, not a quote.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are illustrative booking inputs from the published brief, not real quotes.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r9 | rank | ok | qloo | 2026-10-23T13:24:53.705Z | sha256:bc1d39a6f029… |\n| a2 | where_popular | ok | qloo | 2026-10-24T07:42:23.334Z | sha256:f4fe18907cfa… |\n| a3 | compare_audiences | ok | qloo | 2026-10-24T07:42:26.028Z | sha256:c90870f188b8… |\n| r11 | where_popular | ok | qloo | 2026-10-23T13:24:55.730Z | sha256:0b0f682d1691… |\n| r10 | trends | ok | qloo | 2026-10-23T13:24:54.777Z | sha256:5667d5902b7d… |\n| r12 | compare_audiences | ok | qloo | 2026-10-23T13:24:56.336Z | sha256:f89c1900faaa… |\n| r13 | where_popular | ok | qloo | 2026-10-23T13:24:57.206Z | sha256:0b52fc8d1d3c… |\n| r14 | compare_audiences | ok | qloo | 2026-10-23T13:24:57.805Z | sha256:a573674ea140… |\n| r15 | where_popular | ok | qloo | 2026-10-23T13:24:58.624Z | sha256:e27c457f0d5c… |\n| r16 | compare_audiences | ok | qloo | 2026-10-23T13:24:59.219Z | sha256:3d075ac78393… |\n| r17 | where_popular | ok | qloo | 2026-10-23T13:25:00.096Z | sha256:f650d377dc12… |\n| r18 | compare_audiences | ok | qloo | 2026-10-23T13:25:00.689Z | sha256:b5c45f9b9f58… |\n| a5 | where_popular | ok | qloo | 2026-10-24T07:42:30.522Z | sha256:f71c7582e979… |\n| a6 | compare_audiences | ok | qloo | 2026-10-24T07:42:31.336Z | sha256:19f3518f3580… |\n| a1 | rank | ok | qloo | 2026-10-24T07:42:22.076Z | sha256:755b966f9453… |\n| a4 | trends | ok | qloo | 2026-10-24T07:42:29.604Z | sha256:f18570c268ea… |\nIntegrity: manifest sha256:06ca905464d63eb7166f96f545ef417b5b253e9a8e59b056f554b9889401fe65. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
+      "markdown": "# Houselights decision packet\nFresh research with live Qloo calls. Generated 2026-10-24T10:04:00.865Z. Decision support only: nothing has been booked, offered or approved.\n\n## 1. Event brief\n- Market: New York\n- Audience reference artists (Qloo anchors): Leon Bridges\n- 2 slots · $14,500 artist budget · max 2 per genre · 8 candidates\n\n## 2. Recommendation (for human approval)\n**Michael Kiwanuka + Sault** — $13,500 planned artist fees, $1,000 unallocated, 64.85 policy points.\nRecommended: it maximizes the declared cultural-fit objective and continues in 27/27 disruption scenarios.\n- Near-tie that decides the bill: Sault, Jordan Rakei differ by 0.0001 in Qloo affinity (band 0.002). Treated as tied, the bill would be Michael Kiwanuka + Jordan Rakei.\n- **Michael Kiwanuka** · $6,500 (Illustrative demo value; availability: Illustrative demo value)\n  - Qloo affinity 0.9770 with Leon Bridges in New York (1 of 8 candidates). Relative cultural fit, not demand. [r9]\n  - Qloo returned geographic popularity rows within New York. [a3]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [a4]\n- **Sault** · $7,000 (Illustrative demo value; availability: Illustrative demo value)\n  - Qloo affinity 0.9580 with Leon Bridges in New York (5 of 8 candidates). Relative cultural fit, not demand. [r9]\n  - Qloo returned geographic popularity rows within New York. [r17]\n  - An aggregate audience comparison with the anchors was returned. It does not measure shared ticket buyers. [r18]\n\n## 3. Strategies compared under the same constraints and scenarios\n| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |\n|---|---|---|---|---|---|---|\n| Strongest cultural fit | Michael Kiwanuka + Sault | $13,500 | — | 27/27 | 15 | 75% |\n| Lower-cost alternative · Most robust under disruption · Preferred without the city signal | Michael Kiwanuka + Jordan Rakei | $10,000 | −$3,500, −0.23 pts | 27/27 | 25 | 75% |\n- **Strongest cultural fit:** Highest declared policy score among all feasible bills: the best-supported cultural fit under the declared model. Recommended: it maximizes the declared cultural-fit objective and continues in 27/27 disruption scenarios.\n- **Lower-cost alternative · Most robust under disruption · Preferred without the city signal:** Best policy score among cheaper bills: saves $3,500 for 0.23 policy points. Continues in 27/27 disruption scenarios (25 unchanged) versus 27/27 (15 unchanged) for the recommendation. The optimizer's choice under a location-free Qloo ranking [a2]. Prefer it if the $3,500 saving matters more than the cultural-fit gap, or if the artist budget may fall below $13,500. Prefer it if cancellations, fee increases or budget cuts are likely: it gives up 0.23 policy points for that resilience. Prefer it if the audience is not mainly local to New York.\n- Robustness definition: Budget cuts of 5, 10, 15 and 20%; +10, +20 and +30% on each bookable artist's fee; each bookable artist becoming unavailable; and three combined shocks (5% cut with all fees +10%, 10% with +15%, 15% with +20%). \"Held\": the planned bill stays feasible unchanged. \"Repaired\": one act is swapped and the others stay booked. \"Failed\": no bill keeps the other acts.\n\n## 4. Backups if an act becomes unavailable\n- Michael Kiwanuka: 1) Sault + Jordan Rakei ($10,500, 32.219703 pts); 2) Sault + Hiatus Kaiyote ($12,500, 13.227009 pts)\n- Sault: 1) Michael Kiwanuka + Jordan Rakei ($10,000, 64.617694 pts); 2) Michael Kiwanuka + Hiatus Kaiyote ($12,000, 45.625 pts)\n\n## 5. Fees and availability (assumptions, not verified facts)\n| Artist | Fee | Fee status | Availability | Needs confirmation |\n|---|---|---|---|---|\n| Michael Kiwanuka | $6,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Sault | $7,000 | Illustrative demo value | Illustrative demo value | Yes |\n| Jordan Rakei | $3,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Hiatus Kaiyote | $5,500 | Illustrative demo value | Illustrative demo value | Yes |\n| Charlotte Day Wilson | — | Unknown — quote needed | Not confirmed | Yes |\n| Lady Wray | — | Unknown — quote needed | Not confirmed | Yes |\n| St. Paul & The Broken Bones | — | Unknown — quote needed | Not confirmed | Yes |\n\n## 6. Budget and financial sensitivity\n- Planned artist fees $13,500 of $14,500; $1,000 unallocated.\n- Michael Kiwanuka's fee can rise to $7,500 (+15.38%) before this bill exceeds the budget; above that the plan becomes Michael Kiwanuka + Jordan Rakei.\n- Sault's fee can rise to $8,000 (+14.29%) before this bill exceeds the budget; above that the plan becomes Michael Kiwanuka + Jordan Rakei.\n- The bill survives budget cuts down to $13,500 (6.9% below the brief); below that the plan becomes Michael Kiwanuka + Jordan Rakei at $10,000.\n- No ticket price or capacity was entered; no break-even is calculated.\n\n## 7. Cultural evidence and research\nFit basis: Qloo affinity scores, scaled across the ranked pool.\n6 research action(s) returned; the decision did not change because the winning margin is 0.23 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.\n6 research action(s), 6/10 Qloo workflow calls. Stop: exhausted; stress follow-up: not_needed.\n| Artist | Role | Rank | Local | Audience comparison | Trend |\n|---|---|---|---|---|---|\n| Michael Kiwanuka | recommended | Measured: affinity 0.9770, 1/8 [r9] | Measured [a3] | Measured [a4] | Missing: researched, no interpretable result [a1] |\n| Sault | recommended | Measured: affinity 0.9580, 5/8 [r9] | Measured [r17] | Measured [r18] | Missing: researched, no interpretable result [r10] |\n| Jordan Rakei | alternative | Measured: affinity 0.9579, 6/8 [r9] | Measured [a5] | Measured [a6] | Missing: researched, no interpretable result [a1] |\n| Hiatus Kaiyote | backup | Measured: affinity 0.9477, 8/8 [r9] | Missing: not researched (could not change a strategy) | Missing: not researched (could not change a strategy) | Missing: not researched (could not change a strategy) |\n\n## 8. Stress test\n15 contingency scenarios: the plan adapts feasibly in 15; 2/2 cancellations have a clean replacement; 0 critical vulnerabilities.\n- high: The bill rests on a near-tie: Sault, Jordan Rakei are within 0.0001 Qloo affinity of each other (band 0.002). Treating them as tied gives Michael Kiwanuka + Jordan Rakei.\n- high: If Michael Kiwanuka becomes unavailable, replace with Jordan Rakei: Sault + Jordan Rakei at $10,500 (-32.63 policy points, −$3,000).\n- high: A 10% budget cut ($13,050) changes the plan to Michael Kiwanuka + Jordan Rakei at $10,000.\n- high: Without the New York location signal, Qloo's ranking [a2] would choose Michael Kiwanuka + Jordan Rakei. Sault holds its place because of local taste; if the audience is not mainly local, weigh the location-free bill.\n- dependency: Without Qloo evidence the optimizer would choose Jordan Rakei + Hiatus Kaiyote. The recommendation rests on the cultural receipts listed in this packet.\n- moderate: If Sault becomes unavailable, replace with Jordan Rakei: Michael Kiwanuka + Jordan Rakei at $10,000 (-0.23 policy points, −$3,500).\n\n## 9. Remaining uncertainties\n- Is there Qloo geographic evidence for Hiatus Kaiyote in New York? — immaterial. Tested every combination of possible results: Hiatus Kaiyote's local evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Is there Qloo geographic evidence for Khruangbin in New York? — immaterial. Tested every combination of possible results: Khruangbin's local evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- How does Hiatus Kaiyote's audience compare with the anchor audience? — immaterial. Tested every combination of possible results: Hiatus Kaiyote's comparison evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- How does Khruangbin's audience compare with the anchor audience? — immaterial. Tested every combination of possible results: Khruangbin's comparison evidence could not change the recommended, alternative or fallback bills, and the act is not booked in one.\n- Does Qloo return an interpretable recent trend direction for Hiatus Kaiyote? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Khruangbin? — immaterial. Not answerable in practice: earlier trend calls in this run returned no interpretable direction, so further trend queries are not expected to add evidence.\n- Does Qloo return an interpretable recent trend direction for Michael Kiwanuka? — researched: uninterpretable. Trend data for Michael Kiwanuka carried no interpretable direction [a1].\n- Does Qloo return an interpretable recent trend direction for Jordan Rakei? — researched: uninterpretable. Trend data for Jordan Rakei carried no interpretable direction [a1].\n- Does Qloo return an interpretable recent trend direction for Charlotte Day Wilson? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Charlotte Day Wilson.\n- Does Qloo return an interpretable recent trend direction for St. Paul & The Broken Bones? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for St. Paul & The Broken Bones.\n- Does Qloo return an interpretable recent trend direction for Sault? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Sault.\n- Does Qloo return an interpretable recent trend direction for Lady Wray? — researched: uninterpretable. Saved receipt r10 returned trend data without an interpretable direction for Lady Wray.\n- Confirm: Michael Kiwanuka: fee $6,500 (illustrative); availability illustrative.\n- Confirm: Sault: fee $7,000 (illustrative); availability illustrative.\n- Confirm: Jordan Rakei: fee $3,500 (illustrative); availability illustrative.\n- Confirm: Hiatus Kaiyote: fee $5,500 (illustrative); availability illustrative.\n\n## 10. Next actions\n1. [Requires human approval] Approve Michael Kiwanuka + Sault as the planning bill ($13,500 against $14,500) before any hold request is sent. Houselights has not contacted any agent.\n2. [Confirm with agent] Confirm fee and availability for Michael Kiwanuka and Sault; the recommendation assumes the values in section 5.\n3. [Recommendation] Negotiate Michael Kiwanuka at or below $7,500; above that the bill changes to Michael Kiwanuka + Jordan Rakei.\n4. [Recommendation] Negotiate Sault at or below $8,000; above that the bill changes to Michael Kiwanuka + Jordan Rakei.\n5. [Confirm with agent] Pre-clear Jordan Rakei as the backup for Michael Kiwanuka: confirm availability and fee.\n6. [Confirm with agent] Pre-clear Jordan Rakei as the backup for Sault: confirm availability and fee.\n7. [Requires human approval] Decide how local the audience is: the New York-weighted ranking supports Michael Kiwanuka + Sault; a location-free Qloo ranking [a2] supports Michael Kiwanuka + Jordan Rakei.\n8. [Requires human approval] Choose between near-tied acts: The bill rests on a near-tie: Sault, Jordan Rakei are within 0.0001 Qloo affinity of each other (band 0.002). Treating them as tied gives Michael Kiwanuka + Jordan Rakei. Qloo scores cannot separate them; decide on fee, availability or programming fit.\n9. [Recommendation] Request a quote from Charlotte Day Wilson (rank 2/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Charlotte Day Wilson. This is a hypothetical ceiling, not a quote.\n10. [Recommendation] Request a quote from Lady Wray (rank 3/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + Lady Wray. This is a hypothetical ceiling, not a quote.\n11. [Recommendation] Request a quote from St. Paul & The Broken Bones (rank 4/8): if available at or below $8,000, the optimizer would book them as Michael Kiwanuka + St. Paul & The Broken Bones. This is a hypothetical ceiling, not a quote.\n\n## 11. Assumptions and limits\n- Fees, availability and genres are illustrative booking inputs from the published brief, not real quotes.\n- Qloo supplies aggregate cultural affinity. It does not supply fees, availability, ticket demand, attendance or revenue.\n- Policy points (fit 100/slot, local +2, rising +3, cooling −2, genre breadth, evidence penalty) are an internal objective, not a forecast.\n- Fit is relative rank position within this candidate pool.\n- Planning analysis only: no booking, offer or approval was created. Verify every fee and availability with agents before acting.\n\n## Appendix: Qloo receipt index\n| Receipt | Tool | Status | Source | Retrieved | Content digest |\n|---|---|---|---|---|---|\n| r9 | rank | ok | qloo | 2026-10-23T13:24:53.705Z | sha256:bc1d39a6f029… |\n| a3 | where_popular | ok | qloo | 2026-10-24T10:03:58.299Z | sha256:bffb9385f575… |\n| a4 | compare_audiences | ok | qloo | 2026-10-24T10:03:58.990Z | sha256:cf693d4e1e3b… |\n| r11 | where_popular | ok | qloo | 2026-10-23T13:24:55.730Z | sha256:0b0f682d1691… |\n| r10 | trends | ok | qloo | 2026-10-23T13:24:54.777Z | sha256:5667d5902b7d… |\n| r12 | compare_audiences | ok | qloo | 2026-10-23T13:24:56.336Z | sha256:f89c1900faaa… |\n| r13 | where_popular | ok | qloo | 2026-10-23T13:24:57.206Z | sha256:0b52fc8d1d3c… |\n| r14 | compare_audiences | ok | qloo | 2026-10-23T13:24:57.805Z | sha256:a573674ea140… |\n| r15 | where_popular | ok | qloo | 2026-10-23T13:24:58.624Z | sha256:e27c457f0d5c… |\n| r16 | compare_audiences | ok | qloo | 2026-10-23T13:24:59.219Z | sha256:3d075ac78393… |\n| r17 | where_popular | ok | qloo | 2026-10-23T13:25:00.096Z | sha256:f650d377dc12… |\n| r18 | compare_audiences | ok | qloo | 2026-10-23T13:25:00.689Z | sha256:b5c45f9b9f58… |\n| a5 | where_popular | ok | qloo | 2026-10-24T10:03:59.910Z | sha256:e67aa251b882… |\n| a6 | compare_audiences | ok | qloo | 2026-10-24T10:04:00.611Z | sha256:8aa43cd1e5e7… |\n| a1 | trends | ok | qloo | 2026-10-24T10:03:55.244Z | sha256:24aa691068b8… |\n| a2 | rank | ok | qloo | 2026-10-24T10:03:57.344Z | sha256:4bcc36d6eeaf… |\nIntegrity: manifest sha256:6fc210099402fd98ae6d2873b33aba3e066dde9b94f3ca69ee675118a635175c. Receipt content digests let anyone detect later edits to this record. They do not prove the responses came from Qloo; Qloo responses are unsigned.\n"
     }
   },
   "disclosure": "Captured once through the Autopilot research policy with live Qloo calls. The page replays this record; it makes no new provider calls. Receipt digests are application hashes, not provider signatures. Fees and availability are illustrative."

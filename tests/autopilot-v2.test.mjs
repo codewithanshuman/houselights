@@ -112,24 +112,24 @@ test('integrity: decision-relevant tampering is detected by the right check and 
   const clean=await verifyRecordedAutopilot(file,{pinnedManifestDigest:pin});
   assert.equal(clean.passed,true,JSON.stringify(clean));assert.equal(clean.providerProvenance.verified,false);assert.match(clean.providerProvenance.statement,/not independently verifiable/);
   const cases={
-    affinity:f=>{f.run.receipts[0].evidence.rows[0].affinity+=.01;},
-    entity:f=>{f.run.receipts[0].evidence.rows[0].name='Somebody Else';},
+    affinity:f=>{f.run.receipts.find(row=>row.tool==='rank').evidence.rows[0].affinity+=.01;},
+    entity:f=>{f.run.receipts.find(row=>row.tool==='rank').evidence.rows[0].name='Somebody Else';},
     status:f=>{f.run.receipts.find(row=>row.tool==='where_popular').status='error';},
-    provenance:f=>{f.run.receipts[1].originalDigest='sha256:'+'0'.repeat(64);},
+    provenance:f=>{f.run.receipts.find(row=>row.tool==='where_popular').originalDigest='sha256:'+'0'.repeat(64);},
   };
   for(const [name,mutate] of Object.entries(cases)){
     const tampered=structuredClone(file);mutate(tampered);
     const report=await verifyRecordedAutopilot(tampered,{pinnedManifestDigest:pin});
-    assert.equal(report.evidenceContent.passed,false,name);assert.ok(report.evidenceContent.problems.some(problem=>/Receipt (a1|a2|a5) /.test(problem)),name);
+    assert.equal(report.evidenceContent.passed,false,name);assert.ok(report.evidenceContent.problems.some(problem=>/Receipt a[0-9]+ /.test(problem)),name);
     assert.equal(report.decisionReproducibility.passed,false,`${name}: the decision digest covers receipt content`);
   }
   // A forger who rewrites content and recomputes every digest is caught only by the pin.
-  const forged=structuredClone(file);forged.run.receipts[0].evidence.rows[0].affinity=0.5;
+  const forged=structuredClone(file);forged.run.receipts.find(row=>row.tool==='rank').evidence.rows[0].affinity=0.5;
   forged.run.integrity=buildManifest({receipts:forged.run.receipts,sourceReceipts:loadJudgeCase(NY).snapshot.receipts,decisionDigest:forged.run.digest,items:forged.run.items});
   assert.equal(verifyEvidenceContent(forged.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts}).passed,true);
   assert.match(verifyEvidenceContent(forged.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts,pinnedManifestDigest:pin}).problems.join(' '),/independently pinned/);
   // Content digests ignore capture timing but nothing else.
-  const receipt=file.run.receipts[1];assert.equal(receiptContentDigest({...receipt,ms:1}),receiptContentDigest({...receipt,ms:999}));
+  const receipt=file.run.receipts.find(row=>row.tool==='where_popular');assert.equal(receiptContentDigest({...receipt,ms:1}),receiptContentDigest({...receipt,ms:999}));
   assert.notEqual(receiptContentDigest(receipt),receiptContentDigest({...receipt,fetchedAt:'2000-01-01T00:00:00.000Z'}));
   assert.equal(canonical({b:1,a:[2,{d:1,c:2}]}),'{"a":[2,{"c":2,"d":1}],"b":1}');
 });
@@ -144,6 +144,15 @@ test('the migrated 1.0 record replays under the 1.0 policy and its numbers are n
   const after=await verifyRecordedAutopilot(tampered,{pinnedManifestDigest:pin});
   assert.equal(after.decisionReproducibility.passed,true,'1.0 replay is blind to receipt numbers');
   assert.equal(after.evidenceContent.passed,false);
+});
+
+test('the 2.0 record captured before affinity fits still replays exactly on ordinal ranks',async()=>{
+  const file=read('results/autopilot-recorded-v2-ordinal.json');
+  assert.equal(file.run.fitBasis,undefined);
+  const report=await verifyRecordedAutopilot(file,{pinnedManifestDigest:PINNED_MANIFESTS['results/autopilot-recorded-v2-ordinal.json']});
+  assert.equal(report.passed,true,JSON.stringify(report));
+  const current=read('public/autopilot-recorded.json');assert.equal(current.run.fitBasis,'qloo-affinity');
+  assert.equal(current.run.packet.recommendation.restsOnNearTie,true,'the live record shows the Sault / Jordan Rakei near-tie deciding the bill');
 });
 
 test('provider exceptions and interruptions produce labelled partial runs without invented evidence',async()=>{

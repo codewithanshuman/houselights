@@ -2539,6 +2539,21 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:fe539df867838ea144cb9af75897780375fa8ba71e53332041764236de2f5a78"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Nubya Garcia",
+          "Alfa Mist"
+        ],
+        "affinityBill": [
+          "Nubya Garcia",
+          "Alfa Mist"
+        ]
       }
     },
     {
@@ -5007,6 +5022,30 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:68d9eef4850b1d1850a462c3b2cf69fced04a67cc1fca1cf2b95a3b0d286954d"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [
+          {
+            "names": [
+              "Floating Points",
+              "Moderat"
+            ],
+            "spread": 0.0016,
+            "changesAffinityBill": false
+          }
+        ],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Jon Hopkins",
+          "Floating Points"
+        ],
+        "affinityBill": [
+          "Jon Hopkins",
+          "Floating Points"
+        ]
       }
     },
     {
@@ -8153,6 +8192,30 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:253639a4e94552064a28075c0e3246944fb351178b0894b2c3a888b0bfe74601"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [
+          {
+            "names": [
+              "Sault",
+              "Jordan Rakei"
+            ],
+            "spread": 0.0001,
+            "changesAffinityBill": false
+          }
+        ],
+        "affinityBillDiffers": true,
+        "ordinalBill": [
+          "Michael Kiwanuka",
+          "Sault"
+        ],
+        "affinityBill": [
+          "Michael Kiwanuka",
+          "Jordan Rakei"
+        ]
       }
     },
     {
@@ -11321,6 +11384,18 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:c83d931d85745e94cc3afda264849bd186017638297c714adac21a066beca194"
+      },
+      "disclosure": {
+        "rankComparable": false,
+        "reason": "Qloo ranked 4 of 5 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.",
+        "fitBasis": "none",
+        "nearTies": [],
+        "affinityBillDiffers": null,
+        "ordinalBill": [
+          "The Local train",
+          "Ankur Tewari"
+        ],
+        "affinityBill": null
       }
     },
     {
@@ -14704,6 +14779,39 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:623c16923dea167d8b8b792dd2ae42e746ee82ea215756d83c9251413c5fcd83"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [
+          {
+            "names": [
+              "Charlotte Day Wilson",
+              "Lady Wray",
+              "St. Paul & The Broken Bones"
+            ],
+            "spread": 0.0013,
+            "changesAffinityBill": false
+          },
+          {
+            "names": [
+              "Sault",
+              "Jordan Rakei"
+            ],
+            "spread": 0.0001,
+            "changesAffinityBill": false
+          }
+        ],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Michael Kiwanuka",
+          "Sault"
+        ],
+        "affinityBill": [
+          "Michael Kiwanuka",
+          "Sault"
+        ]
       }
     },
     {
@@ -17686,6 +17794,23 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:f85223461afedbe1a9077af44601996ba825a210b6df6ab7e354f64167e91e24"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Foals",
+          "Caribou",
+          "Wolf Alice"
+        ],
+        "affinityBill": [
+          "Foals",
+          "Caribou",
+          "Wolf Alice"
+        ]
       }
     },
     {
@@ -19798,6 +19923,15 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:47fee4d1a91db20a8dc907510528519bbde1b8e27c7d660aafc041ec8bd33c5c"
+      },
+      "disclosure": {
+        "rankComparable": false,
+        "reason": "Qloo ranked 2 of 5 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.",
+        "fitBasis": "none",
+        "nearTies": [],
+        "affinityBillDiffers": null,
+        "ordinalBill": [],
+        "affinityBill": null
       }
     },
     {
@@ -23016,6 +23150,32 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:288ef4e105ba3ee8359c8272b72e6678c5f43c2eeaff4896dbf0e7b47a439cb1"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [
+          {
+            "names": [
+              "Maribou State",
+              "Floating Points"
+            ],
+            "spread": 0.0007,
+            "changesAffinityBill": false
+          }
+        ],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Tycho",
+          "Mount Kimbie",
+          "Maribou State"
+        ],
+        "affinityBill": [
+          "Tycho",
+          "Mount Kimbie",
+          "Maribou State"
+        ]
       }
     },
     {
@@ -25800,6 +25960,23 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:e13bdd74df3733cbcc37754eae94a380ca79f27f4c11fceb9696a3f2a44822ea"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Snoh Aalegra",
+          "Charlotte Day Wilson",
+          "River Tiber"
+        ],
+        "affinityBill": [
+          "Snoh Aalegra",
+          "Charlotte Day Wilson",
+          "River Tiber"
+        ]
       }
     },
     {
@@ -28515,6 +28692,23 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:711271931f1d23ff23cea020dbf84539b910efe9a7b1cee8cb2950baf2614eb8"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "Thundercat",
+          "Little Simz",
+          "Hiatus Kaiyote"
+        ],
+        "affinityBill": [
+          "Thundercat",
+          "Little Simz",
+          "Hiatus Kaiyote"
+        ]
       }
     },
     {
@@ -30877,6 +31071,41 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:4af424e733e6d4b34540bf238553932bbc08ae2ef6293cdc235f6096db005fae"
+      },
+      "disclosure": {
+        "rankComparable": true,
+        "reason": null,
+        "fitBasis": "qloo-affinity",
+        "nearTies": [
+          {
+            "names": [
+              "DUDA BEAT",
+              "Tuyo",
+              "Luedji Luna"
+            ],
+            "spread": 0.0031,
+            "changesAffinityBill": false
+          },
+          {
+            "names": [
+              "Baco Exu do Blues",
+              "Tim Bernardes"
+            ],
+            "spread": 0.0011,
+            "changesAffinityBill": false
+          }
+        ],
+        "affinityBillDiffers": false,
+        "ordinalBill": [
+          "DUDA BEAT",
+          "Tuyo",
+          "Luedji Luna"
+        ],
+        "affinityBill": [
+          "DUDA BEAT",
+          "Tuyo",
+          "Luedji Luna"
+        ]
       }
     },
     {
@@ -34009,6 +34238,19 @@
           "Provider costs and end-to-end research latency are unavailable unless captured by the source benchmark receipts."
         ],
         "reportDigest": "sha256:4f51413075f6f9d610fd5eaf6fb2c6f2a2a55afa3be1c0e70ec7a796402e9bd7"
+      },
+      "disclosure": {
+        "rankComparable": false,
+        "reason": "Qloo ranked 5 of 6 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief.",
+        "fitBasis": "none",
+        "nearTies": [],
+        "affinityBillDiffers": null,
+        "ordinalBill": [
+          "Jungle",
+          "Ocean Alley",
+          "Pond"
+        ],
+        "affinityBill": null
       }
     }
   ],
@@ -34072,22 +34314,6 @@
         "feeDifference": 3500
       },
       {
-        "sourceId": "5031a69f837e1c28ce045422",
-        "city": "Mumbai",
-        "genre": null,
-        "eventSize": null,
-        "slots": 2,
-        "currency": "INR",
-        "synthetic": false,
-        "poolDigest": "sha256:1439db1176f156f436af47a74bcfe74d826e279a41b16aab71397769a0e8e3ac",
-        "candidateCount": 5,
-        "briefDigest": "sha256:9cb1546678c5efea108a2d4e45882996d08afa62f948b657f012fc89556baedd",
-        "llmStatus": "not_comparable",
-        "llmLineup": [],
-        "fullFeasible": true,
-        "feeDifference": null
-      },
-      {
         "sourceId": "8be4d03ef4792ca9f1466983",
         "city": "New York",
         "genre": null,
@@ -34122,22 +34348,6 @@
         ],
         "fullFeasible": true,
         "feeDifference": 1200
-      },
-      {
-        "sourceId": "fb9ed16d2e0fe1204a084159",
-        "city": "Paris",
-        "genre": null,
-        "eventSize": null,
-        "slots": 3,
-        "currency": "EUR",
-        "synthetic": false,
-        "poolDigest": "sha256:7691dd63403e9e2c312bd18c7c4740e3cbfe14e12502b3163db8a27660fa1db7",
-        "candidateCount": 5,
-        "briefDigest": "sha256:659f17ef5229da52a88e253e51a9ec0b4a7b6cbdb34558c3e60bcf40d7dd1b6b",
-        "llmStatus": "not_comparable",
-        "llmLineup": [],
-        "fullFeasible": false,
-        "feeDifference": null
       },
       {
         "sourceId": "114d2b336b3c490668347b6f",
@@ -34218,22 +34428,6 @@
         ],
         "fullFeasible": true,
         "feeDifference": 0
-      },
-      {
-        "sourceId": "22df6fa52aa06808a8415002",
-        "city": "Sydney",
-        "genre": null,
-        "eventSize": null,
-        "slots": 3,
-        "currency": "USD",
-        "synthetic": false,
-        "poolDigest": "sha256:6b60cfd399e613f47622367b4c34b69d67b36cd811cd385df660dbe6b4a71f1e",
-        "candidateCount": 6,
-        "briefDigest": "sha256:acdc0fc85ec6b3fcfd44816e9942f5897c86c30dbbccd91e072dbfc7ebb9f854",
-        "llmStatus": "not_comparable",
-        "llmLineup": [],
-        "fullFeasible": true,
-        "feeDifference": null
       }
     ],
     "repeatedBriefs": [
@@ -34259,13 +34453,6 @@
         "distinctLineups": 1
       },
       {
-        "briefDigest": "sha256:9cb1546678c5efea108a2d4e45882996d08afa62f948b657f012fc89556baedd",
-        "records": 1,
-        "attempts": 0,
-        "failures": 0,
-        "distinctLineups": 0
-      },
-      {
         "briefDigest": "sha256:3bc7158f3f458ef0faa0213db7ae00845f3516f6e3c6fa2bd269335940e10e6b",
         "records": 1,
         "attempts": 0,
@@ -34278,13 +34465,6 @@
         "attempts": 1,
         "failures": 0,
         "distinctLineups": 1
-      },
-      {
-        "briefDigest": "sha256:659f17ef5229da52a88e253e51a9ec0b4a7b6cbdb34558c3e60bcf40d7dd1b6b",
-        "records": 1,
-        "attempts": 0,
-        "failures": 0,
-        "distinctLineups": 0
       },
       {
         "briefDigest": "sha256:a235d1f2bf2828e0e5fbdd285d2dcb0bcb20e976e4c931562252e99f6bf9b0de",
@@ -34313,13 +34493,6 @@
         "attempts": 1,
         "failures": 0,
         "distinctLineups": 1
-      },
-      {
-        "briefDigest": "sha256:acdc0fc85ec6b3fcfd44816e9942f5897c86c30dbbccd91e072dbfc7ebb9f854",
-        "records": 1,
-        "attempts": 0,
-        "failures": 0,
-        "distinctLineups": 0
       }
     ],
     "pairedBookingCost": {
@@ -34367,15 +34540,7 @@
           "records": 2,
           "distinctBriefs": 2
         },
-        "Mumbai": {
-          "records": 1,
-          "distinctBriefs": 1
-        },
         "London": {
-          "records": 1,
-          "distinctBriefs": 1
-        },
-        "Paris": {
           "records": 1,
           "distinctBriefs": 1
         },
@@ -34394,32 +34559,28 @@
         "São Paulo": {
           "records": 1,
           "distinctBriefs": 1
-        },
-        "Sydney": {
-          "records": 1,
-          "distinctBriefs": 1
         }
       },
       "genre": {
         "unknown": {
-          "records": 12,
-          "distinctBriefs": 12
+          "records": 9,
+          "distinctBriefs": 9
         }
       },
       "eventSize": {
         "unknown": {
-          "records": 12,
-          "distinctBriefs": 12
+          "records": 9,
+          "distinctBriefs": 9
         }
       },
       "slots": {
         "2": {
-          "records": 5,
-          "distinctBriefs": 5
+          "records": 4,
+          "distinctBriefs": 4
         },
         "3": {
-          "records": 7,
-          "distinctBriefs": 7
+          "records": 5,
+          "distinctBriefs": 5
         }
       }
     },
@@ -34442,7 +34603,24 @@
         "method": "Wilson 95% interval"
       }
     },
-    "limitation": "The event brief is the unit; repeated model attempts must not be counted as independent markets. The LLM failure fraction counts available saved attempts, and repeatedBriefs exposes clustering. Operational outcomes do not prove audience preference."
+    "limitation": "The event brief is the unit; repeated model attempts must not be counted as independent markets. The LLM failure fraction counts available saved attempts, and repeatedBriefs exposes clustering. Operational outcomes do not prove audience preference.",
+    "comparison": {
+      "comparableBriefs": 9,
+      "excluded": [
+        {
+          "title": "Mumbai: why a comparison is unavailable",
+          "reason": "Qloo ranked 4 of 5 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+        },
+        {
+          "title": "Illustrative: Paris crossover bill",
+          "reason": "Qloo ranked 2 of 5 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+        },
+        {
+          "title": "Illustrative: Sydney psychedelic and indie bill",
+          "reason": "Qloo ranked 5 of 6 candidates, so no bookable act has a comparable audience rank. Cross-case and method comparisons exclude this brief."
+        }
+      ]
+    }
   },
   "limitations": [
     "Published records can repeat event briefs and artist pools; independent coverage is the distinct-brief and distinct-pool count.",

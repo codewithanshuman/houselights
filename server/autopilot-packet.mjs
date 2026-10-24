@@ -8,6 +8,18 @@ export const FEE_STATUS = { quoted: 'Quoted by agent (promoter-entered)', estima
 export const AVAILABILITY = { confirmed: 'Confirmed (promoter-entered)', assumed: 'Assumed for planning — confirm', unconfirmed: 'Not confirmed', unavailable: 'Unavailable', illustrative: 'Illustrative demo value' };
 const MODE = { live: 'Fresh research with live Qloo calls', synthetic: 'SYNTHETIC Qloo fixtures — not real evidence', planning: 'Planning from saved evidence — no new Qloo calls', recorded: 'Recorded run replayed — no new Qloo calls', replay: 'Offline replay of recorded observations' };
 
+const FIT_BASIS = { 'qloo-affinity': 'Qloo affinity scores, scaled across the ranked pool', 'ordinal-rank': 'ordinal rank positions (Qloo affinity scores unavailable)' };
+// Near-tie and comparability statements shared by both renderers.
+function tieLines(packet) {
+  const lines = [];
+  if (packet.comparability && !packet.comparability.comparable) lines.push(`Not comparable: ${packet.comparability.reason}`);
+  if (packet.ordinalComparison) lines.push(`Affinity versus ordinal: ${packet.ordinalComparison.text}`);
+  for (const group of packet.ties?.groups ?? []) lines.push(group.changesBill
+    ? `Near-tie that decides the bill: ${group.names.join(', ')} differ by ${group.spread.toFixed(4)} in Qloo affinity (band ${packet.ties.band}). Treated as tied, the bill would be ${group.tiedNames.join(' + ')}.`
+    : `Near-tie with no effect on the bill: ${group.names.join(', ')} differ by ${group.spread.toFixed(4)} in Qloo affinity (band ${packet.ties.band}).`);
+  return lines;
+}
+
 export function packetMarkdown(packet, money) {
   const rec = packet.recommendation, brief = packet.brief;
   return lines([
@@ -24,6 +36,7 @@ export function packetMarkdown(packet, money) {
     rec ? `**${rec.names.join(' + ')}** — ${money(rec.totalFee)} planned artist fees, ${money(rec.headroom)} unallocated, ${rec.policyScore} policy points.` : `No feasible lineup. ${packet.infeasibility.reasons.join(' ')}`,
     rec?.provisional ? `**Provisional:** ${rec.provisionalReason}` : null,
     rec?.why ? rec.why : null,
+    ...tieLines(packet).map(line => `- ${line}`),
     ...(rec ? rec.artists.flatMap(artist => [`- **${artist.name}** · ${money(artist.fee)} (${FEE_STATUS[artist.feeStatus] ?? artist.feeStatus}; availability: ${AVAILABILITY[artist.availability] ?? artist.availability})`, ...artist.claims.map(claim => `  - ${claim.text}${claim.receipts.length ? ` [${claim.receipts.map(row => row.id).join(', ')}]` : ''}`)]) : []),
     '', '## 3. Strategies compared under the same constraints and scenarios',
     '| Strategy | Bill | Artist fees | vs recommended | Disruption scenarios continued | Unchanged | Evidence coverage |',
@@ -43,6 +56,7 @@ export function packetMarkdown(packet, money) {
     ...packet.financial.breakpoints.map(row => `- ${row.text}`),
     packet.financial.commercial ? `- Commercial assumptions (promoter-entered, unverified): capacity ${packet.financial.commercial.capacity ?? '—'}, ticket price ${packet.financial.commercial.ticketPrice == null ? '—' : money(packet.financial.commercial.ticketPrice)}, other costs ${money(packet.financial.commercial.otherCosts ?? 0)}. Break-even: ${packet.financial.commercial.breakEvenTickets ?? '—'} paid tickets${packet.financial.commercial.breakEvenShare != null ? ` (${packet.financial.commercial.breakEvenShare}% of capacity)` : ''}. Arithmetic on assumptions, not a sales forecast.` : '- No ticket price or capacity was entered; no break-even is calculated.',
     '', '## 7. Cultural evidence and research',
+    `Fit basis: ${FIT_BASIS[packet.fitBasis] ?? 'ordinal rank positions'}.`,
     packet.research.verdict,
     `${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`,
     '| Artist | Role | Rank | Local | Audience comparison | Trend |',
@@ -88,7 +102,7 @@ ${notice ? `<p class="notice">${h(notice)}</p>` : ''}
 <p class="muted">Houselights decision packet · generated ${h(packet.generatedAt)} · decision support only: nothing has been booked, offered or approved.</p>
 <h2>1. Event brief</h2><ul><li>Market: ${h(brief.city)}${brief.venue ? ` · Venue: ${h(brief.venue)}` : ''}${brief.date ? ` · Date: ${h(brief.date)}` : ''}</li>${brief.direction ? `<li>Programming direction: ${h(brief.direction)}</li>` : ''}${brief.audience ? `<li>Target audience: ${h(brief.audience)}</li>` : ''}<li>Audience reference artists (Qloo anchors): ${h(brief.anchors.join(', ') || '—')}</li>${brief.objectives?.length ? `<li>Objectives: ${h(brief.objectives.join('; '))}</li>` : ''}<li>${h(brief.slots)} slots · ${h(money(brief.budget))} artist budget · max ${h(brief.maxPerGenre)} per genre · ${h(brief.candidates)} candidates${brief.locked?.length ? ` · locked: ${h(brief.locked.join(', '))}` : ''}${brief.excluded?.length ? ` · excluded: ${h(brief.excluded.join(', '))}` : ''}</li></ul>
 <h2>2. Recommendation <span class="tag approval">for human approval</span></h2>
-${rec ? `<div class="rec"><strong>${h(rec.names.join(' + '))}</strong><p>${h(money(rec.totalFee))} planned artist fees · ${h(money(rec.headroom))} unallocated · ${h(rec.policyScore)} policy points</p>${rec.provisional ? `<p><strong>Provisional:</strong> ${h(rec.provisionalReason)}</p>` : ''}${rec.why ? `<p>${h(rec.why)}</p>` : ''}</div>
+${rec ? `<div class="rec"><strong>${h(rec.names.join(' + '))}</strong><p>${h(money(rec.totalFee))} planned artist fees · ${h(money(rec.headroom))} unallocated · ${h(rec.policyScore)} policy points</p>${rec.provisional ? `<p><strong>Provisional:</strong> ${h(rec.provisionalReason)}</p>` : ''}${rec.why ? `<p>${h(rec.why)}</p>` : ''}${tieLines(packet).map(line => `<p><strong>${h(line.split(':')[0])}:</strong>${h(line.slice(line.indexOf(':') + 1))}</p>`).join('')}</div>
 ${table(['Artist', 'Fee', 'Fee status', 'Availability', 'Cultural rationale (Qloo receipts)'], rec.artists.map(artist => [h(artist.name), h(money(artist.fee)), h(FEE_STATUS[artist.feeStatus] ?? artist.feeStatus), h(AVAILABILITY[artist.availability] ?? artist.availability), `<ul>${artist.claims.map(claim => `<li>${h(claim.text)}${claim.receipts.length ? ` <code>[${h(claim.receipts.map(row => row.id).join(', '))}]</code>` : ''}</li>`).join('')}</ul>`]))}`
     : `<div class="rec"><strong>No feasible lineup</strong><p>${h(packet.infeasibility.reasons.join(' '))}</p></div>`}
 <h2>3. Strategies compared under the same constraints and scenarios</h2>
@@ -100,7 +114,7 @@ ${table(['Strategy', 'Bill', 'Artist fees', 'vs recommended', 'Disruption scenar
 ${table(['Artist', 'Fee', 'Fee status', 'Availability', 'Needs confirmation'], packet.terms.map(row => [h(row.name), h(row.fee == null ? '—' : money(row.fee)), h(FEE_STATUS[row.feeStatus] ?? row.feeStatus), h(AVAILABILITY[row.availability] ?? row.availability), row.needsConfirmation ? '<strong>Yes</strong>' : 'No']))}
 <h2>6. Budget and financial sensitivity</h2><ul><li>Planned artist fees ${h(money(packet.financial.plannedFees))} of ${h(money(packet.financial.artistBudget))}; ${h(money(packet.financial.headroom))} unallocated.</li>${packet.financial.breakpoints.map(row => `<li>${h(row.text)}</li>`).join('')}
 <li>${packet.financial.commercial ? h(`Commercial assumptions (promoter-entered, unverified): capacity ${packet.financial.commercial.capacity ?? '—'}, ticket price ${packet.financial.commercial.ticketPrice == null ? '—' : money(packet.financial.commercial.ticketPrice)}, other costs ${money(packet.financial.commercial.otherCosts ?? 0)}. Break-even: ${packet.financial.commercial.breakEvenTickets ?? '—'} paid tickets${packet.financial.commercial.breakEvenShare != null ? ` (${packet.financial.commercial.breakEvenShare}% of capacity)` : ''}. Arithmetic on assumptions, not a sales forecast.`) : 'No ticket price or capacity was entered; no break-even is calculated.'}</li></ul>
-<h2>7. Cultural evidence and research</h2><p>${h(packet.research.verdict)}</p><p class="muted">${h(`${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`)}</p>
+<h2>7. Cultural evidence and research</h2><p class="muted">Fit basis: ${h(FIT_BASIS[packet.fitBasis] ?? 'ordinal rank positions')}.</p><p>${h(packet.research.verdict)}</p><p class="muted">${h(`${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`)}</p>
 ${table(['Artist', 'Role', 'Rank', 'Local', 'Audience comparison', 'Trend'], packet.evidenceMatrix.map(row => [h(row.name), h(row.role), ...['rank', 'local', 'comparison', 'trends'].map(kind => `${h(row.cells[kind].label)}${row.cells[kind].receipts.length ? ` <code>[${h(row.cells[kind].receipts.join(', '))}]</code>` : ''}`)]))}
 <p class="muted">Cultural affinity describes taste relationships. It is not ticket demand, attendance or revenue.</p>
 <h2>8. Stress test</h2><p>${h(packet.robustness.summary)}</p><ul>${packet.robustness.vulnerabilities.map(row => `<li><span class="tag">${h(row.severity)}</span> ${h(row.text)}</li>`).join('')}</ul>

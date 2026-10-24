@@ -87,7 +87,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5&&
       financialDemo.data.result.explanationsBySet?.base?.comparison?.components?.length===8);
     const shocks=await request('/shocks-summary.json');
-    record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.headlineDenominator?.candidateCount===12);
+    record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.breakdown?.solvable?.violationResponses===3&&
+      shocks.data.breakdown.solvable.returnedResponses===231&&shocks.data.breakdown.notComparable?.shocks===9&&!/9.7%/.test(shocks.data.headline));
     const reviews=await request('/api/evidence/reviews');
     record('review-evidence-status',reviews.status===200&&Number.isInteger(reviews.data.completedReviewers)&&Array.isArray(reviews.data.cases));
     const catalog=await request('/api/judge/cases');

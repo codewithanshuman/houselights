@@ -134,7 +134,8 @@ export function computeStrategies(pool, constraints, context) {
   if (partialRank) {
     const ranked = new Set(partialRank.order), missing = partialRank.missingIds.filter(id => pool.find(item => item.id === id && bookable(item)));
     if (missing.length) {
-      const subset = pool.map(item => ranked.has(item.id) ? { ...item, fit: partialRank.order.length > 1 ? 1 - partialRank.order.indexOf(item.id) / (partialRank.order.length - 1) : .5, evidence: { ...item.evidence, rank: true } } : item);
+      const fitOf = id => partialRank.fits?.[id] ?? (partialRank.order.length > 1 ? 1 - partialRank.order.indexOf(id) / (partialRank.order.length - 1) : .5);
+      const subset = pool.map(item => ranked.has(item.id) ? { ...item, fit: fitOf(item.id), evidence: { ...item.evidence, rank: true } } : item);
       const result = optimizeSlate(subset, { ...constraints, excludedIds: unique([...(constraints.excludedIds ?? []), ...missing]) });
       const row = result.feasible ? rows.find(slate => same(slate.selectedIds, result.selectedIds)) : null;
       if (row) add('ranked-only', 'Best among acts Qloo could rank', row, `Qloo returned no rank for ${names(missing)} [${partialRank.receiptId}]. Excluding ${missing.length === 1 ? 'it' : 'them'} and using the returned order, this is the optimizer's choice.`, `Prefer it if you want every booked act backed by a Qloo audience rank.`);

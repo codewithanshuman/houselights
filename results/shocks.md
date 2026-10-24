@@ -1,13 +1,24 @@
-# 0 hard-constraint violations and explicit infeasibility, versus 9.7% for a re-prompted LLM at 12 candidates.
+# On 77 solvable shocks, 3/231 re-prompted LLM responses (1.3%) violated a hard constraint; Houselights proposed 0. On 7 unsolvable shocks Houselights abstained and all 21/21 LLM responses violated, because the prompt required a lineup.
 
-12-candidate headline denominator: 7 violating responses out of 72 returned responses from a synthetic stress case.
+| Group | Shocks | LLM responses returned / requested | LLM violating responses | LLM violation rate | Houselights violations | Houselights abstentions |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Shocks with at least one feasible lineup | 77 | 231/231 | 3 | 1.3% | 0 | 0 |
+| Shocks with no feasible lineup | 7 | 21/21 | 21 | 100.0% | 0 | 7 |
+| Synthetic 12-candidate case, solvable shocks only | 22 | 66/66 | 1 | 1.5% | 0 | 0 |
+| All comparable shocks, pooled | 84 | 252/252 | 24 | 9.5% | 0 | 7 |
+| Briefs without a comparable Qloo ranking | 9 | 0/27 | 0 | — | 0 | 0 |
+
+- **Like-for-like comparison:** solvable shocks only, 3/231 (1.3%).
+- **Unsolvable shocks:** The LLM prompt required a lineup and offered no way to report infeasibility, so every returned lineup on these shocks violates a constraint by construction. These responses measure the prompt design, not model judgment, and are excluded from the like-for-like rate.
+- **Pooled figure:** Pooled over solvable and unsolvable shocks. Not a like-for-like comparison; do not quote it without the split.
+- **Not comparable (Mumbai: why a comparison is unavailable):** Qloo did not rank every candidate in these briefs, so no comparable fit exists and the LLM control was not run. They are excluded from every comparison above.
 
 Deterministic single shocks across public real-data seeds and clearly labeled synthetic 10- and 12-candidate stress cases. Each shock targets the union of both original lineups. Houselights re-optimizes through judgeExperiment; the static LLM replays its saved first-trial lineup; the re-prompted LLM has three independent tool-free captures of the shocked brief. Failure rate counts responses that propose a hard-constraint violation, including invalid artist IDs; provider failures and missing responses are excluded and counted separately. Synthetic fit, fees, availability and artists are invented. Acts changed counts IDs in the symmetric difference from that arm’s original lineup. Abstention is not a feasible lineup.
 
 Houselights has zero proposed-lineup violations by construction: its exact optimizer only returns lineups that satisfy its constraints. This is an engineering property, not independent evidence of better attendance, revenue, or cultural demand.
 
 Across 93 deterministic shocks, Houselights returned 86 feasible slates and explicitly abstained on 7; it proposed 0 hard-constraint violations.
-The re-prompted LLM returned 252/279 requested responses: 24 proposed a violation (9.5%), 228 were feasible. The static first-trial lineup was feasible on 37/93 shocks; it is a fixed-selection diagnostic.
+The static first-trial lineup was feasible on 37/93 shocks; it is a fixed-selection diagnostic.
 
 | Case | Candidates | Shock | Houselights | Static LLM violation / overage | Re-prompted feasible / returned | Re-prompted failure rate | Re-prompted budget-overage spread | Selection spread |
 | --- | ---: | --- | --- | --- | ---: | ---: | --- | --- |
@@ -105,4 +116,4 @@ The re-prompted LLM returned 252/279 requested responses: 24 proposed a violatio
 | Mumbai: why a comparison is unavailable | 5 | Raise Ankur Tewari fee 15% | feasible · 0 IDs changed | unavailable / — | 0/0 | — | — | — |
 | Mumbai: why a comparison is unavailable | 5 | Mark Ankur Tewari unavailable | feasible · 2 IDs changed | unavailable / — | 0/0 | — | — | — |
 
-The 12-candidate headline rate uses only returned proposals from the clearly labeled synthetic 12-candidate case; see `results/shocks.json` for every trial, violation code, overage and exact fixture key. Provider failures and the non-comparable Mumbai case are reported as missing, never counted as successes. The static LLM arm is a fixed-selection stress test, not a new model run.
+See `results/shocks.json` for every trial, violation code, overage and exact fixture key. Provider failures and the non-comparable Mumbai case are reported as missing, never counted as successes. The static LLM arm is a fixed-selection stress test, not a new model run.

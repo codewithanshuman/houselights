@@ -61,6 +61,12 @@ Final verification on the pushed commit is recorded in the delivery message. Run
 - `npm run evaluate:autopilot`, over 12 briefs: 0 hard-constraint violations across 82 selections. Qloo evidence withdrawal changes 9 of 11 feasible decisions. Failure injection never claims sufficiency after a failed call.
 - Live Qloo, limited to about 120 workflow calls across all captures, probes and iterations. Both published records carry pinned or embedded manifests.
 
+## Corrections after review (24 October 2026)
+
+- **Shock headline.** The headline "0 violations vs 9.7% for a re-prompted LLM at 12 candidates" pooled responses on shocks with no feasible lineup. On those shocks the prompt required a lineup, so the LLM was forced to violate a constraint. The like-for-like figure is **3/231 (1.3%)**, on the 77 comparable solvable shocks. The 7 unsolvable shocks (21/21 forced) and Mumbai's 9 non-comparable shocks are reported separately (`results/shocks.md`).
+- **Affinity and tie bands.** Fit now uses Qloo affinity scores, and near-ties within 0.002 are re-checked. See [Autopilot](autopilot.md#qloo-affinity-scores-near-ties-and-comparability).
+- **Incomplete rankings.** Mumbai, Paris, Sydney and the Chicago example are marked "not comparable" and excluded from comparisons. Among the 9 comparable feasible briefs, withdrawing Qloo evidence changes the decision in 7. This replaces the earlier "9 of 11", which counted Mumbai and Sydney.
+
 ## Limitations and unresolved defects
 
 - Policy-selection results use synthetic ground truth. They show policy behaviour, not real audience outcomes.

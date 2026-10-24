@@ -38,7 +38,16 @@ test('the committed three-response fixture reproduces every per-shock result off
   const cases=[...syntheticShockCases(syntheticSource,fixture.baselines).reverse(),...real];
   const reproduced=await reproduceShocks(cases,{fixture:fixture.responses});
   assert.deepEqual(reproduced,JSON.parse(readFileSync(new URL('../results/shocks.json',import.meta.url),'utf8')));
-  assert.match(reproduced.headline,/0 hard-constraint violations and explicit infeasibility, versus [\d.]+% for a re-prompted LLM at 12 candidates/);
+  // The headline reports the like-for-like rate on solvable shocks; forced
+  // violations on unsolvable shocks and non-comparable briefs stay separate.
+  const {solvable,unsolvable,notComparable,overall}=reproduced.breakdown;
+  assert.deepEqual([solvable.violationResponses,solvable.returnedResponses],[3,231]);
+  assert.deepEqual([unsolvable.shocks,unsolvable.violationResponses,unsolvable.returnedResponses,unsolvable.houselightsAbstained],[7,21,21,7]);
+  assert.deepEqual(notComparable.cases,['Mumbai: why a comparison is unavailable']);assert.equal(notComparable.returnedResponses,0);
+  assert.equal(overall.shocks,solvable.shocks+unsolvable.shocks);
+  assert.match(reproduced.headline,/^On 77 solvable shocks, 3\/231 re-prompted LLM responses \(1\.3%\)/);
+  assert.match(reproduced.headline,/because the prompt required a lineup/);
+  assert.doesNotMatch(reproduced.headline,/9\.[57]%/);
 });
 test('live LLM attempts can be captured once and replayed offline against an exact brief digest',async()=>{
   const fixture={};let calls=0;

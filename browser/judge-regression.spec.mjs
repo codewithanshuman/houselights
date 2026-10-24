@@ -201,7 +201,9 @@ test('incomplete older case discloses missing agent events and insufficient rank
   await page.goto(`${origin}/judge.html#5031a69f837e1c28ce045422`);
   await expect(page.locator('#judge-title')).toContainText('Mumbai');
   await expect(page.locator('#judge-agent-trace')).toContainText('no saved model-step event log');
-  await expect(page.locator('#judge-qloo-preview')).toContainText('Treat this comparison as inconclusive.');
+  await expect(page.locator('#judge-qloo-preview')).toContainText('Not comparable: Qloo ranked 4 of 5 candidates');
+  await expect(page.locator('#judge-qloo-preview')).not.toContainText('The choice changes under matched assumptions.');
+  await expect(page.locator('#judge-qloo-preview')).not.toContainText('The choice stays the same under matched assumptions.');
   await expect(page.locator('#judge-source')).toContainText('Receipts only; no agent event log');
 });
 
@@ -399,9 +401,9 @@ test('Autopilot replays the recorded provider-backed run without new research an
   await expect(panel.locator('.autopilot-vulnerabilities')).toContainText('Without the New York location signal');
   await expect(panel.locator('.autopilot-packet-head h4')).toHaveText('Michael Kiwanuka + Sault');
   await expect(panel.locator('.autopilot-verdict')).toContainText('did not change');
-  await panel.locator('.autopilot-justification').getByRole('button',{name:'Receipt a2'}).click();
-  await expect(panel.locator('#autopilot-receipt-a2')).toHaveAttribute('open','');
-  await expect(panel.locator('#autopilot-receipt-a2 pre')).toContainText('"source": "qloo"');
+  await panel.locator('.autopilot-justification').getByRole('button',{name:'Receipt a3'}).click();
+  await expect(panel.locator('#autopilot-receipt-a3')).toHaveAttribute('open','');
+  await expect(panel.locator('#autopilot-receipt-a3 pre')).toContainText('"source": "qloo"');
   await panel.locator('.autopilot-justification').getByRole('button',{name:'Receipt r9'}).first().click();
   await expect(page.locator('#judge-receipts details[open]')).toHaveCount(1);
   const downloaded=page.waitForEvent('download');
@@ -549,4 +551,18 @@ test('workspace and desk controls all have accessible names and headings stay in
   await page.goto(`${origin}/workspace.html#example`);
   await expect(page.locator('#example-run-1 .autopilot-packet-head h4')).not.toHaveText('');
   const example=await audit();expect(example.unnamed).toEqual([]);expect(example.h1).toBe(1);
+});
+
+test('shock study headlines report the like-for-like solvable rate, never the pooled 9.7%', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.locator('.judge-shock-study summary').click();
+  const teaser=page.locator('#judge-shock-teaser');
+  await expect(teaser.locator('strong')).toHaveText('3/231');
+  await expect(teaser).toContainText('because the prompt required a lineup');
+  await expect(teaser).not.toContainText('9.7');
+  await page.goto(`${origin}/evidence.html`);
+  await expect(page.locator('#shock-headline')).toContainText('On 77 solvable shocks, 3/231 re-prompted LLM responses (1.3%)');
+  await expect(page.locator('#shock-stats')).toContainText('Briefs without a comparable Qloo ranking');
+  await expect(page.locator('#shock-rows')).toContainText('not comparable (incomplete Qloo ranking)');
+  await expect(page.locator('body')).not.toContainText('9.7%');
 });

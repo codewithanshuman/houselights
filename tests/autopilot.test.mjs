@@ -144,7 +144,7 @@ test('the recorded provider-backed run replays exactly offline and a tampered re
   assert.doesNotMatch(JSON.stringify(file),/api[_-]?key|authorization|bearer/i);
   const report=await replayRecordedAutopilot(file);
   assert.equal(report.passed,true,JSON.stringify(report));assert.equal(report.providerCalls,0);
-  const tampered=structuredClone(file);tampered.run.receipts[0].args.options=[...tampered.run.receipts[0].args.options].reverse();
+  const tampered=structuredClone(file);tampered.run.receipts.find(row=>row.tool==='rank').args.options=[...tampered.run.receipts.find(row=>row.tool==='rank').args.options].reverse();
   assert.equal((await replayRecordedAutopilot(tampered)).passed,false);
   const altered=structuredClone(file),local=altered.run.receipts.find(row=>row.tool==='where_popular');local.evidence.rows=[];
   assert.equal((await replayRecordedAutopilot(altered)).passed,false);

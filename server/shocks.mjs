@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {judgeExperiment} from './judge.mjs';
 import {benchmarkBrief} from './gm.mjs';
 import {evaluateSelection,optimizeSlate} from './optimizer.mjs';
+import {rankComparability} from './affinity.mjs';
 
 const digest=value=>'sha256:'+createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const unique=values=>[...new Set(values)];
@@ -101,6 +102,7 @@ export async function reproduceShocks(cases,{fixture={},reprompt,onCaptured,repe
     rows.push({caseId:record.id,caseTitle:record.title,shock:{id:shock.id,kind:shock.kind,label:shock.label,patch:shock.patch},
       baseline:{houselights:qlooBaseline,staticLlm:controlBaseline??null},briefDigest,fixtureKey:controlBaseline?key:null,
       arms:{houselights,staticLlm,repromptedLlm},candidateCount:snapshot.memo.items.length,synthetic:record.synthetic===true,
+      rankComparable:rankComparability(record.snapshot.memo.items).comparable,
       evidenceMode:record.synthetic===true?'synthetic':record.snapshot.benchmark?.evidenceMode??(record.snapshot.mock?'mock':'unknown')});
   }
   const summary=Object.fromEntries(['houselights','staticLlm'].map(arm=>{
@@ -116,14 +118,33 @@ export async function reproduceShocks(cases,{fixture={},reprompt,onCaptured,repe
     feasibleTrials:llmTrials.filter(trial=>trial.feasible).length,violationTrials:llmTrials.filter(trial=>trial.violationCount>0).length,
     totalHardConstraintViolations:llmTrials.reduce((sum,trial)=>sum+trial.violationCount,0),
     failureRate:llmTrials.length?llmTrials.filter(trial=>trial.violationCount>0).length/llmTrials.length:null};
-  const large=rows.filter(row=>row.synthetic&&row.candidateCount===12).flatMap(row=>row.arms.repromptedLlm.trials)
-    .filter(trial=>!['unavailable','not_comparable','not_captured'].includes(trial.status));
-  const largeRate=large.length?Math.round(1000*large.filter(trial=>trial.violationCount>0).length/large.length)/10:null;
-  const headline=summary.houselights.totalHardConstraintViolations===0&&largeRate!=null
-    ?`0 hard-constraint violations and explicit infeasibility, versus ${largeRate}% for a re-prompted LLM at 12 candidates.`
-    :'Constraint comparison at 12 candidates awaits captured LLM responses.';
-  return {version:'2.0',headline,headlineDenominator:{candidateCount:12,returnedResponses:large.length,
-      violationResponses:large.filter(trial=>trial.violationCount>0).length},
+  // A shock is solvable when some lineup satisfies every hard constraint; the
+  // exact optimizer decides this. On unsolvable shocks the LLM prompt offered no
+  // way to decline, so every returned lineup violates by construction. The two
+  // groups are reported separately and never pooled into one comparison.
+  const returned=row=>row.arms.repromptedLlm.trials.filter(trial=>!['unavailable','not_comparable','not_captured'].includes(trial.status));
+  const group=(subset,label)=>{const trials=subset.flatMap(returned),violations=trials.filter(trial=>trial.violationCount>0).length;
+    return {label,shocks:subset.length,requestedResponses:subset.length*repeats,returnedResponses:trials.length,violationResponses:violations,
+      violationRate:trials.length?violations/trials.length:null,houselightsViolations:subset.reduce((sum,row)=>sum+row.arms.houselights.violationCount,0),
+      houselightsAbstained:subset.filter(row=>row.arms.houselights.status==='abstained').length};};
+  // Briefs without a comparable Qloo ranking cannot support a method comparison.
+  const comparableRows=rows.filter(row=>row.rankComparable!==false),excludedRows=rows.filter(row=>row.rankComparable===false);
+  const solvableRows=comparableRows.filter(row=>row.arms.houselights.status!=='abstained'),unsolvableRows=comparableRows.filter(row=>row.arms.houselights.status==='abstained');
+  const breakdown={
+    solvable:group(solvableRows,'Shocks with at least one feasible lineup'),
+    unsolvable:{...group(unsolvableRows,'Shocks with no feasible lineup'),
+      note:'The LLM prompt required a lineup and offered no way to report infeasibility, so every returned lineup on these shocks violates a constraint by construction. These responses measure the prompt design, not model judgment, and are excluded from the like-for-like rate.'},
+    notComparable:{...group(excludedRows,'Briefs without a comparable Qloo ranking'),cases:[...new Set(excludedRows.map(row=>row.caseTitle))],
+      note:'Qloo did not rank every candidate in these briefs, so no comparable fit exists and the LLM control was not run. They are excluded from every comparison above.'},
+    overall:{...group(comparableRows,'All comparable shocks, pooled'),note:'Pooled over solvable and unsolvable shocks. Not a like-for-like comparison; do not quote it without the split.'},
+    twelveCandidateSolvable:group(solvableRows.filter(row=>row.synthetic&&row.candidateCount===12),'Synthetic 12-candidate case, solvable shocks only'),
+  };
+  const pct=value=>value==null?'n/a':`${(Math.round(value*1000)/10).toFixed(1)}%`;
+  const s=breakdown.solvable,u=breakdown.unsolvable;
+  const headline=s.returnedResponses&&s.houselightsViolations===0
+    ?`On ${s.shocks} solvable shocks, ${s.violationResponses}/${s.returnedResponses} re-prompted LLM responses (${pct(s.violationRate)}) violated a hard constraint; Houselights proposed 0. On ${u.shocks} unsolvable shocks Houselights abstained and all ${u.violationResponses}/${u.returnedResponses} LLM responses violated, because the prompt required a lineup.`
+    :'Constraint comparison awaits captured LLM responses on solvable shocks.';
+  return {version:'3.0',headline,breakdown,
     methodology:'Deterministic single shocks across public real-data seeds and clearly labeled synthetic 10- and 12-candidate stress cases. Each shock targets the union of both original lineups. Houselights re-optimizes through judgeExperiment; the static LLM replays its saved first-trial lineup; the re-prompted LLM has three independent tool-free captures of the shocked brief. Failure rate counts responses that propose a hard-constraint violation, including invalid artist IDs; provider failures and missing responses are excluded and counted separately. Synthetic fit, fees, availability and artists are invented. Acts changed counts IDs in the symmetric difference from that arm’s original lineup. Abstention is not a feasible lineup.',
     note:'Houselights has zero proposed-lineup violations by construction: its exact optimizer only returns lineups that satisfy its constraints. This is an engineering property, not independent evidence of better attendance, revenue, or cultural demand.',
     summary,rows};
@@ -135,15 +156,21 @@ export function shocksMarkdown(result){
   const money=value=>value==null?'—':value.toFixed(2);
   const spread=value=>value?value.map(money).join('–'):'—';
   const h=result.summary.houselights,l=result.summary.repromptedLlm,s=result.summary.staticLlm;
-  const lines=['# '+result.headline,'',`12-candidate headline denominator: ${result.headlineDenominator.violationResponses} violating responses out of ${result.headlineDenominator.returnedResponses} returned responses from a synthetic stress case.`,'',result.methodology,'',result.note,'',
+  const b=result.breakdown,row=(g)=>`| ${g.label} | ${g.shocks} | ${g.returnedResponses}/${g.requestedResponses} | ${g.violationResponses} | ${pct(g.violationRate)} | ${g.houselightsViolations} | ${g.houselightsAbstained} |`;
+  const lines=['# '+result.headline,'',
+    '| Group | Shocks | LLM responses returned / requested | LLM violating responses | LLM violation rate | Houselights violations | Houselights abstentions |','| --- | ---: | ---: | ---: | ---: | ---: | ---: |',
+    row(b.solvable),row(b.unsolvable),row(b.twelveCandidateSolvable),row(b.overall),row(b.notComparable),'',
+    `- **Like-for-like comparison:** solvable shocks only, ${b.solvable.violationResponses}/${b.solvable.returnedResponses} (${pct(b.solvable.violationRate)}).`,
+    `- **Unsolvable shocks:** ${b.unsolvable.note}`,`- **Pooled figure:** ${b.overall.note}`,`- **Not comparable (${b.notComparable.cases.join(', ')||'none'}):** ${b.notComparable.note}`,'',
+    result.methodology,'',result.note,'',
     `Across ${h.shocks} deterministic shocks, Houselights returned ${h.feasible} feasible slates and explicitly abstained on ${h.abstained}; it proposed ${h.totalHardConstraintViolations} hard-constraint violations.`,
-    `The re-prompted LLM returned ${l.respondedTrials}/${l.requestedTrials} requested responses: ${l.violationTrials} proposed a violation (${pct(l.failureRate)}), ${l.feasibleTrials} were feasible. The static first-trial lineup was feasible on ${s.feasible}/${s.shocks} shocks; it is a fixed-selection diagnostic.`,
+    `The static first-trial lineup was feasible on ${s.feasible}/${s.shocks} shocks; it is a fixed-selection diagnostic.`,
     '', '| Case | Candidates | Shock | Houselights | Static LLM violation / overage | Re-prompted feasible / returned | Re-prompted failure rate | Re-prompted budget-overage spread | Selection spread |',
     '| --- | ---: | --- | --- | --- | ---: | ---: | --- | --- |'];
   for(const row of result.rows){
     const {houselights,staticLlm,repromptedLlm}=row.arms;
     lines.push(`| ${cell(row.caseTitle)}${row.synthetic?' **(synthetic)**':''} | ${row.candidateCount} | ${cell(row.shock.label)} | ${houselights.status}${houselights.feasible?` · ${houselights.actsChanged} IDs changed`:''} | ${cell(staticLlm.hardConstraintViolations.join(', ')||staticLlm.status)} / ${money(staticLlm.budgetOverage)} | ${repromptedLlm.feasibleTrials}/${repromptedLlm.respondedTrials} | ${pct(repromptedLlm.failureRate)} | ${spread(repromptedLlm.budgetOverageRange)} | ${cell(repromptedLlm.actsChangedRange?.join('–'))} |`);
   }
-  lines.push('','The 12-candidate headline rate uses only returned proposals from the clearly labeled synthetic 12-candidate case; see `results/shocks.json` for every trial, violation code, overage and exact fixture key. Provider failures and the non-comparable Mumbai case are reported as missing, never counted as successes. The static LLM arm is a fixed-selection stress test, not a new model run.');
+  lines.push('','See `results/shocks.json` for every trial, violation code, overage and exact fixture key. Provider failures and the non-comparable Mumbai case are reported as missing, never counted as successes. The static LLM arm is a fixed-selection stress test, not a new model run.');
   return lines.join('\n')+'\n';
 }

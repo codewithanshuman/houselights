@@ -2,6 +2,7 @@ import { nameOf, idOf, tagsOf, trendOf, comparisonOf } from './shape.mjs';
 import { optimizeSlate } from './optimizer.mjs';
 import { evaluate } from './eval.mjs';
 import * as llm from './llm.mjs';
+import { fitsFromRankRows } from './affinity.mjs';
 
 const low = value => String(value ?? '').toLowerCase().trim();
 const ago = days => new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
@@ -68,6 +69,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const order = usable(ranking.env) ? [...new Set(rows(ranking.env).map(row => lookup.get(low(idOf(row))) || lookup.get(low(nameOf(row)))).filter(ref => candidates.has(ref)))] : [];
   const ordered = [...order, ...[...candidates.keys()].filter(ref => !order.includes(ref))];
   const rankComplete = order.length === candidates.size;
+  // Fit from Qloo affinity scores when the ranking returned one for every candidate.
+  const scored = rankComplete ? fitsFromRankRows(order, ranking.receipt.evidence?.rows ?? []) : null;
   say('Plan · allocating the remaining evidence budget');
   const deepLimit = Math.max(0, Math.min(4, Math.floor((run.budget - run.used - 1) / 2)));
   const proposal = await llm.plan({ city, callsLeft: run.budget - run.used, candidates: ordered.map(ref => ({ name: candidates.get(ref).name, rank: order.includes(ref) ? order.indexOf(ref) + 1 : null, foundForYou: candidates.get(ref).found })) });
@@ -100,8 +103,9 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       evidenceReceipts.local = [where.receipt.id]; evidenceReceipts.comparison = [compare.receipt.id];
       evidenceReceipts.trends = trendCall ? [trendCall.receipt.id] : [];
     }
-    // Relative rank utility is not Qloo affinity, market share, or a forecast.
-    const fit = hasRank ? order.length > 1 ? 1 - position / (order.length - 1) : .5 : null;
+    // Fit is Qloo affinity scaled across the ranked pool (ordinal position only when
+    // scores are missing). It is relative cultural fit, not market share or a forecast.
+    const fit = hasRank ? scored.fits.get(ref) : null;
     let verdict = !hasRank ? 'hold' : fit >= .6 ? 'lean yes' : candidate.found && fit >= .3 ? 'growth bet' : fit < .3 ? 'lean pass' : 'hold';
     if (momentum === 'cooling' && verdict === 'lean yes') verdict = 'hold';
     const claimList = [{ id: `${ref}:rank`, text: hasRank ? `Ranks ${position + 1} of ${order.length} returned artists for these anchors [${ranking.receipt.id}].` : `No supported audience rank is available [${ranking.receipt.id}].` }];
@@ -110,6 +114,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       claimList.push({ id: `${ref}:trend`, text: `Observed trend direction: ${momentum}${trendCall ? ` [${trendCall.receipt.id}]` : ''}.` });
     }
     items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: candidates.size, fit, local, momentum, verdict,
+      ...(hasRank && scored.basis === 'qloo-affinity' ? { affinity: scored.scores.get(ref), fitBasis: 'qloo-affinity' } : hasRank ? { fitBasis: 'ordinal-rank' } : {}),
       rankCoverage: { complete: rankComplete, returned: order.length, requested: candidates.size },
       receipts: [...new Set(receipts)], tags: candidate.terms.genre ? [candidate.terms.genre] : [],
       evidence: { rank: hasRank, local: localEvidence, comparison, trends: trendEvidence }, evidenceReceipts, claims: claimList, note: claimList.map(claim => claim.text).join(' ') });

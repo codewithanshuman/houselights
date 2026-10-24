@@ -15,6 +15,10 @@
       "title": "Manchester: compare all three methods",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost"
@@ -39,15 +43,19 @@
       "title": "Berlin: compare all three methods",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit"
       ],
       "questionTiers": {
-        "material": 0,
+        "material": 3,
         "ranking": 0,
         "robustness": 1,
         "justification": 0,
-        "fallback": 3,
+        "fallback": 0,
         "immaterial": 3,
         "blocked": 0,
         "done": 3
@@ -62,17 +70,21 @@
       "title": "New York: compare all three methods",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": true,
       "strategies": [
         "cultural-fit",
         "lower-cost"
       ],
       "questionTiers": {
-        "material": 0,
+        "material": 1,
         "ranking": 0,
         "robustness": 1,
         "justification": 3,
-        "fallback": 0,
-        "immaterial": 6,
+        "fallback": 2,
+        "immaterial": 3,
         "blocked": 0,
         "done": 2
       },
@@ -86,6 +98,10 @@
       "title": "Mumbai: why a comparison is unavailable",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": false,
+      "fitBasis": "ordinal-rank",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost",
@@ -111,15 +127,19 @@
       "title": "New York: watch a recorded Qloo research run",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost"
       ],
       "questionTiers": {
-        "material": 0,
+        "material": 1,
         "ranking": 0,
         "robustness": 1,
-        "justification": 6,
+        "justification": 5,
         "fallback": 0,
         "immaterial": 6,
         "blocked": 0,
@@ -135,6 +155,10 @@
       "title": "Illustrative: London alternative bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost"
@@ -159,6 +183,10 @@
       "title": "Illustrative: Paris crossover bill",
       "savedEvidence": "qloo",
       "feasible": false,
+      "rankComparable": false,
+      "fitBasis": "ordinal-rank",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [],
       "questionTiers": {
         "material": 0,
@@ -180,6 +208,10 @@
       "title": "Illustrative: Amsterdam electronic bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost",
@@ -205,16 +237,20 @@
       "title": "Illustrative: Toronto soul and jazz bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost",
         "robust"
       ],
       "questionTiers": {
-        "material": 0,
+        "material": 2,
         "ranking": 0,
         "robustness": 1,
-        "justification": 6,
+        "justification": 4,
         "fallback": 0,
         "immaterial": 3,
         "blocked": 0,
@@ -230,6 +266,10 @@
       "title": "Illustrative: Los Angeles jazz and hip-hop bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost",
@@ -255,6 +295,10 @@
       "title": "Illustrative: São Paulo independent bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": true,
+      "fitBasis": "qloo-affinity",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit"
       ],
@@ -278,6 +322,10 @@
       "title": "Illustrative: Sydney psychedelic and indie bill",
       "savedEvidence": "qloo",
       "feasible": true,
+      "rankComparable": false,
+      "fitBasis": "ordinal-rank",
+      "restsOnNearTie": false,
+      "affinityDiffersFromOrdinal": false,
       "strategies": [
         "cultural-fit",
         "lower-cost",
@@ -313,14 +361,14 @@
         "fixedOrder": {
           "decisionAgreement": 12,
           "calls": 24,
-          "immaterialCalls": 7,
+          "immaterialCalls": 9,
           "unresearchedBookedGaps": 9
         },
         "random": {
           "decisionAgreement": 10.4,
           "calls": 24,
-          "immaterialCalls": 12,
-          "unresearchedBookedGaps": 14.8
+          "immaterialCalls": 12.2,
+          "unresearchedBookedGaps": 13.4
         }
       },
       {
@@ -335,14 +383,14 @@
         "fixedOrder": {
           "decisionAgreement": 12,
           "calls": 48,
-          "immaterialCalls": 18,
+          "immaterialCalls": 21,
           "unresearchedBookedGaps": 7
         },
         "random": {
           "decisionAgreement": 11.2,
           "calls": 48,
           "immaterialCalls": 25.2,
-          "unresearchedBookedGaps": 10.8
+          "unresearchedBookedGaps": 10
         }
       },
       {
@@ -357,14 +405,14 @@
         "fixedOrder": {
           "decisionAgreement": 12,
           "calls": 70,
-          "immaterialCalls": 32,
+          "immaterialCalls": 34,
           "unresearchedBookedGaps": 3
         },
         "random": {
           "decisionAgreement": 11.6,
           "calls": 70,
-          "immaterialCalls": 37.6,
-          "unresearchedBookedGaps": 7
+          "immaterialCalls": 37.4,
+          "unresearchedBookedGaps": 6.8
         }
       }
     ],
@@ -521,7 +569,7 @@
         "fullInformation": {
           "selectedIds": [
             "368316C7-795A-46AF-8BBC-270F6633BE04",
-            "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+            "57478178-BBBC-49A4-8755-5D942B388316"
           ],
           "calls": 7
         },
@@ -531,19 +579,19 @@
               "agrees": true,
               "calls": 2,
               "immaterialCalls": 0,
-              "unresearchedBookedGaps": 1
+              "unresearchedBookedGaps": 0
             },
             "fixedOrder": {
               "agrees": true,
               "calls": 2,
-              "immaterialCalls": 0,
+              "immaterialCalls": 2,
               "unresearchedBookedGaps": 0
             },
             "random": {
               "agreesRate": 1,
               "calls": 2,
-              "immaterialCalls": 1.2,
-              "unresearchedBookedGaps": 1.4
+              "immaterialCalls": 1.4,
+              "unresearchedBookedGaps": 0
             }
           },
           "4": {
@@ -556,14 +604,14 @@
             "fixedOrder": {
               "agrees": true,
               "calls": 4,
-              "immaterialCalls": 1,
+              "immaterialCalls": 4,
               "unresearchedBookedGaps": 0
             },
             "random": {
               "agreesRate": 1,
               "calls": 4,
               "immaterialCalls": 2.6,
-              "unresearchedBookedGaps": 0.8
+              "unresearchedBookedGaps": 0
             }
           },
           "6": {
@@ -576,14 +624,14 @@
             "fixedOrder": {
               "agrees": true,
               "calls": 6,
-              "immaterialCalls": 3,
+              "immaterialCalls": 5,
               "unresearchedBookedGaps": 0
             },
             "random": {
               "agreesRate": 1,
               "calls": 6,
-              "immaterialCalls": 3.8,
-              "unresearchedBookedGaps": 0.2
+              "immaterialCalls": 3.6,
+              "unresearchedBookedGaps": 0
             }
           }
         }
@@ -677,7 +725,7 @@
               "agrees": true,
               "calls": 2,
               "immaterialCalls": 0,
-              "unresearchedBookedGaps": 1
+              "unresearchedBookedGaps": 2
             },
             "fixedOrder": {
               "agrees": true,
