@@ -1,5 +1,32 @@
 # Sharing an existing Oracle server
 
+## Deployments of 764824d and 02f7228 — 24 October 2026
+
+The public host runs `02f7228e0203bbc2b714a54f678c6b53a34e58b0`, and `/healthz` over public HTTPS reports it.
+
+- **`764824d`** added the four-step Booking Desk path, WebP/WOFF2 assets, demoted labs and the festival-policy cap.
+- **`02f7228`** stops the sticky experiment form from covering opened receipts.
+
+Both used the same procedure as below:
+
+- a verified backup (`pre-764824d`, `pre-02f7228`);
+- a rollback drill on the previous image;
+- the exact checkout and secret scan;
+- a capped build;
+- an app-only container switch. Every other container and the livestream PID were unchanged.
+
+**Checks after the deployment**
+
+- `npm run release:verify` passed 84 checks.
+- A second, immediate run failed only its experiment checks, with HTTP 429 from the per-IP limit of 20 experiments per minute. It passed 84/84 once the window reset.
+- In real Chrome on the live site, the four steps ran end to end: Kiwanuka + Sault became Rakei + Hiatus Kaiyote, and receipt `r9 · rank · ok` opened.
+- The opened receipt does not overlap the experiment form at 1280, 900 or 375 px. There was no page overflow and there were no page errors.
+- The deployed optimizer rejects a 20 × 5 festival-policy brief in 1 ms.
+- The uptime monitor's checks pass.
+- Disk use is 84%.
+
+**Rollback:** tag `houselights-shared:pre-02f7228` as `houselights-shared:local`, set `RELEASE_COMMIT=764824d7a3b2e9bf7ea2c437de80fbbedf2c130e`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of bd376df — 24 October 2026
 
 The public host runs `bd376df6285ddb1665a06f4826926e2ff939bf18`, the competition-quality milestone, and `/healthz` over public HTTPS reports that release. The same procedure as below was used:
