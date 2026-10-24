@@ -450,3 +450,9 @@
 .glance-step:nth-child(3){border-left-color:var(--judge-purple)}
 .decision-glance .glance-step .glance-qloo{margin:0 0 10px}
 .glance-step .button[disabled]{opacity:.55;cursor:not-allowed}
+/* The experiment form stays sticky to the end of the workspace grid, so a full-width
+   receipts panel slid under it and hid the left of an opened receipt. Keep the panel
+   beside the form while the form is sticky (it is static below 780px). */
+.judge-page .judge-receipts-panel{grid-column:5/-1}
+@media(max-width:1000px){.judge-page .judge-receipts-panel{grid-column:6/-1}}
+@media(max-width:780px){.judge-page .judge-receipts-panel{grid-column:auto}}

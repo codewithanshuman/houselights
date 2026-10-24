@@ -112,6 +112,13 @@ test('the Booking Desk opens into one path: brief, slate, withdraw Qloo evidence
   await receipt.click();
   const opened=page.locator('#judge-receipts details[open] summary').first();
   await expect(opened).toBeFocused();await expect(opened).toContainText('rank');
+  // The opened receipt must not sit under the sticky experiment form, at any width.
+  for(const width of [1280,900,375]){
+    await page.setViewportSize({width,height:800});
+    const body=page.locator('#judge-receipts details[open]').first();await body.scrollIntoViewIfNeeded();
+    const overlap=await page.evaluate(()=>{const a=document.querySelector('#judge-receipts details[open]').getBoundingClientRect(),b=document.getElementById('judge-form').getBoundingClientRect();return a.left<b.right&&b.left<a.right&&a.top<b.bottom&&b.top<a.bottom;});
+    expect(overlap,`receipt overlaps the experiment form at ${width}px`).toBe(false);
+  }
 });
 
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
