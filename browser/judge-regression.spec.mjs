@@ -20,7 +20,8 @@ async function freePort() {
 }
 
 async function ready() {
-  for (let attempt = 0; attempt < 150; attempt++) {
+  const deadline=Date.now()+60000;
+  while (Date.now()<deadline) {
     if (app.exitCode != null) throw new Error(`Local HouseLights exited early: ${output.slice(-1500)}`);
     try {
       const response = await fetch(`${origin}/api/judge/cases`, { signal: AbortSignal.timeout(1000) });
@@ -32,6 +33,7 @@ async function ready() {
 }
 
 test.beforeAll(async () => {
+  test.setTimeout(90000);
   dataDir = mkdtempSync(join(tmpdir(), 'houselights-browser-'));
   origin = `http://127.0.0.1:${await freePort()}`;
   const env = { ...process.env,
@@ -241,4 +243,18 @@ test('Proof Lab restores the displayed brief after a failed case switch and perm
   await page.locator('#case-select').selectOption(nextId);
   await expect(page.locator('#case-status')).toContainText('Berlin');
   await expect(page.locator('#case-select')).toHaveValue(nextId);
+});
+
+test('recorded case clearly limits the comparison and remains usable on desktop and phone', async ({ page }, testInfo) => {
+  for(const width of [1440,390]){
+    await page.setViewportSize({width,height:900});
+    await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+    await expect(page.locator('#judge-qloo-preview')).toContainText('No matched saved first-trial LLM-only control');
+    await expect(page.locator('#judge-qloo-preview')).toContainText('cannot establish superiority');
+    await page.screenshot({path:testInfo.outputPath(`recorded-judge-${width}.png`),fullPage:false});
+    await page.getByRole('button',{name:/Run the matched test and inspect receipts/}).click();
+    await expect(page.locator('.judge-evidence-comparison')).toContainText('MATCHED EVIDENCE TEST');
+    await expect(page.locator('#judge-result')).toContainText('No saved first-trial LLM control');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }
 });

@@ -1,0 +1,1511 @@
+{
+  "version": "judge-evaluation-audit-v1",
+  "sourceManifestDigest": "sha256:599bd19e848a8100c6ed6247de7bdf804dde990abb9eed052b42f9b2600fb464",
+  "cases": 5,
+  "cities": 4,
+  "shocks": 54,
+  "feasibleDecisions": 52,
+  "explicitInfeasibilities": 2,
+  "houselightsViolations": 0,
+  "reviewEligible": [
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "title": "Manchester: compare all three methods"
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "title": "Berlin: compare all three methods"
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "title": "New York: compare all three methods"
+    }
+  ],
+  "genuineReviewJudgments": 0,
+  "observedSalesOutcomes": 0,
+  "rows": [
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 5400
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 4800
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 4200
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 400,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "cancel-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "patch": {
+        "cancelId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+          "97FCD59C-4F36-4605-B458-79167FBCED33"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "fee-15-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "patch": {
+        "feeIncreaseId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "unavailable-B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+      "patch": {
+        "unavailableId": "B3C36B49-259E-4A4F-80E6-AE9F19F6004C"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+          "97FCD59C-4F36-4605-B458-79167FBCED33"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "cancel-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "patch": {
+        "cancelId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "97FCD59C-4F36-4605-B458-79167FBCED33"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "fee-15-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "patch": {
+        "feeIncreaseId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "4986d98dcd8ac838aed3874a",
+      "shockId": "unavailable-B3176305-C5BA-4B25-BD83-FB86B6E706C1",
+      "patch": {
+        "unavailableId": "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "97FCD59C-4F36-4605-B458-79167FBCED33"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B3C36B49-259E-4A4F-80E6-AE9F19F6004C",
+          "B3176305-C5BA-4B25-BD83-FB86B6E706C1"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 11250
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 1250,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 10000
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 2500,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 8750
+      },
+      "houselights": {
+        "status": "explicit_infeasibility",
+        "selectedIds": [],
+        "violations": [],
+        "budgetOverage": null
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 3750,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "cancel-120402A8-860E-4384-B2F2-91E49383D42B",
+      "patch": {
+        "cancelId": "120402A8-860E-4384-B2F2-91E49383D42B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "fee-15-120402A8-860E-4384-B2F2-91E49383D42B",
+      "patch": {
+        "feeIncreaseId": "120402A8-860E-4384-B2F2-91E49383D42B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "unavailable-120402A8-860E-4384-B2F2-91E49383D42B",
+      "patch": {
+        "unavailableId": "120402A8-860E-4384-B2F2-91E49383D42B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "1FCE26EB-24C4-4AD9-85E0-6F6BC8D262B8",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "cancel-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "patch": {
+        "cancelId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "36254E3F-20E4-4151-AC61-D753CA41F34A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "fee-15-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "patch": {
+        "feeIncreaseId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "unavailable-4F87DE42-3B65-4ED1-B1C8-D015920E8E10",
+      "patch": {
+        "unavailableId": "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "36254E3F-20E4-4151-AC61-D753CA41F34A"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "cancel-36254E3F-20E4-4151-AC61-D753CA41F34A",
+      "patch": {
+        "cancelId": "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "fee-15-36254E3F-20E4-4151-AC61-D753CA41F34A",
+      "patch": {
+        "feeIncreaseId": "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 975,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "unavailable-36254E3F-20E4-4151-AC61-D753CA41F34A",
+      "patch": {
+        "unavailableId": "36254E3F-20E4-4151-AC61-D753CA41F34A"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "cancel-78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+      "patch": {
+        "cancelId": "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "fee-15-78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+      "patch": {
+        "feeIncreaseId": "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "budget"
+        ],
+        "budgetOverage": 900,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "934e002267e2db9ccdc1b5a9",
+      "shockId": "unavailable-78AA0492-B692-47A8-8BC6-78CB0721AF2F",
+      "patch": {
+        "unavailableId": "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "120402A8-860E-4384-B2F2-91E49383D42B",
+          "4F87DE42-3B65-4ED1-B1C8-D015920E8E10"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "36254E3F-20E4-4151-AC61-D753CA41F34A",
+          "78AA0492-B692-47A8-8BC6-78CB0721AF2F"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 13050
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 11600
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 10150
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "cancel-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "cancelId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "fee-15-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "feeIncreaseId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "unavailable-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "unavailableId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "cancel-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "cancelId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "fee-15-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "feeIncreaseId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "unavailable-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "unavailableId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "cancel-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "cancelId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "locks",
+          "exclusions"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "fee-15-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "feeIncreaseId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "bf9b65d52eeff00e0e258917",
+      "shockId": "unavailable-57478178-BBBC-49A4-8755-5D942B388316",
+      "patch": {
+        "unavailableId": "57478178-BBBC-49A4-8755-5D942B388316"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ]
+      },
+      "staticLlm": {
+        "status": "fixed_selection_replay",
+        "feasible": false,
+        "violations": [
+          "availability"
+        ],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 945000
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 840000
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 735000
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "cancel-708E858B-D0E9-4606-A64B-47B890D46108",
+      "patch": {
+        "cancelId": "708E858B-D0E9-4606-A64B-47B890D46108"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "C8A2D53C-5353-4996-985C-868BB38762D9",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "fee-15-708E858B-D0E9-4606-A64B-47B890D46108",
+      "patch": {
+        "feeIncreaseId": "708E858B-D0E9-4606-A64B-47B890D46108"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "C8A2D53C-5353-4996-985C-868BB38762D9",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "unavailable-708E858B-D0E9-4606-A64B-47B890D46108",
+      "patch": {
+        "unavailableId": "708E858B-D0E9-4606-A64B-47B890D46108"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "C8A2D53C-5353-4996-985C-868BB38762D9",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "cancel-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+      "patch": {
+        "cancelId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "C8A2D53C-5353-4996-985C-868BB38762D9"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "fee-15-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+      "patch": {
+        "feeIncreaseId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "5031a69f837e1c28ce045422",
+      "shockId": "unavailable-F2DB6ED1-7F75-4685-ABC1-07E08B4F711B",
+      "patch": {
+        "unavailableId": "F2DB6ED1-7F75-4685-ABC1-07E08B4F711B"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "708E858B-D0E9-4606-A64B-47B890D46108",
+          "C8A2D53C-5353-4996-985C-868BB38762D9"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "budget-90",
+      "patch": {
+        "budget": 13050
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "budget-80",
+      "patch": {
+        "budget": 11600
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "budget-70",
+      "patch": {
+        "budget": 10150
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "cancel-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "cancelId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "fee-15-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "feeIncreaseId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "unavailable-368316C7-795A-46AF-8BBC-270F6633BE04",
+      "patch": {
+        "unavailableId": "368316C7-795A-46AF-8BBC-270F6633BE04"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "cancel-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "cancelId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "fee-15-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "feeIncreaseId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    },
+    {
+      "caseId": "8be4d03ef4792ca9f1466983",
+      "shockId": "unavailable-B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+      "patch": {
+        "unavailableId": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0"
+      },
+      "houselights": {
+        "status": "selection",
+        "feasible": true,
+        "violations": [],
+        "budgetOverage": 0,
+        "selectedIds": [
+          "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "57478178-BBBC-49A4-8755-5D942B388316"
+        ]
+      },
+      "staticLlm": {
+        "status": "unavailable"
+      },
+      "matchedInputs": true,
+      "providerCalls": 0
+    }
+  ],
+  "limitations": [
+    "Dependent stress replays of five saved briefs, not additional independent markets.",
+    "Zero proposed-lineup violations follows from an exact constraint optimizer; explicit infeasibility is reported separately.",
+    "Static LLM selections are not re-prompted under shocks. No fresh LLM superiority comparison is made.",
+    "New recorded case has no matched first-trial LLM control. Review eligibility excludes it and incomplete controls.",
+    "Reviewers have not been recruited. No ballots or event outcomes are inferred from this audit."
+  ]
+}

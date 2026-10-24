@@ -29,6 +29,10 @@ jobs:
           node-version: "24"
       - run: npm ci
       - run: npm test
+      - name: Reproduce the published judge stress audit
+        run: |
+          npm run audit:judge-evaluation
+          git diff --exit-code -- results/judge-evaluation-audit.json
       - run: npx playwright install --with-deps chromium
         if: matrix.runner == 'ubuntu-24.04'
       - run: npm run test:browser

@@ -9,3 +9,10 @@ The brief has one anchor, five offered artists and three Qloo-discovered candida
 The earlier Manchester, Berlin, New York and Mumbai cases remain published with their saved Qloo receipts and controls. They have no model-step event log; the interface labels their receipt-completion display accordingly. The new recorded case has no comparable saved first-trial festival LLM control. The frozen shock v2 benchmark remains scoped to the original four real-evidence cases and two labeled synthetic cases through `evals/shock-cohort.json`; it does not count the new case without three captured re-prompts per shock.
 
 To replay the fixed-pool evidence comparison offline, run `npm run reproduce:qloo-proof`. To check the anonymous judge path and receipt navigation locally, run `npm run test:browser`. The current proof suite covers five distinct saved briefs in four cities; it has no genuine blind judgments or held-out ticket outcomes. The 12-brief target is still unmet.
+
+
+## Repeatable retained-source verification
+
+Run `npm run verify:recorded-source` locally (or pass a retained path after `--`). It verifies that the file is ignored and untracked, checks its exact bytes against the documented digest, regenerates `publicJudgeSnapshot` in an isolated temporary database, and requires exact equality with the published snapshot and case ID. It emits aggregate counts and the already-public digest only. It makes no provider calls and prints no source content, source ID, credentials or raw responses. Failure is redacted. The private original is required for this check; CI cannot independently perform it without that retained file. Unit tests use synthetic test-only bytes and protect digest/projection mismatch handling.
+
+On 2026-10-24 the retained original matched the documented digest and reproduced case `8be4d03ef4792ca9f1466983` exactly on Node v24.21.0: 31 events and 18 receipts. See [independent review readiness](independent-review-readiness.md) for the predeclared eligible comparison cohort and unsent invitation draft.
