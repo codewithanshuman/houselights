@@ -1,0 +1,303 @@
+{
+  "version": "market-coverage-v1",
+  "purpose": "Predeclared illustrative market probes with real Qloo cultural evidence; not real organizer briefs or independently sampled commercial outcomes.",
+  "rule": "Use every resolved offered artist. Re-rank the offered-only pool before any control. Retain all cases, missing evidence and failed attempts. No best-of selection.",
+  "workflowBudgetPerBrief": 24,
+  "offeredRankBudgetPerBrief": 1,
+  "maximumQlooWorkflowAttempts": 175,
+  "maximumLlmRequests": 7,
+  "controlTrialsPerBrief": 1,
+  "reviewTrial": 1,
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "conservativeLlmTokenBudget": 60000,
+  "briefs": [
+    {
+      "label": "London alternative bill",
+      "city": "London",
+      "currency": "GBP",
+      "anchors": [
+        "Radiohead"
+      ],
+      "offers": [
+        "The xx",
+        "Wolf Alice",
+        "Caribou",
+        "Foals",
+        "Warpaint",
+        "Jungle"
+      ],
+      "fees": [
+        5000,
+        4000,
+        3500,
+        3800,
+        2800,
+        4200
+      ],
+      "genres": [
+        "indie",
+        "rock",
+        "electronic",
+        "rock",
+        "indie",
+        "soul"
+      ],
+      "constraints": {
+        "budget": 11500,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "Paris crossover bill",
+      "city": "Paris",
+      "currency": "EUR",
+      "anchors": [
+        "Daft Punk"
+      ],
+      "offers": [
+        "Justice",
+        "Air",
+        "Phoenix",
+        "M83",
+        "L’Impératrice",
+        "Parcels"
+      ],
+      "fees": [
+        6000,
+        5500,
+        5000,
+        4500,
+        3000,
+        3500
+      ],
+      "genres": [
+        "dance",
+        "downtempo",
+        "indie",
+        "electronic",
+        "disco",
+        "disco"
+      ],
+      "constraints": {
+        "budget": 12500,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "Amsterdam electronic bill",
+      "city": "Amsterdam",
+      "currency": "EUR",
+      "anchors": [
+        "Bonobo"
+      ],
+      "offers": [
+        "Maribou State",
+        "Tourist",
+        "Tycho",
+        "Bicep",
+        "Floating Points",
+        "Mount Kimbie"
+      ],
+      "fees": [
+        3500,
+        2800,
+        4000,
+        6000,
+        4500,
+        3200
+      ],
+      "genres": [
+        "organic electronic",
+        "organic electronic",
+        "ambient electronic",
+        "dance",
+        "experimental",
+        "experimental"
+      ],
+      "constraints": {
+        "budget": 11000,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "Toronto soul and jazz bill",
+      "city": "Toronto",
+      "currency": "USD",
+      "anchors": [
+        "Daniel Caesar"
+      ],
+      "offers": [
+        "Charlotte Day Wilson",
+        "BADBADNOTGOOD",
+        "River Tiber",
+        "Jordan Rakei",
+        "Cleo Sol",
+        "Snoh Aalegra"
+      ],
+      "fees": [
+        2800,
+        4500,
+        2200,
+        3500,
+        4200,
+        5000
+      ],
+      "genres": [
+        "soul",
+        "jazz",
+        "electronic",
+        "jazz soul",
+        "soul",
+        "rnb"
+      ],
+      "constraints": {
+        "budget": 10000,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "Los Angeles jazz and hip-hop bill",
+      "city": "Los Angeles",
+      "currency": "USD",
+      "anchors": [
+        "Kendrick Lamar"
+      ],
+      "offers": [
+        "Anderson .Paak",
+        "Thundercat",
+        "Flying Lotus",
+        "Kamasi Washington",
+        "Little Simz",
+        "Hiatus Kaiyote"
+      ],
+      "fees": [
+        6500,
+        4500,
+        5000,
+        4800,
+        5500,
+        4000
+      ],
+      "genres": [
+        "soul",
+        "jazz",
+        "electronic",
+        "jazz",
+        "hip-hop",
+        "soul"
+      ],
+      "constraints": {
+        "budget": 14500,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "São Paulo independent bill",
+      "city": "São Paulo",
+      "currency": "USD",
+      "anchors": [
+        "Liniker"
+      ],
+      "offers": [
+        "Luedji Luna",
+        "Baco Exu do Blues",
+        "Tim Bernardes",
+        "BaianaSystem",
+        "Duda Beat",
+        "Tuyo"
+      ],
+      "fees": [
+        3000,
+        4500,
+        3200,
+        4000,
+        2800,
+        2000
+      ],
+      "genres": [
+        "soul",
+        "rap",
+        "indie",
+        "crossover",
+        "pop",
+        "indie"
+      ],
+      "constraints": {
+        "budget": 9000,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    },
+    {
+      "label": "Sydney psychedelic and indie bill",
+      "city": "Sydney",
+      "currency": "USD",
+      "anchors": [
+        "Tame Impala"
+      ],
+      "offers": [
+        "Pond",
+        "Unknown Mortal Orchestra",
+        "King Gizzard & the Lizard Wizard",
+        "Ocean Alley",
+        "Jungle",
+        "Parcels"
+      ],
+      "fees": [
+        3000,
+        4000,
+        5500,
+        3200,
+        4200,
+        3500
+      ],
+      "genres": [
+        "psychedelic",
+        "psychedelic",
+        "rock",
+        "indie",
+        "soul",
+        "disco"
+      ],
+      "constraints": {
+        "budget": 11000,
+        "slots": 3,
+        "maxPerGenre": 2,
+        "discoveryMin": 0,
+        "riskTolerance": 50,
+        "lockedIds": [],
+        "excludedIds": []
+      }
+    }
+  ]
+}
