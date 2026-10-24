@@ -27,6 +27,7 @@ import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
+import { registerAutopilotRoutes } from './autopilot-api.mjs';
 import { registerDemandRoutes } from './demand-api.mjs';
 import { registerFinancialRoutes } from './financial/api.mjs';
 import { registerExperimentRoutes } from './experiments/experiment-api.mjs';
@@ -101,6 +102,7 @@ export function createApp() {
   registerFinancialRoutes(app);
   registerExperimentRoutes(app);
   registerJudgeRoutes(app);
+  registerAutopilotRoutes(app);
   registerOperationalRoutes(app);
   app.post('/api/investigation/:id/apply', (req,res) => {
     const source=store.load(req.params.id), investigation=source?.investigation;
