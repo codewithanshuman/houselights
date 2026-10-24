@@ -8,7 +8,11 @@ export const FEE_STATUS = { quoted: 'Quoted by agent (promoter-entered)', estima
 export const AVAILABILITY = { confirmed: 'Confirmed (promoter-entered)', assumed: 'Assumed for planning — confirm', unconfirmed: 'Not confirmed', unavailable: 'Unavailable', illustrative: 'Illustrative demo value' };
 const MODE = { live: 'Fresh research with live Qloo calls', synthetic: 'SYNTHETIC Qloo fixtures — not real evidence', planning: 'Planning from saved evidence — no new Qloo calls', recorded: 'Recorded run replayed — no new Qloo calls', replay: 'Offline replay of recorded observations' };
 
-const FIT_BASIS = { 'qloo-affinity': 'Qloo affinity scores, scaled across the ranked pool', 'ordinal-rank': 'ordinal rank positions (Qloo affinity scores unavailable)' };
+// The wording follows the scoring version that produced the packet: fixed-span
+// affinity (fitScale present), the earlier min-max affinity, or ordinal ranks.
+const fitBasisText = packet => packet.fitBasis === 'qloo-affinity'
+  ? (packet.fitScale ? `Qloo affinity scores, scaled over a fixed ${packet.fitScale.replace('fixed-span-', '')} span so small gaps stay small` : 'Qloo affinity scores, min-max scaled across the ranked pool (scoring used before 24 October 2026)')
+  : 'ordinal rank positions (Qloo affinity scores unavailable)';
 // Near-tie and comparability statements shared by both renderers.
 function tieLines(packet) {
   const lines = [];
@@ -56,7 +60,7 @@ export function packetMarkdown(packet, money) {
     ...packet.financial.breakpoints.map(row => `- ${row.text}`),
     packet.financial.commercial ? `- Commercial assumptions (promoter-entered, unverified): capacity ${packet.financial.commercial.capacity ?? '—'}, ticket price ${packet.financial.commercial.ticketPrice == null ? '—' : money(packet.financial.commercial.ticketPrice)}, other costs ${money(packet.financial.commercial.otherCosts ?? 0)}. Break-even: ${packet.financial.commercial.breakEvenTickets ?? '—'} paid tickets${packet.financial.commercial.breakEvenShare != null ? ` (${packet.financial.commercial.breakEvenShare}% of capacity)` : ''}. Arithmetic on assumptions, not a sales forecast.` : '- No ticket price or capacity was entered; no break-even is calculated.',
     '', '## 7. Cultural evidence and research',
-    `Fit basis: ${FIT_BASIS[packet.fitBasis] ?? 'ordinal rank positions'}.`,
+    `Fit basis: ${fitBasisText(packet)}.`,
     packet.research.verdict,
     `${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`,
     '| Artist | Role | Rank | Local | Audience comparison | Trend |',
@@ -114,7 +118,7 @@ ${table(['Strategy', 'Bill', 'Artist fees', 'vs recommended', 'Disruption scenar
 ${table(['Artist', 'Fee', 'Fee status', 'Availability', 'Needs confirmation'], packet.terms.map(row => [h(row.name), h(row.fee == null ? '—' : money(row.fee)), h(FEE_STATUS[row.feeStatus] ?? row.feeStatus), h(AVAILABILITY[row.availability] ?? row.availability), row.needsConfirmation ? '<strong>Yes</strong>' : 'No']))}
 <h2>6. Budget and financial sensitivity</h2><ul><li>Planned artist fees ${h(money(packet.financial.plannedFees))} of ${h(money(packet.financial.artistBudget))}; ${h(money(packet.financial.headroom))} unallocated.</li>${packet.financial.breakpoints.map(row => `<li>${h(row.text)}</li>`).join('')}
 <li>${packet.financial.commercial ? h(`Commercial assumptions (promoter-entered, unverified): capacity ${packet.financial.commercial.capacity ?? '—'}, ticket price ${packet.financial.commercial.ticketPrice == null ? '—' : money(packet.financial.commercial.ticketPrice)}, other costs ${money(packet.financial.commercial.otherCosts ?? 0)}. Break-even: ${packet.financial.commercial.breakEvenTickets ?? '—'} paid tickets${packet.financial.commercial.breakEvenShare != null ? ` (${packet.financial.commercial.breakEvenShare}% of capacity)` : ''}. Arithmetic on assumptions, not a sales forecast.`) : 'No ticket price or capacity was entered; no break-even is calculated.'}</li></ul>
-<h2>7. Cultural evidence and research</h2><p class="muted">Fit basis: ${h(FIT_BASIS[packet.fitBasis] ?? 'ordinal rank positions')}.</p><p>${h(packet.research.verdict)}</p><p class="muted">${h(`${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`)}</p>
+<h2>7. Cultural evidence and research</h2><p class="muted">Fit basis: ${h(fitBasisText(packet))}.</p><p>${h(packet.research.verdict)}</p><p class="muted">${h(`${packet.research.actionsExecuted} research action(s), ${packet.research.callsUsed}/${packet.research.callBudget} Qloo workflow calls. Stop: ${packet.research.stop.decision}; stress follow-up: ${packet.research.stop.followup}.`)}</p>
 ${table(['Artist', 'Role', 'Rank', 'Local', 'Audience comparison', 'Trend'], packet.evidenceMatrix.map(row => [h(row.name), h(row.role), ...['rank', 'local', 'comparison', 'trends'].map(kind => `${h(row.cells[kind].label)}${row.cells[kind].receipts.length ? ` <code>[${h(row.cells[kind].receipts.join(', '))}]</code>` : ''}`)]))}
 <p class="muted">Cultural affinity describes taste relationships. It is not ticket demand, attendance or revenue.</p>
 <h2>8. Stress test</h2><p>${h(packet.robustness.summary)}</p><ul>${packet.robustness.vulnerabilities.map(row => `<li><span class="tag">${h(row.severity)}</span> ${h(row.text)}</li>`).join('')}</ul>

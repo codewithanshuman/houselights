@@ -219,3 +219,14 @@ test('the packet is consistent with the decision state and honest about assumpti
   assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;script&gt;/);
   assert.match(p.markdown,/not a sales forecast/);assert.match(p.markdown,/Requires human approval/);
 });
+
+test('every published record describes fit with the scoring version that produced it',()=>{
+  const expected={'fixed-span':/Fit basis: Qloo affinity scores, scaled over a fixed 0\.05 span/,'min-max':/Fit basis: Qloo affinity scores,( min-max)? scaled across the ranked pool/,ordinal:/Fit basis: ordinal rank positions/};
+  for(const path of Object.keys(PINNED_MANIFESTS)){
+    const run=read(path).run,markdown=run.packet?.markdown;if(!markdown)continue;
+    const version=!run.fitBasis?'ordinal':run.fitScale?'fixed-span':'min-max';
+    if(version==='ordinal'&&!/Fit basis/.test(markdown))continue;
+    assert.match(markdown,expected[version],path);
+    for(const [other,pattern] of Object.entries(expected))if(other!==version)assert.doesNotMatch(markdown,pattern,`${path} must not describe ${other} scoring`);
+  }
+});

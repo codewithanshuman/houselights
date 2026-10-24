@@ -548,7 +548,7 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
       research: { policy, questionsConsidered: initialQuestions.length, actionsExecuted: researched, callsUsed: research ? research.used() : 0, callBudget: options.maxCalls,
         stop: result.stop, decisionChanged: changed, verdict: researchVerdict, crossCheck: notes.crossCheck, failures: failures.length },
       evidenceMatrix, evidenceGaps: gaps,
-      fitBasis: result.fitBasis ?? 'ordinal-rank', comparability,
+      fitBasis: result.fitBasis ?? 'ordinal-rank', ...(result.fitScale ? { fitScale: result.fitScale } : {}), comparability,
       ordinalComparison: result.fitBasis === 'qloo-affinity' && !same(ordinalStart.selectedIds, initial.selectedIds) ? { ordinalNames: ordinalStart.selectedIds.map(nameOf), affinityNames: initial.selectedIds.map(nameOf),
         text: `Ranked by ordinal positions alone, the starting bill would be ${names(ordinalStart.selectedIds)}; with Qloo affinity scores it is ${names(initial.selectedIds)}. The difference comes from score gaps that ordinal ranks exaggerate.` } : null, ties: { band: ties.band, restsOnNearTie: ties.restsOnNearTie, groups: tieGroups.map(({ names: groupNames, spread, scores, changesBill, tiedSelectedIds }) => ({ names: groupNames, spread, scores, changesBill, tiedNames: tiedSelectedIds.map(nameOf) })) },
       robustness: { summary: stress.summary, vulnerabilities: [...tieFindings, ...stress.vulnerabilities], breakpoints: stress.breakpoints, evidence: stress.evidence },
