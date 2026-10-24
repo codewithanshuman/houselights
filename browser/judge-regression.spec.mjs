@@ -83,6 +83,10 @@ test('the judge page leads with one recorded decision, its risk and the human ca
   await expect(glance.locator('#glance-qloo')).toContainText(/Same pool, fees and \$[\d,]+ budget: with Qloo evidence the optimizer books .+; with it withdrawn, .+\. Qloo changed the bill\./);
   await expect(glance.locator('#glance-qloo')).toContainText('not more ticket sales');
   await expect(glance.locator('.glance-grid')).not.toContainText('policy points');
+  // The first useful action is one click away: the link focuses the existing budget-cut control.
+  await glance.getByRole('link',{name:'Try a budget cut ↓'}).click();
+  await expect(page.locator('#judge-tight-budget')).toBeFocused();
+  await expect(page.locator('#judge-tight-budget')).toBeInViewport();
   const order=await page.evaluate(()=>{const g=document.getElementById('decision-glance'),a=document.getElementById('booking-autopilot');return !!a&&!!(g.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING);});
   expect(order).toBe(true);
   await glance.locator('summary',{hasText:/glossary|terms/i}).first().click();

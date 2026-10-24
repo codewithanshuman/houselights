@@ -22,7 +22,12 @@
       </div>
       <p class="glance-qloo" id="glance-qloo" aria-live="polite"><small>WHAT QLOO CHANGED</small> <span>Re-running this brief without Qloo evidence…</span></p>
       <p class="glance-limit">Fees are illustrative. Qloo affinity is cultural fit, not ticket demand. Nothing has been booked.</p>
-      <div class="glance-links"><a class="button primary" href="#booking-autopilot" data-judge-scroll>See how Autopilot decided ↓</a><a class="button subtle" href="/workspace.html#example">See it plan a brand-new event ↗</a></div>`;
+      <div class="glance-links"><a class="button primary" href="#judge-tight-budget" data-glance-scroll>Try a budget cut ↓</a><a class="button subtle" href="#booking-autopilot" data-glance-scroll>See how Autopilot decided ↓</a><a class="button subtle" href="/workspace.html#example">See it plan a brand-new event ↗</a></div>`;
+    // The glance renders after judge.js wires its scroll links, so it moves focus itself.
+    box.querySelectorAll('[data-glance-scroll]').forEach(link=>link.addEventListener('click',event=>{
+      const target=document.getElementById(link.getAttribute('href').slice(1));if(!target)return;
+      event.preventDefault();target.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});target.focus({preventScroll:true});
+    }));
     void qlooContribution(file);
   }).catch(()=>{box.textContent='The recorded decision could not be loaded. The Booking Desk below still works.';});
   // A matched comparison from the existing zero-call experiment route: same case,
