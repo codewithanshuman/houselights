@@ -15,6 +15,7 @@
   <script src="/booking-journey.js" defer></script>
   <script src="/autopilot-view.js" defer></script>
   <script src="/autopilot.js" defer></script>
+  <script src="/decision-glance.js" defer></script>
 </head>
 <body class="judge-page">
   <a class="skip-link" href="#judge-case" data-judge-scroll>Skip to the experiment</a>
@@ -45,6 +46,21 @@
         <span class="judge-art-star">✳</span>
       </div>
     </header>
+    <section id="decision-glance" class="decision-glance" aria-labelledby="decision-glance-title">
+      <h2 id="decision-glance-title">The decision at a glance</h2>
+      <div id="decision-glance-body" aria-live="polite">Loading the recorded decision…</div>
+      <details class="glance-glossary"><summary>What do the terms on this page mean?</summary><dl>
+        <dt>Qloo affinity</dt><dd>Qloo's score for how strongly an artist's audience overlaps in taste with the reference artists in this city. It measures cultural fit, not ticket sales.</dd>
+        <dt>Near-tie</dt><dd>Two artists whose affinity scores differ by less than 0.002, a threshold Houselights sets (Qloo publishes no margin of error). The gap is treated as too small to decide on, so the choice is yours.</dd>
+        <dt>Policy points</dt><dd>The optimizer's internal score: affinity plus small bonuses for local evidence, trends and variety, minus a penalty for missing evidence. A ranking tool, not a forecast.</dd>
+        <dt>Feasible</dt><dd>The bill fits the budget, the slot count, availability and every rule you set.</dd>
+        <dt>Not comparable</dt><dd>Qloo did not rank every candidate, so artists cannot be compared on fit. Those briefs are excluded from comparisons.</dd>
+        <dt>Evidence withdrawal</dt><dd>Re-running the same decision with Qloo's data removed, to see whether Qloo actually changed the choice.</dd>
+        <dt>Stress test</dt><dd>Re-planning under cancellations, fee rises and budget cuts to see whether the plan survives.</dd>
+        <dt>Receipt</dt><dd>A saved record of one Qloo request and what it returned, so every claim can be checked.</dd>
+        <dt>Decision proof</dt><dd>A recalculation record: the same inputs re-run to show how the choice was reached and what would change it. It shows the reasoning is consistent, not that the bill will sell more tickets.</dd>
+      </dl></details>
+    </section>
     <nav class="booking-path" aria-label="Booking journey">
       <a href="#booking-brief"><span>01</span> The brief</a><a href="#booking-research"><span>02</span> Original research</a><a href="#booking-autopilot"><span>03</span> Autopilot</a><a href="#booking-evidence"><span>04</span> Cultural proof</a><a href="#judge-form"><span>05</span> Challenge it</a><a href="#booking-decision"><span>06</span> Your decision</a>
       <span class="booking-replay">RECORDED RESEARCH · LIVE CALCULATION</span>
@@ -93,11 +109,11 @@
       <form id="judge-form" class="panel judge-experiment-panel">
         <p class="judge-section-label"><span>02</span> YOUR EXPERIMENT</p>
         <h2>Make the call.</h2>
-        <p class="judge-section-intro">Move the budget. Lose a headliner. Keep every hard constraint in view.</p>
+        <p class="judge-section-intro">Move the budget. Lose a headliner. Keep every hard constraint in view.</p><p class="judge-fine-print">This simulator replays the published decision, which ranks artists by Qloo rank order. Autopilot scores the same artists on Qloo affinity, so where two artists are near-tied the two can pick differently.</p>
         <div id="booking-budget-controls"></div><div class="gm-fields judge-core-field"><label>Budget <input id="judge-budget" type="number" min="0" max="1000000000" step="0.01" required></label></div>
         <div id="booking-cancel-cards" class="booking-cancel-cards"></div><p id="booking-pending" role="status"></p><details class="judge-advanced"><summary>More ways to challenge the decision</summary><div class="gm-fields"><label>Cancel a baseline artist <select id="judge-cancel"></select></label><label>Withdraw a saved receipt <select id="judge-withdraw"></select></label></div><label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label><div id="judge-candidates"></div></details>
         <div class="judge-form-actions">
-          <button class="button primary" type="submit">Recalculate and prove <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
+          <button class="button primary" type="submit">Recalculate and check <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
           <button class="button subtle" id="judge-reset" type="button">Reset assumptions</button>
         </div>
         <p class="judge-fine-print">Cancellation locks every surviving baseline artist. Conflicting constraints are reported rather than silently relaxed.</p>

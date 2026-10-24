@@ -24,12 +24,12 @@
         "lower-cost"
       ],
       "questionTiers": {
-        "material": 0,
+        "material": 2,
         "ranking": 0,
         "robustness": 1,
         "justification": 3,
         "fallback": 3,
-        "immaterial": 3,
+        "immaterial": 0,
         "blocked": 0,
         "done": 2
       },
@@ -51,11 +51,11 @@
         "cultural-fit"
       ],
       "questionTiers": {
-        "material": 3,
+        "material": 2,
         "ranking": 0,
         "robustness": 1,
         "justification": 0,
-        "fallback": 0,
+        "fallback": 1,
         "immaterial": 3,
         "blocked": 0,
         "done": 3
@@ -1458,17 +1458,22 @@
   ],
   "partD": {
     "caseId": "8be4d03ef4792ca9f1466983",
-    "capturedAt": "2026-10-24T07:42:13.552Z",
+    "capturedAt": "2026-10-24T10:51:12.102Z",
     "providerCalls": 6,
     "statuses": [
-      "a1:rank:ok",
-      "a2:where_popular:ok",
-      "a3:compare_audiences:ok",
-      "a4:trends:ok",
+      "a1:trends:ok",
+      "a2:rank:ok",
+      "a3:where_popular:ok",
+      "a4:compare_audiences:ok",
       "a5:where_popular:ok",
       "a6:compare_audiences:ok"
     ],
     "actions": [
+      {
+        "tier": "material",
+        "tool": "trends",
+        "question": "Does Qloo return an interpretable recent trend direction for Jordan Rakei? (batched for Jordan Rakei, Michael Kiwanuka)"
+      },
       {
         "tier": "robustness",
         "tool": "rank",
@@ -1486,11 +1491,6 @@
       },
       {
         "tier": "justification",
-        "tool": "trends",
-        "question": "Does Qloo return an interpretable recent trend direction for Michael Kiwanuka? (batched for Michael Kiwanuka, Jordan Rakei)"
-      },
-      {
-        "tier": "justification",
         "tool": "where_popular",
         "question": "Is there Qloo geographic evidence for Jordan Rakei in New York?"
       },
@@ -1501,9 +1501,9 @@
       }
     ],
     "decisionChanged": false,
-    "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 7.14 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.",
+    "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 0.14 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.",
     "crossCheck": {
-      "receiptId": "a1",
+      "receiptId": "a2",
       "complete": true,
       "agrees": false,
       "selectedIds": [
@@ -1567,8 +1567,8 @@
           "passed": true
         }
       ],
-      "digest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e",
-      "recordedDigest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e"
+      "digest": "sha256:7b04231d2658d7c611c02c6de58ef92596d360e4909aa269f194ddbe72e2d033",
+      "recordedDigest": "sha256:7b04231d2658d7c611c02c6de58ef92596d360e4909aa269f194ddbe72e2d033"
     }
   }
 }

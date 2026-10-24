@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-const {withAffinityFit,fitsFromRankRows,nearTieGroups,tieSensitivity,rankComparability,TIE_BAND}=await import('../server/affinity.mjs');
+const {withAffinityFit,fitsFromRankRows,nearTieGroups,tieSensitivity,rankComparability,TIE_BAND,AFFINITY_SPAN}=await import('../server/affinity.mjs');
 const {optimizeSlate}=await import('../server/optimizer.mjs');
 const {runAutopilot}=await import('../server/autopilot.mjs');
 const cases=JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8')).cases;
@@ -13,7 +13,11 @@ test('fit comes from Qloo affinity scores, scaled across the ranked pool, with a
   assert.equal(basis,'qloo-affinity');assert.ok(receiptId);
   const scored=items.filter(item=>item.fitBasis==='qloo-affinity');
   assert.equal(scored.length,5);
-  assert.equal(Math.max(...scored.map(item=>item.fit)),1);assert.equal(Math.min(...scored.map(item=>item.fit)),0);
+  // Fixed-span scaling: the top act has fit 1, and the 0.0293 range in this pool
+  // is not stretched to the full scale (min-max would have set the bottom to 0).
+  const top=Math.max(...scored.map(item=>item.affinity)),bottom=Math.min(...scored.map(item=>item.affinity));
+  assert.equal(Math.max(...scored.map(item=>item.fit)),1);assert.ok(Math.abs(Math.min(...scored.map(item=>item.fit))-(1-(top-bottom)/AFFINITY_SPAN))<1e-9);
+  assert.ok(Math.min(...scored.map(item=>item.fit))>0.4,'a 0.03 affinity range spans under 60% of the fit scale');
   const sault=scored.find(item=>item.name==='Sault'),rakei=scored.find(item=>item.name==='Jordan Rakei');
   assert.ok(Math.abs(sault.affinity-rakei.affinity)<0.0002,'Qloo scores Sault and Rakei almost identically');
   assert.ok(Math.abs(sault.fit-rakei.fit)<0.01,'so their fits are almost identical, unlike ordinal ranks 2 and 3');
@@ -21,15 +25,20 @@ test('fit comes from Qloo affinity scores, scaled across the ranked pool, with a
   const partial=structuredClone(ny);partial.receipts.find(row=>row.id===receiptId).evidence.rows[1].affinity=undefined;
   assert.equal(withAffinityFit(partial.memo.items,partial.receipts).basis,'ordinal-rank');
   const rows=fitsFromRankRows(['a','b','c'],[{id:'a',affinity:.9},{id:'b',affinity:.85},{id:'c',affinity:.8}]);
-  assert.equal(rows.basis,'qloo-affinity');assert.ok(Math.abs(rows.fits.get('b')-.5)<1e-9);
+  assert.equal(rows.basis,'qloo-affinity');assert.ok(Math.abs(rows.fits.get('b')-(1-.05/.1))<1e-9,'a pool wider than the span uses its own range');
+  const tight=fitsFromRankRows(['a','b'],[{id:'a',affinity:.95},{id:'b',affinity:.9499}]);
+  assert.ok(tight.fits.get('b')>.997,'a 0.0001 gap stays a 0.0001/0.05 fit gap, not a full step');
   assert.equal(fitsFromRankRows(['a','b'],[{id:'a'},{id:'b',affinity:.8}]).basis,'ordinal-rank');
 });
 
 test('near-ties are identified within the declared band and re-checked against the decision',()=>{
   const items=[{id:'a',name:'A',affinity:.95},{id:'b',name:'B',affinity:.9495},{id:'c',name:'C',affinity:.9482},{id:'d',name:'D',affinity:.93}];
   const groups=nearTieGroups(items,TIE_BAND);
-  assert.equal(TIE_BAND,0.002);assert.deepEqual(groups.map(group=>group.ids),[['a','b','c']]);
-  assert.ok(Math.abs(groups[0].spread-.0018)<1e-9);
+  // Pairs, never chains: a-b and b-c are near-ties, a-c (0.0018) too, but c-d (0.0182) is not.
+  assert.equal(TIE_BAND,0.002);assert.deepEqual(groups.map(group=>group.ids),[['a','b'],['a','c'],['b','c']]);
+  assert.ok(groups.every(group=>group.spread<TIE_BAND));
+  const chain=nearTieGroups([.95,.9485,.947,.9455].map((affinity,i)=>({id:String(i),name:String(i),affinity})));
+  assert.ok(chain.every(group=>group.spread<TIE_BAND),'four acts 0.0045 apart are never reported as one tie');assert.ok(!chain.some(group=>group.ids.includes('0')&&group.ids.includes('3')));
   // b beats c by a hair and a fee tie-break cannot apply; treated as tied, the cheaper c wins.
   const pool=[['x',1,50],['b',.6,40],['c',.59,30]].map(([id,fit,fee])=>({id,name:id,fit,affinity:id==='x'?.99:id==='b'?.9501:.95,evidence:{rank:true,local:true,trends:true,comparison:true},momentum:'flat',local:'yes',terms:{fee,available:true,genre:id}}));
   const constraints={budget:100,slots:2};
@@ -75,6 +84,6 @@ test('the research agent derives fit from the affinity Qloo returns',async()=>{
   const run=new Run({budget:20,mode:'live',execute,cacheStore:new Map()});
   const memo=await buildMemo({city:'X',anchors:['Z'],offers:['A','B','C'],terms:{A:{fee:10,available:true},B:{fee:10,available:true},C:{fee:10,available:true}},constraints:{budget:100,slots:2}},run);
   const fit=id=>memo.items.find(item=>item.id===id);
-  assert.equal(fit('id-a').fitBasis,'qloo-affinity');assert.equal(fit('id-a').fit,1);assert.equal(fit('id-c').fit,0);
+  assert.equal(fit('id-a').fitBasis,'qloo-affinity');assert.equal(fit('id-a').fit,1);assert.equal(fit('id-c').fit,0,'0.06 below the top is beyond the 0.05 span');
   assert.ok(fit('id-b').fit>.99,'B is 0.0005 behind A in Qloo affinity, so its fit is nearly 1 rather than the ordinal 0.5');
 });

@@ -208,7 +208,7 @@ export function briefChanges(before, after) {
 // fees, availability and constraints can be revised against existing evidence.
 export function researchStale(event, brief) {
   const research = event.research;
-  if (!research || research.status !== 'complete') return 'No completed Qloo research exists for this event yet.';
+  if (!research || !['complete', 'partial'].includes(research.status)) return 'No completed Qloo research exists for this event yet.';
   const used = event.revisions.find(row => row.revision === research.revision).brief;
   if (low(used.city) !== low(brief.city)) return `The market changed from ${used.city} to ${brief.city}.`;
   if (JSON.stringify(used.anchors.map(low)) !== JSON.stringify(brief.anchors.map(low))) return 'The audience reference artists changed.';

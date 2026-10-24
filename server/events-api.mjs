@@ -21,6 +21,13 @@ export function eventView(event) {
     runs: event.runs.map(({ run: _run, ...rest }) => rest) };
 }
 
+// Research that produced a memo but lost calls to errors, timeouts or the
+// deadline is usable yet labelled partial, never 'complete'.
+export function researchOutcome(memo, unusable, receipts) {
+  const failedCalls = receipts.filter(row => row.status === 'error').map(row => ({ id: row.id, tool: row.tool, error: row.evidence?.error ?? null }));
+  return { status: !memo || unusable ? 'failed' : failedCalls.length ? 'partial' : 'complete', failedCalls };
+}
+
 async function research(event, revision) {
   const brief = event.revisions.find(row => row.revision === revision).brief;
   const startedAt = new Date().toISOString(), trace = [], unresolved = [], errors = [];
@@ -37,7 +44,8 @@ async function research(event, revision) {
   const resolvedNames = new Set((memo?.items ?? []).flatMap(item => [item.name, item.originalName].filter(Boolean).map(name => name.toLowerCase())));
   const missing = brief.candidates.filter(row => !resolvedNames.has(row.name.toLowerCase())).map(row => row.name);
   const unusable = memo && memo.items.length < 2;
-  return { revision, mode, status: memo && !unusable ? 'complete' : 'failed', startedAt, completedAt: new Date().toISOString(), callsUsed: run.used, callBudget: budget,
+  const { status, failedCalls } = researchOutcome(memo, unusable, run.receipts);
+  return { revision, mode, status, failedCalls, startedAt, completedAt: new Date().toISOString(), callsUsed: run.used, callBudget: budget,
     unresolved: [...new Set([...unresolved.map(row => row.name), ...missing])], choices: unresolved, errors: unusable ? [...errors, 'Fewer than two candidates could be resolved.'] : errors, trace,
     snapshot: memo && !unusable ? { memo: { ...memo, eval: undefined, base: undefined }, receipts: run.receipts.map(publicReceipt) } : null,
     receipts: run.receipts.length };
@@ -68,7 +76,9 @@ export async function researchEvent(event) {
   const revision = event.revisions.at(-1).revision;
   const result = await research(event, revision);
   const current = loadEvent(event.id);
-  if (result.status === 'complete' || !current.research || current.research.status !== 'complete') saveResearch(current, result);
+  // Never replace complete research with a weaker attempt.
+  const rankOf = status => ({ complete: 2, partial: 1, failed: 0 })[status] ?? 0;
+  if (!current.research || rankOf(result.status) >= rankOf(current.research.status)) saveResearch(current, result);
   else { current.lastFailedResearch = { ...result, snapshot: undefined }; saveResearch(current, current.research); }
   return result;
 }
@@ -104,7 +114,7 @@ export function registerEventRoutes(app) {
     if (!routeQuota(req, 'event-research', { minuteLimit: 3, dayLimit: 60 })) throw fault('Research limit reached. Try again later; revising fees and constraints does not need new research.', 429);
     await exclusive(event.id, async () => {
       const result = await researchEvent(event);
-      res.status(result.status === 'complete' ? 201 : 502).json({ ...eventView(loadEvent(event.id)), attempt: { status: result.status, errors: result.errors, unresolved: result.unresolved, callsUsed: result.callsUsed } });
+      res.status(result.status === 'failed' ? 502 : 201).json({ ...eventView(loadEvent(event.id)), attempt: { status: result.status, failedCalls: result.failedCalls, errors: result.errors, unresolved: result.unresolved, callsUsed: result.callsUsed } });
     });
   }));
   app.post('/api/events/:id/autopilot', handle(async (req, res) => {

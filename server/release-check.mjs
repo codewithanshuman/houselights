@@ -74,7 +74,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('autopilot-recorded-manifest-pinned',autopilotRecord.data.run?.integrity?.manifestDigest===PINNED_MANIFESTS['public/autopilot-recorded.json']);
     const example=await request('/workspace-example.json');
     record('organizer-example-session',example.status===200&&example.data.kind==='recorded-organizer-session'&&example.data.runs?.length===2&&
-      example.data.runs.every(row=>row.run?.integrity?.manifestDigest?.startsWith('sha256:'))&&example.data.research?.receipts?.every(row=>row.source==='qloo'));
+      example.data.runs.every(row=>row.run?.integrity?.manifestDigest?.startsWith('sha256:'))&&example.data.research?.receipts?.every(row=>row.source==='qloo'&&row.status!=='error'));
     for(const path of ['/api/events','/api/events/ev_00000000000000000000'])record('private-events:'+path,(await request(path)).status===401);
     record('private-event-write',(await request('/api/events',{body:{}})).status===401);
     record('autopilot-fresh-run-protected',(await request('/api/judge/cases/8be4d03ef4792ca9f1466983/autopilot/live',{body:{}})).status===401);

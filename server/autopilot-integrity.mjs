@@ -79,10 +79,17 @@ export function verifyEvidenceContent(run, { sourceReceipts = [], pinnedManifest
     if (receiptContentDigest(receipt) !== row.contentDigest) problems.push(`Receipt ${receipt.id} content differs from its manifest digest.`);
     if ((publicReceipt(receipt).originalDigest ?? null) !== (row.originalDigest ?? null)) problems.push(`Receipt ${receipt.id} capture-time digest differs from the manifest.`);
   }
-  const sources = new Map(manifest.sourceReceipts.map(row => [row.id, row.contentDigest]));
-  for (const receipt of sourceReceipts) if (sources.has(receipt.id) && sources.get(receipt.id) !== sourceReceiptDigest(receipt)) problems.push(`Source receipt ${receipt.id} differs from the manifest.`);
+  // Every source receipt the manifest lists must be supplied and match; an
+  // absent receipt is a failure, never a silent pass.
+  const supplied = new Map(sourceReceipts.map(receipt => [receipt.id, receipt]));
+  for (const row of manifest.sourceReceipts) {
+    const receipt = supplied.get(row.id);
+    if (!receipt) problems.push(`Source receipt ${row.id} listed in the manifest was not supplied, so it could not be verified.`);
+    else if (sourceReceiptDigest(receipt) !== row.contentDigest) problems.push(`Source receipt ${row.id} differs from the manifest.`);
+  }
   if (manifest.decisionInputsDigest !== sha256((run.items ?? []).map(({ id, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms }) => ({ id, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms }))))
     problems.push('The decision inputs (fits, evidence flags, terms) differ from the manifest.');
   if (manifest.decisionDigest !== run.digest) problems.push('The run decision digest differs from the manifest.');
-  return { passed: problems.length === 0, problems, manifestDigest };
+  // pinChecked tells callers whether a self-consistent rewrite could have been caught.
+  return { passed: problems.length === 0, problems, manifestDigest, pinChecked: !!pinnedManifestDigest, sourceReceiptsChecked: manifest.sourceReceipts.length };
 }

@@ -130,3 +130,12 @@ test('saved events, research and decisions survive an application restart',async
     const full=(await call('GET',`/api/events/${id}/runs/${run.id}`,undefined,{origin})).body;assert.equal(full.run.digest,run.run.digest);
   }finally{if(child.exitCode==null){child.kill();await once(child,'exit');}rmSync(dataDir,{recursive:true,force:true});}
 });
+
+test('research that lost Qloo calls is labelled partial, never complete',async()=>{
+  const {researchOutcome}=await import('../server/events-api.mjs');
+  const memo={items:[{},{}]},ok={id:'r1',tool:'describe',status:'ok'};
+  assert.deepEqual(researchOutcome(memo,false,[ok]),{status:'complete',failedCalls:[]});
+  const lost=researchOutcome(memo,false,[ok,{id:'r2',tool:'rank',status:'error',evidence:{error:'TIMEOUT'}},{id:'r3',tool:'local',status:'error',evidence:{error:'DEADLINE'}}]);
+  assert.equal(lost.status,'partial');assert.deepEqual(lost.failedCalls.map(row=>row.error),['TIMEOUT','DEADLINE']);
+  assert.equal(researchOutcome(null,false,[ok]).status,'failed');assert.equal(researchOutcome(memo,true,[ok]).status,'failed');
+});

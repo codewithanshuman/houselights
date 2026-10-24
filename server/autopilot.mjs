@@ -94,7 +94,10 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
   // reproduces records captured before affinity fits were introduced).
   const ordinalStart = optimizeSlate(items, memo.constraints);
   let affinity = { basis: 'ordinal-rank', receiptId: null };
-  if (fitBasis === 'affinity') { affinity = withAffinityFit(items, source.receipts ?? []); items.splice(0, items.length, ...affinity.items); }
+  // 'affinity' uses the current fixed-span scale; 'affinity-minmax' replays records
+  // captured before it. Both are affinity runs for every other purpose.
+  const scale = fitBasis === 'affinity-minmax' ? 'min-max' : 'fixed-span', usesAffinity = fitBasis !== 'ordinal';
+  if (usesAffinity) { affinity = withAffinityFit(items, source.receipts ?? [], { scale }); items.splice(0, items.length, ...affinity.items); }
   const nameOf = id => items.find(item => item.id === id)?.name ?? id;
   const names = ids => ids?.length ? ids.map(nameOf).join(' + ') : 'no feasible lineup';
   const record = event => { const row = { at: Math.max(0, now() - t0), ...event }; events.push(row); emit(row); return row; };
@@ -119,14 +122,14 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
     const order = unique((saved?.evidence?.rows ?? []).map(row => row.id).filter(id => items.some(item => item.id === id && bookable(item))));
     const missingIds = items.filter(item => bookable(item) && !order.includes(item.id)).map(item => item.id);
     if (saved && order.length >= 2 && missingIds.length) {
-      const scored = fitBasis === 'affinity' ? fitsFromRankRows(order, saved.evidence.rows) : null;
+      const scored = usesAffinity ? fitsFromRankRows(order, saved.evidence.rows, { scale }) : null;
       notes.partialRank = { receiptId: saved.id, scope: 'saved', order, missingIds, ...(scored ? { fits: Object.fromEntries(scored.fits), basis: scored.basis } : {}) };
     }
   }
 
   const initial = optimizeSlate(items, baseConstraints);
   history.push({ phase: 'brief', selectedIds: initial.selectedIds, feasible: initial.feasible, score: initial.score, totalFee: initial.totalFee, cause: null });
-  const basisText = affinity.basis === 'qloo-affinity' ? ` Fit uses Qloo affinity scores [${affinity.receiptId}]${!same(ordinalStart.selectedIds, optimizeSlate(items, memo.constraints).selectedIds) ? `; ordinal rank positions alone would have chosen ${names(ordinalStart.selectedIds)}` : ''}.` : fitBasis === 'affinity' && items.some(item => item.evidence.rank) ? ' Qloo affinity scores are missing for part of the pool, so fit uses ordinal rank positions.' : '';
+  const basisText = affinity.basis === 'qloo-affinity' ? ` Fit uses Qloo affinity scores [${affinity.receiptId}]${!same(ordinalStart.selectedIds, optimizeSlate(items, memo.constraints).selectedIds) ? `; ordinal rank positions alone would have chosen ${names(ordinalStart.selectedIds)}` : ''}.` : usesAffinity && items.some(item => item.evidence.rank) ? ' Qloo affinity scores are missing for part of the pool, so fit uses ordinal rank positions.' : '';
   record({ type: 'frame', text: `Brief: ${options.constraints.slots} slots for listeners of ${anchors.join(', ') || 'the saved anchors'} in ${city}, ${money(options.constraints.budget)} artist budget, ${items.length} candidates. Starting decision: ${names(initial.selectedIds)}.${basisText}`,
     selectedIds: initial.selectedIds, feasible: initial.feasible, briefChanged: options.briefChanged });
 
@@ -224,7 +227,7 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
       const requested = question.options ?? { scope: 'pool', ids: items.map(item => item.id) }, known = new Set(requested.ids);
       const order = usable(status) ? unique(rows.map(row => row.id).filter(id => known.has(id))) : [];
       const complete = order.length === requested.ids.length;
-      const scored = fitBasis === 'affinity' ? fitsFromRankRows(order, rows) : { basis: 'ordinal-rank', fits: new Map(order.map((id, index) => [id, order.length > 1 ? 1 - index / (order.length - 1) : .5])), scores: new Map() };
+      const scored = usesAffinity ? fitsFromRankRows(order, rows, { scale }) : { basis: 'ordinal-rank', fits: new Map(order.map((id, index) => [id, order.length > 1 ? 1 - index / (order.length - 1) : .5])), scores: new Map() };
       const fits = scored.fits;
       const scopeText = requested.scope === 'bookable' ? 'bookable ' : '';
       if (question.kind === 'rank') {
@@ -388,10 +391,10 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
   const final = optimizeSlate(items, baseConstraints);
   const finalQuestions = questions([...phaseAContexts(), ...stressContexts]);
   const status = interrupted || phaseA.stop === 'provider_unavailable' || phaseC.stop === 'provider_unavailable' ? 'partial' : 'complete';
-  const outputItems = items.map(({ id, name, found, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, affinity: score, fitBasis: basis }) => ({ id, name, found: found === true, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, ...(fitBasis === 'affinity' ? { affinity: score ?? null, fitBasis: basis ?? null } : {}) }));
+  const outputItems = items.map(({ id, name, found, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, affinity: score, fitBasis: basis }) => ({ id, name, found: found === true, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, ...(usesAffinity ? { affinity: score ?? null, fitBasis: basis ?? null } : {}) }));
   const ties = tieSensitivity(items, baseConstraints), comparability = rankComparability(items);
   const result = { version: AUTOPILOT_VERSION, policy, status, mode, city, currency, constraints: baseConstraints, briefChanged: options.briefChanged,
-    ...(fitBasis === 'affinity' ? { fitBasis: affinity.basis === 'qloo-affinity' ? 'qloo-affinity' : 'ordinal-rank', ties, comparability, ordinalStartIds: ordinalStart.selectedIds } : {}),
+    ...(usesAffinity ? { fitBasis: affinity.basis === 'qloo-affinity' ? 'qloo-affinity' : 'ordinal-rank', ...(scale === 'fixed-span' ? { fitScale: 'fixed-span-0.05' } : {}), ties, comparability, ordinalStartIds: ordinalStart.selectedIds } : {}),
     budget: { maxCalls: options.maxCalls, reserveForStress: reserve, used: research ? research.used() : 0, maxRounds: options.maxRounds, rounds },
     stop: { decision: phaseA.stop, followup: phaseC.stop }, history, events, receipts, observations, failures,
     questions: finalQuestions.map(publicQuestion), strategies: strategy, stress: publicStress(stress), crossCheck: notes.crossCheck,
@@ -399,7 +402,7 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
     interpretation: 'Deterministic research policy over the exact optimizer. Policy points are an internal objective, not ticket demand, attendance or revenue. Fees and availability are buyer inputs.' };
   // The decision digest covers every decision-relevant input, including the
   // numerical content of each receipt (via its content digest).
-  result.digest = sha256({ version: result.version, policy, ...(fitBasis === 'affinity' ? { fitBasis: result.fitBasis } : {}), constraints: result.constraints,
+  result.digest = sha256({ version: result.version, policy, ...(usesAffinity ? { fitBasis: result.fitBasis } : {}), ...(result.fitScale ? { fitScale: result.fitScale } : {}), constraints: result.constraints,
     items: outputItems.map(({ id, fit, rank, of, local, momentum, evidence, terms }) => ({ id, fit, rank, of, local, momentum, evidence, terms })),
     history: history.map(({ phase, selectedIds, cause }) => ({ phase, selectedIds, cause })),
     actions: events.filter(row => row.type === 'action').map(({ questionId, tool }) => ({ questionId, tool })),

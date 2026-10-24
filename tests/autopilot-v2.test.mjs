@@ -128,6 +128,12 @@ test('integrity: decision-relevant tampering is detected by the right check and 
   forged.run.integrity=buildManifest({receipts:forged.run.receipts,sourceReceipts:loadJudgeCase(NY).snapshot.receipts,decisionDigest:forged.run.digest,items:forged.run.items});
   assert.equal(verifyEvidenceContent(forged.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts}).passed,true);
   assert.match(verifyEvidenceContent(forged.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts,pinnedManifestDigest:pin}).problems.join(' '),/independently pinned/);
+  // Source receipts are mandatory: omitting them is a failure, never a pass.
+  const unsupplied=verifyEvidenceContent(file.run,{pinnedManifestDigest:pin});
+  assert.equal(unsupplied.passed,false);assert.match(unsupplied.problems.join(' '),/listed in the manifest was not supplied/);
+  const oneMissing=verifyEvidenceContent(file.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts.slice(1),pinnedManifestDigest:pin});
+  assert.equal(oneMissing.passed,false);assert.equal(oneMissing.problems.length,1);
+  assert.equal(verifyEvidenceContent(file.run,{sourceReceipts:loadJudgeCase(NY).snapshot.receipts}).pinChecked,false);
   // Content digests ignore capture timing but nothing else.
   const receipt=file.run.receipts.find(row=>row.tool==='where_popular');assert.equal(receiptContentDigest({...receipt,ms:1}),receiptContentDigest({...receipt,ms:999}));
   assert.notEqual(receiptContentDigest(receipt),receiptContentDigest({...receipt,fetchedAt:'2000-01-01T00:00:00.000Z'}));
@@ -153,6 +159,15 @@ test('the 2.0 record captured before affinity fits still replays exactly on ordi
   assert.equal(report.passed,true,JSON.stringify(report));
   const current=read('public/autopilot-recorded.json');assert.equal(current.run.fitBasis,'qloo-affinity');
   assert.equal(current.run.packet.recommendation.restsOnNearTie,true,'the live record shows the Sault / Jordan Rakei near-tie deciding the bill');
+});
+
+test('the affinity record captured under min-max scaling replays exactly under that scale',async()=>{
+  const file=read('results/autopilot-recorded-affinity-minmax.json');
+  assert.equal(file.run.fitBasis,'qloo-affinity');assert.equal(file.run.fitScale,undefined);
+  const report=await verifyRecordedAutopilot(file,{pinnedManifestDigest:PINNED_MANIFESTS['results/autopilot-recorded-affinity-minmax.json']});
+  assert.equal(report.passed,true,JSON.stringify(report));
+  const current=read('public/autopilot-recorded.json');assert.equal(current.run.fitScale,'fixed-span-0.05');
+  assert.equal((await verifyRecordedAutopilot(current,{pinnedManifestDigest:PINNED_MANIFESTS['public/autopilot-recorded.json']})).passed,true);
 });
 
 test('provider exceptions and interruptions produce labelled partial runs without invented evidence',async()=>{

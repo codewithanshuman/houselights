@@ -36,10 +36,11 @@ try {
   const event = createEvent(brief);
   const research = await researchEvent(event);
   console.error(`research: ${research.status}, ${research.callsUsed} calls, unresolved ${research.unresolved.join(', ') || 'none'}`);
-  if (research.status !== 'complete') throw new Error(`Research failed: ${research.errors.join(' ')}`);
+  if (research.status !== 'complete') throw new Error(`Research was ${research.status}, not complete; refusing to publish. ${research.failedCalls?.map(row => `${row.id} ${row.tool} ${row.error}`).join('; ') ?? ''} ${research.errors.join(' ')}`);
   if (research.mode !== 'live') throw new Error('Research was not live.');
   const first = await decideEvent(loadEvent(event.id), { revision: 1, maxCalls: 6 });
   console.error(`decision 1: ${first.summary.names.join(' + ')} (${first.callsUsed} calls, ${first.status})`);
+  if (first.status === 'partial') throw new Error('The first decision lost Qloo calls; refusing to publish a degraded example.');
   const revised = structuredClone(brief);
   revised.constraints.budget = 15000;
   Object.assign(revised.candidates.find(row => row.name === 'Masego'), { fee: 9500, feeStatus: 'quoted', availability: 'confirmed', notes: 'Illustrative quote typed for the demonstration.' });
@@ -60,4 +61,8 @@ try {
   writeFileSync(output, JSON.stringify(file, null, 2) + '\n');
   db.close();
   console.log(JSON.stringify({ output, providerCalls: file.providerCalls, research: research.callsUsed, decision1: first.callsUsed, decisions: [first.summary.names, second.summary.names], lineupChanged: file.comparison.lineupChanged }, null, 2));
-} finally { rmSync(dir, { recursive: true, force: true }); }
+} finally {
+  // The database may still hold the directory open after a failure; cleanup must not hide the real error.
+  try { (await import('../server/database.mjs')).db.close(); } catch {}
+  try { rmSync(dir, { recursive: true, force: true }); } catch (error) { console.error(`Could not remove ${dir}: ${error.code}`); }
+}

@@ -65,7 +65,7 @@
           <div class="workspace-section-head"><div><p class="judge-section-label"><span>1</span> EVENT BRIEF</p><h2 id="brief-title">What are you booking?</h2></div><button class="button subtle small" type="button" id="fill-example">Fill an example brief</button></div>
           <p class="workspace-hint">Only what you enter is used. Leave a fee empty if you do not know it; Houselights will not invent one.</p>
           <form id="brief-form" novalidate>
-            <fieldset><legend>The event</legend>
+            <fieldset><legend>The event <small>Context for the decision packet. These fields are recorded and shown to stakeholders, but they do not change the calculation: the audience reaches Qloo through the reference artists below, and the constraints drive the optimizer.</small></legend>
               <div class="workspace-grid">
                 <label>Event name <input name="name" required maxlength="120" autocomplete="off"></label>
                 <label>City (Qloo market) <input name="city" required maxlength="100" autocomplete="off"></label>
@@ -73,10 +73,10 @@
                 <label>Date <input name="date" type="date"></label>
                 <label class="workspace-wide">Programming direction <input name="direction" maxlength="200" placeholder="e.g. modern soul and jazz crossover"></label>
                 <label class="workspace-wide">Target audience <input name="audience" maxlength="300" placeholder="e.g. 25–40 year-old soul fans in the city"></label>
-                <label class="workspace-wide">Objectives (one per line) <textarea name="objectives" rows="2" maxlength="1000"></textarea></label>
+                <label class="workspace-wide">Objectives (one per line, context only) <textarea name="objectives" rows="2" maxlength="1000"></textarea></label>
               </div>
             </fieldset>
-            <fieldset><legend>Audience reference artists <small>Acts this audience already loves. Qloo measures fit against them. They are not booked.</small></legend>
+            <fieldset><legend>Audience reference artists <small>This is how your target audience enters the decision: Qloo measures every candidate's fit against these acts in your city. They are not booked.</small></legend>
               <div class="workspace-grid workspace-grid-3">
                 <label>Reference 1 <input name="anchor0" required maxlength="100" autocomplete="off"></label>
                 <label>Reference 2 <input name="anchor1" maxlength="100" autocomplete="off"></label>
@@ -89,7 +89,9 @@
                 <label>Currency <select name="currency"><option>USD</option><option>GBP</option><option>EUR</option><option>INR</option></select></label>
                 <label>Lineup size <input name="slots" type="number" min="1" max="6" step="1" required></label>
                 <label>Max acts per genre <input name="maxPerGenre" type="number" min="1" max="6" step="1"></label>
+                <label>Minimum Qloo-discovered acts <input name="discoveryMin" type="number" min="0" max="6" step="1" value="0"></label>
               </div>
+              <p class="workspace-hint">Want the audience to discover someone new? Set a minimum of Qloo-discovered acts. Discovered acts need a quote and availability before they can be booked.</p>
             </fieldset>
             <fieldset><legend>Candidate artists <small>2–8 acts you could book. Lock = must book. Exclude = never book.</small></legend>
               <div class="table-scroll"><table class="workspace-candidates"><thead><tr><th scope="col">Artist</th><th scope="col">Fee</th><th scope="col">Fee status</th><th scope="col">Availability</th><th scope="col">Genre</th><th scope="col">Lock</th><th scope="col">Exclude</th><th scope="col"><span class="workspace-sr">Remove</span></th></tr></thead><tbody id="candidate-rows"></tbody></table></div>

@@ -6,7 +6,8 @@ The buyer supplies the city, artists representing the room's audience, offers, f
 
 **Houselights Autopilot 2.0** turns a promoter's brief into a decision packet. The steps:
 
-- Fit uses Qloo's own affinity scores rather than ordinal ranks. Near-ties within 0.002 are flagged and re-checked, and briefs whose Qloo ranking is incomplete are marked not comparable.
+- Fit uses Qloo's own affinity scores rather than ordinal ranks, scaled over a fixed 0.05 span so tiny gaps stay tiny. Pairs of acts within 0.002 are flagged as near-ties and re-checked, and briefs whose Qloo ranking is incomplete are marked not comparable.
+- The [response to the drawbacks audit](docs/drawbacks-audit-response.md) lists what was fixed, what was relabelled, what was measured and what remains open, including that no real booking advantage has been shown.
 - Every open evidence question is tested against the exact optimizer, jointly as well as alone. A second signal that only matters in combination is no longer missed.
 - Qloo calls are spent only where an answer could change a bill within the call budget, or is needed to justify a booked act.
 - Feasible strategies are compared under one common set of disruption scenarios: cultural fit, lower cost, more robust, ranked-only and location-free. Backups are named for every act.
@@ -125,7 +126,7 @@ Browser → Node/Express → bounded agent workflow → official Qloo MCP harnes
 | Compare | `qloo_compare_audiences` | Retain aggregate comparison context |
 | Timing | `qloo_trends` | Use interpretable, explicit source changes |
 
-The optimizer enumerates every exact-size subset for at most twelve candidates. Its declared policy combines relative rank utility, evidence availability, explicit trend direction, buyer-entered genre diversity and discovery. Fees are rounded to cents. Missing fees or unconfirmed availability make an act ineligible; missing rank evidence can make a selected slate provisional. An exact optimum means best **under this policy and candidate pool**, not the best possible commercial booking decision.
+The optimizer enumerates every exact-size subset for at most twelve candidates. Its declared policy combines cultural fit (Qloo affinity scores scaled over a fixed 0.05 span, with ordinal rank only when scores are missing), evidence availability, explicit trend direction, buyer-entered genre diversity and discovery. Fees are rounded to cents. Missing fees or unconfirmed availability make an act ineligible; missing rank evidence can make a selected slate provisional. An exact optimum means best **under this policy and candidate pool**, not the best possible commercial booking decision.
 
 The optional LLM chooses names from the candidate pool for deeper checks and selects from verified claim IDs. It cannot write new factual prose into the grounded memo. Without it, deterministic planning and template claims remain available. See [architecture and evidence limits](docs/architecture.md) for the scoring formula and provenance model.
 
@@ -163,7 +164,7 @@ See the [operational API contract](docs/api.md) for payloads, legal transitions 
 
 Each receipt records the workflow, arguments, purpose, status, timestamps, latency, cache state, bounded evidence and a SHA-256 digest. A digest is a reproducibility aid for that compact record; it is **not a provider signature**, an immutable audit trail, or proof that the underlying Qloo data is true. Raw provider payloads and API keys are not stored in shared snapshots.
 
-Qloo is not a source of artist fees, confirmed availability, ticket demand, attendance or revenue forecasts. Relative rank utility is not an affinity percentage. Audience comparison does not establish unique ticket buyers, net-new audience share or pairwise cannibalization. Missing results remain missing evidence. Live response calibration and real-booker validation are still required.
+Qloo is not a source of artist fees, confirmed availability, ticket demand, attendance or revenue forecasts. Scaled affinity fit is a relative score, not a probability or a percentage. Audience comparison does not establish unique ticket buyers, net-new audience share or pairwise cannibalization. Missing results remain missing evidence. Live response calibration and real-booker validation are still required.
 
 Share links are bearer links: anyone who has a link can read that snapshot, including buyer-entered planning information. Use demonstration inputs in a public hackathon deployment.
 

@@ -1,5 +1,7 @@
 # Current Qloo proof status
 
+> **Superseded (24 October 2026).** This page describes an earlier four-brief manifest. The current suite has 12 briefs, 9 with a comparable Qloo ranking; see [results/qloo-proof.md](../results/qloo-proof.md).
+
 The reproducible published-case report is [results/qloo-proof.md](../results/qloo-proof.md); the full per-signal outputs and evidence references are [results/qloo-proof.json](../results/qloo-proof.json). These artifacts are generated from the committed public-case manifest by `npm run reproduce:qloo-proof`.
 
 The most important result is methodological: HouseLights now exposes the precise saved observations and policy choices behind each lineup, then reruns all 16 signal combinations under a locked brief. This shows when Qloo information changes an internal booking decision. It does **not** show that the resulting event sells more tickets or is preferred by independent bookers.

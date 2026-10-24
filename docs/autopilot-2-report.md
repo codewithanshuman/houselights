@@ -67,6 +67,18 @@ Final verification on the pushed commit is recorded in the delivery message. Run
 - **Affinity and tie bands.** Fit now uses Qloo affinity scores, and near-ties within 0.002 are re-checked. See [Autopilot](autopilot.md#qloo-affinity-scores-near-ties-and-comparability).
 - **Incomplete rankings.** Mumbai, Paris, Sydney and the Chicago example are marked "not comparable" and excluded from comparisons. Among the 9 comparable feasible briefs, withdrawing Qloo evidence changes the decision in 7. This replaces the earlier "9 of 11", which counted Mumbai and Sydney.
 
+## Second audit response (24 October 2026)
+
+The [drawbacks audit response](drawbacks-audit-response.md) has the full map. In code:
+
+- The verifier now fails when a manifest's source receipt is missing.
+- Near-ties are pairs, never chains.
+- Affinity fit uses a fixed 0.05 span instead of min-max. The recorded run's margin is now honestly 0.14 points.
+- Context-only inputs are labelled as such.
+- A minimum number of Qloo-discovered acts can be required.
+- Workspace research that lost calls is labelled partial.
+- The judge page opens with the decision at a glance.
+
 ## Limitations and unresolved defects
 
 - Policy-selection results use synthetic ground truth. They show policy behaviour, not real audience outcomes.
@@ -75,5 +87,6 @@ Final verification on the pushed commit is recorded in the delivery message. Run
 - Name resolution uses Qloo's matches. Two of the first example's names ("Anderson .Paak", "Cory Henry") were ambiguous and needed the new chooser.
 - Fees, availability, venue size and ticket prices in both published examples are illustrative inputs.
 - No promoter or judge has evaluated a packet. No ticketing outcome validates any decision.
+- Workspace research is `partial` whenever a Qloo call fails. Two recapture attempts on 24 October lost `where_popular` and `compare_audiences` calls to timeouts, so the published workspace example is still the earlier, complete capture. It used ordinal ranks, and the page says so.
 - The public host still runs the previous release. The hosted workspace needs the organizer token and has not been exercised on that host.
 - Worst-case CPU (12 candidates, 3 slots, 16 research rounds) is about 4–6 s spread across provider calls, and about 1 s for planning.

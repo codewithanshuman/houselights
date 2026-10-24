@@ -33,7 +33,7 @@
     for(const name of ['name','city','venue','date','direction','audience','currency'])form.elements[name].value=brief?.[name]??(name==='currency'?'USD':'');
     form.elements.objectives.value=(brief?.objectives??[]).join('\n');
     for(let index=0;index<3;index++)form.elements[`anchor${index}`].value=brief?.anchors?.[index]??'';
-    form.elements.budget.value=brief?.constraints?.budget??'';form.elements.slots.value=brief?.constraints?.slots??2;form.elements.maxPerGenre.value=brief?.constraints?.maxPerGenre??'';
+    form.elements.budget.value=brief?.constraints?.budget??'';form.elements.slots.value=brief?.constraints?.slots??2;form.elements.maxPerGenre.value=brief?.constraints?.maxPerGenre??'';form.elements.discoveryMin.value=brief?.constraints?.discoveryMin??0;
     form.elements.capacity.value=brief?.commercial?.capacity??'';form.elements.ticketPrice.value=brief?.commercial?.ticketPrice??'';form.elements.otherCosts.value=brief?.commercial?.otherCosts??'';
     form.elements.note.value='';
     setCandidates(brief?.candidates??[{},{},{}]);
@@ -52,7 +52,7 @@
     const picks=Object.fromEntries(Object.entries(state.event?.revisions.at(-1).brief.picks??{}).filter(([name])=>present.has(name.toLowerCase())));
     return {name:v('name'),city:v('city'),venue:v('venue')||null,date:v('date')||null,direction:v('direction')||null,audience:v('audience')||null,
       objectives:form.elements.objectives.value.split('\n').map(line=>line.trim()).filter(Boolean),anchors:[0,1,2].map(index=>v(`anchor${index}`)).filter(Boolean),currency:v('currency'),
-      constraints:{budget:num(v('budget')),slots:num(v('slots')),...(v('maxPerGenre')?{maxPerGenre:num(v('maxPerGenre'))}:{})},candidates,
+      constraints:{budget:num(v('budget')),slots:num(v('slots')),...(v('maxPerGenre')?{maxPerGenre:num(v('maxPerGenre'))}:{}),...(v('discoveryMin')?{discoveryMin:num(v('discoveryMin'))}:{})},candidates,
       ...(Object.values(commercial).some(value=>value!=null)?{commercial}:{}),...(Object.keys(picks).length?{picks}:{})};
   }
   const EXAMPLE={name:'Night Shift Soul Revue',city:'Chicago',venue:'700-capacity club (illustrative)',date:'2027-04-16',direction:'Modern soul with a jazz-funk edge',audience:'25–40 year-old soul and R&B fans who follow Leon Bridges and Erykah Badu',objectives:['Fill a 700-capacity room','Book one act the audience is likely to discover'],
@@ -78,10 +78,10 @@
   }
   function newEvent(){state.event=null;state.run=null;fillForm(null);$('brief-submit').textContent='Create event';$('revision-note-row').hidden=true;$('research-output').innerHTML='';$('decide-output').innerHTML='';$('history-output').innerHTML='';renderRevisionChoices();updateButtons();form.elements.name.focus();}
   function updateButtons(){
-    const event=state.event,ready=event?.research?.status==='complete'&&!event.researchStale;
+    const event=state.event,ready=['complete','partial'].includes(event?.research?.status)&&!event.researchStale;
     $('run-research').disabled=state.busy||!event;
     $('run-autopilot').disabled=state.busy||!event||!ready;
-    $('run-research').textContent=event?.research?.status==='complete'?(event.researchStale?'Research again (brief changed)':'Research again'):'Research with Qloo';
+    $('run-research').textContent=['complete','partial'].includes(event?.research?.status)?(event.researchStale?'Research again (brief changed)':'Research again'):'Research with Qloo';
   }
 
   // ---------- Research ----------
@@ -91,6 +91,7 @@
     const synthetic=research.mode==='synthetic';
     const items=research.items??[];
     return `<div class="autopilot-banner ${synthetic?'autopilot-banner-warning':'autopilot-banner-live'}"><strong>${synthetic?'SYNTHETIC QLOO DATA':'QLOO RESEARCH'} · REVISION ${e(research.revision)}</strong><span>${synthetic?'Development fixtures, not real cultural evidence.':`${e(research.callsUsed)} live Qloo workflow calls`} · ${e(research.receipts)} receipts · completed ${e(String(research.completedAt).replace('T',' ').slice(0,16))} UTC.</span></div>
+      ${research.status==='partial'?`<p class="workspace-warning" role="alert"><strong>Partial research:</strong> ${e(research.failedCalls?.length??0)} Qloo call(s) failed (${e([...new Set((research.failedCalls??[]).map(row=>row.error).filter(Boolean))].join(', ')||'errors')}). That evidence is missing, not guessed, so decisions on it are provisional. Research again when Qloo is responding.</p>`:''}
       ${event.researchStale?`<p class="workspace-warning" role="alert">${e(event.researchStale)} Decisions use the last research until you research again.</p>`:''}
       ${research.unresolved?.length?`<div class="workspace-warning"><p>Qloo could not resolve: ${e(research.unresolved.join(', '))}. These names were not used.</p>${(research.choices??[]).filter(row=>row.choices?.length).map(row=>`<p><strong>${e(row.name)}</strong> could be: ${row.choices.map(choice=>`<button type="button" class="button subtle small" data-pick-name="${e(row.name)}" data-pick-id="${e(choice.id)}" data-pick-label="${e(choice.name)}">${e(choice.name)}</button>`).join(' ')}</p>`).join('')}${(research.choices??[]).some(row=>row.choices?.length)?'<p>Choose the intended artist to save a revision, then research again.</p>':'<p>Check the spelling or make the name more specific.</p>'}</div>`:''}
       <div class="table-scroll"><table class="autopilot-compare"><caption>What Qloo returned for each artist in ${e(event.revisions.find(row=>row.revision===research.revision)?.brief.city??'')}</caption><thead><tr><th scope="col">Artist</th><th scope="col">Source</th><th scope="col">Audience rank</th><th scope="col">Local evidence</th><th scope="col">Audience comparison</th></tr></thead><tbody>${items.map(item=>`<tr><th scope="row">${e(item.name)}${item.originalName&&item.originalName!==item.name?` <small>(you entered “${e(item.originalName)}”)</small>`:''}</th><td>${item.found?'Found by Qloo · no quote yet':'Your candidate'}</td><td>${item.evidence?.rank?`${e(item.rank)} of ${e(item.of)}`:'Missing'}</td><td>${item.evidence?.local?'Measured':'Missing'}</td><td>${item.evidence?.comparison?'Measured':'Missing'}</td></tr>`).join('')}</tbody></table></div>
@@ -194,7 +195,7 @@
       const file=await (await fetch('/workspace-example.json',{signal:AbortSignal.timeout(15000)})).json();state.example=file;
       const event=file.event,brief=event.revisions[0].brief,money=moneyFor(brief.currency);
       const [first,second]=file.runs;
-      target.innerHTML=`<div class="autopilot-banner autopilot-banner-recorded"><strong>RECORDED ORGANIZER SESSION</strong><span>${e(file.disclosure)} Captured ${e(file.capturedAt.replace('T',' ').slice(0,16))} UTC with ${e(file.providerCalls)} live Qloo workflow calls. This page replays the record and makes no calls.</span></div>
+      target.innerHTML=`<div class="autopilot-banner autopilot-banner-recorded"><strong>RECORDED ORGANIZER SESSION</strong><span>${e(file.disclosure)} Captured ${e(file.capturedAt.replace('T',' ').slice(0,16))} UTC with ${e(file.providerCalls)} live Qloo workflow calls. This page replays the record and makes no calls.${file.runs.some(row=>row.run?.fitBasis==='ordinal-rank')?' These decisions scored cultural fit by Qloo rank order, because the session was recorded before Houselights used Qloo affinity scores; a new event researched today uses affinity.':''}</span></div>
         <ol class="workspace-story">
           <li><h2><span>1</span> The organizer writes a new brief</h2><div class="panel workspace-brief-card">${briefCard(brief,money)}</div></li>
           <li><h2><span>2</span> Houselights researches it with Qloo</h2><div class="panel">${researchSummary({...event,researchStale:null})}</div></li>

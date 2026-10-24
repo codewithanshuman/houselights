@@ -2,10 +2,13 @@
 //
 // Qloo's rank tool returns an affinity score for every ranked entity. Ordinal
 // positions turn a 0.0001 affinity gap into a full rank step, so fit is derived
-// from the scores themselves wherever every ranked candidate has one:
-// fit = (affinity − lowest) / (highest − lowest) across the ranked pool, which is
-// the optimizer's declared "0–1 relative affinity index". Ordinal position is the
-// fallback only when scores are missing.
+// from the scores themselves wherever every ranked candidate has one.
+//
+// Scaling: fit = 1 − (top score − score) / span, with span = max(pool range,
+// AFFINITY_SPAN). Min-max scaling would stretch a tight pool (say a 0.03 range)
+// over the whole 0–1 fit scale and exaggerate tiny score differences; a fixed
+// floor on the span keeps a small gap small. Only pools wider than the span use
+// their own range. Ordinal position is the fallback when scores are missing.
 import { optimizeSlate } from './optimizer.mjs';
 
 // Declared, not estimated: two candidates whose Qloo affinity scores differ by
@@ -13,6 +16,9 @@ import { optimizeSlate } from './optimizer.mjs';
 // Qloo publishes no score uncertainty; repeated live captures returned identical
 // scores, so the band is a decision-sensitivity threshold, not a noise estimate.
 export const TIE_BAND = 0.002;
+// Declared reference span: an affinity gap of 0.05 moves fit across the whole
+// scale. It is near the widest spread in the published pools (0.019–0.057).
+export const AFFINITY_SPAN = 0.05;
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const bookable = item => item.terms?.available === true && finite(item.terms?.fee) && item.terms.fee >= 0;
 const key = ids => [...ids].sort().join('\0');
@@ -27,48 +33,55 @@ export function affinityScores(items, receipts = []) {
   return { receiptId, scores };
 }
 
+// scale 'fixed-span' is current; 'min-max' reproduces records made before it.
+export function scaleAffinity(values, scale = 'fixed-span') {
+  const high = Math.max(...values), low = Math.min(...values), span = scale === 'min-max' ? high - low : Math.max(high - low, AFFINITY_SPAN);
+  if (!(span > 0)) return { span, low, high, fit: () => .5 };
+  // The legacy formula is kept verbatim so replays reproduce digests bit for bit.
+  if (scale === 'min-max') return { span, low, high, fit: value => (value - low) / (high - low) };
+  return { span, low, high, fit: value => Math.max(0, Math.min(1, 1 - (high - value) / span)) };
+}
+
 /**
  * Items with fit taken from Qloo affinity when every ranked candidate has a
  * score in the cited rank receipt; otherwise unchanged (ordinal fallback).
  */
-export function withAffinityFit(items, receipts = []) {
+export function withAffinityFit(items, receipts = [], { scale = 'fixed-span' } = {}) {
   const ranked = items.filter(item => item.evidence?.rank === true && finite(item.fit));
   const { receiptId, scores } = affinityScores(items, receipts);
   if (ranked.length < 2 || !ranked.every(item => scores.has(item.id)))
     return { items: items.map(item => ({ ...item, fitBasis: item.evidence?.rank ? 'ordinal-rank' : null })), basis: ranked.length ? 'ordinal-rank' : 'none', receiptId };
-  const values = ranked.map(item => scores.get(item.id)), low = Math.min(...values), high = Math.max(...values);
-  return { basis: 'qloo-affinity', receiptId, range: { low, high },
+  const scaled = scaleAffinity(ranked.map(item => scores.get(item.id)), scale);
+  return { basis: 'qloo-affinity', receiptId, range: { low: scaled.low, high: scaled.high, span: scaled.span },
     items: items.map(item => item.evidence?.rank === true && scores.has(item.id)
-      ? { ...item, affinity: scores.get(item.id), fit: high > low ? (scores.get(item.id) - low) / (high - low) : .5, fitBasis: 'qloo-affinity' }
+      ? { ...item, affinity: scores.get(item.id), fit: scaled.fit(scores.get(item.id)), fitBasis: 'qloo-affinity' }
       : { ...item, fitBasis: null }) };
 }
 
 /** Fit for an ordered rank response: affinity-based when every row has a score. */
-export function fitsFromRankRows(order, rows) {
+export function fitsFromRankRows(order, rows, { scale = 'fixed-span' } = {}) {
   const scores = new Map((rows ?? []).filter(row => row.id && finite(row.affinity)).map(row => [row.id, row.affinity]));
   if (order.length > 1 && order.every(id => scores.has(id))) {
-    const values = order.map(id => scores.get(id)), low = Math.min(...values), high = Math.max(...values);
-    return { basis: 'qloo-affinity', fits: new Map(order.map(id => [id, high > low ? (scores.get(id) - low) / (high - low) : .5])), scores };
+    const scaled = scaleAffinity(order.map(id => scores.get(id)), scale);
+    return { basis: 'qloo-affinity', fits: new Map(order.map(id => [id, scaled.fit(scores.get(id))])), scores };
   }
   return { basis: 'ordinal-rank', fits: new Map(order.map((id, index) => [id, order.length > 1 ? 1 - index / (order.length - 1) : .5])), scores };
 }
 
-/** Groups of candidates whose consecutive affinity scores are within the band. */
+/**
+ * Near-ties are pairs whose scores differ by less than the band. Pairs are not
+ * chained, so no reported tie ever spans more than the band.
+ */
 export function nearTieGroups(items, band = TIE_BAND) {
-  const scored = items.filter(item => finite(item.affinity)).sort((a, b) => b.affinity - a.affinity);
-  const groups = [];
-  let current = [];
-  for (const item of scored) {
-    if (current.length && current.at(-1).affinity - item.affinity < band) current.push(item);
-    else { if (current.length > 1) groups.push(current); current = [item]; }
-  }
-  if (current.length > 1) groups.push(current);
-  return groups.map(group => ({ ids: group.map(item => item.id), names: group.map(item => item.name), spread: group[0].affinity - group.at(-1).affinity,
-    scores: group.map(item => item.affinity) }));
+  const scored = items.filter(item => finite(item.affinity)).sort((a, b) => b.affinity - a.affinity || String(a.id).localeCompare(String(b.id)));
+  const pairs = [];
+  for (let i = 0; i < scored.length; i++) for (let j = i + 1; j < scored.length && scored[i].affinity - scored[j].affinity < band; j++)
+    pairs.push({ ids: [scored[i].id, scored[j].id], names: [scored[i].name, scored[j].name], spread: scored[i].affinity - scored[j].affinity, scores: [scored[i].affinity, scored[j].affinity] });
+  return pairs;
 }
 
 /**
- * Re-optimizes with each near-tie group given equal fit (the group mean). A
+ * Re-optimizes with each near-tie pair given equal fit (the pair mean). A
  * recommendation "rests on a near-tie" when that changes the selected bill.
  */
 export function tieSensitivity(items, constraints, band = TIE_BAND) {

@@ -27,14 +27,14 @@ Reused, not rebuilt:
 
 ## Qloo affinity scores, near-ties and comparability
 
-**Fit uses real Qloo scores.** Qloo's rank tool returns an affinity score for every ranked entity. Ordinal positions turn a 0.0001 affinity gap into a full rank step: in a five-act pool, one step is 25 fit points per slot. Fit is now `(affinity − lowest) / (highest − lowest)` across the ranked pool. Ordinal position is used only when a score is missing. This applies to Autopilot, the organizer workspace and new research (`server/affinity.mjs`, `buildMemo`).
+**Fit uses real Qloo scores.** Qloo's rank tool returns an affinity score for every ranked entity. Ordinal positions turn a 0.0001 affinity gap into a full rank step: in a five-act pool, one step is 25 fit points per slot. Fit is now `1 − (top score − score) / span`, where `span = max(pool range, 0.05)`. The first version used min-max scaling, which stretched a tight pool (for example a 0.03 range) across the whole fit scale and so exaggerated small differences. The fixed 0.05 floor, about the widest spread in the published pools, keeps small gaps small. It is a declared modelling choice, not a measured property of Qloo. Ordinal position is used only when a score is missing. This applies to Autopilot, the organizer workspace and new research (`server/affinity.mjs`, `buildMemo`).
 
-**Near-ties are declared and checked.** Candidates whose scores differ by less than **0.002** form a near-tie group. The decision is re-optimized with each group given equal fit. If the bill changes, the packet raises a high-severity "near-tie decides the bill" finding and an approval action. Qloo publishes no score uncertainty, and repeated live captures returned identical scores, so the band is a declared sensitivity threshold, not a noise estimate.
+**Near-ties are declared and checked.** Any **pair** of candidates whose scores differ by less than **0.002** is a near-tie. Pairs are deliberately not chained: an earlier version grouped A–B–C–D when each neighbour was within the band, so one "tie" could span 0.0045. The decision is re-optimized with each pair given equal fit. If the bill changes, the packet raises a high-severity "near-tie decides the bill" finding and an approval action. Qloo publishes no score uncertainty, and repeated live captures returned identical scores, so the band is a declared sensitivity threshold, not a noise estimate.
 
 **What the real scores changed:**
 - *New York: compare all three methods.* Sault and Jordan Rakei differ by 0.0001. The ordinal bill Kiwanuka + Sault becomes Kiwanuka + Rakei under affinity.
 - *Recorded New York run.* After research the bill is still Kiwanuka + Sault, but it rests on the same 0.00014 near-tie. Treated as tied, it would be Kiwanuka + Rakei, $3,500 cheaper. The packet asks the organizer to decide.
-- Near-ties with no effect on the bill are disclosed for Berlin, Amsterdam and São Paulo.
+- Near-ties with no effect on the bill are disclosed for Berlin, Amsterdam and São Paulo (two separate pairs, DUDA BEAT / Tuyo and Tuyo / Luedji Luna).
 
 **Comparability.** A comparison is supported only when every bookable act has a rank from one complete Qloo query. **Mumbai** (4 of 5 ranked), **Paris** (2 of 5) and **Sydney** (5 of 6) fail this test, as does the recorded Chicago example (Qloo omitted Durand Jones & The Indications). They are excluded from the shock-study comparison, the Proof Lab's comparative LLM statistics and the 12-brief audit. Their packets say "Not comparable", and the desk's Qloo preview no longer claims a Qloo effect for them.
 
@@ -74,7 +74,7 @@ Hypothetical fee ceilings say "not a quote". Cultural affinity is never describe
 
 ## Evaluation
 
-See [research-policy evaluation](../results/research-policy-heldout.md), [close-call evaluation](../results/research-policy-heldout-close.md) and the [12-brief audit](../results/autopilot-evaluation.md). The protocol was declared before the held-out runs in [evals/autopilot-policy-protocol.json](../evals/autopilot-policy-protocol.json). In summary, 2.0 fixes the interacting-evidence blind spot, which the tests prove. On held-out synthetic scenarios its decision agreement equals 1.0 in the general family. In close calls it is 95% vs 93% at 4 calls, but with slightly higher mean regret, which is within noise. It does not demonstrably beat a fixed-order heuristic. Details are in [the milestone report](autopilot-2-report.md).
+See [research-policy evaluation](../results/research-policy-heldout.md), [close-call evaluation](../results/research-policy-heldout-close.md) and the [12-brief audit](../results/autopilot-evaluation.md). The protocol was declared before the held-out runs in [evals/autopilot-policy-protocol.json](../evals/autopilot-policy-protocol.json). In summary, 2.0 fixes the interacting-evidence blind spot, as shown on constructed test cases. On held-out synthetic scenarios its decision agreement equals 1.0 in the general family. In close calls it is 95% vs 93% at 4 calls, but with slightly higher mean regret, which is within noise. It does not demonstrably beat a fixed-order heuristic. Details are in [the milestone report](autopilot-2-report.md).
 
 ## Limits
 

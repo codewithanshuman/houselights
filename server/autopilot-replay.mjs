@@ -29,7 +29,8 @@ export async function replayRecordedAutopilot(file) {
     const result = await runAutopilot(judgeAutopilotSource(record), { maxCalls: file.run.budget.maxCalls, maxRounds: file.run.budget.maxRounds },
       { research, now: () => file.clockStart, mode: 'replay', policy: legacy ? 'value-v1' : file.run.policy ?? 'value',
         // Records made before affinity fits carry no fitBasis and replay on ordinal ranks.
-        fitBasis: file.run.fitBasis ? 'affinity' : 'ordinal' });
+        // Scale versions: no fitBasis → ordinal; fitBasis without fitScale → min-max.
+        fitBasis: !file.run.fitBasis ? 'ordinal' : file.run.fitScale ? 'affinity' : 'affinity-minmax' });
     // 2.0 labels rank and cross-check results with their question; 1.0 did not.
     const observed = run => run.observations.map(({ questionId, receiptId, results }) => ({ questionId, receiptId, results: results.map(({ state, text, questionId: id }) => ({ state, text, ...(legacy || ['rank', 'crosscheck'].includes(id) ? {} : { questionId: id }) })) }));
     const pick = run => run.history.map(({ phase, selectedIds, cause }) => ({ phase, selectedIds, cause }));

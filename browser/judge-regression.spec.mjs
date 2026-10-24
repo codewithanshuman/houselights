@@ -64,6 +64,19 @@ test.afterAll(async () => {
     rmSync(dataDir, { recursive: true, force: true });
 });
 
+test('the judge page leads with one recorded decision, its risk and the human call, before any mechanics', async ({ page }) => {
+  const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
+  await page.goto(`${origin}/judge.html`);
+  const glance=page.locator('#decision-glance');
+  await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
+  await expect(glance).toContainText('WATCH OUT');await expect(glance).toContainText('YOUR CALL');
+  await expect(glance).toContainText('Qloo affinity is cultural fit, not ticket demand');
+  const order=await page.evaluate(()=>{const g=document.getElementById('decision-glance'),a=document.getElementById('booking-autopilot');return !!a&&!!(g.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING);});
+  expect(order).toBe(true);
+  await glance.locator('summary',{hasText:/glossary|terms/i}).first().click();
+  await expect(glance).toContainText('Qloo publishes no margin of error');await expect(glance).toContainText('not that the bill will sell more tickets');
+});
+
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
   await page.goto(`${origin}/judge.html#${caseId}`);
   await expect(page.locator('#judge-title')).toContainText('New York');
@@ -92,7 +105,7 @@ test('budget plus evidence withdrawal is labeled as a combined change on mobile'
   await page.getByRole('button', { name: 'Compare with Qloo evidence removed' }).click();
   await expect(page.locator('.judge-evidence-comparison')).toContainText('MATCHED EVIDENCE TEST');
   await page.locator('#judge-budget').fill('10000');
-  await page.getByRole('button', { name: 'Recalculate and prove' }).click();
+  await page.getByRole('button', { name: 'Recalculate and check' }).click();
   const comparison = page.locator('.judge-evidence-comparison');
   await expect(comparison).toContainText('COMBINED-CHANGE REPLAY');
   await expect(comparison).toContainText('Evidence and booking inputs changed');
@@ -288,7 +301,7 @@ test('budget presets and promoter export reflect the exact completed simulator r
   await expect(page.locator('#judge-budget')).toHaveValue('11600');
   await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','true');
   const completed=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/experiment`);
-  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await page.getByRole('button',{name:'Recalculate and check'}).click();
   const output=await (await completed).json();
   await expect(page.locator('#judge-status')).toContainText('Experiment complete');
   await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','false');
@@ -314,7 +327,7 @@ test('booking desk cancellation preserves survivors and zero budget stays explic
   await expect(page.locator('#judge-status')).toContainText('Experiment complete');
   await page.getByRole('button',{name:'Reset assumptions'}).click();
   await page.locator('#judge-budget').fill('0');
-  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await page.getByRole('button',{name:'Recalculate and check'}).click();
   await expect(page.locator('.booking-verdict')).toHaveText('NO FEASIBLE BOOKING');
   await expect(page.locator('.booking-empty')).toContainText('will not silently relax');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -335,7 +348,7 @@ test('failed booking replay keeps the decision visibly pending and exports only 
   await expect(page.locator('.booking-selected')).toContainText('Michael Kiwanuka');
   await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`,route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Test outage'})}));
   await page.getByRole('button',{name:'70%',exact:true}).click();
-  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await page.getByRole('button',{name:'Recalculate and check'}).click();
   await expect(page.locator('#judge-status')).toContainText('no new experiment completed');
   await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','true');
   await expect(page.locator('#booking-budget-output')).toContainText('10,150');
@@ -381,7 +394,7 @@ test('infeasible Paris brief preserves the missing evidence and supports an expl
   await expect(page.locator('.booking-decision-metrics')).toContainText('No selection');
   await expect(page.locator('#judge-tight-budget')).toBeDisabled();
   await page.getByRole('button',{name:'125%',exact:true}).click();
-  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await page.getByRole('button',{name:'Recalculate and check'}).click();
   await expect(page.locator('.booking-verdict')).toHaveText('FEASIBLE PLANNING OPTION');
   await expect(page.locator('#booking-decision-card')).toContainText('Evidence state: blocked');
   await expect(page.locator('#booking-signal-lab')).toContainText('not ticket demand');
