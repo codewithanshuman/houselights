@@ -40,7 +40,7 @@ All figures below are reproduced offline by the commands named in the [claims au
 - **Constraint safety (by construction):** an exact optimizer cannot propose a lineup that breaks a hard rule. For comparison, 3 of 231 re-prompted LLM responses (1.3%) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - 331 unit tests and 31 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
+  - 330 unit tests and 32 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 
