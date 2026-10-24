@@ -13,6 +13,10 @@ const averageFit = (items, ids) => {
 };
 export function withoutDerived(snapshot) {
   const copy = { ...snapshot };
+  // A research log describes the original run's inputs and final decision.
+  // Child scenarios retain their parent link and receipts, not its event log.
+  delete copy.trace;
+  delete copy.traceMeta;
   if (snapshot.memo) copy.memo = { ...snapshot.memo, items: preserveRankProvenance(snapshot) };
   for (const key of ['intelligence', 'venuePlan', 'capacityResearch', 'localActivation', 'festivalResearch', 'gm', 'benchmark', 'benchmarkTrial', 'themeSeason', 'decisionProof', 'investigation', 'commercialStress']) delete copy[key];
   return copy;

@@ -200,3 +200,45 @@ test('incomplete older case discloses missing agent events and insufficient rank
   await expect(page.locator('#judge-qloo-preview')).toContainText('Treat this comparison as inconclusive.');
   await expect(page.locator('#judge-source')).toContainText('Receipts only; no agent event log');
 });
+
+test('Proof Lab ignores an older case response after a newer selection finishes', async ({ page }) => {
+  await page.goto(`${origin}/proof-lab.html#${tracedCaseId}`);
+  await expect(page.locator('#with-lineup')).toHaveText('Michael Kiwanuka + Sault');
+  const olderId='934e002267e2db9ccdc1b5a9',newerId='5031a69f837e1c28ce045422';
+  let release;
+  const gate=new Promise(resolve=>{release=resolve;});
+  await page.route(`**/api/experiments/public/${olderId}`,async route=>{
+    await gate;await route.continue();
+  });
+  const requested=page.waitForRequest(`**/api/experiments/public/${olderId}`);
+  await page.locator('#case-select').selectOption(olderId);await requested;
+  await expect(page.locator('#download')).toBeDisabled();
+  await expect(page.locator('#case-status')).toContainText('previous report remains displayed');
+  await page.locator('#case-select').selectOption(newerId);
+  await expect(page.locator('#case-status')).toContainText('Mumbai');
+  const completed=page.waitForResponse(`**/api/experiments/public/${olderId}`);
+  release();await completed;await page.waitForLoadState('networkidle');
+  await expect(page.locator('#main')).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#case-select')).toHaveValue(newerId);
+  await expect(page.locator('#case-status')).toContainText('Mumbai');
+  expect(new URL(page.url()).hash).toBe(`#${newerId}`);
+  const download=page.waitForEvent('download');await page.locator('#download').click();
+  expect((await download).suggestedFilename()).toBe(`houselights-proof-${newerId}.json`);
+});
+
+test('Proof Lab restores the displayed brief after a failed case switch and permits retry', async ({ page }) => {
+  await page.goto(`${origin}/proof-lab.html#${tracedCaseId}`);
+  await expect(page.locator('#with-lineup')).toHaveText('Michael Kiwanuka + Sault');
+  const nextId='934e002267e2db9ccdc1b5a9';
+  await page.route(`**/api/experiments/public/${nextId}`,route=>route.fulfill({status:503,body:'Unavailable'}));
+  await page.locator('#case-select').selectOption(nextId);
+  await expect(page.locator('#case-status')).toContainText('its brief is selected again');
+  await expect(page.locator('#case-select')).toHaveValue(tracedCaseId);
+  await expect(page.locator('#with-lineup')).toHaveText('Michael Kiwanuka + Sault');
+  await expect(page.locator('#download')).toBeEnabled();
+  expect(new URL(page.url()).hash).toBe(`#${tracedCaseId}`);
+  await page.unroute(`**/api/experiments/public/${nextId}`);
+  await page.locator('#case-select').selectOption(nextId);
+  await expect(page.locator('#case-status')).toContainText('Berlin');
+  await expect(page.locator('#case-select')).toHaveValue(nextId);
+});

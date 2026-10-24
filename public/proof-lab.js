@@ -2,7 +2,7 @@ const $ = id => document.getElementById(id);
 const labels = { rank: 'Audience affinity', local: 'Geographic affinity', trends: 'Cultural trends', comparison: 'Cross-artist affinity' };
 const descriptions = { rank: 'Artist relevance to the audience', local: 'City and area observations', trends: 'Recorded momentum', comparison: 'Relationships between artists' };
 const methods = [ ['llm_only','A','LLM only'], ['constraint_only','B','Constraint only'], ['qloo_ablated','C','Qloo withdrawn'], ['full_houselights','D','Full HouseLights'] ];
-let current = null, selectedMask = 15;
+let current = null, selectedMask = 15, caseRequest = 0;
 const text = (node, value) => { node.textContent = String(value ?? '—'); return node; };
 const el = (tag, className, value) => { const node = document.createElement(tag); if (className) node.className = className; if (value != null) text(node,value); return node; };
 const clear = node => node.replaceChildren();
@@ -99,13 +99,38 @@ function render(){const r=current.report;current.recordNames=Object.fromEntries(
   text($('combination-count'),`${r.ablations.coalitions.length} / 16 combinations`);
   renderHeadlineComparison();renderMethods();renderSignalControls();renderSignal();renderContributions();renderEvaluation();renderAudit();
 }
-async function selectCase(id){text($('case-status'),'Loading locked report…');const response=await fetch(`/api/experiments/public/${encodeURIComponent(id)}`);if(!response.ok)throw new Error('Published case could not be loaded.');current=await response.json();current.coverage=window.proofCoverage;selectedMask=15;render();history.replaceState(null,'',`#${id}`);}
+async function selectCase(id){
+  const request=++caseRequest;
+  text($('case-status'),current?'Loading selected brief… The previous report remains displayed.':'Loading locked report…');
+  $('download').disabled=true;
+  $('main').setAttribute('aria-busy','true');
+  for(const input of $('signal-controls').querySelectorAll('input'))input.disabled=true;
+  try{
+    const response=await fetch(`/api/experiments/public/${encodeURIComponent(id)}`);
+    if(!response.ok)throw new Error('Published case could not be loaded.');
+    const next=await response.json();
+    if(request!==caseRequest)return;
+    current=next;current.coverage=window.proofCoverage;selectedMask=15;
+    $('case-select').value=id;render();history.replaceState(null,'',`#${id}`);
+  }catch(error){
+    if(request!==caseRequest)return;
+    if(current){$('case-select').value=current.caseId;text($('case-status'),`${error.message} The previous report remains displayed; its brief is selected again.`);}
+    else text($('case-status'),error.message);
+  }finally{
+    if(request===caseRequest){
+      $('download').disabled=!current;
+      $('main').setAttribute('aria-busy','false');
+      for(const input of $('signal-controls').querySelectorAll('input'))input.disabled=false;
+    }
+  }
+}
 async function init(){try{const response=await fetch('/api/experiments/public');if(!response.ok)throw new Error('Published case list unavailable.');const payload=await response.json();window.proofCoverage=payload.coverage;const select=$('case-select');clear(select);
     for(const item of payload.cases){const option=el('option','',`${item.title} · ${item.synthetic?'synthetic':'saved live'}`);option.value=item.id;select.append(option);}
     if(!payload.cases.length){text($('case-status'),'No published cases yet.');return;}
     const requested=location.hash.slice(1),guided=payload.cases.find(item=>item.id==='8be4d03ef4792ca9f1466983');
-    const first=payload.cases.some(item=>item.id===requested)?requested:(guided??payload.cases[0]).id;select.value=first;await selectCase(first);
-    select.addEventListener('change',()=>selectCase(select.value).catch(error=>text($('case-status'),error.message)));
+    const first=payload.cases.some(item=>item.id===requested)?requested:(guided??payload.cases[0]).id;select.value=first;
+    select.addEventListener('change',()=>selectCase(select.value));
+    await selectCase(first);
   }catch(error){text($('case-status'),error.message);}}
 $('download').addEventListener('click',()=>{if(!current)return;const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=el('a');a.href=url;a.download=`houselights-proof-${current.caseId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('run-private').addEventListener('click',async()=>{const status=$('private-status');text(status,'Creating locked experiment…');try{const token=$('token').value.trim(),headers={'Content-Type':'application/json',Authorization:`Bearer ${token}`};const sourceSnapshotId=$('source-id').value.trim();if(!sourceSnapshotId)throw new Error('Enter a saved source ID.');

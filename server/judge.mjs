@@ -64,7 +64,9 @@ export function publicJudgeSnapshot(source) {
     projection:'Public query and row projection. Original digest identifies the saved source receipt, not this reduced object.'}));
   const receiptIds=new Set(receipts.map(receipt=>receipt.id));
   const eventTypes=new Set(['start','stage','receipt','plan','needs_input','memo']);
-  const trace=(Array.isArray(source.trace)?source.trace:[]).slice(0,100)
+  // Older saved scenarios may have inherited the parent's research log.
+  // It is not execution evidence for their changed booking decision.
+  const trace=(!source.scenario&&!source.investigationDecision&&Array.isArray(source.trace)?source.trace:[]).slice(0,100)
     .filter(event=>event&&typeof event==='object'&&eventTypes.has(event.type)&&Number.isInteger(event.elapsedMs)&&event.elapsedMs>=0)
     .map(event=>({type:event.type,elapsedMs:event.elapsedMs,
       receiptId:receiptIds.has(event.receiptId)?event.receiptId:null,

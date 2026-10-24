@@ -84,7 +84,7 @@ export function financialValidation() {
     empiricalProfitRangeCoverage: null, calibrated: false,
     caveat: 'No genuine prospective settlement is recorded. Financial scenario probabilities and intervals have no demonstrated calibration.' };
   const mean = values => values.reduce((total, value) => total + value, 0) / values.length;
-  return { status: 'observational_comparison', count: rows.length, excluded: all.length,
+  return { status: 'observational_comparison', count: rows.length, excluded: all.length - rows.length,
     meanAbsoluteProfitError: mean(rows.map(row => Math.abs(row.profitError))),
     meanProfitBias: mean(rows.map(row => row.profitError)),
     breakEvenBrierScore: mean(rows.map(row => (row.predictedBreakEvenProbability - Number(row.actualProfit >= 0)) ** 2)),

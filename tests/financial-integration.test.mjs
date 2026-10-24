@@ -82,3 +82,19 @@ test('100,000-draw job completes and concurrent requests stop at two workers', a
   assert.equal(done.status, 'completed');
   assert.equal(done.result.assumptionResults[0].rows[0].metrics.profit.count, 100000);
 });
+
+test('financial validation counts only unmatched outcomes as excluded', async () => {
+  // Synthetic test-only ledger rows; no real settlements are claimed.
+  const fixture={provenance:{realOutcome:true,preEventSimulation:true},profitError:10,
+    attendanceError:2,predictedBreakEvenProbability:.75,actualProfit:20,predictedP5Profit:-10,predictedP95Profit:50};
+  const ids=['validation-prospective-fixture','validation-retrospective-fixture'];
+  try{
+    for(const [index,id] of ids.entries())db.prepare('INSERT INTO financial_outcomes(id,body,created_at) VALUES(?,?,?)')
+      .run(id,JSON.stringify({...fixture,provenance:{...fixture.provenance,preEventSimulation:index===0}}),new Date().toISOString());
+    const response=await request('/api/financial/validation');
+    assert.equal(response.status,200);
+    assert.equal(response.data.count,1);assert.equal(response.data.excluded,1);
+    assert.equal(response.data.meanAbsoluteProfitError,10);
+    assert.equal(response.data.calibrated,false);
+  }finally{for(const id of ids)db.prepare('DELETE FROM financial_outcomes WHERE id=?').run(id);}
+});

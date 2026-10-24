@@ -97,6 +97,8 @@ test('SSE runs carry booking terms through optimization and a reloadable receipt
   assert.deepEqual(checkpoint.snapshot.receipts, snapshot.receipts);
   assert.ok(checkpoint.snapshot.memo.items.every(item => item.fit === memo.items.find(original => original.id === item.id).fit), 'saved scenarios use server-held evidence, never client-supplied scores');
   assert.equal(checkpoint.snapshot.memo.constraints.budget, 14000);
+  assert.equal(checkpoint.snapshot.trace, undefined, 'A changed scenario must not inherit the original run’s event log');
+  assert.deepEqual(apiStore.load(saved.id).trace, snapshot.trace, 'The original research trace remains intact');
   assert.equal((await post('/api/scenario', { sourceId: saved.id, terms: { unknown: { fee: 1 } } })).status, 400);
   const analysisResponse = await post('/api/analyze', { items: memo.items, constraints: memo.constraints });
   assert.equal(analysisResponse.status, 200);

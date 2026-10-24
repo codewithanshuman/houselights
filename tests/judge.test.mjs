@@ -83,6 +83,19 @@ test('headline all-signal withdrawal agrees with the interactive replay for ever
     assert.equal(interactive.comparison.matchedEvidenceWithdrawal,true,row.title);
   }
 });
+test('legacy scenarios cannot publish inherited research logs as their own execution',()=>{
+  const original=source();
+  assert.equal(judge.publicJudgeSnapshot(original).traceMeta.complete,true);
+  for(const marker of [{scenario:true},{investigationDecision:{scope:'Changed booking inputs'}}]){
+    const changed={...structuredClone(original),...marker};
+    changed.memo.constraints.budget=60;
+    const projected=judge.publicJudgeSnapshot(changed);
+    assert.equal(projected.trace,undefined);
+    assert.equal(projected.traceMeta,undefined);
+    assert.equal(projected.receipts.length,original.receipts.length);
+  }
+  assert.equal(original.trace.length,5);
+});
 test('public experiments recompute exact results, preserve survivors and never save or approve plans',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture'),path='/api/judge/cases/'+record.id+'/experiment';
   const before=db.prepare('SELECT count(*) AS n FROM snapshots').get().n;
