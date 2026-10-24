@@ -1,32 +1,42 @@
-# Houselights submission checklist — 22 October 2026
+# Houselights submission checklist (updated 24 October 2026)
 
-Public demo: [Houselights decision room](https://houselights.80-225-218-239.sslip.io/). Public source: [GitHub repository](https://github.com/codewithanshuman/houselights). The prepared [Devpost description](devpost-description.md) is a draft; it has not been submitted.
+- **Public demo:** the [Houselights Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html).
+- **Public source:** the [GitHub repository](https://github.com/codewithanshuman/houselights).
+- **Devpost description:** the prepared [draft](devpost-description.md) has not been submitted.
 
-## The one-minute judge path
+## The two-minute judge path
 
-1. Open the public decision room without signing in. Select a saved Qloo case and read its source label and illustrative booking terms.
-2. Tighten the budget, then recalculate. The exact optimizer either returns a feasible slate or explains infeasibility.
-3. Turn Qloo evidence off for the same saved pool. Compare the resulting proof and inspect the withdrawn receipt IDs. This is an evidence-dependency test, not an estimate of Qloo's causal commercial value.
-4. Open the evidence page. The shock study reports 93 deterministic shocks and three recorded LLM re-prompts per comparable shock. The 12-candidate synthetic case has 7 violating responses among 72 returned responses. Houselights proposed zero invalid lineups and explicitly abstained on seven infeasible shocks across all cases; zero is an engineering consequence of hard-constraint optimization.
-
-The organizer workspace at `/index.html` contains deeper research, decision proof, saved run traces, portfolio and operational planning. The public path requires no login or provider calls.
+1. Open the Booking Desk. No sign-in is needed. The first screen shows:
+   - the recommended booking, under BOOK;
+   - why, from Qloo audience affinity;
+   - the main risks;
+   - what the promoter must decide;
+   - **what Qloo changed:** the same optimizer, pool, fees and budget with Qloo evidence on and off.
+2. Select **Try a budget cut ↓** and run it. The exact optimizer returns a feasible bill or explains why there is none. No provider calls are made.
+3. In the Booking Desk, turn Qloo evidence off, or withdraw one receipt, and compare. This tests whether the decision depends on the evidence. It does not estimate Qloo's commercial value.
+4. Optionally, open **See it plan a brand-new event** to replay a recorded organizer session, or the evidence page to see the shock study and its limits.
 
 ## Evidence and limits
 
-- The recorded shock suite uses saved live-Qloo cases and two **clearly labeled synthetic** 10- and 12-candidate cases. [Method and call budget](shock-call-budget.md), [reproducible table](../results/shocks.md), [raw results](../results/shocks.json).
-- The saved first-trial and re-prompted LLM controls are tool-free and use the same candidate pool, booking terms and shocked constraints. Provider failures and missing responses are counted separately from returned-response violation rates.
-- No independent human preference judgments have been collected. No blind-review invitations have been sent; the organizer deferred them. A genuine artist quote or availability source review is also pending. The public evidence page shows zero rather than invented rows.
-- Booking fees, availability, and genres are buyer-entered or illustrative. Cultural affinity is not a ticket-sales or revenue forecast. No observed commercial uplift or prize outcome is claimed.
+The [claims audit](claims-audit.md) has every claim, with its reproduction command and its limits. In short:
+
+- Withdrawing Qloo evidence changes 7 of 9 comparable briefs. Three briefs are excluded as not comparable.
+- On comparable solvable shocks, 3 of 231 re-prompted LLM responses (1.3%) violated a hard constraint.
+  - In the synthetic 12-candidate case alone, the figure is 1 of 66.
+  - Houselights' 0 comes from enforcing constraints by construction.
+- No blind reviews, usability sessions, real quotes or ticketing outcomes exist. Booking fees and availability are illustrative.
+- The [competition changelog](competition-changelog.md) lists every correction made to earlier claims.
 
 ## Requirements before final submission
 
-- [x] Public HTTPS Node demo, persistent database, public source, MIT code license, reproducible setup, sanitized public cases.
-- [x] Live Qloo and Groq transport checks, documented separately in [live validation](live-validation.md).
-- [x] Four reference/poster images removed from the public project; remaining artwork provenance and compression recorded in [SOURCES](../public/assets/SOURCES.md).
-- [x] Organizer attested on 22 October 2026 that every entrant is an adult in their jurisdiction, no entrant is excluded or connected to sponsor/judges, and permission exists to publish the remaining supplied artwork. This is an organizer statement, not independent verification.
-- [x] Public application release and anonymous external-browser checks completed on 22 October 2026. The application-code commit and report are recorded in [live validation](live-validation.md); repeat the checker if a later application change is deployed.
-- [x] Mobile-width screenshots of the public decision room and evidence page captured in ignored local artifacts. A video remains optional; a physical fresh-phone test has not been performed.
-- [ ] Collect real blind-review judgments and authentic commercial source evidence if available before submission; if not, keep the zero-evidence disclosure.
-- [ ] Enter the public URL, repository, license, project description and team details in Devpost, then submit.
+- [x] Public HTTPS demo, persistent database, public source under the MIT license (GitHub detects it), reproducible setup and sanitized public cases.
+- [x] Deployed release verified independently. See the [deployment record](shared-oracle-host.md).
+- [x] Live Qloo and Groq transport checks, recorded in [live validation](live-validation.md).
+- [x] Artwork provenance recorded in [SOURCES](../public/assets/SOURCES.md).
+- [x] On 22 October 2026 the organizer attested to entrant eligibility and to permission to publish the supplied artwork. This is an organizer statement, not independent verification.
+- [ ] **The GitHub default branch is `main`, which is still at `c502815` (23 October).** All later work exists only on `development`, so judges reading the repository see the older code. Merging needs the owner's decision.
+- [ ] Optional: set the GitHub repository description and homepage link (both are empty).
+- [ ] Run the [usability test kit](usability-test-kit.md) with real participants if time allows. Otherwise keep the zero-evidence disclosure.
+- [ ] Enter the public URL, repository, license, description and team details in Devpost, then submit.
 
-The [official rules](https://qloo.devpost.com/rules) and [challenge page](https://qloo.devpost.com/) were checked on 22 October 2026. The listed deadline is 30 October 2026 at 11:45 p.m. EDT (31 October 2026 at 9:15 a.m. India time). The submission requires a Qloo-integrated agentic project, an accessible public demo, public source under an open-source license, and a description. Rules also address entrant eligibility and third-party rights. Confirm the live Devpost form immediately before submission in case its fields change.
+The [official rules](https://qloo.devpost.com/rules) and [challenge page](https://qloo.devpost.com/) were checked on 22 October 2026. The listed deadline is 30 October 2026 at 11:45 p.m. EDT (31 October 2026 at 9:15 a.m. India time). Confirm the live Devpost form immediately before submitting, in case its fields have changed.

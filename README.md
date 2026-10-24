@@ -2,6 +2,8 @@
 
 **The AI decision room for live entertainment.** Houselights turns cultural intelligence into a defensible event decision: research the audience, optimize the slate, test which observations matter, challenge weak assumptions, and record the organizer's next step. Its exact slate optimizer and auditable Qloo receipts remain the core.
 
+**For judges (two minutes, no sign-in):** open the [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html). Its first screen shows the recommended booking, why, the main risks, the promoter's decision and **what Qloo changed**: the same optimizer, pool, fees and budget with Qloo evidence on and off. Then try a budget cut. The [claims audit](docs/claims-audit.md) states what is verified and what is not, and the [competition changelog](docs/competition-changelog.md) lists every correction we made to our own claims.
+
 The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
 
 **Houselights Autopilot 2.0** turns a promoter's brief into a decision packet. The steps:

@@ -31,7 +31,8 @@ async function start(){
     try{if((await fetch(`http://127.0.0.1:${port}/healthz`,{signal:AbortSignal.timeout(500)})).ok)return;}catch{}
     await new Promise(resolve=>setTimeout(resolve,250));
   }
-  throw new Error('Rehearsal server did not become healthy.');
+  // Include the server's own output so a slow or failed start explains itself.
+  throw new Error(`Rehearsal server did not become healthy within the wait. Last server output:\n${logs.join('').slice(-1500)||'(none)'}`);
 }
 try{
   await start();
