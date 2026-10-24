@@ -6,6 +6,8 @@
     event.preventDefault();target.focus({preventScroll:true});target.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   }));
   let current=null,result=null,busy=false,loadSequence=0;
+  const notify=(phase='state')=>document.dispatchEvent(new CustomEvent('booking:state',{detail:{current,result,busy,phase}}));
+  document.addEventListener('booking:ready',()=>notify());
   const say=message=>$('judge-status').textContent=message;
   async function request(path,body){const response=await fetch(path,{...(body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});const value=await response.json();if(!response.ok)throw new Error(value.error??'Request failed.');return value;}
   const names=ids=>ids.map(id=>current.snapshot.memo.items.find(i=>i.id===id)?.name??id).join(' + ')||'No feasible lineup';
@@ -75,7 +77,7 @@
       activity=`<ol class="agent-trace-list">${steps.join('')}</ol>`;
     }
     const slate=snapshot.memo.slate;
-    $('judge-agent-trace').innerHTML=`<p class="judge-trace-disclosure">${recorded?'These are saved application events in elapsed order, linked to the exact public Qloo receipts. The summary groups recorded steps for readability; the full log preserves every event. Free-text model reasoning was not saved.':'This case has receipt completion timestamps but no saved model-step event log. The order below follows those timestamps; it does not reconstruct the agent’s choices.'}</p><p><strong>Published booking question:</strong> ${e(question)} <small>Derived from the brief, not a recorded model prompt.</small></p>${activity}<p class="judge-trace-disclosure"><strong>Current replay:</strong> The exact optimizer checks ${e(slate.checkedCount)} lineups; ${e(slate.feasibleCount)} meet every hard constraint. ${e(slate.feasible?'The selected lineup is feasible.':'No feasible lineup was found.')} This replay is separate from the recorded research. Fees and availability are illustrative booking inputs.</p>`;
+    $('judge-agent-trace').innerHTML=`<p class="judge-trace-disclosure">${recorded?'These are saved application events in elapsed order, linked to the exact public Qloo receipts. The summary groups recorded steps for readability; the full log preserves every event. Free-text model reasoning was not saved.':'This case has receipt completion timestamps but no saved model-step event log. The order below follows those timestamps; it does not reconstruct the agent’s choices.'}</p><p><strong>Published booking question:</strong> ${e(question)} <small>Derived from the brief, not a recorded model prompt.</small></p>${activity}<p class="judge-trace-disclosure"><strong>Published baseline search:</strong> The exact optimizer checks ${e(slate.checkedCount)} lineups; ${e(slate.feasibleCount)} meet every hard constraint. ${e(slate.feasible?'The selected lineup is feasible.':'No feasible lineup was found.')} This replay is separate from the recorded research. Fees and availability are illustrative booking inputs.</p>`;
   }
   function methodComparison(){
     const methods=result.methods??{qloo:result.proof.baseline,constraintOnly:result.proof.constraintOnly,
@@ -107,10 +109,10 @@
     $('judge-budget').value=memo.constraints.budget;$('judge-cancel').value='';$('judge-withdraw').value='';$('judge-qloo-off').checked=false;
     document.querySelectorAll('[data-judge-lock]').forEach(input=>input.checked=memo.constraints.lockedIds.includes(input.dataset.judgeLock));
     document.querySelectorAll('[data-judge-exclude]').forEach(input=>input.checked=memo.constraints.excludedIds.includes(input.dataset.judgeExclude));
-    result={caseId:current.id,snapshot:current.snapshot,proof:current.proof,methods:current.methods,providerCalls:0,persisted:false,terms:current.terms};renderResult();
+    result={caseId:current.id,snapshot:current.snapshot,proof:current.proof,methods:current.methods,providerCalls:0,persisted:false,terms:current.terms};renderResult();notify('reset');
   }
   async function load(id){
-    const sequence=++loadSequence;$('judge-workspace').hidden=true;current=null;result=null;
+    const sequence=++loadSequence;$('judge-workspace').hidden=true;current=null;result=null;notify();
     if(!id)return;
     try{
       const record=await request('/api/judge/cases/'+encodeURIComponent(id));if(sequence!==loadSequence)return;current=record;
@@ -129,12 +131,12 @@
   async function experiment(scrollToProof=false){
     if(busy||!current)return;busy=true;const id=current.id;
     const controls=document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select, .judge-quick-actions button, [data-preview-compare]');
-    $('judge-case').disabled=true;controls.forEach(control=>control.disabled=true);say('Enumerating feasible lineups and checking evidence dependencies…');
+    $('judge-case').disabled=true;controls.forEach(control=>control.disabled=true);notify('calculating');say('Enumerating feasible lineups and checking evidence dependencies…');
     try{
       const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
-      result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
+      result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();notify('completed');say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
       if(scrollToProof)$('judge-proof-title').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-    }catch(error){say(`${error.message} The previous result is still displayed; no new experiment completed.`);}finally{busy=false;$('judge-case').disabled=false;controls.forEach(control=>control.disabled=false);}
+    }catch(error){notify('failed');say(`${error.message} The previous result is still displayed; no new experiment completed.`);}finally{busy=false;$('judge-case').disabled=false;controls.forEach(control=>control.disabled=false);notify();}
   }
   $('judge-form').onsubmit=event=>{event.preventDefault();void experiment();};$('judge-reset').onclick=()=>{reset();say('Published baseline restored.');};
   $('judge-workspace').addEventListener('click',event=>{

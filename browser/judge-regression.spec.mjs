@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -257,4 +257,98 @@ test('recorded case clearly limits the comparison and remains usable on desktop 
     await expect(page.locator('#judge-result')).toContainText('No saved first-trial LLM control');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }
+});
+
+test('booking desk connects all signals to a matched local comparison without more research', async ({page})=>{
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const lab=page.locator('#booking-signal-lab');
+  await expect(lab.getByRole('button',{pressed:true})).toHaveCount(4);
+  await expect(lab.locator('.booking-lab-active')).toContainText('Michael Kiwanuka + Sault');
+  let experiments=0;
+  page.on('request',request=>{if(request.url().endsWith('/experiment')||request.url().endsWith('/api/memo'))experiments++;});
+  for(let index=0;index<4;index++)await lab.locator('[data-booking-signal]').nth(index).click();
+  await expect(lab.locator('.booking-lab-active')).toContainText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(lab.locator('.booking-lineup-diff')).toContainText('Sault');
+  await expect(lab).toContainText('Original saved budget, pool, fees and policy remain identical');
+  expect(experiments).toBe(0);
+  await lab.getByRole('button',{name:/Receipt/}).first().click();
+  await expect(page.locator('#judge-receipts details[open]')).toHaveCount(1);
+  expect(errors).toEqual([]);
+});
+
+test('budget presets and promoter export reflect the exact completed simulator result', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#booking-budget-output')).toContainText('14,500');
+  await page.getByRole('button',{name:'80%',exact:true}).click();
+  await expect(page.locator('#judge-budget')).toHaveValue('11600');
+  await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','true');
+  const completed=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/experiment`);
+  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  const output=await (await completed).json();
+  await expect(page.locator('#judge-status')).toContainText('Experiment complete');
+  await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','false');
+  const ids=output.snapshot.memo.slate.selectedIds;
+  for(const id of ids)await expect(page.locator('.booking-selected')).toContainText(output.snapshot.memo.items.find(row=>row.id===id).name);
+  await expect(page.locator('#booking-signal-lab .booking-lab-active')).toContainText('Michael Kiwanuka + Sault');
+  const downloaded=page.waitForEvent('download');
+  await page.getByRole('button',{name:'Download promoter brief'}).click();
+  const file=await downloaded,text=readFileSync(await file.path(),'utf8');
+  expect(text).toContain('Artist budget: US$11,600');
+  expect(text).toContain('Illustrative booking terms');
+  expect(text).toContain('No matched saved first-trial LLM-only control');
+});
+
+test('booking desk cancellation preserves survivors and zero budget stays explicitly infeasible', async ({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('[data-booking-cancel]')).toHaveCount(2);
+  const completed=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/experiment`);
+  await page.locator('[data-booking-cancel]').first().click();
+  const output=await (await completed).json();
+  expect(output.comparison.survivorsPreserved).toBe(true);
+  await expect(page.locator('#judge-status')).toContainText('Experiment complete');
+  await page.getByRole('button',{name:'Reset assumptions'}).click();
+  await page.locator('#judge-budget').fill('0');
+  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await expect(page.locator('.booking-verdict')).toHaveText('NO FEASIBLE BOOKING');
+  await expect(page.locator('.booking-empty')).toContainText('will not silently relax');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('failed signal loading offers a retry without breaking the booking simulator', async ({page})=>{
+  await page.route(`**/api/experiments/public/${tracedCaseId}`,route=>route.fulfill({status:503,body:'Unavailable'}));
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#booking-signal-lab')).toContainText('booking simulator and saved receipts remain available');
+  await expect(page.locator('.booking-selected')).toContainText('Michael Kiwanuka');
+  await page.unroute(`**/api/experiments/public/${tracedCaseId}`);
+  await page.getByRole('button',{name:'Retry signal comparison'}).click();
+  await expect(page.locator('[data-booking-signal]')).toHaveCount(4);
+});
+
+test('failed booking replay keeps the decision visibly pending and exports only completed inputs', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('.booking-selected')).toContainText('Michael Kiwanuka');
+  await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`,route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Test outage'})}));
+  await page.getByRole('button',{name:'70%',exact:true}).click();
+  await page.getByRole('button',{name:'Recalculate and prove'}).click();
+  await expect(page.locator('#judge-status')).toContainText('no new experiment completed');
+  await expect(page.locator('#booking-decision-card')).toHaveAttribute('data-pending','true');
+  await expect(page.locator('#booking-budget-output')).toContainText('10,150');
+  await expect(page.locator('#booking-pending')).toContainText('last completed decision');
+  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Download promoter brief'}).click();
+  const text=readFileSync(await (await pending).path(),'utf8');
+  expect(text).toContain('UNAPPLIED INPUTS');expect(text).toContain('Artist budget: US$14,500');
+});
+
+test('signal switches retain keyboard focus and expose their pressed state', async ({page})=>{
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  const first=page.locator('[data-booking-signal="0"]');
+  await expect(first).toHaveAttribute('aria-pressed','true');
+  await first.focus();await page.keyboard.press('Space');
+  await expect(first).toHaveAttribute('aria-pressed','false');await expect(first).toBeFocused();
+  await page.keyboard.press('Space');await expect(first).toHaveAttribute('aria-pressed','true');
+  await page.locator('.booking-path').getByRole('link',{name:/Your decision/}).click();
+  await expect(page.locator('#booking-decision')).toBeFocused();
+  expect(new URL(page.url()).hash).toBe(`#${tracedCaseId}`);
 });

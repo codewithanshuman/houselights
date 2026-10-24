@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/judge.css">
   <script src="/judge.js" defer></script>
+  <script src="/booking-journey.js" defer></script>
 </head>
 <body class="judge-page">
   <a class="skip-link" href="#judge-case" data-judge-scroll>Skip to the experiment</a>
@@ -19,7 +20,7 @@
       <span class="brand-logo-frame"><img class="brand-logo" src="/assets/brand/portal-logo-v2.png" alt="" width="1254" height="1254"></span>
       <span>Houselights<span class="judge-brand-period">.</span></span>
     </a>
-    <span class="judge-nav-label">THE DECISION ROOM</span>
+    <span class="judge-nav-label">THE AI BOOKING DESK</span>
     <a class="judge-organizer-link" href="/evidence.html">Evidence &amp; limits <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></a>
   </nav>
   <main id="main" class="judge-main">
@@ -27,7 +28,7 @@
       <div class="judge-hero-copy">
         <p class="judge-eyebrow"><span aria-hidden="true"></span> LIVE ENTERTAINMENT. CONSIDERED.</p>
         <h1>Great nights.<br><em>Defensible decisions.</em></h1>
-        <p class="judge-intro">Follow saved Qloo cultural research into a feasible booking decision. Then change a budget or remove the evidence and see exactly what the optimizer changes.</p>
+        <p class="judge-intro">A great recommendation still has to fit the room, the budget and the bill. Follow cultural research into an exact booking decision, then put it under pressure.</p>
         <a class="judge-hero-link" href="#judge-case" data-judge-scroll>Try the booking challenge <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a>
       </div>
       <div class="judge-hero-art" aria-hidden="true">
@@ -41,12 +42,11 @@
         <span class="judge-art-star">✳</span>
       </div>
     </header>
+    <nav class="booking-path" aria-label="Booking journey">
+      <a href="#booking-brief"><span>01</span> The brief</a><a href="#booking-research"><span>02</span> AI research</a><a href="#booking-evidence"><span>03</span> Cultural proof</a><a href="#judge-form"><span>04</span> Challenge it</a><a href="#booking-decision"><span>05</span> Your decision</a>
+      <span class="booking-replay">RECORDED RESEARCH · LIVE CALCULATION</span>
+    </nav>
     <section class="judge-break-panel" aria-labelledby="judge-break-title"><div><p class="judge-eyebrow">THE 60-SECOND PATH</p><h2 id="judge-break-title">Can this concert survive a budget cut?</h2><p>Watch a saved provider-backed New York research run, then tighten the budget. Compare the same brief with its cultural evidence removed. Replays make no new provider calls.</p><a class="judge-hero-link" href="#judge-case" data-judge-scroll>Start the guided path <span class="ui-icon" data-icon="arrow-down-right" aria-hidden="true"></span></a></div><div id="judge-qloo-preview" aria-live="polite">Loading the matched evidence test…</div></section>
-    <ol class="judge-steps" aria-label="How the decision room works">
-      <li><span>01</span><div><strong>Qloo returns cultural evidence</strong><p>Inspect the recorded tool receipts.</p></div></li>
-      <li><span>02</span><div><strong>The agent selects checks</strong><p>Follow its saved plan into exact optimization.</p></div></li>
-      <li><span>03</span><div><strong>You change the constraints</strong><p>See a new feasible choice and its proof.</p></div></li>
-    </ol>
     <section class="judge-status-strip" aria-label="Evidence status"><span id="judge-live-count">Loading saved cases…</span><span id="judge-review-count">Independent reviews: loading…</span><a href="/proof-lab.html">Open Qloo Proof Lab</a><a href="/evidence.html">Open the evidence page</a></section>
     <details class="judge-shock-study"><summary>Explore the separate recorded stress-test study</summary><div id="judge-shock-teaser" aria-live="polite">Loading recorded shock study…</div></details>
     <section class="judge-case-picker" aria-label="Choose a published example">
@@ -61,11 +61,11 @@
       <p id="judge-status" role="status" aria-live="polite"></p>
     </section>
     <section id="judge-workspace" hidden>
-      <section class="panel judge-baseline-panel" aria-labelledby="judge-title">
+      <section id="booking-brief" class="panel judge-baseline-panel" aria-labelledby="judge-title">
         <p class="judge-section-label"><span>01</span> THE PUBLISHED BRIEF</p>
         <h2 id="judge-title"></h2>
         <p id="judge-source"></p>
-        <div id="judge-baseline"></div>
+        <div id="judge-baseline"></div><div id="booking-brief-card"></div>
         <div id="judge-constraints" class="judge-constraints" aria-label="Published booking constraints"></div>
         <div class="judge-quick-actions">
           <button class="button primary" type="button" id="judge-tight-budget">Cut budget below this lineup’s cost <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
@@ -73,12 +73,17 @@
         </div>
         <div class="judge-baseline-footnote"><span class="judge-note-mark" aria-hidden="true">↳</span><p id="judge-terms"></p></div>
       </section>
+      <section id="booking-research" class="panel judge-agent-panel" aria-labelledby="judge-agent-title"><p class="judge-section-label"><span>↳</span> RECORDED EVIDENCE TIMELINE</p><h2 id="judge-agent-title">From research to decision</h2><p class="judge-section-intro">Recorded application events show the actual research sequence where available. Older cases show only receipt completion order. Neither view invents the agent’s reasoning or makes a new provider call.</p><div id="booking-research-cards"></div><div id="judge-agent-trace"></div></section>
+      <section id="booking-evidence" class="panel booking-evidence" aria-labelledby="booking-evidence-title">
+        <div class="booking-panel-heading"><div><p class="judge-section-label"><span>03</span> THE CULTURAL DIFFERENCE</p><h2 id="booking-evidence-title">Take the evidence away.</h2><p>Same artists. Same terms. Change the signals and inspect what the policy chooses.</p></div><span class="booking-scope">FIXED ORIGINAL BRIEF</span></div>
+        <div id="booking-signal-lab" aria-live="polite">Loading the locked evidence comparison…</div>
+      </section>
       <form id="judge-form" class="panel judge-experiment-panel">
         <p class="judge-section-label"><span>02</span> YOUR EXPERIMENT</p>
-        <h2>What if things change?</h2>
-        <p class="judge-section-intro">Set your constraints. Every change gets the same exact search.</p>
-        <div class="gm-fields judge-core-field"><label>Budget <input id="judge-budget" type="number" min="0" max="1000000000" step="0.01" required></label></div>
-        <details class="judge-advanced"><summary>More ways to challenge the decision</summary><div class="gm-fields"><label>Cancel a baseline artist <select id="judge-cancel"></select></label><label>Withdraw a saved receipt <select id="judge-withdraw"></select></label></div><label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label><div id="judge-candidates"></div></details>
+        <h2>Make the call.</h2>
+        <p class="judge-section-intro">Move the budget. Lose a headliner. Keep every hard constraint in view.</p>
+        <div id="booking-budget-controls"></div><div class="gm-fields judge-core-field"><label>Budget <input id="judge-budget" type="number" min="0" max="1000000000" step="0.01" required></label></div>
+        <div id="booking-cancel-cards" class="booking-cancel-cards"></div><p id="booking-pending" role="status"></p><details class="judge-advanced"><summary>More ways to challenge the decision</summary><div class="gm-fields"><label>Cancel a baseline artist <select id="judge-cancel"></select></label><label>Withdraw a saved receipt <select id="judge-withdraw"></select></label></div><label class="judge-evidence-toggle"><input id="judge-qloo-off" type="checkbox"> Turn off Qloo evidence for every candidate <small>Recalculate from the same pool and constraints; all linked Qloo receipts become withdrawn.</small></label><div id="judge-candidates"></div></details>
         <div class="judge-form-actions">
           <button class="button primary" type="submit">Recalculate and prove <span class="ui-icon" data-icon="arrow-up-right" aria-hidden="true"></span></button>
           <button class="button subtle" id="judge-reset" type="button">Reset assumptions</button>
@@ -92,13 +97,12 @@
           </div>
         </details>
       </form>
-      <section class="panel judge-agent-panel" aria-labelledby="judge-agent-title"><p class="judge-section-label"><span>↳</span> RECORDED EVIDENCE TIMELINE</p><h2 id="judge-agent-title">From research to decision</h2><p class="judge-section-intro">Recorded application events show the actual research sequence where available. Older cases show only receipt completion order. Neither view invents the agent’s reasoning or makes a new provider call.</p><div id="judge-agent-trace"></div></section>
-      <section class="panel judge-proof-panel" aria-live="polite" aria-labelledby="judge-proof-title">
+      <section id="booking-decision" class="panel judge-proof-panel" aria-live="polite" aria-labelledby="judge-proof-title">
         <div class="judge-section-heading">
           <div><p class="judge-section-label"><span>03</span> THE REASONING, REVEALED</p><h2 id="judge-proof-title">Decision and proof</h2></div>
           <button class="button subtle" type="button" id="judge-export">Export this experiment <span class="ui-icon" data-icon="download" aria-hidden="true"></span></button>
         </div>
-        <div id="judge-result"></div>
+        <div id="booking-decision-card"></div><div id="judge-result"></div>
         <p class="judge-proof-next"><a id="judge-proof-link" href="/proof-lab.html">See the original Qloo-on / Qloo-off comparison and its receipts ↗</a></p>
       </section>
       <section class="panel judge-receipts-panel" aria-labelledby="judge-receipts-title">

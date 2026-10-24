@@ -286,3 +286,141 @@
 .judge-page .judge-advanced{margin:16px 0}
 .judge-page .judge-advanced .gm-fields{margin:15px 0}
 .judge-page .judge-advanced #judge-candidates{margin-top:18px}
+
+/* Flagship booking journey: one continuous desk, with the solver unchanged. */
+.judge-page { --judge-purple:#6645b4; --judge-lavender:#eee8f8; font-size:15px; }
+.judge-page .judge-main { max-width:1320px; }
+.judge-nav { max-width:1320px; }
+.judge-page .judge-hero { padding:38px 0 30px; }
+.judge-page .judge-intro { max-width:540px; font-size:15px; }
+.judge-page .judge-hero-art { height:265px; }
+.judge-page .judge-break-panel { background:#211b31; color:#fff; border:0; padding:28px; grid-template-columns:1fr 1.25fr; gap:40px; }
+.judge-page .judge-break-panel h2 { font-size:38px; line-height:1.1; max-width:400px; letter-spacing:-1px; }
+.judge-page .judge-break-panel > div > p { color:#ddd5ed; }
+.judge-page .judge-break-panel .judge-hero-link { color:#ece3ff; }
+.judge-page #judge-qloo-preview { box-shadow:none; border:0; background:#fbf9ff; color:#211b31; padding:23px; }
+.judge-page #judge-qloo-preview .judge-preview-choice strong { font-size:23px; }
+.judge-page #judge-qloo-preview .judge-preview-limit { font-size:12px; }
+.booking-path { position:sticky; top:0; z-index:15; display:flex; align-items:stretch; gap:4px; padding:8px; margin:22px 0 16px; background:#f7f6f2f5; backdrop-filter:blur(14px); border:1px solid var(--judge-line); border-radius:10px; }
+.booking-path a { display:flex; align-items:center; gap:10px; padding:12px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:600; white-space:nowrap; color:#51465f; }
+.booking-path a span { font:11px 'IBM Plex Mono',monospace; color:#77648e; }
+.booking-path a:hover,.booking-path a[aria-current] { background:#e8e0f4; color:#452578; }
+.booking-replay { margin-left:auto; align-self:center; max-width:170px; padding:0 10px; font:10px/1.6 'IBM Plex Mono',monospace; color:#62586d; }
+.judge-page #judge-workspace { grid-template-columns:repeat(12,minmax(0,1fr)); gap:20px; }
+.judge-page #booking-brief { grid-column:span 4; }
+.judge-page #booking-research { grid-column:span 8; }
+.judge-page #booking-evidence { grid-column:1/-1; }
+.judge-page #judge-form { grid-column:span 4; position:sticky; top:84px; }
+.judge-page #booking-decision { grid-column:span 8; }
+.judge-page #judge-workspace > section,.judge-page #judge-form { scroll-margin-top:100px; }
+.judge-page .panel { padding:26px; border-radius:14px; box-shadow:none; }
+.judge-page #judge-title { font-size:29px; line-height:1.15; }
+.judge-page #judge-source { font-size:12px; line-height:1.7; }
+.judge-page #judge-baseline { display:none; }
+.booking-market { display:flex; align-items:start; gap:15px; margin:24px 0; }
+.booking-market-code { display:grid; place-items:center; width:48px; height:58px; flex-shrink:0; border:1px solid #d8cee7; border-radius:5px 18px 5px 5px; font:12px 'IBM Plex Mono',monospace; background:#f4effa; color:#5e3f99; }
+.booking-market small { font:10px 'IBM Plex Mono',monospace; color:#6b5e77; letter-spacing:.7px; }
+.booking-market strong { display:block; font:36px/1.2 'Fraunces',Georgia,serif; margin:5px 0; }
+.booking-market p { font-size:13px; color:#62586d; }
+.booking-stats { display:grid; grid-template-columns:1fr 1fr; padding:18px 0; margin-bottom:14px; border-block:1px solid var(--judge-line); gap:15px; }
+.booking-stats small,.booking-decision-metrics small { display:block; color:#655b70; font-size:12px; }
+.booking-stats strong { display:block; font:27px 'Fraunces',Georgia,serif; }
+.judge-page .booking-note { color:#63596d; font-size:12px; line-height:1.7; margin:16px 0; }
+.booking-research-status { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:22px 0 15px; font-size:12px; }
+.booking-research-status>span:last-child { color:#685b75; }
+.booking-led { width:7px; height:7px; border-radius:50%; background:#7557b8; box-shadow:0 0 0 4px #eee8f8; }
+.booking-observations { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.booking-observations article { border-top:2px solid #a38acb; padding:15px 12px; background:#f7f4fb; border-radius:0 0 8px 8px; min-width:0; }
+.booking-observations small { display:block; font-size:12px; color:#665575; }
+.booking-observations strong { display:block; font:25px 'Fraunces',Georgia,serif; margin:10px 0; }
+.judge-page .booking-observations p { font-size:12px; line-height:1.6; margin-bottom:12px; }
+.booking-observations article>span { font-size:12px; }
+.judge-page .agent-stage-list { display:flex; overflow-x:auto; padding:0 0 12px; scroll-snap-type:x proximity; }
+.judge-page .agent-stage-list>li { flex:0 0 255px; scroll-snap-align:start; }
+.judge-page .judge-trace-summary { display:block; padding:12px 15px; }
+.judge-trace-summary strong,.judge-trace-summary span { display:block; }
+.judge-page .judge-trace-disclosure { font-size:12px; margin-top:15px; }
+.booking-panel-heading { display:flex; justify-content:space-between; gap:24px; align-items:start; }
+.booking-panel-heading h2 { font-size:35px; letter-spacing:-.7px; }
+.booking-panel-heading p { font-size:14px; color:#665b70; margin-top:8px; }
+.booking-scope { display:block; padding:8px 12px; background:#eee8f8; color:#584071; border-radius:5px; white-space:nowrap; font:10px 'IBM Plex Mono',monospace; }
+.booking-signal-switches { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:24px 0; }
+.booking-signal-switches button { border:1px solid #d7cfdf; border-radius:8px; padding:13px; background:#fff; color:#68606f; display:flex; align-items:center; gap:10px; text-align:left; cursor:pointer; font:500 13px/1.4 'IBM Plex Sans',sans-serif; min-height:54px; }
+.booking-signal-switches button span { font:10px 'IBM Plex Mono',monospace; padding:4px; background:#eeeaf1; border-radius:3px; }
+.booking-signal-switches button[aria-pressed=true] { border-color:#8b70b8; background:#f2edf9; color:#43276b; }
+.booking-signal-switches button[aria-pressed=true] span { background:#6645b4; color:white; }
+.booking-lab-grid { display:grid; grid-template-columns:1fr 1fr; border:1px solid #d8cfe4; border-radius:10px; overflow:hidden; }
+.booking-lab-choice { padding:26px; background:#faf9fc; min-width:0; }
+.booking-lab-choice small { font:11px 'IBM Plex Mono',monospace; color:#685b75; }
+.judge-page .booking-lab-choice h3 { font-size:29px; line-height:1.2; margin:12px 0; }
+.booking-lab-choice>span { font-size:13px; }
+.booking-lab-active { background:#eee7f8; border-left:1px solid #d8cfe4; }
+.booking-lineup-diff { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; font-size:13px; }
+.booking-lineup-diff>span { padding:6px 12px; border-radius:5px; background:#f4f1f7; }
+.booking-lineup-diff .booking-out { background:#f6eae5; color:#7b3928; }
+.booking-lineup-diff .booking-in { background:#e5f0e9; color:#275e42; }
+.booking-signal-explanation { margin-top:20px; padding:22px; border:1px solid var(--judge-line); border-radius:10px; }
+.booking-signal-explanation p { margin-top:10px!important; color:#63596d; font-size:13px; }
+.booking-contributions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-top:20px; }
+.booking-contributions>div { border-left:2px solid #d5c7eb; padding-left:12px; }
+.booking-contributions span,.booking-contributions small { display:block; font-size:11px; color:#71637d; }
+.booking-contributions strong { display:block; font:25px 'Fraunces',Georgia,serif; margin:5px 0; }
+.booking-budget-readout { display:grid; gap:5px; margin-top:22px; }
+.booking-budget-readout span { font:11px 'IBM Plex Mono',monospace; color:#73627f; }
+.booking-budget-readout output { font:38px 'Fraunces',Georgia,serif; color:#513285; }
+.booking-range-label { display:block; font-size:12px; margin:14px 0 4px; }
+.judge-page input[type=range] { width:100%; padding:0; border:0; accent-color:#6645b4; background:transparent; min-height:44px; box-shadow:none; }
+.booking-presets { display:flex; gap:7px; }
+.booking-presets button { flex:1; min-height:44px; border:1px solid #d8cfe4; border-radius:6px; background:#f5f1fa; color:#513285; cursor:pointer; font-size:13px; }
+.booking-control-title { font-size:13px; font-weight:600; margin-bottom:10px!important; }
+.booking-cancel { display:flex; align-items:center; justify-content:space-between; gap:15px; width:100%; background:white; border:1px solid #ddd4e7; border-radius:8px; padding:14px; margin:8px 0; text-align:left; cursor:pointer; }
+.booking-cancel small { display:block; font:9px 'IBM Plex Mono',monospace; letter-spacing:.6px; color:#7f665a; }
+.booking-cancel strong { display:block; font-size:14px; font-weight:500; margin-top:5px; }
+#booking-pending { font-size:12px; line-height:1.6; color:#6a547f; padding:12px; border-radius:6px; margin-top:15px; background:#f4f0f8; }
+.booking-decision-top { display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; font-size:11px; color:#71687a; margin:22px 0; }
+.booking-verdict { padding:6px 10px; background:#e8f1eb; border:1px solid #bcd4c4; color:#285a3c; border-radius:4px; font:10px 'IBM Plex Mono',monospace; }
+.booking-infeasible { background:#faece5; color:#823c29; border-color:#e7c7b9; }
+.booking-selected { display:grid; gap:10px; }
+.booking-selected article { display:flex; align-items:center; gap:14px; padding:18px; border:1px solid #dbd1e7; border-radius:10px; background:#fdfbff; }
+.booking-artist-initial { display:grid; place-items:center; width:44px; height:50px; flex-shrink:0; background:#e9dff6; color:#674191; border-radius:5px 15px 5px 5px; font:27px 'Fraunces',Georgia,serif; }
+.booking-selected article>div { min-width:0; }
+.booking-selected article>div>strong { display:block; font:23px/1.2 'Fraunces',Georgia,serif; overflow-wrap:anywhere; }
+.booking-selected article small { display:block; font-size:12px; color:#6b5d77; margin-top:6px; }
+.booking-selected article>strong { margin-left:auto; white-space:nowrap; font-size:14px; }
+.booking-decision-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:23px 0; gap:16px; border-bottom:1px solid var(--judge-line); }
+.booking-decision-metrics strong { display:block; font:27px 'Fraunces',Georgia,serif; margin-top:7px; }
+.judge-page .booking-decision-change { font-size:13px; color:#67586f; line-height:1.7; margin-top:16px; }
+.booking-report-actions { display:flex; align-items:center; flex-wrap:wrap; gap:15px; margin-top:18px; font-size:11px; color:#6d6277; }
+.booking-empty { padding:22px; background:#fff3ed; border-radius:8px; color:#773b2c; }
+#booking-decision-card[data-pending=true] { border-left:3px solid #aa864a; padding-left:16px; }
+.judge-page #judge-result>h3 { font-size:25px; }
+.judge-page #judge-result h4 { font-size:16px; }
+@media(max-width:1000px){
+ .booking-replay{display:none}.booking-path a{flex:1;justify-content:center;padding:11px 8px;font-size:12px;gap:6px}
+ .judge-page #booking-brief{grid-column:span 5}.judge-page #booking-research{grid-column:span 7}
+ .judge-page #judge-form{grid-column:span 5}.judge-page #booking-decision{grid-column:span 7}
+ .booking-observations{grid-template-columns:1fr}.booking-observations article{display:none}.booking-observations article:first-child{display:block}
+ .booking-selected article{flex-wrap:wrap}.booking-selected article>strong{margin-left:58px}.booking-decision-metrics{grid-template-columns:1fr 1fr}
+}
+@media(max-width:780px){
+ .judge-page .judge-main{padding-inline:18px}.judge-page .judge-hero h1{font-size:44px}.judge-page .judge-hero{padding:28px 0 24px}
+ .judge-page .judge-break-panel{display:flex;flex-direction:column;gap:22px;padding:22px;align-items:stretch}.judge-page .judge-break-panel h2{font-size:32px}
+ .judge-page #judge-qloo-preview{order:0;padding:19px}.booking-path{overflow-x:auto;border-radius:6px;margin-top:18px}
+ .booking-path a{flex:0 0 auto;min-width:115px;font-size:12px;padding:10px 8px}.booking-path a span{font-size:10px}
+ .judge-page #judge-workspace{display:flex;flex-direction:column;gap:18px}.judge-page #judge-workspace>*{width:100%}
+ .judge-page #judge-form{position:static}.judge-page .panel{padding:21px}.booking-observations{grid-template-columns:1fr 1fr 1fr}.booking-observations article{display:block;padding:12px 9px}.booking-observations p{display:none}
+ .booking-observations strong{font-size:21px}.booking-observations article>span{font-size:11px}.booking-panel-heading{display:block}.booking-scope{display:inline-block;margin-top:15px}
+ .booking-signal-switches{grid-template-columns:1fr 1fr;gap:8px}.booking-signal-switches button{padding:10px;font-size:12px;gap:7px}
+ .booking-lab-grid{grid-template-columns:1fr}.booking-lab-active{border-left:0;border-top:1px solid #d8cfe4}.booking-lab-choice{padding:20px}
+ .booking-contributions{grid-template-columns:1fr 1fr;gap:18px}.booking-signal-explanation{padding:17px}
+ .booking-selected article{padding:15px;gap:12px}.booking-selected article>div>strong{font-size:21px}.booking-selected article>strong{margin-left:auto;font-size:13px}
+ .booking-decision-metrics{grid-template-columns:1fr 1fr}.booking-decision-metrics strong{font-size:25px}
+ .booking-observations{gap:6px}.booking-observations small{font-size:11px}.judge-page .judge-status-strip{font-size:11px}.judge-page .judge-status-strip a{margin-left:0}
+}
+@media(max-width:380px){.booking-observations{grid-template-columns:1fr}.booking-observations article{display:none}.booking-observations article:first-child{display:block}.booking-selected article>strong{margin-left:56px}.booking-panel-heading h2{font-size:30px}}
+@media print{.booking-path,#booking-budget-controls,.booking-cancel-cards,.booking-signal-switches,.booking-report-actions{display:none!important}.judge-page #judge-workspace{display:block}.judge-page #judge-form{position:static}.judge-page .agent-stage-list{display:grid;overflow:visible}}
+
+.judge-page #judge-qloo-preview .judge-preview-kicker { color:#5d429f; }
+@media(max-width:780px){.judge-page .judge-break-panel>div:first-child>p:not(.judge-eyebrow){display:none}.judge-page .judge-break-panel h2{font-size:29px}.judge-page .judge-break-panel{gap:17px}.booking-path{margin-top:0}.judge-page .judge-break-panel .judge-hero-link{margin-top:10px}}
+
+.booking-alternatives article{padding:15px 18px;border-bottom:1px solid var(--judge-line)}.booking-alternatives article>strong,.booking-alternatives article>span{display:block;font-size:13px}.booking-alternatives article>span{margin-top:5px;color:#655b70}.booking-alternatives p{font-size:12px;line-height:1.6;color:#655b70;padding:10px 18px}.booking-alternatives article p{padding:0;margin-top:9px}

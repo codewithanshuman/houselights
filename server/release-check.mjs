@@ -55,8 +55,11 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       if(path==='/evidence.html')record('recorded-run-provenance-ui',page.data.includes('id="agent-trace-status"')&&page.data.includes('id="agent-trace-link"'));
       if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#8be4d03ef4792ca9f1466983'));
       if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
+      if(path==='/judge.html')record('unified-booking-desk',page.data.includes('id="booking-evidence"')&&page.data.includes('id="booking-decision-card"')&&page.data.includes('/booking-journey.js'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
+    const bookingScript=await request('/booking-journey.js',{format:'text'});
+    record('booking-desk-script',bookingScript.status===200&&bookingScript.data.includes('booking:state')&&bookingScript.data.includes('data-booking-signal'));
     const financialDemo=await request('/financial-demo.json');
     record('published-financial-scenario',financialDemo.status===200&&financialDemo.data.label?.includes('SYNTHETIC')&&
       financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5&&
