@@ -11,7 +11,8 @@ export default defineConfig({
   testDir: './browser',
   workers: 1,
   fullyParallel: false,
-  reporter: 'list',
+  // On CI, failures also become GitHub annotations, which are readable without signing in.
+  reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: {
     browserName: 'chromium',
     headless: true,
