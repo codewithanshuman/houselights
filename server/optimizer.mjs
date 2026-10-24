@@ -234,6 +234,21 @@ function publicSlate(result) {
   };
 }
 
+/** Evidence-dependent points one candidate adds to a slate's raw score before
+ * division by the slot count: fit, momentum, local support and its share of the
+ * missing-evidence penalty. Genre, discovery and festival terms do not depend on
+ * evidence. Research planning uses this to bound joint evidence effects exactly.
+ */
+export function evidencePoints(candidate, rawConstraints = {}) {
+  const item = normalizeCandidate(candidate, []);
+  const tolerance = finite(rawConstraints.riskTolerance) ? rawConstraints.riskTolerance : 50;
+  const uncertainty = (item.evidence.rank ? 0 : 0.6) + (item.evidence.local ? 0 : 0.15) + (item.evidence.trends ? 0 : 0.15) + (item.evidence.comparison ? 0 : 0.1);
+  return (item.fit ?? 0) * WEIGHTS.fit
+    + (item.momentum === 'rising' ? WEIGHTS.risingMomentum : item.momentum === 'cooling' ? WEIGHTS.coolingMomentum : 0)
+    + (item.local ? WEIGHTS.localSupport : 0)
+    - WEIGHTS.missingEvidence * (1 - tolerance / 100) * uncertainty;
+}
+
 /** Find the global best slate under the declared policy for at most 20 candidates
  * and 25,000 exact-size combinations.
  * The function is pure: it never writes candidate terms, calls Qloo, or infers fees.

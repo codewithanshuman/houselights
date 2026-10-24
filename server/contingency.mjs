@@ -86,7 +86,9 @@ function resilientSlates(items, constraints, baseline) {
 
 // Produces an adaptive playbook. Every scenario preserves taste evidence and
 // changes one explicit booking assumption; no probability is assigned.
-export function buildContingencyPlan(items, constraints) {
+// robustSearch: false skips the exhaustive robust-slate ranking for callers that
+// measure robustness themselves (Autopilot); every scenario is still computed.
+export function buildContingencyPlan(items, constraints, { robustSearch = true } = {}) {
   const sourceItems = cloneItems(Array.isArray(items) ? items : []);
   const baseline = optimizeSlate(sourceItems, constraints);
   const baselineIds = baseline.selectedIds || [];
@@ -166,7 +168,7 @@ export function buildContingencyPlan(items, constraints) {
     minimumBudget: row.relaxations?.minimumBudget ?? null,
     reasons: row.reasons
   }));
-  const slateResilience = resilientSlates(sourceItems, baseline.constraints, baseline);
+  const slateResilience = robustSearch ? resilientSlates(sourceItems, baseline.constraints, baseline) : [];
   response.robustSlate = slateResilience[0] || null;
   response.robustnessFrontier = slateResilience.slice(0, 5);
   const retained = feasible.reduce((sum, row) => sum + row.retainedIds.length, 0);
@@ -178,7 +180,7 @@ export function buildContingencyPlan(items, constraints) {
     cancellationCoverage: response.cancellations.filter(row => row.feasible).length,
     cancellationCount: response.cancellations.length,
     criticalDependencyCount: response.criticalDependencies.length,
-    feasibleSlateCount: slateResilience.length,
+    feasibleSlateCount: robustSearch ? slateResilience.length : null,
     robustSlateDiffersFromBaseline: response.robustSlate?.differsFromBaseline ?? false
   };
   if (response.backupBench.length === 0) response.warnings.push('No non-baseline artist appears in a feasible contingency slate; expand or quote the candidate pool.');

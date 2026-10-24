@@ -33,14 +33,14 @@ try {
     emit: event => console.error(`[+${(event.at / 1000).toFixed(1)}s] ${event.type}: ${String(event.text ?? '').slice(0, 160)}`) });
   await closeQloo();
   if (result.receipts.some(receipt => receipt.source !== 'qloo')) throw new Error('A non-Qloo receipt was produced; refusing to publish.');
-  const file = { version: '1.0', kind: 'recorded-provider-backed-autopilot-run', caseId: record.id, caseTitle: record.title,
+  const file = { version: '2.0', kind: 'recorded-provider-backed-autopilot-run', caseId: record.id, caseTitle: record.title,
     capturedAt: new Date(startedAt).toISOString(), completedAt: new Date().toISOString(), clockStart: startedAt,
     environment: { node: process.version, commit, dirtyWorkingTree: dirty, qlooHost: new URL(process.env.QLOO_BASE_URL ?? 'https://hackathon.api.qloo.com').host,
-      harness: JSON.parse(readFileSync(join(repo, 'node_modules', '@qloo', 'qloo-harness', 'package.json'), 'utf8')).version, llm: 'none (deterministic research policy)' },
+      harness: JSON.parse(readFileSync(join(repo, 'node_modules', '@qloo', 'qloo-harness', 'package.json'), 'utf8')).version, llm: 'none (deterministic research policy)', policy: result.policy },
     providerCalls: run.used, run: publicAutopilotRun(result),
     disclosure: 'Captured once through the Autopilot research policy with live Qloo calls. The page replays this record; it makes no new provider calls. Receipt digests are application hashes, not provider signatures. Fees and availability are illustrative.' };
   writeFileSync(output, JSON.stringify(file, null, 2) + '\n');
   db.close();
   console.log(JSON.stringify({ output, providerCalls: run.used, receipts: result.receipts.length, statuses: result.receipts.map(row => `${row.id}:${row.tool}:${row.status}`),
-    decisionChanged: result.packet.research.decisionChanged, stop: result.stop, digest: result.digest, fileSha256: createHash('sha256').update(readFileSync(output)).digest('hex') }, null, 2));
+    decisionChanged: result.packet.research.decisionChanged, stop: result.stop, digest: result.digest, manifestDigest: result.integrity.manifestDigest, fileSha256: createHash('sha256').update(readFileSync(output)).digest('hex') }, null, 2));
 } finally { rmSync(dir, { recursive: true, force: true }); }

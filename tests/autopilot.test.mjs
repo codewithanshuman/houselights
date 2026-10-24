@@ -69,7 +69,7 @@ test('fresh research is organizer-only, labelled synthetic here, persisted and e
   assert.ok(saved.receipts.every(row=>row.source==='synthetic'));assert.match(saved.packet.markdown,/SYNTHETIC QLOO DATA/);
   const again=await (await realFetch(`${base}/api/autopilot/runs/${saved.id}`)).json();assert.equal(again.digest,saved.digest);
   const html=await realFetch(`${base}/api/autopilot/runs/${saved.id}/packet`);
-  assert.match(html.headers.get('content-security-policy'),/default-src 'none'/);assert.match(await html.text(),/<h2>Next steps<\/h2>/);
+  assert.match(html.headers.get('content-security-policy'),/default-src 'none'/);assert.match(await html.text(),/Next actions<\/h2>/);
   const md=await realFetch(`${base}/api/autopilot/runs/${saved.id}/packet?format=md`);assert.match(md.headers.get('content-disposition'),/attachment/);
   assert.equal((await realFetch(`${base}/api/autopilot/runs/not-a-run`)).status,404);
 });
@@ -98,14 +98,15 @@ test('when research cannot change the bill the agent says why and still justifie
   assert.equal(result.packet.research.decisionChanged,false);
   assert.ok(result.events.filter(row=>row.type==='action').every(row=>row.tier!=='immaterial'));
   assert.match(result.packet.research.verdict,/did not change because the winning margin is/);
-  assert.ok(result.questions.some(row=>row.tier==='immaterial'&&/would not enter or leave/.test(row.why)));
+  assert.ok(result.questions.some(row=>row.tier==='immaterial'&&/could not change the recommended, alternative or fallback bills/.test(row.why)));
 });
 
 test('provider failures stop the agent without fabricating evidence or changing the plan',async()=>{
   const {research,calls}=scripted(()=>({status:'error',evidence:{error:'TRANSPORT'}}));
   const source=nearTie(),planning=await runAutopilot(source,{});
   const result=await runAutopilot(source,{maxCalls:10},{research,mode:'live'});
-  assert.equal(result.stop.decision,'provider_unavailable');assert.equal(calls.length,2);
+  assert.equal(result.stop.decision,'provider_unavailable');assert.equal(calls.length,2);assert.equal(result.status,'partial');
+  assert.match(result.packet.research.verdict,/Partial run/);
   assert.deepEqual(result.items.map(item=>item.evidence),planning.items.map(item=>item.evidence));
   assert.deepEqual(result.packet.recommendation.selectedIds,planning.packet.recommendation.selectedIds);
   assert.ok(result.packet.evidenceGaps.some(row=>row.status.startsWith('researched: unavailable')));
