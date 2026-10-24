@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "declaredAt": "2026-10-24T08:00:00Z",
+  "purpose": "Compare Autopilot research-selection policies under identical tools, evidence integration and call budgets, on synthetic scenarios with known ground truth.",
+  "policies": {
+    "none": "No additional research (planning only).",
+    "fixed-order": "Rank first if incomplete, then every open gap in artist rank order (local, comparison, trends).",
+    "random": "Every open gap in a seeded random order; seeds 1, 2 and 3; results averaged.",
+    "value-v1": "Autopilot 1.0: single-gap materiality, justification and fallback tiers.",
+    "value": "Autopilot 2.0: joint materiality across gaps, budget-aware reachability, learned answer rates and batching cost."
+  },
+  "budgets": [1, 2, 4],
+  "developmentSeeds": { "from": 1, "to": 200, "use": "Used while building and debugging the policy." },
+  "heldOutSeeds": { "from": 10001, "to": 10150, "use": "Evaluated once after the policy was frozen. Not used for tuning." },
+  "closeCallFamily": {
+    "declaredAt": "2026-10-24T08:20:00Z",
+    "reason": "A 30-scenario development sample showed only 2 scenarios with jointly-material evidence; most decisions there are settled by ranking alone, so policies could not differ. This family is added before any held-out run.",
+    "definition": "Scenarios from the same generator, kept only if at the start at least one open, answerable gap could change the bill alone or jointly within 4 calls (the jointMateriality test). The filter uses the starting state only, never ground truth.",
+    "developmentScan": { "fromSeed": 50001, "accept": 40 },
+    "heldOutScan": { "fromSeed": 60001, "accept": 80 }
+  },
+  "generator": "scripts/evaluate-research-policy.mjs#scenario: 5–8 candidates, 2–3 slots, shuffled full ranking, seeded fees and genres, 85% availability, 20% unquoted discoveries, 35% of evidence already known, 15% of scenarios start with an incomplete ranking. Ground truth per gap: local rows 55%; comparison 75%; trends rising 25%, cooling 25%, flat 10%, uninterpretable 40%; rank calls complete 85%.",
+  "metrics": {
+    "agreement": "Final recommended bill equals the bill chosen with every gap answered (full information).",
+    "regret": "Full-information policy score of the full-information bill minus that of the chosen bill (0 when they agree; an infeasible choice scores 0).",
+    "callsUsed": "Qloo workflow calls actually spent.",
+    "interactionSubset": "Scenarios where, at the start, at least one gap is decision-material only jointly with another gap."
+  },
+  "fairness": [
+    "All policies use the same research client, receipts, integration code, stop rules and phase budgets except where the protocol names a policy difference.",
+    "The value policies can spend one call on a location-free ranking cross-check; in synthetic scenarios this check cannot change the decision, so it is a pure cost to them.",
+    "Synthetic ground truth tests research selection only; it is not evidence about real Qloo responses or audiences."
+  ]
+}

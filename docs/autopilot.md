@@ -1,101 +1,70 @@
-# Houselights Autopilot
+# Houselights Autopilot 2.0
 
-**Promoter brief → evidence-gap research → feasible strategies → stress test → stress-driven follow-up → decision packet.**
+**Brief → evidence-gap research → feasible strategies → stress test → stress follow-up → decision packet.**
 
-Autopilot is step 03 of the public [Booking Desk](/judge.html#8be4d03ef4792ca9f1466983). It reuses the exact slate optimizer, the Qloo `Run` client with receipts and budgets, the contingency engine and the decision-proof evidence ablations. The new part is the research policy that decides what is worth asking Qloo, and the connection of stress results back into research and into the final recommendation.
+Autopilot runs in two places:
+- **Booking Desk** (`/judge.html`, step 03): public, published briefs. It shows a recorded provider-backed run and re-plans any brief from saved evidence with zero provider calls.
+- **Organizer workspace** (`/workspace.html`): private, behind the organizer token. Organizers create new events, research them with Qloo, decide, revise, compare and export. See [organizer workspace](organizer-workspace.md).
 
-## How the agent decides what to research
+Reused, not rebuilt:
+- the exact slate optimizer;
+- the Qloo `Run` client, with receipts, budgets and caching;
+- the memo research agent (`buildMemo`), used for new events;
+- the contingency engine and decision-proof evidence ablations;
+- SQLite persistence and organizer authorization.
 
-1. **Frame.** Optimize the brief with the saved evidence and record the starting bill.
-2. **List unanswered questions.** For every candidate and every missing evidence class (geography, audience comparison, trend), plus pool-level ranking completeness and a location-free ranking cross-check.
-3. **Test each question against the optimizer before spending a call.** Every possible observation is applied hypothetically. Geography and comparison are tested as "returned"; trends as both rising and cooling. The exact optimizer is then re-run. Each question gets a tier:
-   - `ranking`: the pool ranking is incomplete. Fit carries 100 policy points per slot, so this comes first.
-   - `material`: some possible answer changes the recommended or fallback bill.
-   - `robustness`: the location-free ranking cross-check.
-   - `justification` / `fallback`: no answer changes the bill, but the act is booked (or is the replacement under a stress scenario). The packet would justify it without evidence.
-   - `immaterial`: no answer changes any strategy, and the act is not booked anywhere. **Not researched**, with the reason shown.
-   - `blocked`: no fee or availability (Qloo cannot make an act bookable), or no anchor identities.
-4. **Execute** the highest-priority question with the matching Qloo tool: `rank`, `where_popular`, `compare_audiences` or `trends`. Trend questions are batched.
-5. **Integrate only what the receipt shows.** Empty, uninterpretable or failed answers leave the gap open. Nothing is imputed.
-6. **Re-optimize after every observation** and record any decision change with its causing receipt.
-7. **Stop** when one of these holds:
-   - `sufficient`: no researchable question remains and every answer was usable.
-   - `exhausted`: everything relevant was attempted, but some answers were unusable.
-   - `budget_exhausted`
-   - `round_limit`
-   - `provider_unavailable`: two consecutive failures.
-   - `planning_only`: public replay with no calls.
+## What changed in 2.0
 
-   A quarter of the call budget is held back for stress follow-up.
-8. **Strategies.** Three bills are built from the exact enumeration:
-   - **Strongest cultural fit:** the optimizer winner.
-   - **Lower-cost:** the best policy score among cheaper feasible bills.
-   - **Most stress-resilient:** survives the most declared stress scenarios unchanged (budget cuts of 5–20%, +10/20/30% on each booked fee, three combined shocks), then cancellation coverage, then score.
+| Area | 1.0 behaviour | 2.0 behaviour |
+|---|---|---|
+| Research selection | Tested each missing signal alone. Two signals needed together were labelled "immaterial". | **Joint materiality**: for every feasible challenger bill, the best case of its open gaps is compared with the worst case of the incumbent's. Evidence enters the objective additively per artist (`evidencePoints`, tested against the optimizer), so this bound is exact and needs no outcome enumeration. A gap is decision-material if it belongs to the smallest answer set that could flip the bill within the remaining calls. If that set needs more calls than remain, the gap is `deferred`, not researched. |
+| Priority within material gaps | Fixed tier order. | Calls needed, learned answer rate per evidence kind, batched trend cost, and validation of booked acts. |
+| Incomplete Qloo ranking | All fit discarded; the full pool was re-queried with the same request. | The re-query covers **bookable acts only**. If it is still incomplete, the bill is marked **provisional**, a separate "best among acts Qloo could rank" strategy is shown, and the packet asks the organizer to approve keeping an unranked act. |
+| Robustness | Count of budget-only checks, with a coverage tie-break that could label a bill "most resilient" without better survival. | One **common scenario set** for every bill: 5–20% budget cuts; +10/20/30% on each fee; each act unavailable; three combined shocks. Each scenario is **held**, **repaired** (one act swapped) or **failed**. A bill is called more robust only if it strictly beats the recommendation on plan continuity, or on unchanged holds at equal continuity. |
+| Integrity | The decision digest ignored receipt numbers, so editing an affinity left it unchanged. | Per-receipt **content digests** over canonical JSON, a **manifest** with its own digest, the decision digest covering every receipt digest, and **pinned** manifest digests in reviewed code. Three separate verdicts are reported (below). |
+| Failures | Error envelopes only. | Transport exceptions and client disconnects are recorded as failures, not evidence. Runs are marked `partial` with stop reason `provider_unavailable` or `interrupted`. |
+| Packet | Markdown. | Structured packet rendered to Markdown and print-ready HTML with tables (section list below). |
 
-   A **location-free** bill is added when the cross-check disagrees with the city-weighted ranking. Coincident strategies are merged and labelled, not duplicated.
-9. **Stress test the recommendation.** This step covers artist unavailability with survivors locked, fee increases, budget cuts, combined shocks and withdrawal of all or individual evidence classes. It also produces exact break points: the maximum fee per booked act, the minimum budget, and the bill that replaces it.
-10. **Stress-driven follow-up.** Fallback bills from cancellations and the budget floor become new research contexts. Their open questions are tiered and researched with the remaining budget, then strategies and stress are recomputed.
-11. **Decision packet.** It contains:
-    - the recommendation, with per-artist claims linked to receipts;
-    - alternatives and their trade-offs;
-    - assumptions;
-    - research verdict: did research change the decision, and if not, why;
-    - robustness findings and break points;
-    - evidence gaps, each with its status and reason;
-    - quote leads for top-ranked but unquoted artists, with the hypothetical fee at which the optimizer would book them;
-    - actionable next steps.
+## Integrity: what is verified and what is not
 
-    It is exported as Markdown and as a strict-CSP printable HTML page.
+`verifyRecordedAutopilot(file, { pinnedManifestDigest })` reports three separate properties:
 
-The research policy is deterministic. No LLM chooses actions or writes facts, so runs are reproducible and every sentence is a template over receipts and optimizer output. The separate [LLM-directed investigator](advanced-workflows.md) remains available.
+1. **Evidence-content integrity.** Every public receipt still hashes to its manifest digest. The manifest still hashes to its own digest. Decision inputs (fits, flags, terms) and source receipts match. Edits to affinity, entities, status, arguments, timestamps or capture-time digests are detected. Anyone who rewrites the content *and* recomputes every digest is detected only against the independent pin in `server/autopilot-pins.mjs`, which the release check also enforces.
+2. **Decision reproducibility.** The deterministic policy is replayed against the recorded observations with no provider calls. 2.0 records must reproduce identical actions, observations, history, strategies, stop reasons and decision digest. The 1.0 record has been migrated to `results/autopilot-recorded-v1.json`: a manifest was added and tied to the Git blob of the committed 1.0 file. It replays under the 1.0 policy, and only its research reproducibility is checked.
+3. **Provider provenance.** This is **not verified.** Qloo responses are unsigned. `originalDigest` values are application hashes made at capture, not provider signatures.
 
-## Three clearly separated modes
+The adversarial tests modify a receipt's affinity, an entity name, a status and a provenance digest; each is caught by the appropriate check. They also cover a self-consistent forgery, which only the pin catches.
 
-| Mode | Where | Provider calls | Label |
-|---|---|---|---|
-| Recorded provider-backed run | Booking Desk default for the New York recorded case; `public/autopilot-recorded.json` | 0 when viewed (6 at capture) | "RECORDED PROVIDER-BACKED RUN … This page made no new provider calls" |
-| Planning replay | Any published case, any budget; `POST /api/judge/cases/:id/autopilot` (anonymous, rate-limited) | 0; research budgets rejected | "PLANNING REPLAY · SAVED EVIDENCE ONLY … nothing below was newly researched" |
-| Fresh run | `POST /api/judge/cases/:id/autopilot/live` (organizer token; counted as paid research) | ≤16 workflow calls | "FRESH PROVIDER-BACKED RUN", or "SYNTHETIC QLOO DATA" in mock mode |
+## Decision packet (2.0)
 
-Fresh runs are persisted: `GET /api/autopilot/runs/:id` returns the run and `…/packet[?format=md]` returns the packet. Bearer-link semantics match saved memos.
+The packet has these sections:
+1. Event brief and objectives.
+2. Recommendation, marked **for human approval**, with provisional status where it applies.
+3. Strategy comparison under the same constraints and scenarios, with "prefer it when…".
+4. Backups for every booked act.
+5. Fees and availability. Each is labelled quoted, estimate, illustrative or unknown, and confirmed, assumed or not confirmed, with "needs confirmation" flags.
+6. Budget and financial sensitivity: fee ceilings and budget floor. Break-even appears only when the promoter supplied commercial assumptions, and it is arithmetic, not a forecast.
+7. An evidence matrix that separates *measured* from *missing* evidence, with the reason each gap is missing.
+8. Stress test.
+9. Remaining uncertainties.
+10. Prioritised next actions, each tagged *Requires human approval*, *Confirm with agent* or *Recommendation*.
+11. Assumptions and limits, plus a receipt index with content digests.
 
-## The recorded New York run (genuine)
+Hypothetical fee ceilings say "not a quote". Cultural affinity is never described as demand.
 
-This run was captured with `npm run capture:autopilot` against case `8be4d03ef4792ca9f1466983`. It used an isolated cache, so all 6 calls are fresh and `cached:false`. All six Qloo receipts returned `ok`.
+## Recorded runs
 
-1. *Robustness:* a location-free rank of the same 8 candidates [a1]. It would select **Michael Kiwanuka + Jordan Rakei** instead of **Michael Kiwanuka + Sault**. Sault's place in the bill depends on the New York signal. The packet reports this as a high-severity finding and a next step ("decide how local the audience is").
-2. *Justification:* Kiwanuka, the booked headliner, had no geographic or audience-comparison evidence in the original run. Qloo returned 10 New York geography rows [a2] and an anchor comparison [a3].
-3. *Justification:* trends for Kiwanuka and Rakei [a4] returned data with no interpretable direction. The gap stays open, and further trend queries are skipped.
-4. *Justification:* Jordan Rakei (lower-cost alternative and the cancellation fallback for both acts) received New York geography [a5] and an anchor comparison [a6].
-5. It stopped with `exhausted`: 2 answers were unusable. Six gaps for Khruangbin and Hiatus Kaiyote were judged immaterial and **not** researched. The quoted acts had no possible outcome that changes any strategy.
-6. Verdict: the decision did not change. The winning margin is 7.14 policy points, and no tested outcome could alter the selection.
-
-Two independent live captures about 20 minutes apart produced the identical run digest (`sha256:4863df3b…`). `npm run reproduce:autopilot` replays the record offline. Each call is answered only from the recorded receipt for identical tool and arguments. The check requires identical actions, decision history, strategies, stop reasons and digest. Tampering with a receipt's arguments or evidence fails the check.
+- **New York (Booking Desk).** Captured with `npm run capture:autopilot` using 6 fresh Qloo calls, all `ok`. The location-free cross-check shows that Sault's slot depends on New York taste. Trends returned no interpretable direction. The decision did not change. `npm run reproduce:autopilot` replays it exactly.
+- **New organizer event (workspace example).** Captured with `npm run capture:workspace-example`: "Night Shift Soul Revue", Chicago, references Leon Bridges and Erykah Badu. It used 26 live Qloo calls: 20 for research and 6 for the first decision. Qloo's ranking omitted Durand Jones & The Indications even in a bookable-only query, so both decisions are **provisional**. The packet offers the ranked-only bill and asks for approval. After the organizer cut the budget to $15,000 and entered a $9,500 Masego quote, the bill changed from Thee Sacred Souls + Thundercat to Masego + Thee Sacred Souls with no new research calls. Fees, venue and ticket price are illustrative inputs.
 
 ## Evaluation
 
-Run `npm run evaluate:autopilot`. It makes no provider calls. Output is in [results/autopilot-evaluation.md](../results/autopilot-evaluation.md) and `.json`.
-
-- **Saved Qloo evidence across 12 published briefs.** Withdrawing the saved Qloo evidence changes the optimized decision in 9 of 11 feasible briefs. Across 80 recommended, alternative and fallback selections there are 0 hard-constraint violations. The infeasible Paris brief spends 0 calls: evidence cannot fix fees or budget.
-- **Research-selection policy (synthetic outcomes, same tools and integration).** The comparison is against fixed-order (top-ranked artists first, like the original memo agent) and random research. Agreement with the full-information decision:
-
-  | Budget | Autopilot | Fixed order | Random (mean) |
-  |---|---|---|---|
-  | 2 calls | 12/12 | 12/12 | 10.4/12 |
-  | 4 calls | 12/12 | 12/12 | 11.2/12 |
-  | 6 calls | 12/12 | 12/12 | 11.6/12 |
-
-  Booked-act gaps left unresearched are 15 / 6 / 1 for Autopilot versus 9 / 7 / 3 for fixed order. At 2 calls Autopilot leaves more booked-artist gaps, because it spends a call on the ranking cross-check. Autopilot also stops earlier: 63 vs 70 calls at a budget of 6. An earlier version researched ±2-point local gaps before re-requesting an incomplete ranking. That lost agreement on the Sydney brief (11/12) until ranking was prioritised. This metric does not show Autopilot beating a simple heuristic on decision agreement for these briefs.
-- **Failure injection.** Every call fails:
-  - Stop reasons: `provider_unavailable` 10, `exhausted` 1, `sufficient` 1 (no call attempted).
-  - At most 2 calls are spent.
-  - Evidence and recommendation are unchanged in 12/12 briefs.
-  - Gaps are reported as open.
+See [research-policy evaluation](../results/research-policy-heldout.md), [close-call evaluation](../results/research-policy-heldout-close.md) and the [12-brief audit](../results/autopilot-evaluation.md). The protocol was declared before the held-out runs in [evals/autopilot-policy-protocol.json](../evals/autopilot-policy-protocol.json). In summary, 2.0 fixes the interacting-evidence blind spot, which the tests prove. On held-out synthetic scenarios its decision agreement equals 1.0 in the general family. In close calls it is 95% vs 93% at 4 calls, but with slightly higher mean regret, which is within noise. It does not demonstrably beat a fixed-order heuristic. Details are in [the milestone report](autopilot-2-report.md).
 
 ## Limits
 
-- Policy points are the optimizer's declared objective. They are not demand, attendance or revenue. Fees and availability are illustrative inputs.
-- The policy comparison uses synthetic research outcomes. It shows policy behaviour, not that real Qloo answers would change these briefs.
-- The live trends tool returns series without an interpretable direction in this deployment. Momentum therefore stays unknown for every artist.
-- No human booker has judged the packets. No ticketing outcome validates them.
-- Only one brief has a recorded provider-backed Autopilot run. Fresh runs on the public host require the organizer token.
+- Policy points are the optimizer's declared objective. They are not demand, attendance or revenue.
+- Research-selection comparisons use synthetic ground truth. They test policy behaviour, not real audiences.
+- Live trend calls in this deployment return series without an interpretable direction.
+- Qloo sometimes omits a requested artist from a ranking. The decision then stays provisional rather than imputing a rank.
+- No human promoter has evaluated a packet, and no ticketing outcome validates one.

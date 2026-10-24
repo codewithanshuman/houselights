@@ -1,0 +1,5854 @@
+{
+  "protocol": "evals/autopilot-policy-protocol.json",
+  "set": "held-out · close calls",
+  "seeds": {
+    "from": 60062,
+    "to": 62204,
+    "scanned": 2204
+  },
+  "scenarios": 80,
+  "interactionScenarios": 78,
+  "all": {
+    "none": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.071,
+      "meanCalls": 0
+    },
+    "fixed-order@1": {
+      "scenarios": 80,
+      "agreement": 0.9,
+      "meanRegret": 0.059,
+      "meanCalls": 1
+    },
+    "random@1": {
+      "scenarios": 80,
+      "agreement": 0.88,
+      "meanRegret": 0.084,
+      "meanCalls": 1
+    },
+    "value-v1@1": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.073,
+      "meanCalls": 1
+    },
+    "value@1": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.073,
+      "meanCalls": 1
+    },
+    "fixed-order@2": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.092,
+      "meanCalls": 2
+    },
+    "random@2": {
+      "scenarios": 80,
+      "agreement": 0.88,
+      "meanRegret": 0.072,
+      "meanCalls": 2
+    },
+    "value-v1@2": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.085,
+      "meanCalls": 2
+    },
+    "value@2": {
+      "scenarios": 80,
+      "agreement": 0.9,
+      "meanRegret": 0.062,
+      "meanCalls": 2
+    },
+    "fixed-order@4": {
+      "scenarios": 80,
+      "agreement": 0.89,
+      "meanRegret": 0.072,
+      "meanCalls": 4
+    },
+    "random@4": {
+      "scenarios": 80,
+      "agreement": 0.88,
+      "meanRegret": 0.087,
+      "meanCalls": 4
+    },
+    "value-v1@4": {
+      "scenarios": 80,
+      "agreement": 0.93,
+      "meanRegret": 0.024,
+      "meanCalls": 4
+    },
+    "value@4": {
+      "scenarios": 80,
+      "agreement": 0.95,
+      "meanRegret": 0.037,
+      "meanCalls": 4
+    }
+  },
+  "interaction": {
+    "none": {
+      "scenarios": 78,
+      "agreement": 0.9,
+      "meanRegret": 0.048,
+      "meanCalls": 0
+    },
+    "fixed-order@1": {
+      "scenarios": 78,
+      "agreement": 0.91,
+      "meanRegret": 0.036,
+      "meanCalls": 1
+    },
+    "random@1": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.078,
+      "meanCalls": 1
+    },
+    "value-v1@1": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.075,
+      "meanCalls": 1
+    },
+    "value@1": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.075,
+      "meanCalls": 1
+    },
+    "fixed-order@2": {
+      "scenarios": 78,
+      "agreement": 0.9,
+      "meanRegret": 0.07,
+      "meanCalls": 2
+    },
+    "random@2": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.065,
+      "meanCalls": 2
+    },
+    "value-v1@2": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.087,
+      "meanCalls": 2
+    },
+    "value@2": {
+      "scenarios": 78,
+      "agreement": 0.9,
+      "meanRegret": 0.063,
+      "meanCalls": 2
+    },
+    "fixed-order@4": {
+      "scenarios": 78,
+      "agreement": 0.9,
+      "meanRegret": 0.049,
+      "meanCalls": 4
+    },
+    "random@4": {
+      "scenarios": 78,
+      "agreement": 0.88,
+      "meanRegret": 0.081,
+      "meanCalls": 4
+    },
+    "value-v1@4": {
+      "scenarios": 78,
+      "agreement": 0.92,
+      "meanRegret": 0.025,
+      "meanCalls": 4
+    },
+    "value@4": {
+      "scenarios": 78,
+      "agreement": 0.95,
+      "meanRegret": 0.038,
+      "meanCalls": 4
+    }
+  },
+  "providerCalls": 0,
+  "rows": [
+    {
+      "seed": 60062,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.3333333333333333,
+          "regret": 0.47,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.705,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.705,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.3333333333333333,
+          "regret": 0.47,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.235,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60071,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60085,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.31266666666666665,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.31266666666666665,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.938,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": false,
+          "regret": 0.938,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60093,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60157,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60191,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 2.625,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60192,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60207,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60232,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60256,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60310,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60324,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 1.143,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 1.143,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 1.143,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 1.143,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 1.143,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 1.143,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0,
+          "regret": 1.143,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.762,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60329,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60355,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60393,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60402,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60415,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.11499999999999999,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.345,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.345,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.11499999999999999,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60550,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60595,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.646,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.21533333333333335,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60599,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.357,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60644,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60729,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60793,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60808,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60830,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.3333333333333333,
+          "regret": 0.3333333333333333,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.3333333333333333,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60836,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.205,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.205,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.06833333333333333,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.205,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.06833333333333333,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.205,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.205,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.06833333333333333,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60873,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.21433333333333335,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.21433333333333335,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.643,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.643,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.4286666666666667,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60883,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.3333333333333333,
+          "regret": 1.292,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 1.938,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.646,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60900,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60902,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60929,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 0.542,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0,
+          "regret": 0.542,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.18066666666666667,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.542,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60940,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.738,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.738,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 0.738,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.738,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.3333333333333333,
+          "regret": 0.492,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.738,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.492,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60956,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 60960,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61001,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61002,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61100,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61101,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61125,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61142,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61150,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61211,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61219,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61234,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61309,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61320,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61338,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61390,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61395,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61456,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61473,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61486,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61556,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61581,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 2,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 2,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61587,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.08333333333333333,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.25,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61591,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61676,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 1.018,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 1.018,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 1.018,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 1.018,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.6786666666666666,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61709,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.056,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.037333333333333336,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61726,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 0.063,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0,
+          "regret": 0.063,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0,
+          "regret": 0.063,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.063,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61774,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.917,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.3333333333333333,
+          "regret": 0.6113333333333334,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.3333333333333333,
+          "regret": 0.6113333333333334,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61804,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 0.104,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0,
+          "regret": 0.104,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.3333333333333333,
+          "regret": 0.06933333333333333,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.104,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61861,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": false,
+          "regret": 1.643,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": false,
+          "regret": 1.643,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61866,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61878,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61928,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.5833333333333334,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.5833333333333334,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 1.75,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0,
+          "regret": 1.75,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": false,
+          "regret": 1.75,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61958,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61975,
+      "interaction": false,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 1.893,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 1.893,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0.6666666666666666,
+          "regret": 0.631,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 1.893,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0.6666666666666666,
+          "regret": 0.631,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 1.893,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0.6666666666666666,
+          "regret": 0.631,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61977,
+      "interaction": false,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 61996,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62029,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62050,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62056,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62067,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62084,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62168,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 0,
+          "regret": 0.045000000000000005,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 0,
+          "regret": 0.045000000000000005,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 0,
+          "regret": 0.045000000000000005,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": false,
+          "regret": 0.045,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62170,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62180,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62187,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62201,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    },
+    {
+      "seed": 62204,
+      "interaction": true,
+      "results": {
+        "none": {
+          "agree": true,
+          "regret": 0,
+          "calls": 0
+        },
+        "fixed-order@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "random@1": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 1
+        },
+        "value-v1@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "value@1": {
+          "agree": true,
+          "regret": 0,
+          "calls": 1
+        },
+        "fixed-order@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "random@2": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 2
+        },
+        "value-v1@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "value@2": {
+          "agree": true,
+          "regret": 0,
+          "calls": 2
+        },
+        "fixed-order@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "random@4": {
+          "agree": 1,
+          "regret": 0,
+          "calls": 4
+        },
+        "value-v1@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        },
+        "value@4": {
+          "agree": true,
+          "regret": 0,
+          "calls": 4
+        }
+      }
+    }
+  ]
+}

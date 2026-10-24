@@ -88,7 +88,8 @@
       "feasible": true,
       "strategies": [
         "cultural-fit",
-        "lower-cost"
+        "lower-cost",
+        "ranked-only"
       ],
       "questionTiers": {
         "material": 2,
@@ -96,13 +97,13 @@
         "robustness": 0,
         "justification": 2,
         "fallback": 0,
-        "immaterial": 2,
+        "immaterial": 0,
         "blocked": 0,
         "done": 3
       },
       "evidenceWithdrawalChangesDecision": true,
       "constraintViolations": 0,
-      "checkedSelections": 8,
+      "checkedSelections": 9,
       "providerCalls": 0
     },
     {
@@ -279,7 +280,8 @@
       "feasible": true,
       "strategies": [
         "cultural-fit",
-        "lower-cost"
+        "lower-cost",
+        "ranked-only"
       ],
       "questionTiers": {
         "material": 4,
@@ -293,7 +295,7 @@
       },
       "evidenceWithdrawalChangesDecision": true,
       "constraintViolations": 0,
-      "checkedSelections": 7,
+      "checkedSelections": 8,
       "providerCalls": 0
     }
   ],
@@ -1408,7 +1410,7 @@
   ],
   "partD": {
     "caseId": "8be4d03ef4792ca9f1466983",
-    "capturedAt": "2026-10-24T05:28:00.956Z",
+    "capturedAt": "2026-10-24T07:42:13.552Z",
     "providerCalls": 6,
     "statuses": [
       "a1:rank:ok",
@@ -1451,7 +1453,7 @@
       }
     ],
     "decisionChanged": false,
-    "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 7.14 policy points and no tested outcome could alter the selection. The new evidence completes the justification for booked and fallback acts.",
+    "verdict": "6 research action(s) returned; the decision did not change because the winning margin is 7.14 policy points and no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.",
     "crossCheck": {
       "receiptId": "a1",
       "complete": true,
@@ -1481,13 +1483,23 @@
       "passed": true,
       "providerCalls": 0,
       "replayedCalls": 6,
+      "policy": "value",
+      "scope": "full decision reproducibility",
       "checks": [
         {
           "name": "same number of research calls",
           "passed": true
         },
         {
+          "name": "same research actions",
+          "passed": true
+        },
+        {
           "name": "same decision history",
+          "passed": true
+        },
+        {
+          "name": "same observations",
           "passed": true
         },
         {
@@ -1503,12 +1515,12 @@
           "passed": true
         },
         {
-          "name": "same run digest",
+          "name": "same decision digest",
           "passed": true
         }
       ],
-      "digest": "sha256:4863df3bc450f23ad2c2718f3dabedc21ba8573cd8329c407b3b741bd6c32dd5",
-      "recordedDigest": "sha256:4863df3bc450f23ad2c2718f3dabedc21ba8573cd8329c407b3b741bd6c32dd5"
+      "digest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e",
+      "recordedDigest": "sha256:a536f9f5d9e95635387bceb8a880672d8af1e226a052968bd35ef76a06b7da7e"
     }
   }
 }

@@ -4,7 +4,14 @@
 
 The buyer supplies the city, artists representing the room's audience, offers, fees, availability and planning categories. Qloo supplies cultural context. The optimizer enforces the buyer's constraints and exposes its policy instead of presenting a score as a ticket-sales forecast.
 
-**Houselights Autopilot** turns a brief into a decision packet. It lists every unanswered evidence question and tests each one against the exact optimizer. It spends bounded Qloo calls only where an answer could change a bill or is needed to justify a booked act. Then it builds cultural-fit, lower-cost and stress-resilient strategies, stress-tests them, follows up on fallback acts and writes an organizer-ready packet with receipts, break points and next steps. A genuine provider-backed New York run is replayed in the [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html#8be4d03ef4792ca9f1466983); any published brief can also be re-planned there with zero provider calls. See [Autopilot](docs/autopilot.md) and its [evaluation](results/autopilot-evaluation.md).
+**Houselights Autopilot 2.0** turns a promoter's brief into a decision packet. The steps:
+
+- Every open evidence question is tested against the exact optimizer, jointly as well as alone. A second signal that only matters in combination is no longer missed.
+- Qloo calls are spent only where an answer could change a bill within the call budget, or is needed to justify a booked act.
+- Feasible strategies are compared under one common set of disruption scenarios: cultural fit, lower cost, more robust, ranked-only and location-free. Backups are named for every act.
+- An organizer-ready packet is written, with receipts, fee and availability status, break points and approval-tagged next actions.
+
+Organizers create and revise their own events in the private [organizer workspace](docs/organizer-workspace.md). Judges see a recorded live New York run and a recorded organizer session on a brand-new event in the [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html#8be4d03ef4792ca9f1466983). Every published record carries content digests and a pinned manifest. Provider authenticity is stated as unverifiable. See [Autopilot 2.0](docs/autopilot.md) and the [milestone report](docs/autopilot-2-report.md).
 
 The [advanced workflows](docs/advanced-workflows.md) include a bounded model-directed investigator with native function calls and server-rendered facts, private source-document review, approval enforcement across planning APIs, joint commercial stress, diverse-brief evaluation, and verified SQLite backup/restore. Real Groq controls cover London, Manchester, Berlin and New York; an incomplete Mumbai ranking remains explicitly non-comparable. External human judgments remain pending.
 
