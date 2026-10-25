@@ -1,5 +1,10 @@
 # Houselights artwork
 
+## Booking Desk landing — 25 October 2026
+
+- `brand/cards/{crowd,jazz,headphones,disc,record-frames}.webp` are 480 × 600 crops, made with Pillow, of the owner-supplied artwork listed below. They are used only as decorative cards in the Booking Desk hero, between real product cards. They are not Qloo evidence and not photographs of recommended acts.
+- `fonts/geist-variable.woff2` is Geist by Vercel (SIL Open Font License 1.1, `fonts/OFL-geist.txt`), taken from the `geist` npm package version 1.3.1 and subset with fontTools to Latin and the symbols the site uses. It is used only on the Booking Desk.
+
 ## Light identity — 21 October 2026
 
 The owner supplied the portal logo and music assets for this redesign. The

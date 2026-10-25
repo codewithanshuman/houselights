@@ -1,147 +1,274 @@
-/* The Booking Desk: plan a show, see the decision, change it. Uses the site tokens. */
-.plan-page{background:var(--hl-paper)}
-.plan-main{max-width:1180px;margin:0 auto;padding:0 20px var(--hl-space-7)}
-.plan-main h1,.plan-main h2,.plan-main h3,.plan-main h4{color:var(--hl-ink)}
+/* The Booking Desk: a landing page that is also the product. One typeface (Geist), flat warm
+   background, black pill actions, purple only for Qloo data. Motion uses one spring curve and
+   is removed under prefers-reduced-motion. */
+@font-face{font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/geist-variable.woff2) format('woff2')}
 
-/* Hero: the pitch and the plan form side by side */
-.plan-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:var(--hl-space-7);align-items:start;padding:var(--hl-space-7) 0 var(--hl-space-6)}
-.plan-hero-copy{padding-top:var(--hl-space-6)}
-.plan-eyebrow{font:600 var(--hl-text-xs)/1.4 var(--hl-mono);letter-spacing:.8px;text-transform:uppercase;color:var(--hl-accent-ink);margin:0 0 var(--hl-space-3)}
-.plan-hero h1{font:500 clamp(36px,5.2vw,60px)/1.04 var(--hl-serif);letter-spacing:-1.5px;margin:0 0 var(--hl-space-4);max-width:15ch}
-.plan-lede{font-size:18px;line-height:1.6;color:var(--hl-ink-soft);margin:0 0 var(--hl-space-5);max-width:56ch}
-.plan-points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.plan-points li{position:relative;padding-left:30px;line-height:1.5;color:var(--hl-ink-soft)}
-.plan-points li::before{content:"✓";position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;background:var(--hl-good-soft);color:var(--hl-good);font:700 12px/20px var(--hl-sans);text-align:center}
-.plan-points strong{color:var(--hl-ink)}
+.plan-page{
+  --pp-bg:#F5F4F0;--pp-card:#FFFFFF;--pp-ink:#111111;--pp-soft:#3A3A40;--pp-muted:#62616A;--pp-line:#E6E3DC;--pp-line-strong:#D6D2C8;
+  --pp-accent:#5E44B8;--pp-accent-soft:#EEEAFB;--pp-good:#1E6B45;--pp-good-soft:#E4F2EA;--pp-warn:#8A5A00;--pp-warn-soft:#FBF0D9;--pp-bad:#A33346;--pp-bad-soft:#FCEDF0;
+  --pp-ease:cubic-bezier(.32,.72,0,1);--pp-shadow:0 1px 2px #1111110d,0 12px 32px #1111110f;--pp-shadow-lift:0 2px 4px #11111112,0 24px 48px #1111111f;
+  --hl-sans:'Geist',system-ui,sans-serif;--hl-serif:'Geist',system-ui,sans-serif;--hl-mono:'Geist',system-ui,sans-serif;
+  --hl-paper:var(--pp-bg);--hl-ink:var(--pp-ink);--hl-accent:var(--pp-accent);
+  background:var(--pp-bg);color:var(--pp-ink);font-family:'Geist',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.plan-page *,.plan-page *::before,.plan-page *::after{box-sizing:border-box}
+.plan-page h1,.plan-page h2,.plan-page h3,.plan-page h4{font-family:'Geist',system-ui,sans-serif;text-wrap:balance}
+.plan-page p{text-wrap:pretty}
+.plan-page :where(a,button,input,summary,[tabindex]):focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
 
-.plan-card{background:var(--hl-panel);border:1px solid var(--hl-line);border-radius:var(--hl-radius-lg);box-shadow:var(--hl-shadow);padding:var(--hl-space-6);display:grid;gap:var(--hl-space-4)}
-.plan-card h2{font:500 var(--hl-text-xl)/1.1 var(--hl-serif);margin:0}
-.plan-field{display:grid;gap:6px;min-width:0;border:0;padding:0;margin:0}
-.plan-field label,.plan-field legend{font:600 var(--hl-text-sm)/1.3 var(--hl-sans);color:var(--hl-ink);padding:0}
-.plan-card *,.plan-card *::before,.plan-card *::after{box-sizing:border-box}
-.plan-field input:not([type=radio]){min-height:48px;border:1px solid #CFCAD9;border-radius:var(--hl-radius);padding:0 14px;font:var(--hl-text-md) var(--hl-sans);background:#fff;color:var(--hl-ink);width:100%}
-.plan-field input:not([type=radio]):focus{border-color:var(--hl-accent)}
-.plan-field input[aria-invalid=true]{border-color:var(--hl-bad)}
-.plan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--hl-space-4);align-items:end}
-.plan-segment{display:flex;border:1px solid #CFCAD9;border-radius:var(--hl-radius);overflow:hidden;background:#fff}
+/* Floating glass pill navigation (this page only) */
+.plan-page .site-header{position:sticky;top:0;z-index:50;background:transparent;border:0;padding:16px 16px 0;pointer-events:none}
+.plan-page .site-nav{pointer-events:auto;width:max-content;max-width:100%;margin:0 auto;padding:6px 6px 6px 16px;gap:16px;border-radius:999px;background:#FFFFFFb8;border:1px solid #11111112;box-shadow:0 8px 24px #1111110f;backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
+.plan-page .site-brand{font:600 16px/1 'Geist',sans-serif;letter-spacing:-.2px;min-height:40px}
+.plan-page .site-brand img{width:28px;height:28px}
+.plan-page .site-links{margin-left:0;gap:2px}
+.plan-page .site-links>a,.plan-page .site-tools>summary{min-height:40px;padding:0 14px;border-radius:999px;font:500 14px/1 'Geist',sans-serif;color:var(--pp-soft)}
+.plan-page .site-links>a[aria-current="page"]{background:var(--pp-ink);color:#fff}
+.plan-page .site-tools-menu{border-radius:16px}
+
+.plan-main{max-width:1200px;margin:0 auto;padding:0 24px 96px}
+
+/* Hero */
+.plan-hero{text-align:center;padding:80px 0 48px;display:flex;flex-direction:column;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 24px;padding:8px 16px;border-radius:999px;background:var(--pp-card);border:1px solid var(--pp-line);font:500 14px/20px 'Geist',sans-serif;color:var(--pp-soft);box-shadow:0 1px 2px #1111110a}
+.hero-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--pp-accent);box-shadow:0 0 0 4px var(--pp-accent-soft)}
+.hero-title{margin:0;max-width:900px;font:600 60px/1 'Geist',sans-serif;letter-spacing:-2.4px;background:linear-gradient(90deg,#000000,#666666);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{max-width:680px;margin:24px auto 0;font:400 18px/28px 'Geist',sans-serif;color:var(--pp-muted)}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:16px;margin-top:32px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:999px;background:var(--pp-ink);color:#fff;font:600 16px/24px 'Geist',sans-serif;text-decoration:none;box-shadow:0 8px 24px #11111126;transition:transform .5s var(--pp-ease),box-shadow .5s var(--pp-ease),background .3s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px #11111133;background:#000}
+.hero-cta:active{transform:scale(.98)}
+.hero-link{display:inline-flex;align-items:center;min-height:48px;padding:0 12px;color:var(--pp-ink);font:500 16px/24px 'Geist',sans-serif;text-decoration:underline;text-decoration-color:var(--pp-line-strong);text-underline-offset:6px}
+.hero-link:hover{text-decoration-color:var(--pp-ink)}
+.hero-proof{margin:24px 0 0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+
+/* The card fan: owner supplied artwork between real product cards */
+.card-fan{position:relative;width:100%;max-width:1100px;height:380px;margin:64px auto 0}
+.fan-card{position:absolute;left:50%;top:40px;margin:0;border-radius:24px;overflow:hidden;background:var(--pp-card);box-shadow:var(--pp-shadow);transform:translateX(-50%) translateX(var(--x)) translateY(var(--y,0px)) rotate(var(--r));transition:transform .8s var(--pp-ease),box-shadow .8s var(--pp-ease);z-index:var(--z)}
+.fan-card:hover{transform:translateX(-50%) translateX(var(--x)) translateY(calc(var(--y,0px) - 12px)) rotate(var(--r)) scale(1.03);box-shadow:var(--pp-shadow-lift);z-index:10}
+.fan-photo{width:200px;height:250px;border:6px solid #fff}
+.fan-photo img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px}
+.fan-ui{width:230px;padding:24px;text-align:left;border:1px solid var(--pp-line)}
+.fan-1{--x:-430px;--y:56px;--r:-13deg;--z:1}
+.fan-2{--x:-290px;--y:16px;--r:-7deg;--z:4}
+.fan-3{--x:-160px;--y:-8px;--r:-3deg;--z:3}
+.fan-hero{--x:0px;--y:-24px;--r:0deg;--z:6;width:300px;padding:32px}
+.fan-5{--x:160px;--y:-8px;--r:4deg;--z:3}
+.fan-6{--x:295px;--y:16px;--r:8deg;--z:4}
+.fan-7{--x:430px;--y:56px;--r:13deg;--z:1}
+.fan-label{margin:0 0 12px;font:500 12px/16px 'Geist',sans-serif;color:var(--pp-muted)}
+.fan-kicker{margin:0;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.fan-bill{margin:4px 0 0;font:600 24px/32px 'Geist',sans-serif;letter-spacing:-.6px;color:var(--pp-ink)}
+.fan-fee{margin:8px 0 0;font:600 36px/40px 'Geist',sans-serif;letter-spacing:-1.2px;color:var(--pp-accent);font-variant-numeric:tabular-nums}
+.fan-pass{display:flex;align-items:center;gap:8px;margin:16px 0 0;padding:8px 12px;border-radius:12px;background:var(--pp-good-soft);color:var(--pp-good);font:500 14px/20px 'Geist',sans-serif}
+.fan-big{margin:0;font:600 18px/28px 'Geist',sans-serif;letter-spacing:-.3px}
+.fan-small{margin:8px 0 0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted);font-variant-numeric:tabular-nums}
+.fan-bar{height:8px;border-radius:4px;background:var(--pp-accent-soft);margin-top:12px;overflow:hidden}
+.fan-bar span{display:block;width:92%;height:100%;border-radius:4px;background:var(--pp-accent)}
+.fan-dark{background:var(--pp-ink);border-color:var(--pp-ink);color:#fff}
+.fan-dark .fan-label,.fan-dark .fan-small{color:#C9C7CF}
+@media (prefers-reduced-motion:no-preference){
+  .fan-card{animation:fan-in 1.1s var(--pp-ease) both}
+  .fan-hero{animation-delay:.05s}.fan-3,.fan-5{animation-delay:.15s}.fan-2,.fan-6{animation-delay:.25s}.fan-1,.fan-7{animation-delay:.35s}
+  @keyframes fan-in{from{opacity:0;transform:translateX(-50%) translateY(80px) rotate(0deg) scale(.92)}}
+}
+
+/* Sections */
+.section-eyebrow{margin:0 0 12px;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-accent)}
+.section-title{margin:0;font:600 48px/1 'Geist',sans-serif;letter-spacing:-1.6px;color:var(--pp-ink)}
+.section-sub{margin:16px 0 0;max-width:560px;font:400 18px/28px 'Geist',sans-serif;color:var(--pp-muted)}
+
+/* Planner */
+.planner{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,440px);gap:64px;align-items:center;padding:96px 0 64px;scroll-margin-top:96px}
+.planner-points{list-style:none;margin:32px 0 0;padding:0;display:grid;gap:16px}
+.planner-points li{display:flex;align-items:center;gap:16px;font:500 16px/24px 'Geist',sans-serif;color:var(--pp-soft)}
+.planner-points li span{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--pp-card);border:1px solid var(--pp-line);font:600 14px/20px 'Geist',sans-serif;color:var(--pp-accent);font-variant-numeric:tabular-nums;flex-shrink:0}
+.plan-card{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:24px;box-shadow:var(--pp-shadow-lift);padding:32px;display:grid;gap:16px}
+.plan-card h3{margin:0;font:600 24px/32px 'Geist',sans-serif;letter-spacing:-.6px}
+.plan-field{display:grid;gap:8px;min-width:0;border:0;padding:0;margin:0}
+.plan-field label,.plan-field legend{font:500 14px/20px 'Geist',sans-serif;color:var(--pp-soft);padding:0}
+.plan-field input:not([type=radio]){width:100%;min-height:48px;border:1px solid var(--pp-line-strong);border-radius:12px;padding:0 16px;font:400 16px/24px 'Geist',sans-serif;background:#FBFAF7;color:var(--pp-ink);transition:border-color .3s,background .3s,box-shadow .3s}
+.plan-field input:not([type=radio])::placeholder{color:#8C8A93}
+.plan-field input:not([type=radio]):hover{background:#fff}
+.plan-field input:not([type=radio]):focus{border-color:var(--pp-ink);background:#fff;box-shadow:0 0 0 4px #1111110f;outline:none}
+.plan-field input[aria-invalid=true]{border-color:var(--pp-bad)}
+.plan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end}
+.plan-segment{display:flex;padding:4px;gap:4px;border-radius:12px;background:#F1EFEA;border:1px solid var(--pp-line)}
 .plan-segment label{position:relative;flex:1}
 .plan-segment input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
-.plan-segment span{display:grid;place-items:center;width:100%;min-width:44px;min-height:46px;font:600 var(--hl-text-md) var(--hl-sans);color:var(--hl-ink-soft);border-left:1px solid var(--hl-line)}
-.plan-segment label:first-child span{border-left:0}
-.plan-segment input:checked+span{background:var(--hl-accent);color:#fff}
-.plan-segment input:focus-visible+span{outline:var(--hl-focus);outline-offset:-3px}
-.plan-submit{min-height:52px;border:0;border-radius:var(--hl-radius);background:var(--hl-accent);color:#fff;font:600 17px var(--hl-sans);cursor:pointer;box-shadow:0 6px 18px #5E44B840}
-.plan-submit:hover{background:var(--hl-accent-ink)}
-.plan-submit:disabled{opacity:.75;cursor:progress}
-.plan-error{margin:0;padding:10px 12px;border-radius:var(--hl-radius-sm);background:var(--hl-bad-soft);color:var(--hl-bad);font-size:var(--hl-text-sm);line-height:1.5}
-.plan-note{margin:0;font-size:13px;line-height:1.5;color:var(--hl-muted)}
-.plan-examples{border-top:1px solid var(--hl-line);padding-top:var(--hl-space-4)}
-.plan-examples>p{margin:0 0 var(--hl-space-2);font:600 13px var(--hl-sans);color:var(--hl-ink-soft)}
+.plan-segment span{display:grid;place-items:center;width:100%;min-width:40px;min-height:38px;border-radius:8px;font:600 16px/24px 'Geist',sans-serif;color:var(--pp-muted);transition:background .4s var(--pp-ease),color .3s}
+.plan-segment input:checked+span{background:var(--pp-card);color:var(--pp-ink);box-shadow:0 1px 2px #11111114,0 2px 8px #1111110f}
+.plan-segment input:focus-visible+span{outline:3px solid var(--pp-accent);outline-offset:2px}
+.plan-submit{min-height:52px;border:0;border-radius:999px;background:var(--pp-ink);color:#fff;font:600 16px/24px 'Geist',sans-serif;cursor:pointer;transition:transform .5s var(--pp-ease),background .3s,box-shadow .5s var(--pp-ease);box-shadow:0 8px 24px #11111126}
+.plan-submit:hover{background:#000;transform:translateY(-1px)}
+.plan-submit:active{transform:scale(.98)}
+.plan-submit:disabled{opacity:.7;cursor:progress;transform:none}
+.plan-error{margin:0;padding:12px 16px;border-radius:12px;background:var(--pp-bad-soft);color:var(--pp-bad);font:400 14px/20px 'Geist',sans-serif}
+.plan-note{margin:0;font:400 12px/16px 'Geist',sans-serif;color:var(--pp-muted)}
+.plan-examples{border-top:1px solid var(--pp-line);padding-top:16px}
+.plan-examples>p{margin:0 0 12px;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-soft)}
 .plan-chips{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
-.plan-chip{display:inline-flex;align-items:center;gap:6px;min-height:var(--hl-tap);padding:0 14px;border:1px solid var(--hl-line);border-radius:var(--hl-radius-pill);background:var(--hl-surface);color:var(--hl-ink);font:600 var(--hl-text-sm) var(--hl-sans);cursor:pointer}
-.plan-chip span{font-weight:400;color:var(--hl-muted)}
-.plan-chip:hover{border-color:var(--hl-accent)}
+.plan-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border:1px solid var(--pp-line);border-radius:999px;background:#FBFAF7;color:var(--pp-ink);font:500 14px/20px 'Geist',sans-serif;cursor:pointer;transition:background .3s,border-color .3s,transform .5s var(--pp-ease)}
+.plan-chip span{font-weight:400;color:var(--pp-muted)}
+.plan-chip:hover{background:#fff;border-color:var(--pp-ink);transform:translateY(-1px)}
+.plan-chip:active{transform:scale(.98)}
 
 /* Live progress */
-.plan-progress{background:var(--hl-panel);border:1px solid var(--hl-line);border-radius:var(--hl-radius-lg);padding:var(--hl-space-5) var(--hl-space-6);margin-bottom:var(--hl-space-5);scroll-margin-top:20px}
-.plan-progress-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--hl-space-3);align-items:baseline}
-.plan-progress h2{font:500 var(--hl-text-lg)/1.2 var(--hl-serif);margin:0}
-.plan-calls{margin:0;font:var(--hl-text-xs) var(--hl-mono);color:var(--hl-muted)}
-.plan-steps{list-style:none;margin:var(--hl-space-4) 0 0;padding:0;display:grid;gap:10px}
-.plan-steps li{display:flex;align-items:center;gap:12px;color:var(--hl-subtle);line-height:1.4}
-.plan-steps .step-mark{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--hl-line);font:600 12px var(--hl-mono);flex-shrink:0}
-.plan-steps .is-done{color:var(--hl-ink-soft)}.plan-steps .is-done .step-mark{background:var(--hl-good-soft);border-color:transparent;color:var(--hl-good)}
-.plan-steps .is-active{color:var(--hl-ink);font-weight:600}.plan-steps .is-active .step-mark{background:var(--hl-accent);border-color:transparent;color:#fff}
-@media (prefers-reduced-motion:no-preference){.plan-steps .is-active .step-mark{animation:hl-pulse 1.2s ease-in-out infinite}}
-@keyframes hl-pulse{50%{box-shadow:0 0 0 6px #5E44B833}}
-.plan-choose{margin-top:var(--hl-space-4);padding:var(--hl-space-4);background:var(--hl-warn-soft);border-radius:var(--hl-radius)}
-.plan-choose p{margin:0 0 var(--hl-space-3)}
+.plan-progress{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:24px;box-shadow:var(--pp-shadow);padding:32px;margin:0 0 32px;scroll-margin-top:96px}
+.plan-progress-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:baseline}
+.plan-progress h2{margin:0;font:600 24px/32px 'Geist',sans-serif;letter-spacing:-.6px}
+.plan-calls{margin:0;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-muted);font-variant-numeric:tabular-nums}
+.plan-steps{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:12px}
+.plan-steps li{display:flex;align-items:center;gap:12px;font:400 16px/24px 'Geist',sans-serif;color:#77757E}
+.plan-steps .step-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--pp-line);font:600 12px/16px 'Geist',sans-serif;flex-shrink:0}
+.plan-steps .is-done{color:var(--pp-soft)}.plan-steps .is-done .step-mark{background:var(--pp-good-soft);border-color:transparent;color:var(--pp-good)}
+.plan-steps .is-active{color:var(--pp-ink);font-weight:500}.plan-steps .is-active .step-mark{background:var(--pp-ink);border-color:transparent;color:#fff}
+@media (prefers-reduced-motion:no-preference){.plan-steps .is-active .step-mark{animation:pp-pulse 1.4s var(--pp-ease) infinite}}
+@keyframes pp-pulse{50%{box-shadow:0 0 0 8px #11111114}}
+.plan-choose{margin-top:24px;padding:16px;background:var(--pp-warn-soft);border-radius:16px}
+.plan-choose p{margin:0 0 12px}
 
 /* The decision */
-.plan-result{background:var(--hl-panel);border:1px solid var(--hl-line);border-radius:var(--hl-radius-lg);padding:var(--hl-space-6);min-height:520px;scroll-margin-top:20px}
-.result-skeleton{display:grid;gap:var(--hl-space-4)}.result-skeleton .skeleton:first-child{height:90px}.result-skeleton .skeleton:last-child{height:300px}
-.result-meta{margin:0;font:600 var(--hl-text-xs)/1.5 var(--hl-mono);letter-spacing:.6px;text-transform:uppercase;color:var(--hl-muted)}
-.result-badges{display:flex;flex-wrap:wrap;gap:6px;margin:var(--hl-space-2) 0 var(--hl-space-3)}
-.badge-live{background:var(--hl-good-soft);color:var(--hl-good);border-color:#B9DDC8}
-.badge-saved{background:var(--hl-accent-soft);color:var(--hl-accent-ink);border-color:#CFC3EF}
-.badge-muted{background:var(--hl-surface);color:var(--hl-muted);border-color:var(--hl-line)}
-.result-decision{font:500 clamp(28px,4vw,44px)/1.12 var(--hl-serif);letter-spacing:-.8px;margin:0 0 var(--hl-space-2)}
-.decision-bill,.decision-fee{color:var(--hl-accent)}
-.result-decision.is-changed .decision-bill{color:var(--hl-bad)}
-.result-sub{margin:0;color:var(--hl-ink-soft);line-height:1.5}
-.result-changed{margin:var(--hl-space-2) 0 0;font-size:var(--hl-text-sm);color:var(--hl-muted)}
-.result-qloo{display:flex;flex-wrap:wrap;align-items:center;gap:var(--hl-space-4);margin:var(--hl-space-5) 0;padding:var(--hl-space-4);background:var(--hl-surface);border-radius:var(--hl-radius)}
-.result-qloo-note{flex:1 1 320px;margin:0;line-height:1.5;color:var(--hl-ink-soft)}
+.plan-result{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:32px;box-shadow:var(--pp-shadow);padding:48px;min-height:520px;scroll-margin-top:96px}
+.result-skeleton{display:grid;gap:16px}.result-skeleton .skeleton:first-child{height:96px;border-radius:16px}.result-skeleton .skeleton:last-child{height:300px;border-radius:16px}
+.result-meta{margin:0;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.result-badges{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.plan-page .badge{font:500 12px/16px 'Geist',sans-serif;padding:4px 12px;border-radius:999px}
+.badge-live{background:var(--pp-good-soft);color:var(--pp-good);border-color:#BFE0CC}
+.badge-saved{background:var(--pp-accent-soft);color:#4A3596;border-color:#D7CEF3}
+.badge-muted{background:#F1EFEA;color:var(--pp-muted);border-color:var(--pp-line)}
+.result-decision{margin:0;font:600 48px/1 'Geist',sans-serif;letter-spacing:-1.6px;color:var(--pp-ink)}
+.decision-bill,.decision-fee{color:var(--pp-accent)}
+.result-decision.is-changed .decision-bill{color:var(--pp-bad)}
+.result-sub{margin:16px 0 0;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-soft)}
+.result-why{margin:8px 0 0;max-width:720px;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.result-changed{margin:8px 0 0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.result-qloo{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:32px 0;padding:16px;background:#F7F5FD;border:1px solid #E7E1F8;border-radius:20px}
+.result-qloo-note{flex:1 1 320px;margin:0;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-soft)}
+.plan-page .fs-switch{min-height:52px;border-radius:999px;border:1px solid #D7CEF3;background:#fff;font:600 16px/24px 'Geist',sans-serif;gap:12px;padding:8px 20px 8px 8px;color:var(--pp-ink)}
 
 /* Act cards */
-.act-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:var(--hl-space-4)}
-.act-card{display:flex;flex-direction:column;gap:var(--hl-space-3);padding:var(--hl-space-4);border:1px solid var(--hl-line);border-radius:var(--hl-radius);background:#fff;min-width:0}
-.act-card.is-booked{border:2px solid var(--hl-accent);box-shadow:0 4px 16px #5E44B81f}
-.act-card.is-dropped{opacity:.7;border-style:dashed}
+.act-heading{margin:0 0 16px;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.act-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.act-card{display:flex;flex-direction:column;gap:12px;padding:20px;border:1px solid var(--pp-line);border-radius:20px;background:#fff;min-width:0;transition:transform .6s var(--pp-ease),box-shadow .6s var(--pp-ease)}
+.act-card:hover{transform:translateY(-3px);box-shadow:var(--pp-shadow)}
+.act-card.is-booked{border:2px solid var(--pp-ink);box-shadow:var(--pp-shadow)}
+.act-card.is-dropped{opacity:.65;border-style:dashed}
 .act-top{display:flex;align-items:center;gap:12px}
-.act-avatar{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;flex-shrink:0;font:600 15px var(--hl-sans);color:#fff;background:linear-gradient(135deg,hsl(var(--act-hue) 45% 38%),hsl(calc(var(--act-hue) + 40) 50% 30%))}
+.act-avatar{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;flex-shrink:0;font:600 16px/24px 'Geist',sans-serif;color:#fff;background:hsl(var(--act-hue) 42% 36%)}
 .act-name{min-width:0;flex:1}
-.act-name h4{margin:0;font:600 var(--hl-text-md)/1.25 var(--hl-sans);overflow-wrap:anywhere}
-.act-name p{margin:2px 0 0;font-size:var(--hl-text-sm);color:var(--hl-muted)}
+.act-name h4{margin:0;font:600 16px/24px 'Geist',sans-serif;overflow-wrap:anywhere}
+.act-name p{margin:0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted);font-variant-numeric:tabular-nums}
 .act-name abbr{text-decoration:underline dotted;cursor:help}
-.act-status{flex-shrink:0;font:600 11px/1 var(--hl-sans);letter-spacing:.3px;text-transform:uppercase;padding:6px 8px;border-radius:var(--hl-radius-pill)}
-.act-booked{background:var(--hl-accent);color:#fff}.act-bench{background:var(--hl-surface);color:var(--hl-muted)}
-.act-over{background:var(--hl-warn-soft);color:var(--hl-warn)}.act-dropped{background:var(--hl-bad-soft);color:var(--hl-bad)}
-.act-fit p{margin:0;font-size:var(--hl-text-sm);line-height:1.45;color:var(--hl-ink-soft)}
-.act-bar{height:8px;border-radius:4px;background:var(--hl-surface);margin:8px 0 4px;overflow:hidden}
-.act-bar span{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#8C74E0,var(--hl-accent))}
-.act-fit .act-score{font:var(--hl-text-xs) var(--hl-mono);color:var(--hl-muted)}
-.act-why{margin:0;font-size:13px;line-height:1.45;color:var(--hl-warn)}
-.result-why{margin:var(--hl-space-2) 0 0;font-size:var(--hl-text-sm);color:var(--hl-muted);line-height:1.5;max-width:75ch}
-.act-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0}
-.act-chips span{font-size:12px;padding:3px 8px;border-radius:var(--hl-radius-pill);background:var(--hl-good-soft);color:var(--hl-good)}
+.act-status{flex-shrink:0;font:600 12px/16px 'Geist',sans-serif;padding:4px 10px;border-radius:999px}
+.act-booked{background:var(--pp-ink);color:#fff}.act-bench{background:#F1EFEA;color:var(--pp-muted)}
+.act-over{background:var(--pp-warn-soft);color:var(--pp-warn)}.act-dropped{background:var(--pp-bad-soft);color:var(--pp-bad)}
+.act-fit p{margin:0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-soft)}
+.act-bar{height:8px;border-radius:4px;background:var(--pp-accent-soft);margin:12px 0 4px;overflow:hidden}
+.act-bar span{display:block;height:100%;border-radius:4px;background:var(--pp-accent);transition:width .8s var(--pp-ease)}
+.act-fit .act-score{font:500 12px/16px 'Geist',sans-serif;color:var(--pp-muted);font-variant-numeric:tabular-nums}
+.act-why{margin:0;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-warn)}
+.act-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.act-chips span{font:500 12px/16px 'Geist',sans-serif;padding:4px 10px;border-radius:999px;background:var(--pp-good-soft);color:var(--pp-good)}
 .act-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
-
-.act-heading{font:600 var(--hl-text-xs)/1.4 var(--hl-mono);letter-spacing:.6px;text-transform:uppercase;color:var(--hl-muted);margin:0 0 var(--hl-space-3)}
-.act-empty{padding:var(--hl-space-4);border:1px dashed var(--hl-line);border-radius:var(--hl-radius);color:var(--hl-muted)}
-.act-others{margin-top:var(--hl-space-5)}
-.act-others>summary{cursor:pointer;min-height:var(--hl-tap);display:flex;align-items:center;font:600 var(--hl-text-sm) var(--hl-sans);color:var(--hl-accent-ink)}
-.act-grid-compact{margin-top:var(--hl-space-3)}
-.act-grid-compact .act-card{background:var(--hl-paper);gap:var(--hl-space-2)}
-.act-grid-compact .act-avatar{width:36px;height:36px;border-radius:10px;font-size:13px}
+.plan-page .act-actions .button,.plan-page .result-controls .button{min-height:40px;border-radius:999px;font:500 14px/20px 'Geist',sans-serif;padding:8px 14px}
+.act-empty{padding:24px;border:1px dashed var(--pp-line-strong);border-radius:20px;color:var(--pp-muted)}
+.act-others{margin-top:32px}
+.act-others>summary{cursor:pointer;min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:999px;border:1px solid var(--pp-line);font:500 14px/20px 'Geist',sans-serif;color:var(--pp-ink);background:#FBFAF7}
+.act-grid-compact{margin-top:16px}
+.act-grid-compact .act-card{background:#FBFAF7;gap:8px}
+.act-grid-compact .act-avatar{width:40px;height:40px;border-radius:12px;font-size:14px}
 
 /* Controls */
-.result-controls{margin-top:var(--hl-space-5);padding-top:var(--hl-space-5);border-top:1px solid var(--hl-line);display:grid;gap:var(--hl-space-3)}
-.result-controls h3{font:500 var(--hl-text-lg)/1.2 var(--hl-serif);margin:0}
-.control-budget{display:grid;gap:8px;max-width:520px}
-.control-budget input[type=range]{width:100%;accent-color:var(--hl-accent);min-height:var(--hl-tap)}
+.result-controls{margin-top:40px;padding-top:32px;border-top:1px solid var(--pp-line);display:grid;gap:16px}
+.result-controls h3{margin:0;font:600 24px/32px 'Geist',sans-serif;letter-spacing:-.6px}
+.control-budget{display:grid;gap:8px;max-width:560px}
+.control-budget label{font:400 16px/24px 'Geist',sans-serif;color:var(--pp-soft)}
+.control-budget input[type=range]{width:100%;accent-color:var(--pp-ink);min-height:44px}
 .control-presets{display:flex;flex-wrap:wrap;gap:8px}
-.control-help{margin:0;font-size:var(--hl-text-sm);color:var(--hl-muted);line-height:1.5;max-width:70ch}
+.control-help{margin:0;max-width:720px;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
 .result-controls #plan-reset{justify-self:start}
-.result-status{margin:0;min-height:1.4em;font-size:var(--hl-text-sm);color:var(--hl-ink-soft)}
-.result-terms{margin:var(--hl-space-5) 0 0;font-size:13px;line-height:1.5;color:var(--hl-muted)}
-.link-button{border:0;background:none;padding:0;color:var(--hl-accent-ink);text-decoration:underline;font:inherit;cursor:pointer;min-height:auto}
+.result-status{margin:0;min-height:20px;font:400 14px/20px 'Geist',sans-serif;color:var(--pp-soft)}
+.result-terms{margin:32px 0 0;font:400 12px/16px 'Geist',sans-serif;color:var(--pp-muted)}
+.link-button{border:0;background:none;padding:0;color:var(--pp-ink);text-decoration:underline;font:inherit;cursor:pointer;min-height:auto}
 
-/* Receipt drawer extras */
-.receipt-meta{font-size:var(--hl-text-sm);color:var(--hl-muted);line-height:1.6}
-.receipt-note{font-size:13px;color:var(--hl-muted);line-height:1.5}
+/* Receipt drawer */
+.plan-page .receipt-drawer{border-radius:24px 0 0 24px;font-family:'Geist',sans-serif}
+.receipt-meta{font:400 14px/20px 'Geist',sans-serif;color:var(--pp-muted)}
+.receipt-note{font:400 12px/16px 'Geist',sans-serif;color:var(--pp-muted)}
 .receipt-digest{word-break:break-all}
-.data-table tr.is-highlight th,.data-table tr.is-highlight td{background:var(--hl-accent-soft);font-weight:600}
+.data-table tr.is-highlight th,.data-table tr.is-highlight td{background:var(--pp-accent-soft);font-weight:600}
+
+/* Tagline: each word lights up as it crosses the reading line */
+.tagline{padding:128px 0 96px;display:flex;justify-content:center}
+.tagline-text{margin:0;max-width:880px;text-align:center;font:600 48px/1.12 'Geist',sans-serif;letter-spacing:-1.4px;color:var(--pp-ink)}
+.tagline-text .word{transition:color .9s var(--pp-ease)}
+.has-reveal .tagline-text .word{color:#75737C}
+.has-reveal .tagline-text .word.is-lit{color:var(--pp-ink)}
 
 /* How it works */
-.plan-how{margin-top:var(--hl-space-7)}
-.plan-how h2{font:500 var(--hl-text-xl)/1.2 var(--hl-serif);margin:0 0 var(--hl-space-4)}
-.how-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--hl-space-4);counter-reset:how}
-.how-steps li{counter-increment:how;padding:var(--hl-space-4);background:var(--hl-panel);border:1px solid var(--hl-line);border-radius:var(--hl-radius);line-height:1.55;color:var(--hl-ink-soft);font-size:15px}
-.how-steps li::before{content:counter(how);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--hl-accent-soft);color:var(--hl-accent-ink);font:600 13px var(--hl-mono);margin-bottom:10px}
-.how-steps strong{display:block;color:var(--hl-ink);margin-bottom:4px}
-.how-limits{margin:var(--hl-space-5) 0 0;font-size:var(--hl-text-sm);color:var(--hl-muted);line-height:1.6}
+.plan-how{padding:32px 0 64px}
+.how-steps{margin:40px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;counter-reset:how}
+.how-steps li{counter-increment:how;padding:24px;background:var(--pp-card);border:1px solid var(--pp-line);border-radius:24px;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-muted)}
+.how-steps li::before{content:counter(how,decimal-leading-zero);display:block;margin-bottom:24px;font:600 14px/20px 'Geist',sans-serif;color:var(--pp-accent);font-variant-numeric:tabular-nums}
+.how-steps strong{display:block;margin-bottom:8px;font:600 18px/28px 'Geist',sans-serif;color:var(--pp-ink)}
 
-@media (max-width:900px){
-  .plan-hero-copy{padding-top:0}
-  .plan-hero{grid-template-columns:1fr;gap:var(--hl-space-5);padding-top:var(--hl-space-5)}
-  .plan-hero h1{max-width:none}
+/* FAQ */
+.plan-faq{padding:64px 0}
+.faq-list{margin-top:40px;display:grid;gap:12px;max-width:880px}
+.faq-list details{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:20px;padding:0 24px}
+.faq-list summary{list-style:none;cursor:pointer;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;font:600 18px/28px 'Geist',sans-serif;color:var(--pp-ink)}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary::after{content:"+";font:400 24px/1 'Geist',sans-serif;color:var(--pp-muted);transition:transform .5s var(--pp-ease)}
+.faq-list details[open] summary::after{transform:rotate(45deg)}
+.faq-list details p{margin:0 0 24px;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-muted);max-width:720px}
+.faq-list a{color:var(--pp-ink)}
+
+/* Final call to action */
+.final-cta{margin-top:32px;padding:96px 24px;border-radius:32px;background:var(--pp-ink);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center}
+.final-cta .section-title{color:#fff}
+.final-cta .section-sub{color:#C9C7CF;margin:16px auto 32px}
+.final-cta .hero-cta{background:#fff;color:var(--pp-ink)}
+.final-cta .hero-cta:hover{background:#F1EFEA}
+
+/* Scroll reveal: a heavy fade up, only when scripts run and motion is allowed */
+@media (prefers-reduced-motion:no-preference){
+  .has-reveal .reveal{opacity:0;transform:translateY(64px);filter:blur(12px);transition:opacity .9s var(--pp-ease),transform .9s var(--pp-ease),filter .9s var(--pp-ease)}
+  .has-reveal .reveal.is-in{opacity:1;transform:none;filter:none}
 }
-@media (max-width:560px){
-  .plan-main{padding:0 16px var(--hl-space-6)}
-  .plan-card,.plan-result{padding:var(--hl-space-4)}
-  .plan-progress{padding:var(--hl-space-4)}
+
+.plan-page .site-footer{background:transparent;border-top:1px solid var(--pp-line);margin-top:64px}
+
+@media (max-width:1000px){
+  .card-fan{height:340px}
+  .fan-1,.fan-7{display:none}
+  .fan-2{--x:-230px}.fan-6{--x:230px}.fan-3{--x:-120px}.fan-5{--x:120px}
+}
+@media (max-width:900px){
+  .planner{grid-template-columns:1fr;gap:40px;padding-top:64px}
+  .hero-title{font-size:48px;letter-spacing:-1.6px}
+  .section-title,.result-decision,.tagline-text{font-size:36px;line-height:40px;letter-spacing:-1px}
+  .plan-result{padding:32px}
+}
+@media (max-width:640px){
+  .plan-main{padding:0 16px 64px}
+  .plan-page .site-header{position:relative;padding:12px 12px 0}
+  .plan-page .site-nav{border-radius:24px;padding:8px 12px;gap:8px;justify-content:center}
+  .plan-page .site-links{justify-content:center}
+  .plan-hero{padding:48px 0 32px}
+  .hero-title{font-size:36px;line-height:40px;letter-spacing:-1.2px}
+  .hero-sub{font-size:16px;line-height:24px}
+  .card-fan{height:300px;margin-top:40px}
+  .fan-2,.fan-6{display:none}
+  .fan-photo{width:150px;height:190px}
+  .fan-3{--x:-96px;--y:24px}.fan-5{--x:96px;--y:24px}
+  .fan-hero{width:240px;padding:24px}
+  .fan-fee{font-size:30px;line-height:36px}
+  .plan-card,.plan-progress{padding:24px}
+  .plan-result{padding:24px;border-radius:24px;min-height:640px}
   .plan-row{grid-template-columns:1fr}
-  .plan-lede{font-size:16px}
-  .plan-result{min-height:640px}
+  .section-title,.result-decision,.tagline-text{font-size:30px;line-height:36px}
+  .tagline{padding:96px 0 64px}
+  .final-cta{padding:64px 24px;border-radius:24px}
 }

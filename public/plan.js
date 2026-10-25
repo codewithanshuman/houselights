@@ -42,11 +42,11 @@
     try{
       const record=await fetchJSON(`/api/judge/cases/${encodeURIComponent(id)}`,{timeout:15000});
       view={record,base:record.snapshot,current:record.snapshot,off:null,budget:record.snapshot.memo.constraints.budget,cancelId:null,qlooOff:false};
-      render();
+      render();if(record.id===FEATURED)fillFan(record.snapshot,null);
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
-      experiment({qlooOff:true}).then(data=>{if(view?.record.id===record.id){view.off=data.snapshot;render();}}).catch(problem=>{if(view?.record.id===record.id){view.offError=problem;render();}});
+      experiment({qlooOff:true}).then(data=>{if(view?.record.id===record.id){view.off=data.snapshot;render();if(record.id===FEATURED)fillFan(record.snapshot,data.snapshot);}}).catch(problem=>{if(view?.record.id===record.id){view.offError=problem;render();}});
     }catch(problem){
       state(result,{kind:problem.kind??'server',title:problem.status===404?'Plan not found':undefined,text:problem.status===404?'This plan link is not valid. Open a saved plan above.':problem.message,retry:()=>openCase(id,{scroll})});
     }finally{result.setAttribute('aria-busy','false');}
@@ -89,7 +89,7 @@
         <div class="result-badges">${badges}</div>
         <h2 id="result-title" class="result-decision${changed?' is-changed':''}">${decision}</h2>
         <p class="result-sub">${sub}</p>
-        ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest-scoring set that fits the budget.</p>`:''}
+        ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest scoring set that fits the budget.</p>`:''}
         ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
       </div>
       <div class="result-qloo">
@@ -109,7 +109,7 @@
           <input type="range" id="plan-budget-range" min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
           <div class="control-presets">${[1,.9,.8,.7].map(f=>`<button type="button" class="button subtle small" data-budget="${Math.round(base.memo.constraints.budget*f)}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`).join('')}</div>
         </div>
-        <p class="control-help">Drop a booked act with its <strong>Drop</strong> button to see the best replacement. Every change re-runs the exact optimizer on the same saved evidence; no new Qloo calls.</p>
+        <p class="control-help">Drop a booked act with its <strong>Drop</strong> button to see the best replacement. Every change runs the exact optimizer again on the same saved evidence, with no new Qloo calls.</p>
         <button type="button" class="button subtle small" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button>
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
       </div>
@@ -233,6 +233,32 @@
     finally{submit.disabled=false;submit.innerHTML='Plan my bill <span aria-hidden="true">→</span>';}
   }
   form.addEventListener('submit',event=>{event.preventDefault();const input=readInput();if(input)void planLive(input);});
+
+  // ── Landing ────────────────────────────────────────────────────────────────────
+  // The hero cards show the featured plan; they are filled from the published record so
+  // they always match the decision below.
+  function fillFan(snapshot,off){
+    const set=(key,text)=>document.querySelectorAll(`[data-fan="${key}"]`).forEach(node=>{node.textContent=text;});
+    const top=[...itemsOf(snapshot)].filter(item=>item.rank).sort((a,b)=>a.rank-b.rank)[0],score=top?affinityOf(snapshot,top):null;
+    if(top){set('top-act',top.name);if(score!=null)set('top-score',`Affinity ${score.toFixed(3)} · rank ${top.rank} of ${top.of}`);}
+    set('bill',billNames(snapshot).join(' + '));set('fee',usd(snapshot.memo.slate.totalFee));
+    if(off){set('off-bill',billNames(off).join(' + '));set('off-fee',`${usd(off.memo.slate.totalFee)} · a different bill`);}
+  }
+  // Sections fade up as they enter; the tagline lights word by word along the reading line.
+  if('IntersectionObserver' in window){
+    document.documentElement.classList.add('has-reveal');
+    const reveal=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-in');reveal.unobserve(entry.target);}},{rootMargin:'0px 0px -10% 0px'});
+    document.querySelectorAll('.reveal').forEach(node=>reveal.observe(node));
+    const tagline=$('tagline-text');
+    if(tagline){
+      tagline.innerHTML=tagline.textContent.trim().split(/\s+/).map(word=>`<span class="word">${e(word)}</span>`).join(' ');
+      const light=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-lit');light.unobserve(entry.target);}},{rootMargin:'0px 0px -38% 0px'});
+      tagline.querySelectorAll('.word').forEach(word=>light.observe(word));
+    }
+  }
+  document.querySelectorAll('a[href="#planner"]').forEach(link=>link.addEventListener('click',event=>{
+    event.preventDefault();$('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});$('plan-city').focus({preventScroll:true});
+  }));
 
   // ── Start ──────────────────────────────────────────────────────────────────────
   const fromUrl=new URLSearchParams(location.search).get('plan')||(/^#[a-f0-9]{24}$/.test(location.hash)?location.hash.slice(1):null);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#F7F6F2">
+  <meta name="theme-color" content="#F5F4F0">
   <title>Houselights — Booking Desk</title>
   <meta name="description" content="Name a city and an artist your audience loves. Houselights asks Qloo who else those fans love in that city, then an exact optimizer books the best bill your budget allows, with a Qloo receipt behind every claim.">
   <meta name="twitter:card" content="summary_large_image">
@@ -13,9 +13,7 @@
   <meta property="og:description" content="Book the bill your city's fans will show up for. Live Qloo taste data, an exact optimizer, and a receipt for every claim.">
   <meta property="og:image" content="https://houselights.80-225-218-239.sslip.io/assets/brand/crowd.webp">
   <link rel="icon" type="image/png" href="/assets/brand/favicon-64.png">
-  <link rel="preload" href="/assets/fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/fonts.css">
+  <link rel="preload" href="/assets/fonts/geist-variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/icons.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/site.css">
@@ -28,25 +26,61 @@
   <header class="site-header" data-site-nav="booking"></header>
   <main id="main" class="plan-main">
     <section class="plan-hero" aria-labelledby="hero-title">
-      <div class="plan-hero-copy">
-        <p class="plan-eyebrow">For promoters and talent buyers · Built with Qloo</p>
-        <h1 id="hero-title">Book the bill your city’s fans will show up for.</h1>
-        <p class="plan-lede">Name a city and an artist your audience loves. Houselights asks Qloo’s taste graph who else those fans love <em>in that city</em>, then an exact optimizer books the best bill your budget allows, with a saved Qloo receipt behind every claim.</p>
-        <ul class="plan-points">
-          <li><strong>Live Qloo taste data</strong> for your city and audience</li>
-          <li><strong>Never breaks your budget</strong>: every possible bill is checked</li>
-          <li><strong>Turn Qloo off</strong> and watch the decision change</li>
+      <p class="hero-badge"><span class="hero-badge-dot" aria-hidden="true"></span>Built with Qloo’s taste graph</p>
+      <h1 id="hero-title" class="hero-title">Book the bill your<br> city’s fans will show up for.</h1>
+      <p class="hero-sub">Name a city and an artist your audience loves. Houselights asks Qloo who else those fans love there, then books the best bill your budget allows, with a receipt behind every claim.</p>
+      <div class="hero-actions">
+        <a class="hero-cta" href="#planner">Plan a show <span aria-hidden="true">→</span></a>
+        <a class="hero-link" href="#plan-result">See a real decision</a>
+      </div>
+
+      <div class="card-fan" aria-label="What a Houselights decision looks like">
+        <figure class="fan-card fan-photo fan-1"><img src="/assets/brand/cards/headphones.webp" alt="" width="480" height="600" loading="eager"></figure>
+        <div class="fan-card fan-ui fan-2">
+          <p class="fan-label">Qloo ranks for Leon Bridges fans</p>
+          <p class="fan-big" data-fan="top-act">Michael Kiwanuka</p>
+          <div class="fan-bar"><span></span></div>
+          <p class="fan-small" data-fan="top-score">Affinity 0.977 · rank 1 of 8</p>
+        </div>
+        <figure class="fan-card fan-photo fan-3"><img src="/assets/brand/cards/crowd.webp" alt="" width="480" height="600" loading="eager"></figure>
+        <div class="fan-card fan-ui fan-hero">
+          <p class="fan-label">New York · $14,500 · 2 acts</p>
+          <p class="fan-kicker">Book</p>
+          <p class="fan-bill" data-fan="bill">Michael Kiwanuka + Sault</p>
+          <p class="fan-fee" data-fan="fee">$13,500</p>
+          <p class="fan-pass"><span aria-hidden="true">✓</span> Every booking rule passes</p>
+        </div>
+        <figure class="fan-card fan-photo fan-5"><img src="/assets/brand/cards/jazz.webp" alt="" width="480" height="600" loading="eager"></figure>
+        <div class="fan-card fan-ui fan-dark fan-6">
+          <p class="fan-label">Qloo off</p>
+          <p class="fan-big" data-fan="off-bill">Jordan Rakei + Hiatus Kaiyote</p>
+          <p class="fan-small" data-fan="off-fee">$9,000 · a different bill</p>
+        </div>
+        <figure class="fan-card fan-photo fan-7"><img src="/assets/brand/cards/disc.webp" alt="" width="480" height="600" loading="eager"></figure>
+      </div>
+      <p class="hero-proof">Live Qloo data · An exact optimizer checks every possible bill · Free, no sign in</p>
+    </section>
+
+    <section id="planner" class="planner" aria-labelledby="plan-form-title">
+      <div class="planner-copy reveal">
+        <p class="section-eyebrow">Try it on your own show</p>
+        <h2 class="section-title">Plan a show in under a minute.</h2>
+        <p class="section-sub">Any city, any artist your crowd already loves. Houselights runs a capped live Qloo search, ranks what it finds for that audience and books the best bill that fits.</p>
+        <ul class="planner-points">
+          <li><span aria-hidden="true">01</span>Up to 12 live Qloo calls, shown as they happen</li>
+          <li><span aria-hidden="true">02</span>Every possible bill checked against your budget</li>
+          <li><span aria-hidden="true">03</span>A shareable plan you can change and question</li>
         </ul>
       </div>
-      <form id="plan-form" class="plan-card" novalidate aria-labelledby="plan-form-title">
-        <h2 id="plan-form-title">Plan a show</h2>
+      <form id="plan-form" class="plan-card reveal" novalidate>
+        <h3 id="plan-form-title">Plan a show</h3>
         <div class="plan-field">
           <label for="plan-city">City</label>
-          <input id="plan-city" name="city" autocomplete="off" maxlength="60" required placeholder="e.g. Chicago">
+          <input id="plan-city" name="city" autocomplete="off" maxlength="60" required placeholder="Chicago">
         </div>
         <div class="plan-field">
           <label for="plan-anchor">Your audience loves</label>
-          <input id="plan-anchor" name="anchor" autocomplete="off" maxlength="80" required placeholder="An artist, e.g. Phoebe Bridgers">
+          <input id="plan-anchor" name="anchor" autocomplete="off" maxlength="80" required placeholder="Phoebe Bridgers">
         </div>
         <div class="plan-row">
           <div class="plan-field">
@@ -54,7 +88,7 @@
             <input id="plan-budget" name="budget" type="number" inputmode="numeric" min="1000" max="500000" step="500" value="20000" required>
           </div>
           <fieldset class="plan-field plan-slots">
-            <legend>Acts on the bill</legend>
+            <legend>Acts</legend>
             <div class="plan-segment">
               <label><input type="radio" name="slots" value="1"><span>1</span></label>
               <label><input type="radio" name="slots" value="2" checked><span>2</span></label>
@@ -65,9 +99,9 @@
         </div>
         <p id="plan-error" class="plan-error" role="alert" hidden></p>
         <button type="submit" class="plan-submit" id="plan-submit">Plan my bill <span aria-hidden="true">→</span></button>
-        <p class="plan-note">Live Qloo research takes about a minute. Fees for new acts are estimates. Up to 3 live plans every 10 minutes.</p>
+        <p class="plan-note">Fees for new acts are estimates from Qloo popularity. Up to 3 live plans every 10 minutes.</p>
         <div class="plan-examples">
-          <p id="examples-label">Or open a saved plan instantly:</p>
+          <p id="examples-label">Or open a saved plan</p>
           <div id="plan-examples" class="plan-chips" role="group" aria-labelledby="examples-label"></div>
         </div>
       </form>
@@ -87,15 +121,38 @@
       <div class="result-skeleton" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div></div>
     </section>
 
+    <section class="tagline" aria-label="What Houselights does">
+      <p class="tagline-text" id="tagline-text">Qloo knows what your city loves. Houselights turns it into a bill you can actually book, and shows its working.</p>
+    </section>
+
     <section class="plan-how" aria-labelledby="how-title">
-      <h2 id="how-title">How Houselights decides</h2>
+      <p class="section-eyebrow">How it works</p>
+      <h2 id="how-title" class="section-title">Four steps, all of them visible.</h2>
       <ol class="how-steps">
-        <li><strong>Ask Qloo who your audience loves.</strong> Qloo’s taste graph finds artists linked to your anchor artist’s fans in your city.</li>
-        <li><strong>Rank them for this crowd.</strong> Qloo scores every candidate against the same audience and city, then checks where fans are and which acts are trending.</li>
-        <li><strong>Check every possible bill.</strong> An exact optimizer tries every combination and books the best one that fits your budget and rules. It never guesses and never breaks a rule.</li>
-        <li><strong>Show the receipts.</strong> Every claim links to the saved Qloo response behind it. Turn Qloo off to see what the same rules would book without it.</li>
+        <li class="reveal"><strong>Ask Qloo who your audience loves</strong>Qloo’s taste graph finds artists linked to your anchor artist’s fans in your city.</li>
+        <li class="reveal"><strong>Rank them for this crowd</strong>Qloo scores every candidate for the same audience and city, and checks where the fans are.</li>
+        <li class="reveal"><strong>Check every possible bill</strong>An exact optimizer tries every combination and books the best one that fits your budget and rules.</li>
+        <li class="reveal"><strong>Show the receipts</strong>Every claim links to the saved Qloo response. Turn Qloo off to see what the same rules would book.</li>
       </ol>
-      <p class="how-limits">Qloo measures cultural affinity, not ticket sales. Fees on saved plans are illustrative and fees for new acts are estimates from Qloo popularity. Nothing is booked. <a href="/evidence.html">Evidence and limits</a> · <a href="/desk.html">Full Booking Desk lab</a></p>
+    </section>
+
+    <section class="plan-faq" aria-labelledby="faq-title">
+      <p class="section-eyebrow">Questions</p>
+      <h2 id="faq-title" class="section-title">What judges usually ask.</h2>
+      <div class="faq-list">
+        <details class="reveal"><summary>Are the fees real quotes?</summary><p>No. Saved plans use illustrative fees, and new acts get an estimate from their Qloo popularity tier. Every fee is labelled as such. Qloo has no booking fees, so nothing here is a quote.</p></details>
+        <details class="reveal"><summary>What does Qloo actually decide?</summary><p>Qloo supplies the taste evidence: which artists the anchor’s fans love in that city, how strongly, and where those fans are. The optimizer then picks the bill. Turn Qloo off and the same rules book a different bill in the featured New York case, in 200 of 200 fee variations we tested.</p></details>
+        <details class="reveal"><summary>Will this sell more tickets?</summary><p>We do not know yet. Qloo affinity measures cultural fit, not ticket demand, and no ticketing outcomes have been collected. The <a href="/evidence.html">evidence page</a> lists every claim with its limits.</p></details>
+        <details class="reveal"><summary>Can it break my budget or rules?</summary><p>No. The optimizer checks every possible bill and only books one that satisfies the budget and every rule. If none does, it says so instead of bending a rule.</p></details>
+        <details class="reveal"><summary>How many Qloo calls does a plan make?</summary><p>At most 12, with a two minute deadline. The progress panel shows each call as it happens, and each one becomes a receipt you can open.</p></details>
+        <details class="reveal"><summary>Where is the full methodology?</summary><p>In the <a href="/desk.html">full Booking Desk lab</a>, with Autopilot, the original research timeline and the method comparisons, and on the <a href="/evidence.html">evidence page</a>.</p></details>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="final-title">
+      <h2 id="final-title" class="section-title">Plan your next show.</h2>
+      <p class="section-sub">Free, no sign in, about a minute with live Qloo data.</p>
+      <a class="hero-cta" href="#planner">Plan a show <span aria-hidden="true">→</span></a>
     </section>
   </main>
 
