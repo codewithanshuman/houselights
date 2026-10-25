@@ -3,7 +3,10 @@
   const $=id=>document.getElementById(id),form=$('plan-form');
   const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const money=(value,currency)=>value==null?'Unknown':new Intl.NumberFormat('en-GB',{style:'currency',currency}).format(value);
-  const read=async(path,body)=>{const response=await fetch(path,body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:undefined);
+  // Seed inputs live in a table; each gets an accessible name from its column and row.
+  function labelSeedRows(){const heads=[...document.querySelectorAll('#twin-seeds')].length?[...document.getElementById('twin-seeds').closest('table').querySelectorAll('thead th')].map(th=>th.textContent.trim()):[];
+    [...(document.getElementById('twin-seeds')?.children??[])].forEach((row,index)=>[...row.children].forEach((cell,column)=>cell.querySelectorAll('input,select').forEach(input=>{if(!input.labels?.length)input.setAttribute('aria-label',`${heads[column]??'Value'}, taste seed ${index+1}`);})));}
+    const read=async(path,body)=>{const response=await fetch(path,body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:undefined);
     const data=await response.json();if(!response.ok)throw new Error(data.error||`Request failed (${response.status}).`);return data;};
   const value=name=>form.elements.namedItem(name)?.value?.trim()??'';
   const numeric=name=>value(name)===''?null:Number(value(name));
@@ -42,7 +45,10 @@
       :`<p>${escape(data.reason||'No model is active.')}</p>`;
     if(data.reported?.count) $('model-details').innerHTML+=`<p>Source catalog: ${escape(data.reported.count)} publisher-reported outcomes, including ${escape(data.reported.singleShow)} single-show rows. They have no timestamped pre-event predictors, so none train the model. <a href="/api/demand/reported-outcomes">Inspect private source rows</a>.</p>`;
   }
-  async function refreshModel(){try{renderModel(await read('/api/demand/model'));
+  // Private model records are requested only after organizer access is confirmed, so an
+  // anonymous visit makes no request that is bound to fail.
+  async function refreshModel(){try{const access=await read('/api/access');if(!access.editable){$('model-status').textContent='Private model records need organizer access.';$('model-details').textContent='Unlock organizer access to inspect private training records.';$('twin-validation').textContent='';return;}
+    renderModel(await read('/api/demand/model'));
       const validation=await read('/api/demand/twin-validation');
       $('twin-validation').textContent=validation.count
         ?`Audience Twin: ${validation.count} eligible sourced event totals; mean absolute scenario error ${Math.round(validation.meanAbsoluteError)} paid tickets. ${Math.round(validation.withinSensitivityRange*100)}% fell inside the assumption-sensitivity range; that is not statistical coverage.`
@@ -85,7 +91,7 @@
   $('add-seed').onclick=()=>{const rows=$('twin-seeds');if(rows.children.length>=5){$('twin-status').textContent='At most five taste seeds are supported.';return;}
     const row=rows.lastElementChild.cloneNode(true),number=rows.children.length+1;
     row.querySelector('[data-twin=label]').value=`Taste seed ${number}`;
-    row.querySelector('[data-twin=anchorIds]').value='';rows.append(row);rebalanceSeeds();$('twin-status').textContent=`${number} seeds. Enter a saved-source artist ID for the new seed.`;};
+    row.querySelector('[data-twin=anchorIds]').value='';rows.append(row);rebalanceSeeds();labelSeedRows();$('twin-status').textContent=`${number} seeds. Enter a saved-source artist ID for the new seed.`;};
   $('remove-seed').onclick=()=>{const rows=$('twin-seeds');if(rows.children.length<=2){$('twin-status').textContent='At least two taste seeds are required.';return;}
     rows.lastElementChild.remove();rebalanceSeeds();$('twin-status').textContent=`${rows.children.length} seeds remain.`;};
   async function loadSource(id){if(!id)throw new Error('Enter a saved source ID first.');const source=await read('/api/memo/'+encodeURIComponent(id));
@@ -125,4 +131,5 @@
   for(let index=0;index<4;index++)artistRow();
   form.elements.namedItem('eventDate').value=new Date(Date.now()+45*864e5).toISOString().slice(0,10);
   void refreshModel();
+  labelSeedRows();
 })();

@@ -41,7 +41,7 @@
 .autopilot-action { background:#fcfbfe; border-color:#ddd3ee; }
 .autopilot-changed { border-color:#7357c8; box-shadow:inset 3px 0 0 #7357c8; }
 .autopilot-stop { background:#f6f4ef; }
-.autopilot-time { font:10.5px "IBM Plex Mono",monospace; color:#80788b; white-space:nowrap; }
+.autopilot-time { font:11px "IBM Plex Mono",monospace; color:#5B5A64; white-space:nowrap; }
 .autopilot-chip { display:inline-block; padding:3px 7px; border-radius:4px; background:#eeeaf5; color:#4c4160; font:500 9.5px/1.4 "IBM Plex Mono",monospace; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
 .autopilot-tier-material, .autopilot-tier-ranking { background:#7357c8; color:#fff; }
 .autopilot-tier-robustness { background:#e3d9f7; color:#4b2f8f; }

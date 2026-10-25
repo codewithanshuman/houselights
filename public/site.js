@@ -63,9 +63,21 @@
     footer.innerHTML=`<div class="site-footer-inner"><span>Houselights<span class="site-brand-dot">.</span> Booking decisions with Qloo receipts.</span><span class="site-footer-links"><a href="/evidence.html">Evidence &amp; limits</a><a href="https://github.com/codewithanshuman/houselights">Source (MIT)</a></span><span class="site-release">Release <code id="site-release">…</code></span></div>`;
     fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{const node=document.getElementById('site-release');if(node)node.textContent=health.release?String(health.release).slice(0,7):'local build';}).catch(()=>{const node=document.getElementById('site-release');if(node)node.textContent='unavailable';});
   }
+  // Scrollable tables and logs must be reachable by keyboard (WCAG 2.1.1): every scroll
+  // container, including ones rendered later, gets tabindex and a name.
+  function focusableScrollers(root=document){
+    root.querySelectorAll?.('.table-scroll,#receipts').forEach(node=>{
+      if(node.hasAttribute('tabindex'))return;
+      node.setAttribute('tabindex','0');
+      if(!node.hasAttribute('role'))node.setAttribute('role','region');
+      if(!node.hasAttribute('aria-label')&&!node.hasAttribute('aria-labelledby')){const caption=node.querySelector('caption')?.textContent?.trim();node.setAttribute('aria-label',caption?caption.slice(0,80)+' (scrollable)':'Scrollable table');}
+    });
+  }
   function start(){
     document.querySelectorAll('[data-site-nav]').forEach(renderNav);
     document.querySelectorAll('[data-site-footer]').forEach(renderFooter);
+    focusableScrollers();
+    new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});
   }
   // Every GET without its own signal gets a 20-second timeout, so no page waits forever
   // on a stalled request. POSTs keep their own progress handling (research can take 150 s).
