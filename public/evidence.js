@@ -9,7 +9,7 @@
     $('shock-limits').textContent = data.note;
     const b = data.breakdown, rate = group => group.violationRate == null ? '—' : `${(group.violationRate * 100).toFixed(1)}%`;
     $('shock-stats').innerHTML = [b.solvable, b.unsolvable, b.overall, b.notComparable].map(group => `<span><strong>${e(group.violationResponses)}/${e(group.returnedResponses)}</strong> ${e(group.label)} (${e(group.shocks)} shocks, LLM violation rate ${e(rate(group))})</span>`).join('') + `<p>${e(b.unsolvable.note)} ${e(b.overall.note)} ${e(b.notComparable.note)}</p>`;
-    $('shock-rows').innerHTML = data.rows.map(row => `<tr><td>${e(row.caseTitle)}${row.caseTitle.startsWith('SYNTHETIC')?' · synthetic':' · saved Qloo case'}</td><td>${e(row.shock)}</td><td>${e(row.houselights.status)} · ${e(row.houselights.violations)} violations</td><td>${e(row.reprompted.failures)}/${e(row.reprompted.returned)} violating responses${row.rankComparable===false?' · not comparable (incomplete Qloo ranking)':row.solvable===false?' · no feasible lineup exists':''}</td></tr>`).join('');
+    $('shock-rows').innerHTML = data.rows.map(row => `<tr><td>${e(row.caseTitle)}${row.caseTitle.startsWith('SYNTHETIC')?' · synthetic':' · saved Qloo case'}</td><td>${e(row.shock)}</td><td>${e(row.houselights.status)} · ${e(row.houselights.violations)} violations</td><td>${e(row.reprompted.failures)}/${e(row.reprompted.returned)} violating responses${row.rankComparable===false?' · not comparable (incomplete Qloo ranking)':row.solvable===false?' · no feasible bill exists':''}</td></tr>`).join('');
   }).catch(error => $('shock-headline').textContent = error.message);
   read('/api/judge/cases').then(data => {
     const cases=data.cases??[],complete=cases.filter(row=>row.recordedTrace===true);

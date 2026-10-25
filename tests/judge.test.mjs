@@ -138,7 +138,7 @@ test('judge publication rejects malformed optional links and unexpected route fa
   try{
     const response=await realFetch(base+'/api/judge/cases/'+id);
     assert.equal(response.status,500);
-    assert.deepEqual(await response.json(),{error:'The request could not be completed.'});
+    const body=await response.json();assert.equal(body.error,'The request could not be completed.');assert.deepEqual(Object.keys(body).sort(),['error','requestId'],'no internal details leak');
   }finally{console.error=originalError;}
 });
 test('rejects injected scores, unknown IDs, unsupported budgets and non-illustrative publication',async()=>{

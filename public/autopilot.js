@@ -6,7 +6,7 @@
   let record=null,view=null,busy=false,editable=false,sequence=0;
   const recordedFile=fetch('/autopilot-recorded.json',{signal:AbortSignal.timeout(15000)}).then(r=>r.ok?r.json():null).catch(()=>null);
   fetch('/api/access',{signal:AbortSignal.timeout(15000)}).then(r=>r.json()).then(access=>{editable=access.editable===true;if(record)renderModes();}).catch(()=>{});
-  const money=value=>value==null||!Number.isFinite(value)?'—':new Intl.NumberFormat('en-US',{style:'currency',currency:record?.snapshot.memo.currency??'USD',maximumFractionDigits:0}).format(value);
+  const money=value=>value==null||!Number.isFinite(Number(value))?'—':window.HL.money(value,record?.snapshot.memo.currency??'USD');
 
   async function post(path,body){
     const response=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(180000)});

@@ -176,6 +176,11 @@ export function judgeExperiment(record,raw={},options={}) {
       survivorIds:survivors,survivorsPreserved:result.feasible?survivors.every(id=>result.selectedIds.includes(id)):null,affectedIds,
       interpretation:'Exact optimization within the saved pool under the declared policy. Evidence withdrawal measures dependence, not causal value. No approval or booking is created.'}};
 }
+// Experiments are deterministic (saved evidence, zero provider calls), so identical
+// requests reuse a stored result. Quotas still apply first; any publish or unpublish
+// clears the cache.
+const experimentCache=new Map(),EXPERIMENT_CACHE_MAX=300;
+const sortedJson=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 export function registerJudgeRoutes(app) {
   const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
     if(Number.isInteger(error?.status)&&error.status>=400&&error.status<500)return res.status(error.status).json({error:error.message});
@@ -186,14 +191,18 @@ export function registerJudgeRoutes(app) {
     recordedTrace:r.snapshot.traceMeta?.complete===true,currency:r.snapshot.memo.currency,createdAt:r.createdAt}))}));
   app.post('/api/judge/cases',handle((req,res)=>{
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
-    res.status(201).json(publishJudgeCase(source,req.body?.title));
+    experimentCache.clear();res.status(201).json(publishJudgeCase(source,req.body?.title));
   }));
   app.get('/api/judge/cases/:id',handle((req,res)=>{const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);res.json(record);}));
-  app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);res.json({unpublished:true});}));
+  app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);experimentCache.clear();res.json({unpublished:true});}));
   app.post('/api/judge/cases/:id/experiment',handle((req,res)=>{
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
     const minute=Math.floor(Date.now()/60000),address=digest(req.ip??'unknown');
     if(!consumeQuota([{key:`judge:${minute}:${address}`,limit:20,expires:(minute+1)*60000},{key:`judge-global:${minute}`,limit:60,expires:(minute+1)*60000}]))throw fault('Experiment limit reached. Wait a minute before another calculation.',429);
-    res.json(judgeExperiment(record,req.body));
+    const key=sortedJson([req.params.id,record.createdAt??null,req.body??{}]);
+    let result=experimentCache.get(key);
+    if(result){res.set('X-Cache','hit');}
+    else{result=judgeExperiment(record,req.body);if(experimentCache.size>=EXPERIMENT_CACHE_MAX)experimentCache.delete(experimentCache.keys().next().value);experimentCache.set(key,result);res.set('X-Cache','miss');}
+    res.json(result);
   }));
 }

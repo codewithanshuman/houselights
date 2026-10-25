@@ -190,7 +190,7 @@
     $('workspace-app').hidden=true;$('workspace-gate').hidden=true;$('workspace-example').hidden=false;
     $('workspace-mode').innerHTML='<strong>RECORDED ORGANIZER SESSION</strong> · read-only replay, no new Qloo calls';
     const target=$('workspace-example');
-    target.innerHTML='<p class="autopilot-loading">Loading the recorded session…</p>';
+    target.innerHTML='<p class="autopilot-loading"><span class="skeleton-line" aria-hidden="true"></span><span class="sr-only">Loading the recorded session</span></p>';
     try{
       const file=await (await fetch('/workspace-example.json',{signal:AbortSignal.timeout(15000)})).json();state.example=file;
       const event=file.event,brief=event.revisions[0].brief,money=moneyFor(brief.currency);

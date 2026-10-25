@@ -34,7 +34,11 @@ test('health and asset endpoints expose mode without credentials', async () => {
 test('request validation stays 4xx while unexpected failures are 500 without leaking details', async () => {
   const invalid = await fetch(url + '/api/optimize', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{bad-json' });
   assert.equal(invalid.status, 400);
-  assert.deepEqual(await invalid.json(), { error: 'Invalid request body.' });
+  const invalidBody = await invalid.json();
+  assert.equal(invalidBody.error, 'Invalid request body.');
+  assert.match(invalidBody.requestId, /^[0-9a-f-]{36}$/, 'every error carries a request ID');
+  assert.equal(invalid.headers.get('x-request-id'), invalidBody.requestId);
+  assert.deepEqual(Object.keys(invalidBody).sort(), ['error', 'requestId']);
   assert.deepEqual(classifyRequestError(Object.assign(new Error('bad choice'), { status: 422 })), { status: 422, message: 'bad choice' });
   assert.deepEqual(classifyRequestError(new Error('database credentials or private stack details')), { status: 500, message: 'The request could not be completed.' });
 });

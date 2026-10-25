@@ -12,7 +12,8 @@
     const article = document.createElement('article');
     article.appendChild(setText(document.createElement('span'), label));
     article.appendChild(setText(document.createElement('strong'), value));
-    if (note) article.appendChild(setText(document.createElement('small'), note));
+    // A note may be {html} only for markup built by HL.term (escaped, generated here).
+    if (note) { const small = document.createElement('small'); if (typeof note === 'object' && note.html) small.innerHTML = note.html; else setText(small, note); article.appendChild(small); }
     return article;
   }
   function svgText(x, y, value, anchor = 'middle') {
@@ -87,7 +88,7 @@
       metric('Expected net profit', money(chosen.metrics.profit.mean), 'Scenario mean'),
       metric('Chance of breaking even', pct(chosen.metrics.breakEvenProbability), `${number(payload.config.simulation.draws)} seeded draws`),
       metric('5th-percentile profit', money(chosen.metrics.profit.p5), 'Adverse threshold'),
-      metric('Worst 5% mean loss', money(chosen.metrics.conditionalValueAtRisk95), 'CVaR at 95%'),
+      metric('Worst 5% mean loss', money(chosen.metrics.conditionalValueAtRisk95), window.HL?{html:window.HL.term('CVaR at 95%','cvar')}:'CVaR at 95%'),
       metric('Expected paid tickets sold', number(chosen.metrics.paidTickets.mean), `Capacity ${number(payload.config.sellableCapacity)}`),
       metric('Cash before revenue', money(chosen.metrics.cashBeforeRevenue.mean), 'Deposit and pre-event needs'),
       metric('Loss beyond threshold', pct(chosen.metrics.lossBeyondThresholdProbability), `Threshold ${money(payload.config.lossThresholdCents / 100)}`),

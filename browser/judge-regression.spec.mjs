@@ -205,7 +205,7 @@ test('budget plus evidence withdrawal is labeled as a combined change on mobile'
   const comparison = page.locator('.judge-evidence-comparison');
   await expect(comparison).toContainText('COMBINED-CHANGE REPLAY');
   await expect(comparison).toContainText('Evidence and booking inputs changed');
-  await expect(comparison).toContainText('The lineup difference cannot be attributed to Qloo evidence alone.');
+  await expect(comparison).toContainText('The bill difference cannot be attributed to Qloo evidence alone.');
   await expect(comparison).not.toContainText('MATCHED EVIDENCE TEST');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
@@ -235,7 +235,7 @@ test('genuine agent run exposes recorded plan, ordered tool events, and matched 
   await expect(page.locator('.judge-trace-summary')).toContainText('31 recorded events · 18/18 receipts linked');
   await expect(page.locator('.agent-stage-list')).toContainText('Model-selected checks');
   await expect(page.locator('.agent-stage-list')).toContainText('Charlotte Day Wilson');
-  await expect(page.locator('.agent-stage-list')).toContainText('Exact optimization found a feasible slate');
+  await expect(page.locator('.agent-stage-list')).toContainText('Exact optimization found a feasible bill');
   await page.locator('.judge-trace-full summary').click();
   await expect(page.locator('.judge-trace-full .agent-trace-list li')).toHaveCount(31);
   await page.locator('.judge-trace-full').getByRole('button', { name: 'Receipt r1', exact: true }).click();
@@ -407,7 +407,7 @@ test('budget presets and promoter export reflect the exact completed simulator r
   const downloaded=page.waitForEvent('download');
   await page.getByRole('button',{name:'Download promoter brief'}).click();
   const file=await downloaded,text=readFileSync(await file.path(),'utf8');
-  expect(text).toContain('Artist budget: US$11,600');
+  expect(text).toContain('Artist budget: $11,600');
   expect(text).toContain('Illustrative booking terms');
   expect(text).toContain('No matched saved first-trial LLM-only control');
 });
@@ -451,7 +451,7 @@ test('failed booking replay keeps the decision visibly pending and exports only 
   await expect(page.locator('#booking-pending')).toContainText('last completed decision');
   const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Download promoter brief'}).click();
   const text=readFileSync(await (await pending).path(),'utf8');
-  expect(text).toContain('UNAPPLIED INPUTS');expect(text).toContain('Artist budget: US$14,500');
+  expect(text).toContain('UNAPPLIED INPUTS');expect(text).toContain('Artist budget: $14,500');
 });
 
 test('signal switches retain keyboard focus and expose their pressed state', async ({page})=>{
@@ -471,7 +471,7 @@ test('separate later LLM replication retains all trials and makes the cheaper co
   const study=page.locator('#booking-independent-study');
   await expect(study).toContainText('3 / 3 declared attempts retained');
   await expect(study).toContainText('Michael Kiwanuka + Jordan Rakei');
-  await expect(study).toContainText('US$3,500 cheaper');
+  await expect(study).toContainText('$3,500 cheaper');
   await expect(study).toContainText('does not replace the original run');
   await study.locator('summary').click();
   await expect(study.locator('tbody tr')).toHaveCount(3);
@@ -691,7 +691,7 @@ test('shock study headlines report the like-for-like solvable rate, never the po
   await page.locator('.judge-shock-study summary').click();
   const teaser=page.locator('#judge-shock-teaser');
   await expect(teaser.locator('strong')).toHaveText('3/231');
-  await expect(teaser).toContainText('because the prompt required a lineup');
+  await expect(teaser).toContainText('because the prompt required a bill');
   await expect(teaser).not.toContainText('9.7');
   await page.goto(`${origin}/evidence.html`);
   await expect(page.locator('#shock-headline')).toContainText('On 77 solvable shocks, 3/231 re-prompted LLM responses (1.3%)');

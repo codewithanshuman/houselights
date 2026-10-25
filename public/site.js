@@ -67,6 +67,24 @@
     document.querySelectorAll('[data-site-nav]').forEach(renderNav);
     document.querySelectorAll('[data-site-footer]').forEach(renderFooter);
   }
-  window.HL={e,money,signedMoney,affinity,count,fetchJSON,FetchProblem,state};
+  // Every GET without its own signal gets a 20-second timeout, so no page waits forever
+  // on a stalled request. POSTs keep their own progress handling (research can take 150 s).
+  const nativeFetch=window.fetch.bind(window);
+  window.fetch=(input,init={})=>{
+    const method=String(init.method??(input instanceof Request?input.method:'GET')).toUpperCase();
+    if(method!=='GET'||init.signal)return nativeFetch(input,init);
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(new DOMException('The request timed out.','TimeoutError')),20000);
+    return nativeFetch(input,{...init,signal:controller.signal}).finally(()=>clearTimeout(timer));
+  };
+  // Accessible jargon: the explanation shows on hover and keyboard focus, is linked by
+  // aria-describedby (not the title attribute) and closes with Escape.
+  const TERMS={
+    policyPoints:'The optimizer’s internal score: Qloo fit plus small bonuses for local evidence, trends and variety, minus a penalty for missing evidence. A ranking tool, not a forecast of sales.',
+    evidencePenalty:'Points subtracted when an act lacks Qloo evidence (rank, local, trend or audience comparison), so unsupported acts cannot win on missing data.',
+    cvar:'Conditional value at risk: the average loss across the worst 5% of simulated outcomes. Lower is safer. The scenarios are assumptions, not observed results.'};
+  let termCount=0;
+  const term=(label,key)=>{const id='term-tip-'+(++termCount);return `<span class="term" tabindex="0" aria-describedby="${id}">${e(label)}<span class="term-tip" role="tooltip" id="${id}">${e(TERMS[key]??key)}</span></span>`;};
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.activeElement?.classList?.contains('term'))document.activeElement.blur();});
+  window.HL={e,money,signedMoney,affinity,count,fetchJSON,FetchProblem,state,term};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();

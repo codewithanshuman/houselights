@@ -18,6 +18,7 @@ import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived, preserveRankProvenance } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode, routeQuota } from './access.mjs';
+import { requestContext, publicReadCache, unknownApiRoute } from './http-hygiene.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
 import { registerOperationalRoutes } from './operational-evidence.mjs';
@@ -49,7 +50,7 @@ export function classifyRequestError(error) {
 }
 function sendProcessingError(res, error) {
   const { status, message } = classifyRequestError(error);
-  if (status === 500) console.error('Unexpected Houselights request failure:', error);
+  if (status === 500) console.error(JSON.stringify({ t: new Date().toISOString(), level: 'error', requestId: res.req?.id ?? null, path: res.req?.path ?? null, message: 'Unexpected Houselights request failure', error: String(error?.stack ?? error).slice(0, 2000) }));
   return res.status(status).json({ error: message });
 }
 
@@ -90,6 +91,7 @@ export function createApp() {
   const budget = Math.min(60, positiveInteger(process.env.CALL_BUDGET, 30));
   const intelligenceBudget = Math.min(60, positiveInteger(process.env.INTELLIGENCE_CALL_BUDGET, 60));
   app.disable('x-powered-by');
+  app.use(requestContext);
   if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
   app.use((_req, res, next) => {
     res.set('X-Content-Type-Options', 'nosniff'); res.set('Referrer-Policy', 'no-referrer');
@@ -98,6 +100,7 @@ export function createApp() {
   });
   app.use(express.json({ limit: '160kb' }));
   app.use(accessMiddleware);
+  app.use(publicReadCache);
   registerResearchRoutes(app);
   registerDemandRoutes(app);
   registerFinancialRoutes(app);
@@ -352,6 +355,9 @@ export function createApp() {
       if (!res.destroyed) emit({ type: 'error', text: 'The run could not complete. Review the last receipt and try again. No booking was made.' });
     } finally { clearInterval(heartbeat); res.end(); }
   });
+  app.use('/api', unknownApiRoute);
+  // Anything else that matched no file or route gets the styled 404 page.
+  app.use((req, res) => req.method === 'GET' || req.method === 'HEAD' ? res.status(404).sendFile('404.html', { root: pub }) : res.status(404).json({ error: 'Not found.' }));
   app.use((error, _req, res, _next) => {
     if (error.status === 413) return res.status(413).json({ error: 'Request is too large.' });
     if (error.type === 'entity.parse.failed' || error.status === 400) return res.status(400).json({ error: 'Invalid request body.' });

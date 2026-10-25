@@ -7,13 +7,13 @@ const text = (node, value) => { node.textContent = String(value ?? '—'); retur
 const el = (tag, className, value) => { const node = document.createElement(tag); if (className) node.className = className; if (value != null) text(node,value); return node; };
 const clear = node => node.replaceChildren();
 const artistNames = ids => ids.map(id => current?.recordNames?.[id] ?? id);
-const money = (value, currency) => value == null ? '—' : new Intl.NumberFormat('en', { style:'currency', currency: currency ?? 'GBP', maximumFractionDigits:0 }).format(value);
+const money = (value, currency) => value == null ? '—' : window.HL ? window.HL.money(value, currency ?? 'GBP') : new Intl.NumberFormat('en-US', { style:'currency', currency: currency ?? 'GBP', maximumFractionDigits:0 }).format(value);
 const percent = value => value == null ? '—' : `${Math.round(value * 100)}%`;
 function tile(label, value, note) { const node=el('div','tile'); node.append(el('small','',label),el('strong','',value)); if(note)node.append(el('small','',note)); return node; }
 function renderHeadlineComparison() {
   const r=current.report, full=r.methods.full_houselights, without=r.methods.qloo_ablated, difference=r.decisionDifference;
-  text($('without-lineup'),without.selectedIds.length?artistNames(without.selectedIds).join(' + '):'No feasible lineup');
-  text($('with-lineup'),full.selectedIds.length?artistNames(full.selectedIds).join(' + '):'No feasible lineup');
+  text($('without-lineup'),without.selectedIds.length?artistNames(without.selectedIds).join(' + '):'No feasible bill');
+  text($('with-lineup'),full.selectedIds.length?artistNames(full.selectedIds).join(' + '):'No feasible bill');
   text($('without-feasibility'),`${without.feasible?'Meets':'Does not meet'} booking constraints · ${money(without.totalFee,r.brief.currency)} in planned fees`);
   text($('with-feasibility'),`${full.feasible?'Meets':'Does not meet'} booking constraints · ${money(full.totalFee,r.brief.currency)} in planned fees`);
   const removed=artistNames(difference.removedIds),added=artistNames(difference.addedIds);
@@ -32,7 +32,7 @@ function renderMethods() {
   for (const [id,index,title] of methods) {
     const data=r.methods[id], metric=r.metrics[id], card=el('article',`method ${id==='full_houselights'?'full':''}`);
     card.append(el('span','index',`METHOD ${index}`),el('h3','',title),el('span','state',data.status.replaceAll('_',' ')));
-    card.append(el('p','lineup',data.available&&data.selectedIds.length?artistNames(data.selectedIds).join(' + '):data.reason??'No feasible lineup'));
+    card.append(el('p','lineup',data.available&&data.selectedIds.length?artistNames(data.selectedIds).join(' + '):data.reason??'No feasible bill'));
     const dl=el('dl'); for(const [label,value] of [['Operationally feasible',data.available?(data.feasible?'Yes':'No'):'Unavailable'],['Booking cost',money(data.totalFee,r.brief.currency)],['Budget used',percent(metric.budgetUtilization)],['Hard violations',metric.hardConstraintViolations],['Overlap with full',percent(metric.lineupJaccardVsFull)]]){
       const row=el('div'); row.append(el('dt','',label),el('dd','',value)); dl.append(row);
     } card.append(dl); box.append(card);
@@ -49,8 +49,8 @@ function renderSignalControls() {
 function renderSignal() {
   const r=current.report,row=r.ablations.coalitions.find(entry=>entry.mask===selectedMask);
   text($('signal-mask'),`${row.enabled.length} OF 4 SIGNAL GROUPS RETAINED · COMBINATION ${selectedMask+1}/16`);
-  text($('signal-lineup'),row.selectedIds.length?artistNames(row.selectedIds).join(' + '):'No feasible lineup');
-  text($('signal-note'),row.feasible?row.difference.interpretation:'The declared constraints yield no feasible slate with these signals.');
+  text($('signal-lineup'),row.selectedIds.length?artistNames(row.selectedIds).join(' + '):'No feasible bill');
+  text($('signal-note'),row.feasible?row.difference.interpretation:'The declared constraints yield no feasible bill with these signals.');
   const chips=$('signal-difference');clear(chips);
   for(const id of row.difference.removedIds)chips.append(el('span','chip remove',`− ${current.recordNames[id]??id}`));
   for(const id of row.difference.addedIds)chips.append(el('span','chip add',`+ ${current.recordNames[id]??id}`));

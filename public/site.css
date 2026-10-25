@@ -79,8 +79,9 @@
 
 /* Accessible tooltips: shown on hover and keyboard focus, read via aria-describedby */
 .term{position:relative;display:inline;border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline dotted;text-underline-offset:3px;cursor:help}
-.term-tip{position:absolute;left:0;top:calc(100% + 6px);z-index:50;width:min(300px,80vw);padding:10px 12px;border-radius:var(--hl-radius-sm);background:var(--hl-ink);color:#fff;font:400 var(--hl-text-xs)/1.5 var(--hl-sans);text-align:left;box-shadow:var(--hl-shadow);visibility:hidden;opacity:0}
-.term:hover .term-tip,.term:focus-visible .term-tip,.term:focus .term-tip{visibility:visible;opacity:1}
+.term-tip{position:absolute;left:0;top:calc(100% + 6px);z-index:50;width:max-content;max-width:min(300px,calc(100vw - 40px));padding:10px 12px;border-radius:var(--hl-radius-sm);background:var(--hl-ink);color:#fff;font:400 var(--hl-text-xs)/1.5 var(--hl-sans);text-align:left;box-shadow:var(--hl-shadow);display:none;white-space:normal}
+/* Hidden tips take no layout space (no sideways scroll on phones). */
+.term:hover .term-tip,.term:focus-visible .term-tip,.term:focus .term-tip{display:block}
 
 /* Booking Desk first screen */
 .first-screen{max-width:1240px;margin:0 auto;padding:var(--hl-space-6) 20px var(--hl-space-5);min-height:320px}
@@ -147,3 +148,11 @@
 img{max-width:100%;height:auto}
 /* Motion only for decision changes: every other animation stops when reduced motion is requested. */
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+/* 404 and error pages */
+.status-main{max-width:720px;margin:0 auto;padding:var(--hl-space-7) 20px;min-height:55vh}
+.status-main h1{font:500 var(--hl-text-2xl)/1.15 var(--hl-serif);margin:0 0 var(--hl-space-4)}
+.status-main p{font-size:var(--hl-text-md);line-height:1.6;color:var(--hl-ink-soft)}
+.status-main .button{display:inline-flex;align-items:center;padding:0 18px;border-radius:var(--hl-radius-sm);text-decoration:none;font-weight:600;margin:var(--hl-space-2) var(--hl-space-2) 0 0}
+.status-main .button.primary{background:var(--hl-accent);color:#fff}.status-main .button.subtle{border:1px solid var(--hl-line);color:var(--hl-ink)}
+.organizer-notice{max-width:1240px;margin:12px auto 0;padding:10px 20px;font-size:var(--hl-text-sm);color:var(--hl-ink-soft);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.page-note{max-width:1240px;margin:var(--hl-space-5) auto 0;padding:0 20px;font-size:var(--hl-text-sm);color:var(--hl-muted)}
