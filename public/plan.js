@@ -42,7 +42,7 @@
     try{
       const record=await fetchJSON(`/api/judge/cases/${encodeURIComponent(id)}`,{timeout:15000});
       view={record,base:record.snapshot,current:record.snapshot,off:null,budget:record.snapshot.memo.constraints.budget,cancelId:null,qlooOff:false};
-      render();if(record.id===FEATURED){fillFan(record.snapshot,null);if(watchReady)startReplay();}
+      render();if(record.id===FEATURED){fillFan(record.snapshot,null);fillPipeline(record.snapshot);if(watchReady)startReplay();}
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
@@ -69,6 +69,13 @@
   }
 
   // ── Rendering ──────────────────────────────────────────────────────────────────
+  // The decision reads like a gig ticket with a budget stub; the Qloo panel sets the two
+  // bills side by side; booked acts get cards with a rank ring and every other candidate
+  // sits in one ranked table that says why it was not booked.
+  const ring=(fraction,label,cls='')=>{
+    const r=20,c=2*Math.PI*r,f=Math.max(0,Math.min(1,fraction||0));
+    return `<svg class="ring ${cls}" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="${r}" class="ring-track"/><circle cx="24" cy="24" r="${r}" class="ring-fill" stroke-dasharray="${(c*f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 24 24)"/><text x="24" y="25" class="ring-text">${e(label)}</text></svg>`;
+  };
   function render(){
     const {record,base,current}=view,slate=current.memo.slate,baseSlate=base.memo.slate,input=base.memo.input;
     const anchors=anchorText(base),budget=current.memo.constraints.budget,slots=current.memo.constraints.slots;
@@ -83,68 +90,122 @@
     const sub=slate.feasible
       ?`${e(usd(slate.remainingBudget))} under budget · every booking rule passes · best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked`
       :e((slate.reasons??[]).join(' ')||'Every combination breaks the budget or a rule. Raise the budget or reset.');
+    const used=slate.feasible&&budget?slate.totalFee/budget:0;
+    const side=(key,label,names,fee,active)=>`<div class="compare-side${active?' is-active':''}" data-side="${key}">
+        <p class="compare-label">${label}</p>
+        <p class="compare-bill">${names?e(names.join(' + ')):'<span class="skeleton-line" aria-hidden="true"></span><span class="sr-only">Loading</span>'}</p>
+        <p class="compare-fee">${fee!=null?e(usd(fee)):'&nbsp;'}</p>
+      </div>`;
     result.innerHTML=`
-      <div class="result-head">
-        <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
-        <div class="result-badges">${badges}</div>
-        <h2 id="result-title" class="result-decision${changed?' is-changed':''}">${decision}</h2>
-        <p class="result-sub">${sub}</p>
-        ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest scoring set that fits the budget.</p>`:''}
-        ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
-      </div>
-      <div class="result-qloo">
-        <button type="button" class="fs-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
-          <span class="fs-switch-track" aria-hidden="true"><span class="fs-switch-thumb"></span></span><span>Qloo evidence ${view.qlooOff?'off':'on'}</span>
-        </button>
-        <p id="plan-switch-note" class="result-qloo-note">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
-          ?`Without Qloo evidence, the same rules book the same bill. Here Qloo explains the choice but does not change it.`
-          :`Without Qloo evidence, the same rules book <strong>${e(offBill.join(' + '))}</strong> for ${e(usd(offFee))}. Qloo changes this decision.`)
-          :view.offError?'The comparison without Qloo could not load just now. Use the switch to try again.':'Checking what the same rules book without Qloo…'}</p>
+      <div class="decision">
+        <article class="ticket${changed?' is-changed':''}" aria-labelledby="result-title">
+          <div class="ticket-main">
+            <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
+            <div class="result-badges">${badges}</div>
+            <h2 id="result-title" class="result-decision">${decision}</h2>
+            <p class="result-sub">${sub}</p>
+            ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest scoring set that fits the budget.</p>`:''}
+            ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
+          </div>
+          <div class="ticket-stub">
+            ${slate.feasible?ring(used,`${Math.round(used*100)}%`,'ring-budget'):''}
+            <p class="stub-small">${slate.feasible?'of the budget':'No bookable bill'}</p>
+            <dl class="stub-stats">
+              <div><dt>Bills checked</dt><dd>${e(slate.checkedCount)}</dd></div>
+              <div><dt>Bookable</dt><dd>${e(slate.feasibleCount)}</dd></div>
+              <div><dt>Left over</dt><dd>${slate.feasible?e(usd(slate.remainingBudget)):'—'}</dd></div>
+            </dl>
+          </div>
+        </article>
+        <section class="result-qloo" aria-label="What Qloo changes">
+          <div class="qloo-head">
+            <button type="button" class="fs-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
+              <span class="fs-switch-track" aria-hidden="true"><span class="fs-switch-thumb"></span></span><span>Qloo evidence ${view.qlooOff?'off':'on'}</span>
+            </button>
+            <p id="plan-switch-note" class="result-qloo-note">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
+              ?`Without Qloo evidence, the same rules book the same bill. Here Qloo explains the choice but does not change it.`
+              :`Without Qloo evidence, the same rules book <strong>${e(offBill.join(' + '))}</strong> for ${e(usd(offFee))}. Qloo changes this decision.`)
+              :view.offError?'The comparison without Qloo could not load just now. Use the switch to try again.':'Checking what the same rules book without Qloo…'}</p>
+          </div>
+          <div class="compare${view.qlooOff?' is-off':''}">
+            <span class="compare-glide" aria-hidden="true"></span>
+            ${side('on','With Qloo evidence',billNames(base),baseSlate.totalFee,!view.qlooOff)}
+            <span class="compare-arrow" aria-hidden="true">→</span>
+            ${side('off','Without Qloo evidence',offBill,offFee,view.qlooOff)}
+          </div>
+        </section>
       </div>
       ${actSections()}
       <div class="result-controls" aria-labelledby="controls-title">
-        <h3 id="controls-title">Change the plan</h3>
-        <div class="control-budget">
-          <label for="plan-budget-range">Artist budget: <strong id="plan-budget-value">${e(usd(view.budget))}</strong></label>
-          <input type="range" id="plan-budget-range" min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
-          <div class="control-presets">${[1,.9,.8,.7].map(f=>`<button type="button" class="button subtle small" data-budget="${Math.round(base.memo.constraints.budget*f)}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`).join('')}</div>
+        <div class="controls-copy">
+          <h3 id="controls-title">Change the plan</h3>
+          <p class="control-help">Move the budget or drop a booked act. The exact optimizer runs again on the same saved evidence, with no new Qloo calls.</p>
         </div>
-        <p class="control-help">Drop a booked act with its <strong>Drop</strong> button to see the best replacement. Every change runs the exact optimizer again on the same saved evidence, with no new Qloo calls.</p>
-        <button type="button" class="button subtle small" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button>
+        <div class="control-budget">
+          <label for="plan-budget-range">Artist budget <strong id="plan-budget-value">${e(usd(view.budget))}</strong></label>
+          <input type="range" id="plan-budget-range" min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
+          <div class="control-presets">${[1,.9,.8,.7].map(f=>{const value=Math.round(base.memo.constraints.budget*f);return `<button type="button" class="preset${value===view.budget?' is-on':''}" data-budget="${value}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`;}).join('')}
+            <button type="button" class="preset preset-reset" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button></div>
+        </div>
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
       </div>
       <p class="result-terms">${e(record.terms)}${record.live?` <button type="button" class="link-button" id="plan-share">Copy link to this plan</button>`:''}</p>`;
     wire();
   }
 
-  function card(item){
-    const {record,current,base}=view,selected=current.memo.slate.selectedIds,city=base.memo.input.city,anchors=anchorText(base);
+  // What the table and cards say about one act.
+  function actFacts(item){
+    const {record,current,base}=view,selected=current.memo.slate.selectedIds,city=base.memo.input.city;
     const scores=itemsOf(current).map(i=>affinityOf(base,i)).filter(v=>v!=null),min=Math.min(...scores),max=Math.max(...scores);
-    const budget=current.memo.constraints.budget,rank=rankReceipt(base);
-    const booked=selected.includes(item.id),dropped=view.cancelId===item.id,score=affinityOf(base,item);
-    const width=score==null?0:max>min?8+92*(score-min)/(max-min):100;
-    const fee=item.terms.fee,over=fee!=null&&fee>budget;
-    const status=dropped?'<span class="act-status act-dropped">Dropped</span>':booked?'<span class="act-status act-booked">Booked</span>':fee==null?'<span class="act-status act-over">No fee</span>':over?'<span class="act-status act-over">Over budget</span>':'<span class="act-status act-bench">Not picked</span>';
-    // Why an act is not on the bill: could it replace any booked act within the budget?
+    // With Qloo evidence switched off there is no affinity to show.
+    const budget=current.memo.constraints.budget,score=view.qlooOff?null:affinityOf(base,item);
+    const position=score==null?0:max>min?.12+.88*(score-min)/(max-min):1;
+    const booked=selected.includes(item.id),dropped=view.cancelId===item.id,fee=item.terms.fee,over=fee!=null&&fee>budget;
     const total=current.memo.slate.feasible?current.memo.slate.totalFee:null,bookedItems=itemsOf(current).filter(i=>selected.includes(i.id));
     const fitsSwap=fee!=null&&total!=null&&bookedItems.some(b=>total-(b.terms.fee??0)+fee<=budget);
-    const why=booked||dropped?'':fee==null?'':over?'Costs more than the whole budget.':total==null?'':fitsSwap?'Fits the budget, but the booked set scores higher overall.':'Over budget alongside the rest of the bill.';
+    const status=dropped?['act-dropped','Dropped']:booked?['act-booked','Booked']:fee==null?['act-over','No fee']:over?['act-over','Over budget']:['act-bench','Not picked'];
+    const why=booked?'':dropped?'You dropped this act.':fee==null?'No fee quoted, so it cannot be booked.':over?'Costs more than the whole budget.':total==null?'':fitsSwap?'Fits the budget, but the booked set scores higher.':'Over budget alongside the rest of the bill.';
     const chips=[item.found?'Suggested by Qloo':'',item.local==='yes'?`Fans concentrated in ${city}`:'',item.momentum==='rising'?'Rising':item.momentum==='cooling'?'Cooling':''].filter(Boolean);
-    return `<li class="act-card${booked?' is-booked':''}${dropped?' is-dropped':''}">
-      <div class="act-top"><span class="act-avatar" style="--act-hue:${hue(item.name)}" aria-hidden="true">${e(initials(item.name))}</span>
-        <div class="act-name"><h4>${e(item.name)}</h4><p>${fee==null?'No fee quoted, so it cannot be booked':`${e(usd(fee))}${estimated(record)?' <abbr title="Estimated from Qloo popularity, not a quote">est.</abbr>':''}`}</p></div>${status}</div>
-      <div class="act-fit"><p>${item.rank?`Qloo ranks it <strong>${e(item.rank)} of ${e(item.of)}</strong> for ${e(anchors)} fans in ${e(city)}`:'No Qloo rank for this act'}</p>
-        ${score!=null?`<div class="act-bar" role="img" aria-label="Qloo affinity ${score.toFixed(3)}"><span style="width:${width.toFixed(1)}%"></span></div><p class="act-score">Qloo affinity ${e(score.toFixed(3))}</p>`:''}</div>
-      ${why?`<p class="act-why">${e(why)}</p>`:''}
-      ${chips.length?`<p class="act-chips">${chips.map(chip=>`<span>${e(chip)}</span>`).join('')}</p>`:''}
-      <div class="act-actions">${rank?`<button type="button" class="button subtle small" data-receipt="${e(rank.id)}" data-entity="${e(item.name)}">Qloo receipt</button>`:''}${booked&&!view.qlooOff?`<button type="button" class="button subtle small" data-drop="${e(item.id)}" aria-label="Drop ${e(item.name)} and rebook">Drop</button>`:''}</div>
+    const feeText=fee==null?'No fee':`${usd(fee)}${estimated(record)?' est.':''}`;
+    return {score,position,booked,dropped,status,why,chips,feeText,rank:rankReceipt(base)};
+  }
+  function card(item){
+    const f=actFacts(item),anchors=anchorText(view.base),city=view.base.memo.input.city;
+    return `<li class="act-card is-booked">
+      <div class="act-ring">${ring(f.position,item.rank?`#${item.rank}`:'—')}</div>
+      <div class="act-main">
+        <p class="act-kicker"><span class="act-status act-booked">Booked</span>${item.rank?`Qloo rank ${e(item.rank)} of ${e(item.of)}`:'No Qloo rank'}</p>
+        <h4>${e(item.name)}</h4>
+        <p class="act-fee">${e(f.feeText)}${f.score!=null?` · affinity ${e(f.score.toFixed(3))}`:''}</p>
+        <p class="act-for">For ${e(anchors)} fans in ${e(city)}</p>
+        ${f.chips.length?`<p class="act-chips">${f.chips.map(chip=>`<span>${e(chip)}</span>`).join('')}</p>`:''}
+      </div>
+      <div class="act-actions">${f.rank?`<button type="button" class="button subtle small" data-receipt="${e(f.rank.id)}" data-entity="${e(item.name)}">Qloo receipt</button>`:''}${!view.qlooOff?`<button type="button" class="button subtle small" data-drop="${e(item.id)}" aria-label="Drop ${e(item.name)} and rebook">Drop</button>`:''}</div>
+    </li>`;
+  }
+  function row(item){
+    const f=actFacts(item);
+    return `<li class="act-card rank-row${f.dropped?' is-dropped':''}">
+      <span class="rank-no">${item.rank?`#${e(item.rank)}`:'—'}</span>
+      <span class="rank-name"><strong>${e(item.name)}</strong>${f.chips.length?`<small>${e(f.chips.join(' · '))}</small>`:''}</span>
+      <span class="rank-aff">${f.score!=null?`<span class="rank-bar"><span style="width:${(f.position*100).toFixed(1)}%"></span></span><span class="rank-num">${e(f.score.toFixed(3))}</span>`:'<span class="rank-num">—</span>'}</span>
+      <span class="rank-fee">${e(f.feeText)}</span>
+      <span class="rank-why"><span class="act-status ${f.status[0]}">${f.status[1]}</span>${f.why?`<small>${e(f.why)}</small>`:''}</span>
+      ${f.rank?`<button type="button" class="rank-receipt" data-receipt="${e(f.rank.id)}" data-entity="${e(item.name)}" aria-label="Qloo receipt for ${e(item.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button>`:'<span></span>'}
     </li>`;
   }
   function actSections(){
     const selected=view.current.memo.slate.selectedIds,items=[...itemsOf(view.current)].sort((a,b)=>(a.rank??99)-(b.rank??99));
     const booked=selected.map(id=>items.find(item=>item.id===id)).filter(Boolean),others=items.filter(item=>!selected.includes(item.id));
-    return `<h3 class="act-heading">The bill</h3><ul class="act-grid" aria-label="Booked acts">${booked.map(card).join('')||'<li class="act-empty">No act can be booked under these rules.</li>'}</ul>
-      ${others.length?`<details class="act-others"${matchMedia('(min-width: 700px)').matches?' open':''}><summary>The other ${others.length} candidates Qloo ranked</summary><ul class="act-grid act-grid-compact" aria-label="Other candidates">${others.map(card).join('')}</ul></details>`:''}`;
+    return `<div class="lineup">
+        <h3 class="act-heading">The bill</h3>
+        <ul class="act-grid" aria-label="Booked acts">${booked.map(card).join('')||'<li class="act-empty">No act can be booked under these rules.</li>'}</ul>
+        ${others.length?`<details class="act-others"${matchMedia('(min-width: 700px)').matches?' open':''}><summary>The other ${others.length} candidates Qloo ranked</summary>
+          <div class="rank-table">
+            <div class="rank-head" aria-hidden="true"><span>Rank</span><span>Artist</span><span>Qloo affinity</span><span>Fee</span><span>Why not booked</span><span></span></div>
+            <ol aria-label="Other candidates">${others.map(row).join('')}</ol>
+          </div></details>`:''}
+      </div>`;
   }
 
   function wire(){
@@ -257,6 +318,33 @@
     set('bill',billNames(snapshot).join(' + '));set('fee',usd(snapshot.memo.slate.totalFee));
     if(off){set('off-bill',billNames(off).join(' + '));set('off-fee',`${usd(off.memo.slate.totalFee)} · a different bill`);}
   }
+  // The pipeline shows the featured run's real numbers and counts up when it scrolls in.
+  function fillPipeline(snapshot){
+    const values={calls:snapshot.receipts.length,candidates:itemsOf(snapshot).length,checked:snapshot.memo.slate.checkedCount,bookable:snapshot.memo.slate.feasibleCount,booked:snapshot.memo.slate.feasible?1:0};
+    for(const [key,value] of Object.entries(values))document.querySelectorAll(`[data-pipe="${key}"]`).forEach(node=>{node.dataset.value=String(value);node.textContent=String(value);});
+    document.querySelectorAll('[data-pipe="bill"]').forEach(node=>{node.textContent=billNames(snapshot).join(' + ');});
+  }
+  const pipeline=$('pipeline');
+  function countUp(){
+    pipeline.classList.add('is-in');
+    if(reduced())return;
+    pipeline.querySelectorAll('.pipe-num').forEach((node,index)=>{
+      const target=Number(node.dataset.value??node.textContent),start=performance.now()+index*260,duration=900;
+      const step=time=>{const t=Math.min(1,Math.max(0,(time-start)/duration)),eased=1-Math.pow(1-t,3);node.textContent=String(Math.round(target*eased));if(t<1)requestAnimationFrame(step);};
+      node.textContent='0';requestAnimationFrame(step);
+    });
+  }
+  if(pipeline&&'IntersectionObserver' in window){
+    const pipeWatch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){pipeWatch.disconnect();countUp();}},{rootMargin:'0px 0px -25% 0px'});
+    pipeWatch.observe(pipeline);
+  }else pipeline?.classList.add('is-in');
+  // The closing form hands its answers to the planner and starts a live plan.
+  $('final-form')?.addEventListener('submit',event=>{
+    event.preventDefault();
+    $('plan-city').value=$('final-city').value.trim();$('plan-anchor').value=$('final-anchor').value.trim();
+    $('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
+    const input=readInput();if(input)void planLive(input);
+  });
   // Sections fade up as they enter; the tagline lights word by word along the reading line.
   if('IntersectionObserver' in window){
     document.documentElement.classList.add('has-reveal');
