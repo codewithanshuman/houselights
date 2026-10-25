@@ -1,5 +1,19 @@
 # Sharing an existing Oracle server
 
+## Deployment of 94deec6 — 25 October 2026
+
+The public host runs `94deec6f6b022a6c94082041694d92413d97ec8a`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release fixes the regression found after `d997b60`: in-page jumps now land below the sticky step bar. On screens under 1,300 px tall, the experiment form now scrolls with the page instead of staying fixed.
+
+- **Before the switch:** the backup `pre-94deec6` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-94deec6`. The rollback drill ran that image on a restored database copy: it reported `d997b60`, served 12 cases and logged no errors, and it was removed afterwards. CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. Only the app container was recreated, because the Caddyfile is unchanged. Every other container, including Caddy, and the livestream PID were unchanged. Disk use is 85%.
+- **Checks:** `release:verify` passed. zstd compression and HSTS are served, and the new CSS is live.
+  - "Try a budget cut ↓" lands visible below the step bar in Chromium, Firefox and WebKit, at phone and desktop sizes, with and without reduced motion. That is 12 of 12 combinations, with no console errors.
+  - At 1280×720 the cancellation cards are reachable, the Qloo switch changes the bill and the receipt drawer opens.
+  - Lighthouse on the Booking Desk: desktop 100. Mobile ranged from 56 to 75 across runs (LCP 2.8–4.1 s). CLS was 0.005, except one run at 0.113, when the Plex 500/700 fonts arrived after first paint.
+- **Residual risk:** below-the-fold sections are laid out on the first click or key press. A purely programmatic scroll before any interaction can land short of its target.
+
+**Rollback:** tag `houselights-shared:pre-94deec6` as `houselights-shared:local`, set `RELEASE_COMMIT=d997b606307505dd44a3b6cecf592f1887169483`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of d997b60 — 25 October 2026
 
 The public host runs `d997b606307505dd44a3b6cecf592f1887169483`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release adds the server-rendered navigation, the inlined claim table, deferred below-the-fold layout, subset fonts, the cached-experiment rate-limit fix, and the Caddyfile change (zstd/gzip compression and HSTS).
@@ -24,7 +38,7 @@ The public host runs `d997b606307505dd44a3b6cecf592f1887169483`, and `/healthz` 
 - Private routes return 401. The 404 page has the navigation.
 - Lighthouse on the live site, Booking Desk: 86 on mobile (LCP 2.7 s, CLS 0.005) and 99 on desktop (LCP 0.7 s). Evidence page: 81 on mobile and 99 on desktop. Accessibility scored 100 on all four runs.
 - In headless Chromium, Firefox and WebKit on the live site, at phone and desktop sizes, the Qloo switch changes the bill, the receipt drawer opens and the Autopilot panel loads its styles lazily. No page logged a console error.
-- **Regression found:** on this release, "Try a budget cut ↓" scrolls its button under the sticky step bar. On `02f7228` it landed mid-screen only because content above it moved afterwards. Focus still goes to the button. The fix is `6590a3a`, which is on `development` and not deployed.
+- **Regression found:** on this release, "Try a budget cut ↓" scrolls its button under the sticky step bar. On `02f7228` it landed mid-screen only because content above it moved afterwards. Focus still goes to the button. Fixed by `6590a3a`, deployed in `94deec6` (above).
 
 **Rollback:** tag `houselights-shared:pre-d997b60` as `houselights-shared:local`, set `RELEASE_COMMIT=02f7228e0203bbc2b714a54f678c6b53a34e58b0`, check out that commit, then run `up --no-build -d houselights` with both Compose files. Then force-recreate the `https` service so Caddy reads that commit's Caddyfile.
 
