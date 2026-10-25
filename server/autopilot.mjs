@@ -390,7 +390,10 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
 
   const final = optimizeSlate(items, baseConstraints);
   const finalQuestions = questions([...phaseAContexts(), ...stressContexts]);
-  const status = interrupted || phaseA.stop === 'provider_unavailable' || phaseC.stop === 'provider_unavailable' ? 'partial' : 'complete';
+  // A run is partial when it was interrupted, lost the provider, or used any Qloo answer
+  // that came back partial or degraded: its evidence is incomplete, so it is never 'complete'.
+  const incompleteAnswers = receipts.filter(row => ['partial', 'degraded'].includes(row.status));
+  const status = interrupted || phaseA.stop === 'provider_unavailable' || phaseC.stop === 'provider_unavailable' || incompleteAnswers.length ? 'partial' : 'complete';
   const outputItems = items.map(({ id, name, found, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, affinity: score, fitBasis: basis }) => ({ id, name, found: found === true, fit, rank, of, local, momentum, evidence, evidenceReceipts, terms, rankCoverage, ...(usesAffinity ? { affinity: score ?? null, fitBasis: basis ?? null } : {}) }));
   const ties = tieSensitivity(items, baseConstraints), comparability = rankComparability(items);
   const result = { version: AUTOPILOT_VERSION, policy, status, mode, city, currency, constraints: baseConstraints, briefChanged: options.briefChanged,
@@ -517,7 +520,9 @@ export async function runAutopilot(source, raw = {}, { research = null, now = Da
     if (openMaterial.length) push('recommendation', `Resolve ${openMaterial.length} open decision-relevant evidence question(s) before booking: ${openMaterial.slice(0, 3).map(row => row.question).join(' ')}`);
     const changed = !same(history[0].selectedIds, slate.selectedIds);
     const researched = observations.length;
-    const researchVerdict = status === 'partial' ? `Partial run (${result.stop.decision === 'interrupted' || result.stop.followup === 'interrupted' ? 'interrupted' : 'provider unavailable'}): ${researched} research action(s) returned before stopping. Open questions are listed; nothing was substituted.`
+    const researchVerdict = status === 'partial' && incompleteAnswers.length && !interrupted && phaseA.stop !== 'provider_unavailable' && phaseC.stop !== 'provider_unavailable'
+      ? `Partial evidence: ${incompleteAnswers.length} Qloo answer(s) came back partial or degraded (${[...new Set(incompleteAnswers.map(row => row.tool))].join(', ')}). The decision uses what was returned and is provisional; nothing was substituted.`
+      : status === 'partial' ? `Partial run (${result.stop.decision === 'interrupted' || result.stop.followup === 'interrupted' ? 'interrupted' : 'provider unavailable'}): ${researched} research action(s) returned before stopping. Open questions are listed; nothing was substituted.`
       : !researched ? (research ? 'No research action was needed: no open gap could change a strategy or justify a booked act.' : 'Planning mode: no research was executed; the open questions are listed in priority order.')
         : changed ? `Research changed the decision from ${names(history[0].selectedIds)} to ${names(slate.selectedIds)} (${history.filter(row => row.cause).map(row => `${row.cause.questionId} via ${row.cause.receiptId}`).join('; ')}).`
           : `${researched} research action(s) returned; the decision did not change because ${strategy.margin?.points != null ? `the winning margin is ${strategy.margin.points} policy points and ` : ''}no combination of tested outcomes could alter the selection. The new evidence completes the justification for booked and fallback acts.`;

@@ -1,3 +1,4 @@
+// @ts-check
 // A small slate is exhaustively searchable. Keep economics, evidence and policy
 // preferences separate so that every chosen trade-off can be inspected.
 const MAX_CANDIDATES = 20;

@@ -1,3 +1,4 @@
+// @ts-check
 // Evidence integrity for Autopilot records.
 //
 // Three separate properties are reported and never conflated:

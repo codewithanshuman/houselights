@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["es2023"],
+    "types": ["node"],
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true
+  },
+  "files": ["server/optimizer.mjs", "server/affinity.mjs", "server/autopilot-integrity.mjs", "server/autopilot-replay.mjs"]
+}

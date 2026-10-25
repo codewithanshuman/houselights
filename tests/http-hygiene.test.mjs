@@ -62,3 +62,20 @@ test('public judge reads and identical experiments are served from the server ca
   assert.equal(a.headers.get('x-cache'), 'miss');assert.equal(b.headers.get('x-cache'), 'hit', 'key order does not matter');
   assert.deepEqual((await a.json()).snapshot.memo.slate.selectedIds, (await b.json()).snapshot.memo.slate.selectedIds);
 });
+
+test('a flood of forged ballots is rejected without storing anything, then rate-limited', async () => {
+  db.prepare('DELETE FROM quotas').run();
+  const before = db.prepare('SELECT COUNT(*) n FROM ballots').get().n;
+  const statuses = [];
+  for (let i = 0; i < 40; i++) {
+    const response = await fetch(`${url}/api/reviews/study-${i}/ballot`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-review-token': `forged-token-${i}` }, body: JSON.stringify({ judgments: [{ caseId: 'x', preference: 'a', reason: 'flood' }] }) });
+    statuses.push(response.status);
+  }
+  assert.ok(statuses.every(status => status >= 400 && status < 500), `no 5xx under a ballot flood: ${[...new Set(statuses)]}`);
+  assert.equal(db.prepare('SELECT COUNT(*) n FROM ballots').get().n, before, 'no forged ballot is stored');
+  // Sustained abuse from one address reaches the persistent per-IP limit.
+  let limited = null;
+  for (let i = 0; i < 200 && !limited; i++) { const response = await fetch(`${url}/api/reviews/flood/ballot`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }); if (response.status === 429) limited = response; }
+  assert.ok(limited, 'the per-IP limit engages');assert.ok(Number(limited.headers.get('retry-after')) >= 1);
+  db.prepare('DELETE FROM quotas').run();
+});

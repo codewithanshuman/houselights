@@ -230,3 +230,26 @@ test('every published record describes fit with the scoring version that produce
     for(const [other,pattern] of Object.entries(expected))if(other!==version)assert.doesNotMatch(markdown,pattern,`${path} must not describe ${other} scoring`);
   }
 });
+
+test('failure paths are always labelled partial: provider killed mid-run, quota exhausted, partial or degraded answers',async()=>{
+  // Provider dies after its first answer.
+  let n=0;const dying=client(tool=>{n++;return n>1?new Error('ECONNRESET: provider process exited'):favourable(tool);});
+  const killed=await runAutopilot(interacting(),{maxCalls:6},{research:dying.research,mode:'live'});
+  assert.equal(killed.status,'partial');assert.equal(killed.receipts.length,1);assert.ok(killed.failures.length>=1);
+  assert.match(killed.packet.research.verdict,/^Partial run \(provider unavailable\)/);
+  // Every call is rate limited.
+  const quota=client(()=>({status:'error',evidence:{error:'RATE_LIMITED'}}));
+  const limited=await runAutopilot(interacting(),{maxCalls:6},{research:quota.research,mode:'live'});
+  assert.equal(limited.status,'partial');assert.match(limited.packet.research.verdict,/^Partial run/);
+  // Regression: partial or degraded Qloo answers used to produce status 'complete'.
+  for(const answerStatus of ['partial','degraded']){
+    const incomplete=client(tool=>({...favourable(tool),status:answerStatus}));
+    const run=await runAutopilot(interacting(),{maxCalls:6},{research:incomplete.research,mode:'live'});
+    assert.equal(run.status,'partial',answerStatus);
+    assert.match(run.packet.research.verdict,/^Partial evidence: \d+ Qloo answer\(s\) came back partial or degraded/,answerStatus);
+    assert.equal(run.packet.status,'partial');
+  }
+  // A spent call budget is not a failure: research was sufficient, follow-up was out of budget.
+  const budget=await runAutopilot(interacting(),{maxCalls:1},{research:client(favourable).research,mode:'live'});
+  assert.equal(budget.status,'complete');assert.equal(budget.stop.followup,'budget_exhausted');
+});

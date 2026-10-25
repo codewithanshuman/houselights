@@ -1,3 +1,4 @@
+// @ts-check
 // Qloo affinity scores, near-tie bands and rank comparability.
 //
 // Qloo's rank tool returns an affinity score for every ranked entity. Ordinal
