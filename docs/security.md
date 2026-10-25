@@ -47,6 +47,8 @@ X-Request-Id: <per request>
 
 `TRUST_PROXY=1` is correct only with exactly one trusted proxy hop in front of the app; production has one (Caddy). The live check is in [shared Oracle host](shared-oracle-host.md).
 
+Checked live on 25 October 2026 (release `02f7228`): 200 requests to `/api/judge/cases` within one minute, each with a different forged `X-Forwarded-For`, returned 180 × 200 then 20 × 429. The per-address limit (180 a minute) applied to the real client address, so a forged header cannot dodge rate limits.
+
 ## Integrity of evidence
 
 Receipts carry content digests, and published records carry manifests pinned in source (`server/autopilot-pins.mjs`). Qloo responses are unsigned, so these digests show that a record is unchanged since capture, not that Qloo produced it.
