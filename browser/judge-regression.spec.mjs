@@ -781,7 +781,7 @@ test('the evidence page lists every claim with its status, limit and a copyable 
   const rows = page.locator('#claim-table-body tbody tr');
   await expect(rows).toHaveCount(table.rows.length);
   await expect(rows.filter({ hasText: 'Blind reviews' })).toContainText('0 completed so far');
-  await expect(rows.filter({ hasText: 'Ticket sales' })).toContainText('not measured');
+  await expect(rows.filter({ hasText: 'from following Houselights' })).toContainText('not measured');
   await expect(rows.first()).toContainText('ticket sales are not measured; fees are illustrative');
   await rows.first().getByRole('button', { name: /Copy command/ }).click();
   await expect(page.locator('#copy-status')).toHaveText(`Copied: ${table.rows[0].reproduce}`);
