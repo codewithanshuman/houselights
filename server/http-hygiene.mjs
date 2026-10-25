@@ -3,6 +3,8 @@
 // 0.5-CPU host; responses still carry Cache-Control: no-store, so browsers and proxies
 // always revalidate and updated cases appear at once.
 import { randomUUID } from 'node:crypto';
+import { readFileSync, statSync } from 'node:fs';
+import { join as joinPath, normalize, sep } from 'node:path';
 
 const SAFE_ID = /^[A-Za-z0-9._-]{8,64}$/;
 export function requestContext(req, res, next) {
@@ -54,4 +56,32 @@ export function publicReadCache(req, res, next) {
 // Unknown API routes answer in the same JSON shape instead of falling through to HTML.
 export function unknownApiRoute(req, res) {
   res.status(404).json({ error: `Unknown API route: ${req.method} ${req.path}` });
+}
+
+// Static assets with safe long-term caching. HTML pages are served with every local
+// script and stylesheet URL stamped ?v=<release>, so those assets can be immutable:
+// a new release changes the URL. HTML and unstamped CSS/JS always revalidate (ETag);
+// fonts and images, whose names change when their content does, are cached for a week.
+const htmlCache = new Map();
+export function staticAssets(root, express) {
+  const release = (process.env.RELEASE_COMMIT || `dev-${Date.now().toString(36)}`).slice(0, 12);
+  const stamp = html => html.replace(/(<(?:script|link)\b[^>]*?\b(?:src|href)=")(\/[\w./-]+\.(?:js|css))(")/g, `$1$2?v=${release}$3`);
+  const pages = (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    const path = req.path === '/' ? '/index.html' : req.path;
+    if (!path.endsWith('.html')) return next();
+    const file = normalize(joinPath(root, path));
+    if (!file.startsWith(normalize(root) + sep)) return next();
+    let mtime; try { mtime = statSync(file).mtimeMs; } catch { return next(); }
+    let entry = htmlCache.get(file);
+    if (!entry || entry.mtime !== mtime) { entry = { mtime, body: stamp(readFileSync(file, 'utf8')) }; htmlCache.set(file, entry); }
+    res.set('Cache-Control', 'no-cache').type('html').send(entry.body);
+  };
+  const files = express.static(root, { cacheControl: false, setHeaders(res, path) {
+    const versioned = res.req?.query?.v === release;
+    if (/\.(js|css)$/.test(path)) res.set('Cache-Control', versioned ? 'public, max-age=31536000, immutable' : 'no-cache');
+    else if (/\.(woff2|webp|png|jpg|svg|ico|gif)$/.test(path)) res.set('Cache-Control', 'public, max-age=604800');
+    else res.set('Cache-Control', 'no-cache');
+  } });
+  return [pages, files];
 }

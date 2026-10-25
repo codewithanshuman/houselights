@@ -1,5 +1,7 @@
 # Autopilot 2.0 milestone report
 
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see [Autopilot](autopilot.md) and the [claims audit](claims-audit.md).
+
 Development branch only. Production is not changed, and nothing is merged to `main`.
 
 ## What now works end to end

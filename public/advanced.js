@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const e=escapeHTML;
-  document.querySelector('link[href="/theme.css"]').insertAdjacentHTML('beforebegin','<link rel="stylesheet" href="/advanced.css">');
+  document.querySelector('link[href^="/theme.css"]').insertAdjacentHTML('beforebegin','<link rel="stylesheet" href="/advanced.css">');
   let eventSequence=0, portfolio=null, batch=null, busy=false;
   document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend','<button class="nav-item" data-view="portfolio"><span class="ui-icon nav-icon" data-icon="layers" aria-hidden="true"></span>Event portfolio<span class="nav-key">06</span></button><button class="nav-item" data-view="evaluation"><span class="ui-icon nav-icon" data-icon="compare" aria-hidden="true"></span>Independent evaluation<span class="nav-key">07</span></button>');
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin',`<section class="view" id="view-portfolio" aria-label="Event portfolio" hidden>

@@ -134,7 +134,7 @@
   // missing or non-numeric input, and clamping to $0-$10,000,000 with a note.
   const BUDGET_MAX=10000000;
   function readBudget(){
-    const field=$('judge-budget'),error=$('judge-budget-error'),raw=String(field.value).trim().replace(/[$,s]/g,''),value=Number(raw);
+    const field=$('judge-budget'),error=$('judge-budget-error'),raw=String(field.value).trim().replace(/[$,\s]/g,''),value=Number(raw);
     const fail=message=>{field.setAttribute('aria-invalid','true');if(error){error.textContent=message;error.hidden=false;}field.focus();return null;};
     if(!raw)return fail('Enter an artist budget in US dollars, for example 14500.');
     if(!Number.isFinite(value))return fail('The budget must be a number of US dollars, for example 14500.');

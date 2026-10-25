@@ -1,5 +1,7 @@
 # Flagship AI booking desk
 
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see the four-step Booking Desk described in the [README](../README.md).
+
 The public judge page now connects a saved brief, recorded Qloo research, a local signal laboratory, interactive booking constraints and a promoter decision report in one continuous workflow. It retains the existing optimizer, authentication boundaries, public source records and exact experiment endpoints.
 
 ## Autopilot (October 2026)

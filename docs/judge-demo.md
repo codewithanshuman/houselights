@@ -1,5 +1,7 @@
 # One public demo path: a slate under pressure
 
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see the four-step Booking Desk described in the [README](../README.md).
+
 In this working copy, open the [recorded New York research run](/judge.html#8be4d03ef4792ca9f1466983) on the running application. Production needs a separate authorized deployment. This path requires no login and makes no new provider calls. Its source was a genuine provider-backed `/api/memo` run on 2026-10-23, not a fresh run on every visit. The curated projection contains 31 recorded application events, including one model-selected evidence-check plan, and 18 linked live-Qloo receipts. It does not contain private model reasoning.
 
 1. **Review the brief and actual research sequence.** The agent resolved six artists including the anchor, requested discovery and ranking, recorded a model-selected deep-check plan, then called Qloo for trends, local relevance and audience comparison before the exact optimizer ran. Expand the complete event log to verify elapsed order and receipt links. The eight-artist candidate pool includes three discovered artists with unknown booking fees, so only five offered acts have illustrative terms. The four earlier cases still have receipts but no model-step log and are labeled accordingly.

@@ -1,3 +1,20 @@
 {$PUBLIC_HOSTNAME} {
+    # Compress text assets and JSON. Standard Caddy has zstd and gzip; Brotli would need
+    # a custom build. Server-sent event streams are excluded so they are never buffered.
+    encode {
+        zstd
+        gzip
+        match {
+            header Content-Type text/html*
+            header Content-Type text/css*
+            header Content-Type text/javascript*
+            header Content-Type application/javascript*
+            header Content-Type application/json*
+            header Content-Type image/svg+xml*
+            header Content-Type text/plain*
+            header Content-Type text/markdown*
+        }
+    }
+    header Strict-Transport-Security "max-age=31536000"
     reverse_proxy houselights:8080
 }

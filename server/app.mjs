@@ -18,7 +18,7 @@ import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived, preserveRankProvenance } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode, routeQuota } from './access.mjs';
-import { requestContext, publicReadCache, unknownApiRoute } from './http-hygiene.mjs';
+import { requestContext, publicReadCache, unknownApiRoute, staticAssets } from './http-hygiene.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
 import { registerOperationalRoutes } from './operational-evidence.mjs';
@@ -147,7 +147,7 @@ export function createApp() {
   registerPortfolioRoutes(app);
   registerBenchmarkRoutes(app);
   if(process.env.PUBLIC_LANDING_PAGE==='judge')app.get('/',(_req,res)=>res.redirect(302,'/judge.html'));
-  app.use(express.static(pub));
+  app.use(...staticAssets(pub, express));
   app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),
     protected:protectedMode(),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));

@@ -28,3 +28,5 @@ Verification:
   LLM lineup as violating the lowered budget. No provider call was needed.
 
 Production deployment verification is recorded separately in ignored artifacts.
+
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see the shared design tokens and components in `public/site.css`.

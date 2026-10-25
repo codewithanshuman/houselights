@@ -1,5 +1,7 @@
 # Response to the complete drawbacks audit
 
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see the [claims audit](claims-audit.md), which tracks every claim's current status.
+
 24 October 2026. This document takes each item in the audit and puts it in one of four groups:
 
 - **Fixed.** Fixed in code, with a test that failed before the fix.

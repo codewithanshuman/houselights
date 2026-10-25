@@ -30,7 +30,7 @@ function previewGauntletChallenge(id) {
 function installGauntletUI() {
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet'; stylesheet.href = '/gauntlet.css';
-  document.head.insertBefore(stylesheet, document.querySelector('link[href="/theme.css"]'));
+  document.head.insertBefore(stylesheet, document.querySelector('link[href^="/theme.css"]'));
   $('memo-notes').insertAdjacentHTML('beforebegin', '<section class="gauntlet-invite"><div><p class="small-label">THE DECISION GAUNTLET</p><h3>Can your slate survive the room?</h3><p>Six server-verified missions test cost pressure, discovery, diversity, evidence, resilience, and conviction.</p></div><button id="enter-gauntlet" type="button" class="button dark">Enter the Gauntlet <span class="ui-icon" data-icon="trophy" aria-hidden="true"></span></button></section>');
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gauntlet" aria-label="Decision Gauntlet" hidden><header class="gauntlet-arena" aria-labelledby="gauntlet-heading">
   <div class="arena-marquee"><span><i class="ui-icon" data-icon="sparkles" aria-hidden="true"></i> THE HOUSELIGHTS CHALLENGE SERIES</span><span>06 CHALLENGES · ONE LINEUP</span></div>

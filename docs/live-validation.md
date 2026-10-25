@@ -76,6 +76,8 @@ The LLM-only column remains explicitly unavailable because no real control was g
 - Groq is selected with `openai/gpt-oss-120b`, but `GROQ_API_KEY` is absent. The browser correctly reports the missing configuration and refuses a genuine benchmark. Transport tests use an explicit stub; they are **not live model results**. No actual model performance or Qloo-versus-LLM improvement is claimed.
 - Blind review now supports venue programmers, festival organizers, artist bookers and audience members, with optional cultural-fit, breadth and practicality ratings. API tests verify roles, genuine-generation gates, stale briefs, first-trial selection, and concealed source labels using isolated test data. **No real external judgments were collected or invented.** See [the evaluation protocol](evaluation-protocol.md).
 
+> **Superseded (25 October 2026).** This document describes an earlier state and is kept for the record. For the current state see the deployment records in [shared Oracle host](shared-oracle-host.md).
+
 ## Persistent research and six-archive audit — 17 October 2026
 
 - Reidentified all six supplied archives by SHA-256 and checked the relevant research, storage, replay, logistics, inspection and analysis modules against the existing mappings. [Capability status](archive-capability-status.md) records the meaningful omissions explicitly.
