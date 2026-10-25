@@ -37,7 +37,7 @@ The [claims audit](claims-audit.md) has every claim, with its reproduction comma
 - [x] The GitHub default branch `main` was fast-forwarded on 24 October to the deployed, verified commit `bd376df`. It was at `e7dd977`. Nothing was overwritten.
 - [x] Production disk cleaned on 24 October: 95% → 78% full. Only old Houselights images were removed; every backup and the recent rollback images were kept.
 - [ ] Set the GitHub repository description and homepage link (both are empty). This needs the owner's signed-in account: open **Settings → About** on the repository page.
-  - **Description:** Booking decisions for live events, grounded in Qloo cultural evidence: an exact lineup optimizer, receipts for every claim, and honest limits.
+  - **Description:** Booking decisions for live events, grounded in Qloo cultural evidence: an exact bill optimizer, receipts for every claim, and honest limits.
   - **Website:** https://houselights.80-225-218-239.sslip.io/judge.html
   - **Topics:** qloo, hackathon, live-events, booking, optimization, decision-support
 - [ ] Run the [usability test kit](usability-test-kit.md) with real participants if time allows. Otherwise keep the zero-evidence disclosure.
@@ -59,7 +59,7 @@ Invitations go only to real people who have agreed to take part. No reviewer has
 To run the study:
 
 1. List at least 5 reviewers. Give each a role: `venue_programmer`, `festival_organizer`, `artist_booker`, `audience_member` or `other`.
-2. Create the study from the 5 briefs whose lineups differ: Berlin, New York, London, Amsterdam and Toronto. The 3 identical pairs can only produce ties; see the [claims audit](claims-audit.md).
+2. Create the study from the 5 briefs whose bills differ: Berlin, New York, London, Amsterdam and Toronto. The 3 identical pairs can only produce ties; see the [claims audit](claims-audit.md).
 3. Send each person their private link using the [invitation draft](reviewer-invitation-drafts.md).
 4. Set `PUBLIC_STUDY_ID` on the server, so `/evidence.html` shows live counts.
 

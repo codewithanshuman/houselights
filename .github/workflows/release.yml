@@ -36,6 +36,8 @@ jobs:
       # the official Qloo harness and has no fix yet; it is recorded in docs/security.md.
       - name: Quoted numbers match the results JSON
         run: npm run claims:check
+      - name: Links in README and docs (relative links and anchors)
+        run: npm run check:links
       - name: Dependency audit
         run: npm audit --omit=dev --audit-level=critical
       - run: npm test

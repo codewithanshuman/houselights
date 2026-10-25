@@ -50,7 +50,8 @@
     "claims:update": "node scripts/claims.mjs --update",
     "evaluate:sensitivity": "node scripts/evaluate-sensitivity.mjs",
     "evaluate:rank-vs-optimum": "node scripts/evaluate-rank-vs-optimum.mjs",
-    "secret-scan": "node scripts/secret-scan.mjs"
+    "secret-scan": "node scripts/secret-scan.mjs",
+    "check:links": "node scripts/check-links.mjs"
   },
   "keywords": [],
   "author": "",

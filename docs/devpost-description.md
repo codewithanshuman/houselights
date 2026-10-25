@@ -2,11 +2,11 @@
 
 ## Inspiration
 
-Talent buyers often know the room they want to fill. They still have to turn audience taste, artist availability, fees and programming rules into one lineup they can defend. A popular artist can be a poor fit for a particular market, and a strong recommendation can fall apart as soon as a quote rises or a headliner cancels. Houselights treats the whole booking decision as the unit of work.
+Talent buyers often know the room they want to fill. They still have to turn audience taste, artist availability, fees and programming rules into one bill they can defend. A popular artist can be a poor fit for a particular market, and a strong recommendation can fall apart as soon as a quote rises or a headliner cancels. Houselights treats the whole booking decision as the unit of work.
 
 ## What it does
 
-Houselights makes constraint-correct, auditable booking decisions with Qloo receipts. A promoter gives it a city, the artists whose audience they want, candidate acts, fees, availability and booking rules. It uses Qloo audience affinity to rank the candidates, finds the best lineup that satisfies every rule, and links each conclusion to the saved Qloo response behind it.
+Houselights makes constraint-correct, auditable booking decisions with Qloo receipts. A promoter gives it a city, the artists whose audience they want, candidate acts, fees, availability and booking rules. It uses Qloo audience affinity to rank the candidates, finds the best bill that satisfies every rule, and links each conclusion to the saved Qloo response behind it.
 
 **The two-minute path.** The public Booking Desk (no sign-in) opens straight into it:
 
@@ -24,7 +24,7 @@ Beyond that path:
 ## How we built it
 
 - **Backend:** Node.js 24 with the official Qloo MCP harness. The agent plans bounded Qloo workflows, and each call leaves a receipt recording its query, status and evidence.
-- **Optimizer:** an exact optimizer enumerates every feasible lineup under the budget, slot, fee, availability, lock, exclusion, discovery and genre rules, and reports infeasibility explicitly. Cultural fit uses Qloo affinity scores on a fixed scale, so tiny gaps stay tiny. Pairs within 0.002 are flagged as near-ties and handed to the promoter.
+- **Optimizer:** an exact optimizer enumerates every feasible bill under the budget, slot, fee, availability, lock, exclusion, discovery and genre rules, and reports infeasibility explicitly. Cultural fit uses Qloo affinity scores on a fixed scale, so tiny gaps stay tiny. Pairs within 0.002 are flagged as near-ties and handed to the promoter.
 - **Models and storage:** optional Groq model calls supply tool-free baseline controls. SQLite persists events, decisions, traces and quotas.
 - **Hosting:** the public demo runs on an existing free Oracle ARM VM behind HTTPS. Each deployment is backed up and rehearsed for rollback.
 
@@ -37,10 +37,10 @@ All figures below are reproduced offline by the commands named in the [claims au
   - Where Qloo's top-k acts were bookable, the optimizer chose differently in <!--claim:rankDiffers-->11.7%<!--/claim--> of cases (<!--claim:rankDiffersCount-->177 of 1,517<!--/claim-->), all in the one brief with a near-tie at the selection boundary. Evidence influences the decision; ticket sales are not measured; fees are illustrative.
   - Its main contribution is constraint handling. In <!--claim:unbookable-->58%<!--/claim--> of scenarios the top-k could not be booked: it found the best bookable bill in 1,380 and reported that none exists in 703.
   - With the older ordinal fit it never differed (<!--claim:rankDiffersOrdinal-->0%<!--/claim-->). We report that too.
-- **Constraint safety (by construction):** an exact optimizer cannot propose a lineup that breaks a hard rule. For comparison, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) did so on comparable solvable shocks. That shows a design property, not better judgement.
+- **Constraint safety (by construction):** an exact optimizer cannot propose a bill that breaks a hard rule. For comparison, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - <!--claim:unitTests-->335<!--/claim--> unit tests and <!--claim:browserTests-->44<!--/claim--> browser tests: an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge path in Chromium, Firefox and WebKit;
+  - <!--claim:unitTests-->335<!--/claim--> unit tests and <!--claim:browserTests-->45<!--/claim--> browser tests: an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge path in Chromium, Firefox and WebKit;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 
