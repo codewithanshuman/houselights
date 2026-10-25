@@ -200,6 +200,13 @@
 .receipt-digest{word-break:break-all}
 .data-table tr.is-highlight th,.data-table tr.is-highlight td{background:var(--pp-accent-soft);font-weight:600}
 
+/* Photo band: owner supplied concert hall with a glass caption (no background gradients) */
+.photo-band{position:relative;margin:96px 0 0;border-radius:32px;overflow:hidden;background:#1F1F1F;aspect-ratio:1200/620;max-height:620px}
+.photo-band img{display:block;width:100%;height:100%;object-fit:cover}
+.photo-band-caption{position:absolute;left:32px;bottom:32px;max-width:440px;padding:24px;border-radius:24px;background:#FFFFFFd9;border:1px solid #FFFFFF99;backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 12px 32px #1111112e}
+.photo-band-caption h2{margin:0;font:600 30px/36px 'Geist',sans-serif;letter-spacing:-.8px;color:var(--pp-ink)}
+.photo-band-caption p:last-child{margin:12px 0 0;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-soft)}
+
 /* Tagline: each word lights up as it crosses the reading line */
 .tagline{padding:128px 0 96px;display:flex;justify-content:center}
 .tagline-text{margin:0;max-width:880px;text-align:center;font:600 48px/1.12 'Geist',sans-serif;letter-spacing:-1.4px;color:var(--pp-ink)}
@@ -271,4 +278,8 @@
   .section-title,.result-decision,.tagline-text{font-size:30px;line-height:36px}
   .tagline{padding:96px 0 64px}
   .final-cta{padding:64px 24px;border-radius:24px}
+  .photo-band{aspect-ratio:auto;max-height:none;border-radius:24px;margin-top:64px}
+  .photo-band img{height:260px}
+  .photo-band-caption{position:static;max-width:none;border-radius:0;border:0;background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
+  .photo-band-caption h2{font-size:24px;line-height:32px}
 }

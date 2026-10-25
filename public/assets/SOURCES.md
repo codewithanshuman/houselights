@@ -2,7 +2,8 @@
 
 ## Booking Desk landing — 25 October 2026
 
-- `brand/cards/{crowd,jazz,headphones,disc,record-frames}.webp` are 480 × 600 crops, made with Pillow, of the owner-supplied artwork listed below. They are used only as decorative cards in the Booking Desk hero, between real product cards. They are not Qloo evidence and not photographs of recommended acts.
+- On 25 October 2026 the owner supplied four more images and stated the project has the rights to publish them. The originals are kept, unserved, in `design/source-assets/brand/`: `turntable-galaxy.webp`, `flowers-collage.webp`, `sunflower-hand.webp` and `concert-hall.webp`. Three further supplied images were deliberately not used: concert photos of a recognisable real artist (one watermarked) and a real album cover with its title. On a booking product these could read as an endorsement or as recommended acts.
+- `brand/cards/{turntable-galaxy,flowers-collage,sunflower-hand}.webp` are 480 × 600 crops, made with Pillow. The turntable crop excludes the album sleeve and its title. `brand/cards/jazz.webp` is a crop of the earlier supplied `jazz.webp`. `brand/concert-hall-band.webp` is a 1200 × 680 crop of the concert hall. All are decorative: they are not Qloo evidence and not photographs of recommended acts.
 - `fonts/geist-variable.woff2` is Geist by Vercel (SIL Open Font License 1.1, `fonts/OFL-geist.txt`), taken from the `geist` npm package version 1.3.1 and subset with fontTools to Latin and the symbols the site uses. It is used only on the Booking Desk.
 
 ## Light identity — 21 October 2026
