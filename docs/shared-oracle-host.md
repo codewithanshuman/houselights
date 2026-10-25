@@ -1,5 +1,27 @@
 # Sharing an existing Oracle server
 
+## Deployment of 7a9b224 — 25 October 2026
+
+The public host runs `7a9b2241f8737cbff76fca3060a68f27c5ed8784`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release rebuilds the Booking Desk around "Plan a show", adds the public live-plan route `POST /api/plan`, and keeps the previous page as `/desk.html`.
+
+- **Before the switch:**
+  - The backup `pre-7a9b224` passed an isolated restore (status verified, integrity ok). A copy is held off-host.
+  - The running image was tagged `houselights-shared:pre-7a9b224`.
+  - Rollback drill: that image ran on a restored database copy. It reported `94deec6`, served 12 cases and logged no errors, and it was removed afterwards.
+  - CI passed on the commit.
+- **Switch:**
+  - Exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build.
+  - Only the app container was recreated, because the Caddyfile is unchanged.
+  - Every other container and the livestream PID were unchanged. Disk use is 86%.
+- **Checks:**
+  - `release:verify` passed all 86 checks, including the new plan-form check. An immediate second run hit the per-IP limit of 20 experiments a minute, as before.
+  - In Chromium, Firefox and WebKit, at phone and desktop sizes, the new Booking Desk shows the featured bill, and the Qloo switch changes it. The receipt drawer opens, nothing overflows and no page logs a console error.
+  - Lighthouse on the live Booking Desk: 99 on mobile (LCP 1.7 s, CLS 0.014) and 100 on desktop. Accessibility scored 100 on both.
+  - **One live "Plan a show" run on production**, through the page: Austin, fans of Khruangbin, $25,000, 3 acts. It took 13.7 seconds and 11 Qloo calls. It booked SAULT + Glass Beams + Common Saints for $17,500 (estimated fees). With Qloo off, the same rules book Mildlife + Common Saints + Robohands for $8,000.
+- **Issue found:** the plan's first Qloo-off request was refused with 429, because the verification runs had just used this address's experiment limit. The note then stayed on "Checking…". The page now says the comparison could not load and lets the switch retry; that fix is on `development` and is not deployed.
+
+**Rollback:** tag `houselights-shared:pre-7a9b224` as `houselights-shared:local`, set `RELEASE_COMMIT=94deec6f6b022a6c94082041694d92413d97ec8a`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 94deec6 — 25 October 2026
 
 The public host runs `94deec6f6b022a6c94082041694d92413d97ec8a`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release fixes the regression found after `d997b60`: in-page jumps now land below the sticky step bar. On screens under 1,300 px tall, the experiment form now scrolls with the page instead of staying fixed.

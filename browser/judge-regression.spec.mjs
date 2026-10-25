@@ -857,6 +857,20 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('.result-meta')).toContainText('Leeds');
   });
 
+  test('when the server refuses an experiment, the page says so and the switch stays put', async ({ page }) => {
+    await page.route('**/experiment', route => route.fulfill({ status: 429, headers: { 'retry-after': '30', 'content-type': 'application/json' }, body: '{"error":"Experiment limit reached."}' }));
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#plan-switch-note')).toHaveText('The comparison without Qloo could not load just now. Use the switch to try again.');
+    await page.locator('#plan-switch').click();
+    await expect(page.locator('#result-status')).toContainText('Too many changes at once');
+    await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+    await page.unroute('**/experiment');
+    await page.locator('#plan-switch').click();
+    await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+  });
+
   test('invalid input is explained inline and nothing is sent', async ({ page }) => {
     let planned = false;
     page.on('request', request => { if (request.url().endsWith('/api/plan')) planned = true; });

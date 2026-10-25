@@ -46,7 +46,7 @@
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
-      experiment({qlooOff:true}).then(data=>{if(view?.record.id===record.id){view.off=data.snapshot;render();}}).catch(()=>{});
+      experiment({qlooOff:true}).then(data=>{if(view?.record.id===record.id){view.off=data.snapshot;render();}}).catch(problem=>{if(view?.record.id===record.id){view.offError=problem;render();}});
     }catch(problem){
       state(result,{kind:problem.kind??'server',title:problem.status===404?'Plan not found':undefined,text:problem.status===404?'This plan link is not valid. Open a saved plan above.':problem.message,retry:()=>openCase(id,{scroll})});
     }finally{result.setAttribute('aria-busy','false');}
@@ -60,11 +60,11 @@
     if(view.cancelId)body.cancelId=view.cancelId;
     if(view.qlooOff)body.qlooOff=true;
     const status=$('result-status');
-    if(!Object.keys(body).length){view.current=view.base;render();return;}
-    if(Object.keys(body).length===1&&body.qlooOff&&view.off){view.current=view.off;render();return;}
+    if(!Object.keys(body).length){view.current=view.base;render();return true;}
+    if(Object.keys(body).length===1&&body.qlooOff&&view.off){view.current=view.off;render();return true;}
     result.setAttribute('aria-busy','true');
-    try{const data=await experiment(body);view.current=data.snapshot;render();}
-    catch(problem){if(status)status.textContent=problem.status===429?'Too many changes at once. Wait a minute and try again; the last result is still shown.':`${problem.message} The last result is still shown.`;}
+    try{const data=await experiment(body);if(Object.keys(body).length===1&&body.qlooOff){view.off=data.snapshot;view.offError=null;}view.current=data.snapshot;render();return true;}
+    catch(problem){if(status)status.textContent=problem.status===429?'Too many changes at once. Wait a minute and try again; the last result is still shown.':`${problem.message} The last result is still shown.`;return false;}
     finally{result.setAttribute('aria-busy','false');}
   }
 
@@ -99,7 +99,7 @@
         <p id="plan-switch-note" class="result-qloo-note">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
           ?`Without Qloo evidence, the same rules book the same bill. Here Qloo explains the choice but does not change it.`
           :`Without Qloo evidence, the same rules book <strong>${e(offBill.join(' + '))}</strong> for ${e(usd(offFee))}. Qloo changes this decision.`)
-          :'Checking what the same rules book without Qloo…'}</p>
+          :view.offError?'The comparison without Qloo could not load just now. Use the switch to try again.':'Checking what the same rules book without Qloo…'}</p>
       </div>
       ${actSections()}
       <div class="result-controls" aria-labelledby="controls-title">
@@ -151,7 +151,9 @@
     const say=text=>{const status=$('result-status');if(status)status.textContent=text;};
     $('plan-switch').addEventListener('click',async()=>{
       view.qlooOff=!view.qlooOff;if(view.qlooOff)view.cancelId=null;
-      await rerun();$('plan-switch').focus();
+      // A refused request leaves the shown bill unchanged, so the switch must not stay flipped.
+      if(!await rerun()){view.qlooOff=!view.qlooOff;const message=$('result-status').textContent;render();$('result-status').textContent=message;$('plan-switch').focus();return;}
+      $('plan-switch').focus();
       say(view.qlooOff?`Qloo evidence off. The bill is ${billNames(view.current).join(' and ')}.`:`Qloo evidence on. The bill is ${billNames(view.current).join(' and ')}.`);
     });
     const range=$('plan-budget-range');let timer;
