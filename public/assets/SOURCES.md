@@ -4,6 +4,10 @@
 
 - On 25 October 2026 the owner supplied four more images and stated the project has the rights to publish them. The originals are kept, unserved, in `design/source-assets/brand/`: `turntable-galaxy.webp`, `flowers-collage.webp`, `sunflower-hand.webp` and `concert-hall.webp`. Three further supplied images were deliberately not used: concert photos of a recognisable real artist (one watermarked) and a real album cover with its title. On a booking product these could read as an endorsement or as recommended acts.
 - `brand/cards/{turntable-galaxy,flowers-collage,sunflower-hand}.webp` are 480 × 600 crops, made with Pillow. The turntable crop excludes the album sleeve and its title. `brand/cards/jazz.webp` is a crop of the earlier supplied `jazz.webp`. `brand/concert-hall-band.webp` is a 1200 × 680 crop of the concert hall. All are decorative: they are not Qloo evidence and not photographs of recommended acts.
+- On 25 October 2026 the owner replaced those four originals with full-quality PNGs and supplied `footer.png`, a pen-and-ink drawing of a festival crowd, stage and bay. All are kept unserved in `design/source-assets/brand/`. The served crops were regenerated from the PNGs.
+  - `brand/footer-festival.webp` (2000 px wide) and `brand/footer-festival-phone.webp` (the stage end, for phones) are crops of `footer.png`, used as the Booking Desk footer.
+  - `brand/pill-{turntable,hall,sunflower}.webp` are small crops used as image pills in the headline.
+- Not used: `disc-music.gif` shows a real record company's label ("Columbia") and would read as an association. The owner removed the unserved `portal-logo.png` source; `portal-logo-v2.webp` and the favicon were made from it earlier.
 - `fonts/geist-variable.woff2` is Geist by Vercel (SIL Open Font License 1.1, `fonts/OFL-geist.txt`), taken from the `geist` npm package version 1.3.1 and subset with fontTools to Latin and the symbols the site uses. It is used only on the Booking Desk.
 
 ## Light identity — 21 October 2026

@@ -709,6 +709,8 @@ const PUBLIC_PAGES=['/judge.html','/desk.html','/evidence.html','/proof-lab.html
 
 test('every page passes axe WCAG 2.1 AA with no serious or critical issues, at desktop and phone width', async ({ page }) => {
   test.setTimeout(240000);
+  // Check settled colours: a fade or shimmer caught mid-animation is not a contrast failure.
+  await page.emulateMedia({reducedMotion:'reduce'});
   const failures=[];
   for(const path of PUBLIC_PAGES)for(const width of [1280,375]){
     await page.setViewportSize({width,height:900});
@@ -869,6 +871,32 @@ test.describe('Booking Desk: plan your show', () => {
     await page.locator('#plan-switch').click();
     await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+  });
+
+  test('the agent card replays the saved Qloo run, folds each stage and stays expandable @cross-browser', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`${origin}/judge.html`);
+    await page.locator('#planner').scrollIntoViewIfNeeded();
+    const card = page.locator('#agent-trace');
+    await expect(card.locator('.agent-label-text')).toHaveText('Researched in 20.5s · 18 Qloo calls');
+    await expect(card.locator('.agent-stage')).toHaveCount(7);
+    const verify = card.locator('.agent-stage').filter({ hasText: 'Check where fans are' });
+    await expect(verify.locator('.agent-stage-count')).toHaveText('8 calls');
+    await verify.locator('.agent-stage-head').click();
+    await expect(verify.locator('.agent-call')).toHaveCount(8);
+    await expect(verify.locator('.agent-chip').first()).toHaveText('Charlotte Day Wilson');
+    await expect(card.locator('.agent-foot')).toContainText('replayed at 2× speed');
+  });
+
+  test('a live plan streams its Qloo calls into the agent card', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city', 'Leeds');
+    await page.fill('#plan-anchor', 'Arlo Parks');
+    await page.locator('#plan-submit').click();
+    await expect(page.locator('#agent-caption')).toHaveText('Live run: Leeds, fans of Arlo Parks');
+    await expect(page.locator('#agent-trace .agent-label-text')).toHaveText(/^Planned with \d+ Qloo calls$/, { timeout: 30000 });
+    await expect(page.locator('#agent-trace .agent-call').first()).toBeAttached();
+    await expect(page.locator('#footer-release')).not.toHaveText('…');
   });
 
   test('invalid input is explained inline and nothing is sent', async ({ page }) => {

@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/plan.css">
   <script src="/site.js" defer></script>
+  <script src="/agent-trace.js" defer></script>
   <script src="/plan.js" defer></script>
 </head>
 <body class="plan-page">
@@ -27,7 +28,7 @@
   <main id="main" class="plan-main">
     <section class="plan-hero" aria-labelledby="hero-title">
       <p class="hero-badge"><span class="hero-badge-dot" aria-hidden="true"></span>Built with Qloo’s taste graph</p>
-      <h1 id="hero-title" class="hero-title">Book the bill your<br> city’s fans will show up for.</h1>
+      <h1 id="hero-title" class="hero-title">Book the bill <span class="title-pill title-pill-a" aria-hidden="true"><img src="/assets/brand/pill-turntable.webp" alt="" width="120" height="64"></span> your<br> city’s fans <span class="title-pill title-pill-b" aria-hidden="true"><img src="/assets/brand/pill-hall.webp" alt="" width="120" height="64"></span> will show up for.</h1>
       <p class="hero-sub">Name a city and an artist your audience loves. Houselights asks Qloo who else those fans love there, then books the best bill your budget allows, with a receipt behind every claim.</p>
       <div class="hero-actions">
         <a class="hero-cta" href="#planner">Plan a show <span aria-hidden="true">→</span></a>
@@ -66,11 +67,12 @@
         <p class="section-eyebrow">Try it on your own show</p>
         <h2 class="section-title">Plan a show in under a minute.</h2>
         <p class="section-sub">Any city, any artist your crowd already loves. Houselights runs a capped live Qloo search, ranks what it finds for that audience and books the best bill that fits.</p>
-        <ul class="planner-points">
-          <li><span aria-hidden="true">01</span>Up to 12 live Qloo calls, shown as they happen</li>
-          <li><span aria-hidden="true">02</span>Every possible bill checked against your budget</li>
-          <li><span aria-hidden="true">03</span>A shareable plan you can change and question</li>
-        </ul>
+        <section id="plan-progress" class="agent-card-wrap" aria-labelledby="agent-caption">
+          <p class="agent-caption" id="agent-caption">Watch a real saved run: New York, fans of Leon Bridges</p>
+          <div id="agent-trace" class="agent-card"><p class="agent-placeholder">Loading the saved research run…</p></div>
+          <div id="progress-choose" class="plan-choose" hidden></div>
+          <p id="progress-status" class="sr-only" role="status" aria-live="polite"></p>
+        </section>
       </div>
       <form id="plan-form" class="plan-card reveal" novalidate>
         <h3 id="plan-form-title">Plan a show</h3>
@@ -105,16 +107,6 @@
           <div id="plan-examples" class="plan-chips" role="group" aria-labelledby="examples-label"></div>
         </div>
       </form>
-    </section>
-
-    <section id="plan-progress" class="plan-progress" hidden aria-labelledby="progress-title">
-      <div class="plan-progress-head">
-        <h2 id="progress-title">Researching your show with Qloo</h2>
-        <p id="progress-calls" class="plan-calls"></p>
-      </div>
-      <ol id="progress-steps" class="plan-steps"></ol>
-      <div id="progress-choose" class="plan-choose" hidden></div>
-      <p id="progress-status" class="sr-only" role="status" aria-live="polite"></p>
     </section>
 
     <section id="plan-result" class="plan-result" aria-labelledby="result-title" aria-busy="true">
@@ -169,6 +161,25 @@
     <div class="receipt-drawer-head"><h2 id="receipt-title">Qloo receipt</h2><button type="button" class="button subtle small" id="receipt-close">Close</button></div>
     <div id="receipt-body"></div>
   </dialog>
-  <footer class="site-footer" data-site-footer></footer>
+  <footer class="plan-footer">
+    <div class="plan-footer-inner">
+      <div class="footer-brand">
+        <a class="footer-logo" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="32" height="32"><span>Houselights<span class="footer-dot">.</span></span></a>
+        <p>Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>
+        <p class="footer-release">Release <code id="footer-release">…</code></p>
+      </div>
+      <nav class="footer-cols" aria-label="Footer">
+        <div><h2>Product</h2><a href="#planner">Plan a show</a><a href="#plan-result">The decision</a><a href="/desk.html">Booking Desk lab</a></div>
+        <div><h2>Evidence</h2><a href="/evidence.html">Evidence and limits</a><a href="/proof-lab.html">Qloo Proof Lab</a><a href="https://github.com/codewithanshuman/houselights/blob/main/docs/claims-audit.md">Claims audit</a></div>
+        <div><h2>Project</h2><a href="https://github.com/codewithanshuman/houselights">Source on GitHub</a><a href="https://github.com/codewithanshuman/houselights/blob/main/docs/security.md">Security</a><a href="https://github.com/codewithanshuman/houselights/blob/main/LICENSE">MIT license</a></div>
+        <div><h2>Built for</h2><p>The Qloo Agentic Hackathon 2026, on Qloo’s taste graph.</p></div>
+      </nav>
+    </div>
+    <p class="footer-legal">Fees on saved plans are illustrative and fees for new acts are estimates. Nothing is booked.</p>
+    <picture class="footer-art">
+      <source media="(max-width: 640px)" srcset="/assets/brand/footer-festival-phone.webp">
+      <img src="/assets/brand/footer-festival.webp" alt="Pen and ink drawing of a festival crowd facing an outdoor stage by the water, under string lights" width="2000" height="528" loading="lazy">
+    </picture>
+  </footer>
 </body>
 </html>

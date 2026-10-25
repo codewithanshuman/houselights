@@ -42,7 +42,7 @@
     try{
       const record=await fetchJSON(`/api/judge/cases/${encodeURIComponent(id)}`,{timeout:15000});
       view={record,base:record.snapshot,current:record.snapshot,off:null,budget:record.snapshot.memo.constraints.budget,cancelId:null,qlooOff:false};
-      render();if(record.id===FEATURED)fillFan(record.snapshot,null);
+      render();if(record.id===FEATURED){fillFan(record.snapshot,null);if(watchReady)startReplay();}
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
@@ -185,11 +185,16 @@
   }
 
   // ── Live planning ──────────────────────────────────────────────────────────────
-  const STEPS=[['Resolve','Confirming {anchor} with Qloo'],['Discover','Finding artists {anchor} fans love in {city}'],['Rank','Ranking every candidate for this audience'],
-    ['Plan','Choosing which acts to check in depth'],['Verify','Checking where fans are and how audiences overlap'],['Optimize','Checking every possible bill against your budget'],['Write','Writing up the decision']];
-  const fill=(text,input)=>text.replace('{anchor}',input.anchor).replace('{city}',input.city);
-  function stepList(input,active){
-    $('progress-steps').innerHTML=STEPS.map(([key,text],index)=>`<li class="${index<active?'is-done':index===active?'is-active':''}"><span class="step-mark" aria-hidden="true">${index<active?'✓':index+1}</span>${e(fill(text,input))}</li>`).join('');
+  // The agent card first replays the saved New York run; a live plan takes it over.
+  const agent=$('agent-trace');
+  let replaying=null,replayStarted=false,watchReady=false;
+  function startReplay(){
+    if(replayStarted||!view||view.record.id!==FEATURED||!window.HLTrace)return;
+    replayStarted=true;replaying=window.HLTrace.replay(agent,view.base,{speed:2});
+  }
+  if('IntersectionObserver' in window){
+    const watch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){watch.disconnect();watchReady=true;startReplay();}},{rootMargin:'0px 0px -20% 0px'});
+    watch.observe(agent);
   }
   function readInput(){
     const data=new FormData(form);
@@ -203,10 +208,14 @@
   }
   async function planLive(input){
     const submit=$('plan-submit'),status=$('progress-status');
-    submit.disabled=true;submit.textContent='Planning…';progress.hidden=false;$('progress-choose').hidden=true;$('progress-calls').textContent='';
-    stepList(input,0);progress.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
+    replaying?.cancel();replayStarted=true;
+    submit.disabled=true;submit.textContent='Planning…';$('progress-choose').hidden=true;
+    $('agent-caption').textContent=`Live run: ${input.city}, fans of ${input.anchor}`;
+    const trace=window.HLTrace.create(agent,{city:input.city,anchor:input.anchor,label:`Researching ${input.city} with Qloo`});
+    trace.stage('Resolve');
+    if(matchMedia('(max-width: 900px)').matches)agent.scrollIntoView({block:'center',behavior:reduced()?'instant':'smooth'});
     status.textContent=`Researching a show in ${input.city} for fans of ${input.anchor}.`;
-    const showError=text=>{const error=$('plan-error');error.textContent=text;error.hidden=false;progress.hidden=true;};
+    const showError=text=>{const error=$('plan-error');error.textContent=text;error.hidden=false;trace.fail('The live plan stopped');};
     try{
       const response=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input),signal:AbortSignal.timeout(180000)});
       if(!response.ok||!response.body){let message='The live plan could not start.';try{message=(await response.json()).error||message;}catch{}showError(message);return;}
@@ -217,16 +226,20 @@
           const block=buffer.slice(0,cut);buffer=buffer.slice(cut+2);
           if(!block.startsWith('data: '))continue;
           const event=JSON.parse(block.slice(6));
-          if(event.type==='stage'){const index=STEPS.findIndex(([key])=>event.text.startsWith(key));if(index>=0)stepList(input,index);}
-          else if(event.type==='call'&&event.max)$('progress-calls').textContent=`Qloo calls: ${event.used} of ${event.max}`;
+          if(event.type==='stage')trace.stage(event.text);
+          else if(event.type==='call'){trace.call({tool:event.tool,count:event.count,status:event.status});trace.setBudget(event.used,event.max);}
           else if(event.type==='choose'){
+            trace.fail(`Which “${event.name}” did you mean?`);
             const box=$('progress-choose');box.hidden=false;
             box.innerHTML=`<p>Qloo found more than one “${e(event.name)}”. Which one did you mean?</p><div class="plan-chips">${event.options.map(option=>`<button type="button" class="plan-chip" data-anchor-id="${e(option.id)}" data-anchor-name="${e(option.name)}">${e(option.name)}</button>`).join('')}</div>`;
             box.querySelectorAll('[data-anchor-id]').forEach(button=>button.addEventListener('click',()=>{$('plan-anchor').value=button.dataset.anchorName;void planLive({...input,anchor:button.dataset.anchorName,anchorId:button.dataset.anchorId});},{once:true}));
             status.textContent='Choose which artist you meant.';done=true;
           }
           else if(event.type==='error'){showError(event.text);done=true;}
-          else if(event.type==='ready'){stepList(input,STEPS.length);status.textContent='Your plan is ready.';progress.hidden=true;await openCase(event.id,{scroll:true});done=true;}
+          else if(event.type==='ready'){
+            trace.done(`Planned with ${event.calls} Qloo calls`,'Every call is saved as a receipt you can open on the plan.');
+            status.textContent='Your plan is ready.';await openCase(event.id,{scroll:true});done=true;
+          }
         }
       }
     }catch(problem){showError(problem?.name==='TimeoutError'?'The live plan took too long. Try again, or open a saved plan.':'The live plan was interrupted. Try again, or open a saved plan.');}
@@ -259,6 +272,8 @@
   document.querySelectorAll('a[href="#planner"]').forEach(link=>link.addEventListener('click',event=>{
     event.preventDefault();$('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});$('plan-city').focus({preventScroll:true});
   }));
+
+  fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{$('footer-release').textContent=health.release?String(health.release).slice(0,7):'local build';}).catch(()=>{$('footer-release').textContent='unavailable';});
 
   // ── Start ──────────────────────────────────────────────────────────────────────
   const fromUrl=new URLSearchParams(location.search).get('plan')||(/^#[a-f0-9]{24}$/.test(location.hash)?location.hash.slice(1):null);
