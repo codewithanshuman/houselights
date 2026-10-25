@@ -17,11 +17,15 @@ Checked on 24 October 2026. I re-checked each significant claim Houselights make
 
 **Limit.** This shows the evidence influences the decision. It does not show more ticket sales.
 
-### 2. Withdrawing Qloo evidence changes 7 of 9 comparable briefs (matched)
+### 2. Withdrawing Qloo evidence changes <!--claim:withdrawal-->7 of 9<!--/claim--> comparable briefs (matched)
 
 **Claim.** Among the 9 feasible briefs whose Qloo ranking is comparable, withdrawing the saved Qloo evidence changes the optimized decision in 7.
 
 **Source.** `results/autopilot-evaluation.md`; reproduce with `npm run evaluate:autopilot`.
+
+**Limit.** Evidence influences the decision; ticket sales are not measured; fees are illustrative.
+
+**Sensitivity.** Under ±20% noise on every illustrative fee (200 seeded draws per brief), withdrawal changes the decision in <!--claim:noiseMean-->71%<!--/claim--> of draws on average, but robustly (in at least 95% of draws) in only <!--claim:noiseRobust-->1 of 9<!--/claim--> briefs. Berlin, published as "no change", changes in 63% of draws. "7 of 9" is therefore a point estimate at the published fees ([sensitivity](../results/sensitivity.md); `node scripts/evaluate-sensitivity.mjs`).
 
 **Status.** Verified: regenerated with no change.
 
@@ -49,7 +53,7 @@ Checked on 24 October 2026. I re-checked each significant claim Houselights make
 
 ### 5. Shock study (matched where comparable)
 
-**Claim.** On 77 comparable solvable shocks, 3 of 231 re-prompted LLM responses (1.3%) violated a hard constraint, against 0 for Houselights.
+**Claim.** On 77 comparable solvable shocks, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) violated a hard constraint, against 0 for Houselights.
 
 **Source.** `results/shocks.md`; reproduce with `npm run reproduce:shocks`.
 
@@ -96,7 +100,7 @@ Checked on 24 October 2026. I re-checked each significant claim Houselights make
 
 ### 9. Optimizer vs booking Qloo's top-k (seeded scenarios)
 
-**Claim.** Where the top-k acts by Qloo rank are bookable, the optimizer chooses differently in 177 of 1,517 scenarios (11.7%) under affinity fit and 0 under ordinal fit. All 177 come from New York, the only brief with a near-tie at the selection boundary. The top-k could not be booked in 2,083 of 3,600 scenarios; the optimizer found the best bookable lineup in 1,380 and reported infeasibility in 703.
+**Claim.** Where the top-k acts by Qloo rank are bookable, the optimizer chooses differently in <!--claim:rankDiffersCount-->177 of 1,517<!--/claim--> scenarios (<!--claim:rankDiffers-->11.7%<!--/claim-->) under affinity fit and <!--claim:rankDiffersOrdinal-->0%<!--/claim--> under ordinal fit. Evidence influences the decision; ticket sales are not measured; fees are illustrative. All 177 come from New York, the only brief with a near-tie at the selection boundary. The top-k could not be booked in 2,083 of 3,600 scenarios; the optimizer found the best bookable lineup in 1,380 and reported infeasibility in 703.
 
 **Source.** `results/rank-vs-optimum.md`; reproduce with `node scripts/evaluate-rank-vs-optimum.mjs`.
 

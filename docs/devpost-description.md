@@ -32,15 +32,15 @@ Beyond that path:
 
 All figures below are reproduced offline by the commands named in the [claims audit](claims-audit.md).
 
-- **Qloo influence (matched):** among the 9 feasible briefs with a complete Qloo ranking, withdrawing the saved Qloo evidence changes the decision in 7. Berlin and São Paulo do not change. Mumbai, Paris and Sydney are excluded because Qloo did not rank every candidate there.
-- **What the optimizer adds over booking Qloo's top acts:** we ran 3,600 seeded scenarios with varied fees, availability and budgets.
-  - Where Qloo's top-k acts were bookable, the optimizer chose differently in 11.7% of cases, all in the one brief with a near-tie at the selection boundary.
-  - Its main contribution is constraint handling. In 58% of scenarios the top-k could not be booked: it found the best bookable lineup in 1,380 and reported that none exists in 703.
-  - With the older ordinal fit it never differed (0%). We report that too.
-- **Constraint safety (by construction):** an exact optimizer cannot propose a lineup that breaks a hard rule. For comparison, 3 of 231 re-prompted LLM responses (1.3%) did so on comparable solvable shocks. That shows a design property, not better judgement.
+- **Qloo influence (matched):** withdrawing the saved Qloo evidence changes the decision in <!--claim:withdrawal-->7 of 9<!--/claim--> feasible briefs with a complete Qloo ranking. Berlin and São Paulo do not change. Mumbai, Paris and Sydney are excluded because Qloo did not rank every candidate there. Evidence influences the decision; ticket sales are not measured; fees are illustrative. Under ±20% fee noise, withdrawal changes the decision in <!--claim:noiseMean-->71%<!--/claim--> of draws, and robustly in only <!--claim:noiseRobust-->1 of 9<!--/claim--> briefs, so "7 of 9" is a point estimate at the published fees.
+- **What the optimizer adds over booking Qloo's top acts:** we ran <!--claim:scenarios-->3,600<!--/claim--> seeded scenarios with varied fees, availability and budgets.
+  - Where Qloo's top-k acts were bookable, the optimizer chose differently in <!--claim:rankDiffers-->11.7%<!--/claim--> of cases (<!--claim:rankDiffersCount-->177 of 1,517<!--/claim-->), all in the one brief with a near-tie at the selection boundary. Evidence influences the decision; ticket sales are not measured; fees are illustrative.
+  - Its main contribution is constraint handling. In <!--claim:unbookable-->58%<!--/claim--> of scenarios the top-k could not be booked: it found the best bookable bill in 1,380 and reported that none exists in 703.
+  - With the older ordinal fit it never differed (<!--claim:rankDiffersOrdinal-->0%<!--/claim-->). We report that too.
+- **Constraint safety (by construction):** an exact optimizer cannot propose a lineup that breaks a hard rule. For comparison, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - 330 unit tests and 32 real-browser tests, including an independent reference check of the optimizer over 600 seeded constraint combinations;
+  - <!--claim:unitTests-->335<!--/claim--> unit tests and <!--claim:browserTests-->44<!--/claim--> browser tests: an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge path in Chromium, Firefox and WebKit;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 

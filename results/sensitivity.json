@@ -1,0 +1,239 @@
+{
+  "version": "1.0",
+  "seed": 23,
+  "draws": 200,
+  "feeNoise": 0.2,
+  "bands": [
+    0.001,
+    0.002,
+    0.005
+  ],
+  "providerCalls": 0,
+  "rows": [
+    {
+      "brief": "Manchester: compare all three methods",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 150,
+        "share": 0.75
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 2,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "Berlin: compare all three methods",
+      "publishedWithdrawalChanges": false,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 126,
+        "share": 0.63
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 2,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "New York: compare all three methods",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 164,
+        "share": 0.82
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 3,
+          "restsOnNearTie": true
+        }
+      }
+    },
+    {
+      "brief": "New York: watch a recorded Qloo research run",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 200,
+        "share": 1
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 2,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 4,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 6,
+          "restsOnNearTie": true
+        }
+      }
+    },
+    {
+      "brief": "Illustrative: London alternative bill",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 184,
+        "share": 0.92
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 2,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "Illustrative: Amsterdam electronic bill",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 122,
+        "share": 0.61
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 1,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "Illustrative: Toronto soul and jazz bill",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 186,
+        "share": 0.93
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "Illustrative: Los Angeles jazz and hip-hop bill",
+      "publishedWithdrawalChanges": true,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 129,
+        "share": 0.645
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 3,
+          "restsOnNearTie": false
+        }
+      }
+    },
+    {
+      "brief": "Illustrative: São Paulo independent bill",
+      "publishedWithdrawalChanges": false,
+      "feeNoise": {
+        "draws": 200,
+        "withdrawalChanges": 12,
+        "share": 0.06
+      },
+      "bands": {
+        "0.001": {
+          "pairs": 0,
+          "restsOnNearTie": false
+        },
+        "0.002": {
+          "pairs": 3,
+          "restsOnNearTie": false
+        },
+        "0.005": {
+          "pairs": 8,
+          "restsOnNearTie": false
+        }
+      }
+    }
+  ],
+  "totals": {
+    "briefs": 9,
+    "publishedChanged": 7,
+    "robustUnderNoise": 1,
+    "neverUnderNoise": 0,
+    "mixed": 8,
+    "meanShare": 0.7072222222222222,
+    "nearTieDecides": {
+      "0.001": 0,
+      "0.002": 0,
+      "0.005": 2
+    },
+    "nearTiePairs": {
+      "0.001": 4,
+      "0.002": 10,
+      "0.005": 27
+    }
+  }
+}

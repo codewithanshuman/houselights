@@ -20,8 +20,8 @@
 
 The [claims audit](claims-audit.md) has every claim, with its reproduction command and its limits. In short:
 
-- Withdrawing Qloo evidence changes 7 of 9 comparable briefs. Three briefs are excluded as not comparable.
-- On comparable solvable shocks, 3 of 231 re-prompted LLM responses (1.3%) violated a hard constraint.
+- Withdrawing Qloo evidence changes <!--claim:withdrawal-->7 of 9<!--/claim--> comparable briefs. Three briefs are excluded as not comparable. Evidence influences the decision; ticket sales are not measured; fees are illustrative. Under ±20% fee noise the share of draws where it changes is <!--claim:noiseMean-->71%<!--/claim-->.
+- On comparable solvable shocks, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) violated a hard constraint.
   - In the synthetic 12-candidate case alone, the figure is 1 of 66.
   - Houselights' 0 comes from enforcing constraints by construction.
 - No blind reviews, usability sessions, real quotes or ticketing outcomes exist. Booking fees and availability are illustrative.

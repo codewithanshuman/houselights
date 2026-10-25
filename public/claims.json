@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "generatedBy": "scripts/claims.mjs",
+  "rows": [
+    {
+      "claim": "Withdrawing Qloo evidence changes the decision in 7 of 9 briefs with a complete Qloo ranking.",
+      "status": "verified",
+      "limit": "Evidence influences the decision; ticket sales are not measured; fees are illustrative. Under ±20% fee noise it changes in 71% of draws, robustly in 1 of 9 briefs.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/results/autopilot-evaluation.md",
+      "reproduce": "npm run evaluate:autopilot"
+    },
+    {
+      "claim": "Where Qloo's top-ranked acts are bookable, the optimizer still chooses differently in 11.7% of seeded scenarios (177 of 1,517); 0% with the old ordinal fit.",
+      "status": "verified",
+      "limit": "Evidence influences the decision; ticket sales are not measured; fees are illustrative. All differences come from one near-tie brief.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/results/rank-vs-optimum.md",
+      "reproduce": "npm run evaluate:rank-vs-optimum"
+    },
+    {
+      "claim": "In 58% of 3,600 scenarios Qloo's top-ranked acts cannot be booked; the optimizer finds the best bookable bill or says none exists.",
+      "status": "verified",
+      "limit": "The main contribution is constraint handling, not re-ranking Qloo.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/results/rank-vs-optimum.md",
+      "reproduce": "npm run evaluate:rank-vs-optimum"
+    },
+    {
+      "claim": "Fee-noise and near-tie band sensitivity of the findings above.",
+      "status": "verified",
+      "limit": "\"7 of 9\" is a point estimate at the published, illustrative fees.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/results/sensitivity.md",
+      "reproduce": "npm run evaluate:sensitivity"
+    },
+    {
+      "claim": "3/231 re-prompted LLM responses (1.3%) broke a hard rule on comparable solvable shocks; Houselights broke none.",
+      "status": "verified (by construction)",
+      "limit": "An exact optimizer cannot break a hard rule; this is not evidence of better judgement.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/results/shocks.md",
+      "reproduce": "npm run reproduce:shocks"
+    },
+    {
+      "claim": "Every pinned Autopilot recording replays exactly under the scoring version that produced it.",
+      "status": "verified",
+      "limit": "Qloo responses are unsigned: digests show records are unchanged, not that Qloo sent them.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/server/autopilot-pins.mjs",
+      "reproduce": "npm run reproduce:autopilot"
+    },
+    {
+      "claim": "Blind reviews by promoters, venue programmers or bookers.",
+      "status": "pending",
+      "limit": "None collected yet; the live count is shown below.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/docs/usability-test-kit.md",
+      "reproduce": null,
+      "live": "reviews"
+    },
+    {
+      "claim": "First-time usability sessions.",
+      "status": "pending",
+      "limit": "0 sessions run. The protocol is ready.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/docs/usability-test-kit.md",
+      "reproduce": null
+    },
+    {
+      "claim": "Ticket sales, attendance or profit improvement from following Houselights.",
+      "status": "not measured",
+      "limit": "No real outcome data exists for these decisions.",
+      "source": "https://github.com/codewithanshuman/houselights/blob/main/docs/claims-audit.md",
+      "reproduce": null
+    }
+  ]
+}

@@ -773,3 +773,17 @@ test.describe('visual states', { tag: '@visual' }, () => {
     await expect(page).toHaveScreenshot('mobile-first-screen.png', { mask: mask(page) });
   });
 });
+
+test('the evidence page lists every claim with its status, limit and a copyable reproduce command', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const table = JSON.parse(readFileSync(join(root, 'public', 'claims.json'), 'utf8'));
+  await page.goto(`${origin}/evidence.html`);
+  const rows = page.locator('#claim-table-body tbody tr');
+  await expect(rows).toHaveCount(table.rows.length);
+  await expect(rows.filter({ hasText: 'Blind reviews' })).toContainText('0 completed so far');
+  await expect(rows.filter({ hasText: 'Ticket sales' })).toContainText('not measured');
+  await expect(rows.first()).toContainText('ticket sales are not measured; fees are illustrative');
+  await rows.first().getByRole('button', { name: /Copy command/ }).click();
+  await expect(page.locator('#copy-status')).toHaveText(`Copied: ${table.rows[0].reproduce}`);
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(table.rows[0].reproduce);
+});
