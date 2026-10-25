@@ -82,7 +82,7 @@
     const exportButton=event.target.closest('[data-autopilot-download]');
     if(exportButton)download(exportButton.dataset.autopilotDownload);
   });
-  $('autopilot-replan').addEventListener('click',()=>{const budget=Number($('autopilot-budget').value);if(!Number.isFinite(budget)||budget<0){status('Enter a non-negative budget.');return;}void show('planning',{budget});});
+  $('autopilot-replan').addEventListener('click',()=>{const raw=String($('autopilot-budget').value).trim().replace(/[$,s]/g,''),entered=Number(raw);if(!raw||!Number.isFinite(entered)){status('Enter an artist budget in US dollars, for example 12000.');$('autopilot-budget').focus();return;}const budget=Math.min(10000000,Math.max(0,Math.round(entered)));if(budget!==entered){$('autopilot-budget').value=String(budget);status(`Budget adjusted to $${budget.toLocaleString('en-US')}: the allowed range is $0 to $10,000,000.`);}void show('planning',{budget});});
   document.addEventListener('booking:state',event=>{
     const next=event.detail.current;
     if(!next){record=null;view=null;++sequence;return;}

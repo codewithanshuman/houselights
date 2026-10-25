@@ -60,6 +60,11 @@ test.beforeEach(() => {
   try { quotas.exec('PRAGMA busy_timeout=5000; DELETE FROM quotas;'); } finally { quotas.close(); }
 });
 
+// Opens the "Go deeper" panels that hold Autopilot and the original research timeline.
+async function openDeeper(page){
+  for(const id of ['go-deeper-research','go-deeper-autopilot'])await page.locator(`#${id}`).evaluate(node=>{node.open=true;});
+}
+
 test.afterAll(async () => {
   if (app && app.exitCode == null) {
     app.kill();
@@ -72,57 +77,104 @@ test.afterAll(async () => {
     rmSync(dataDir, { recursive: true, force: true });
 });
 
-test('the judge page leads with one recorded decision, its risk and the human call, before any mechanics', async ({ page }) => {
-  const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
+test('first paint shows the real bill and the Qloo-off change with no API call', async ({ page }) => {
+  // The first screen is inlined at build time: block every API call and it still renders.
+  await page.route('**/api/**',route=>route.abort());
+  await page.goto(`${origin}/judge.html`,{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#first-screen-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  await expect(page.locator('#fs-change')).toContainText('$13,500 → $9,000');
+  await expect(page.locator('#first-screen h1')).toHaveCount(1);
+  await expect(page.locator('#first-screen button')).toHaveCount(1);
+  await expect(page.locator('#step-brief-body')).toContainText('Fans of Leon Bridges');
+  await expect(page.locator('#step-receipt-body [data-receipt]')).not.toHaveCount(0);
+  // Status strip and shock teaser sit below the four steps.
+  const below=await page.evaluate(()=>{const s=document.getElementById('step-receipt'),strip=document.querySelector('.judge-status-strip'),shock=document.querySelector('.judge-shock-study');return !!(s.compareDocumentPosition(strip)&Node.DOCUMENT_POSITION_FOLLOWING)&&!!(s.compareDocumentPosition(shock)&Node.DOCUMENT_POSITION_FOLLOWING);});
+  expect(below).toBe(true);
+});
+
+test('keyboard only: the Qloo switch changes the decision, announces it once and keeps focus', async ({ page }) => {
   const experimentPosts=[];page.on('request',request=>{if(request.method()==='POST'&&/\/experiment$/.test(request.url()))experimentPosts.push(request.url());});
+  await page.goto(`${origin}/judge.html`);
+  const sw=page.getByRole('switch',{name:/Qloo evidence/});
+  await expect(sw).toHaveAttribute('aria-checked','true');
+  await page.keyboard.press('Tab');await expect(page.locator('.skip-link')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await sw.focus();await page.keyboard.press('Space');
+  await expect(sw).toHaveAttribute('aria-checked','false');await expect(sw).toBeFocused();
+  await expect(page.locator('#first-screen-title')).toHaveText('Book Jordan Rakei + Hiatus Kaiyote for $9,000.');
+  await expect(page.locator('#fs-diff')).toContainText('−$4,500');
+  await expect(page.locator('#fs-diff .act-out')).toContainText('Michael Kiwanuka, Sault');
+  await expect(page.locator('#fs-diff .act-in')).toContainText('Jordan Rakei, Hiatus Kaiyote');
+  await expect(page.locator('#fs-announce')).toHaveText(/^Decision changed\. Without Qloo evidence the bill is Jordan Rakei \+ Hiatus Kaiyote/);
+  await page.keyboard.press('Enter');await expect(sw).toHaveAttribute('aria-checked','true');
+  await expect(page.locator('#first-screen-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  expect(experimentPosts).toEqual([]);
+});
+
+test('the bill step explains the choice, draws the near-tie and badges the fit basis', async ({ page }) => {
+  const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
   await page.goto(`${origin}/judge.html`);
   const glance=page.locator('#decision-glance');
   await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
   await expect(glance).toContainText('WATCH OUT');await expect(glance).toContainText('YOUR CALL');
-  await expect(glance).toContainText('Qloo affinity is cultural fit, not ticket demand');
-  // The Qloo contribution is a matched zero-call comparison (same case, pool, fees and
-  // budget), served statically so page views spend none of the shared experiment quota.
-  expect(experimentPosts).toEqual([]);
-  await expect(glance.locator('#glance-qloo')).toContainText(/Same pool, fees and \$[\d,]+ budget: with Qloo evidence the optimizer books .+; with it withdrawn, .+\. Qloo changed the bill\./);
-  await expect(glance.locator('#glance-qloo')).toContainText('not more ticket sales');
   await expect(glance.locator('.glance-grid')).not.toContainText('policy points');
-  // The first useful action is one click away: the link focuses the existing budget-cut control.
+  await expect(glance.locator('.fit-badge')).toHaveText('Fit: Qloo affinity');
+  await expect(page.locator('#judge-form .fit-badge')).toHaveText('Fit: ordinal fallback');
+  const figure=glance.locator('figure.near-tie');
+  await expect(figure.locator('svg[role=img]')).toHaveAttribute('aria-label',/Sault 0\.9580 and Jordan Rakei 0\.9579/);
+  await expect(figure).toContainText('Coin flip, your call.');
+  await expect(glance).toContainText('Qloo affinity 0.9770');
   await glance.getByRole('link',{name:'Try a budget cut ↓'}).click();
-  await expect(page.locator('#judge-tight-budget')).toBeFocused();
-  await expect(page.locator('#judge-tight-budget')).toBeInViewport();
-  const order=await page.evaluate(()=>{const g=document.getElementById('decision-glance'),a=document.getElementById('booking-autopilot');return !!a&&!!(g.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING);});
-  expect(order).toBe(true);
-  await glance.locator('summary',{hasText:/glossary|terms/i}).first().click();
-  await expect(glance).toContainText('Qloo publishes no margin of error');await expect(glance).toContainText('not that the bill will sell more tickets');
+  await expect(page.locator('#judge-tight-budget')).toBeFocused();await expect(page.locator('#judge-tight-budget')).toBeInViewport();
+  await page.locator('.glance-glossary summary').click();
+  await expect(page.locator('.glance-glossary')).toContainText('Qloo publishes no margin of error');
 });
 
-test('the Booking Desk opens into one path: brief, slate, withdraw Qloo evidence, decision changes, receipt', async ({ page }) => {
+test('receipt drawer shows the saved Qloo row with the act highlighted, digests and integrity', async ({ page }) => {
   await page.goto(`${origin}/judge.html`);
-  const steps=page.locator('#decision-glance .glance-step');
-  await expect(steps).toHaveCount(4);
-  await expect(steps.nth(0)).toContainText('1 · THE BRIEF');await expect(steps.nth(0)).toContainText('listeners of Leon Bridges');
-  await expect(steps.nth(1).locator('.glance-book strong')).toHaveText('Michael Kiwanuka + Sault');
-  const receipt=page.getByRole('button',{name:'Open the receipt ↓'});
-  await expect(receipt).toBeDisabled();
-  await page.getByRole('button',{name:'Withdraw Qloo evidence and re-run ↓'}).click();
+  const trigger=page.locator('#step-receipt-body [data-entity="Sault"]');
+  await trigger.focus();await page.keyboard.press('Enter');
+  const drawer=page.locator('#receipt-drawer');
+  await expect(drawer).toBeVisible();
+  await expect(drawer.locator('tr.is-highlight')).toContainText(/sault/i);
+  await expect(drawer.locator('tr.is-highlight')).toContainText('0.9580');
+  await expect(drawer.locator('.integrity-ok')).toContainText('Integrity check passed');
+  await expect(drawer.locator('.digests code').first()).toHaveText(/^sha256:[0-9a-f]{64}$/);
+  await page.keyboard.press('Escape');
+  await expect(drawer).toBeHidden();await expect(trigger).toBeFocused();
+});
+
+test('step 3 re-runs the withdrawal live, and the opened receipt clears the sticky form', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await page.locator('.booking-path').getByRole('link',{name:/Check the receipt/}).click();
+  await expect(page.locator('#step-receipt')).toBeFocused();
+  await page.getByRole('button',{name:'Re-run it live in the Booking Desk ↓'}).click();
   const comparison=page.locator('.judge-evidence-comparison');
   await expect(comparison).toContainText('Selection changed.',{timeout:30000});
   await expect(comparison.locator('.judge-evidence-columns strong').nth(1)).toHaveText('Jordan Rakei + Hiatus Kaiyote');
-  await expect(receipt).toBeEnabled();
-  await receipt.click();
-  const opened=page.locator('#judge-receipts details[open] summary').first();
-  await expect(opened).toBeFocused();await expect(opened).toContainText('rank');
-  // The opened receipt must not sit under the sticky experiment form, at any width.
+  await comparison.locator('[data-receipt-index]').first().click();
+  await expect(page.locator('#judge-receipts details[open] summary').first()).toContainText('rank');
   for(const width of [1280,900,375]){
     await page.setViewportSize({width,height:800});
-    const body=page.locator('#judge-receipts details[open]').first();await body.scrollIntoViewIfNeeded();
+    await page.locator('#judge-receipts details[open]').first().scrollIntoViewIfNeeded();
     const overlap=await page.evaluate(()=>{const a=document.querySelector('#judge-receipts details[open]').getBoundingClientRect(),b=document.getElementById('judge-form').getBoundingClientRect();return a.left<b.right&&b.left<a.right&&a.top<b.bottom&&b.top<a.bottom;});
     expect(overlap,`receipt overlaps the experiment form at ${width}px`).toBe(false);
   }
 });
 
+test('the budget field explains bad input and clamps out-of-range values', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await expect(page.locator('#judge-workspace')).toBeVisible();
+  const field=page.locator('#judge-budget'),error=page.locator('#judge-budget-error');
+  await expect(field).toHaveAttribute('inputmode','decimal');await expect(field).toHaveAttribute('max','10000000');
+  await field.fill('');await page.getByRole('button',{name:/Recalculate and check/}).click();
+  await expect(error).toHaveText('Enter an artist budget in US dollars, for example 14500.');await expect(field).toHaveAttribute('aria-invalid','true');
+  await field.fill('25000000');await page.getByRole('button',{name:/Recalculate and check/}).click();
+  await expect(field).toHaveValue('10000000');await expect(error).toContainText('allowed range is $0 to $10,000,000');
+});
+
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#${caseId}`);
+  await page.goto(`${origin}/judge.html#${caseId}`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.getByRole('button', { name: 'Compare with Qloo evidence removed' }).click();
   const comparison = page.locator('.judge-evidence-comparison');
@@ -163,7 +215,7 @@ test('anonymous visitor can follow the homepage challenge through proof and limi
   await page.getByRole('link', { name: /Try the booking challenge/ }).click();
   await expect(page).toHaveURL(new RegExp(`/judge\\.html#${tracedCaseId}$`));
   await expect(page.locator('#judge-title')).toContainText('New York');
-  await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
+  await page.getByRole('button', { name: 'Cut budget below this bill’s cost' }).click();
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Jordan Rakei');
   await expect(page.locator('#judge-status')).toContainText('Experiment complete');
   await page.locator('#judge-proof-link').click();
@@ -177,7 +229,7 @@ test('anonymous visitor can follow the homepage challenge through proof and limi
 });
 
 test('genuine agent run exposes recorded plan, ordered tool events, and matched Qloo decision proof', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('recorded Qloo research run');
   await expect(page.locator('#judge-qloo-preview')).toContainText('The choice changes under matched assumptions.');
   await expect(page.locator('.judge-trace-summary')).toContainText('31 recorded events · 18/18 receipts linked');
@@ -203,12 +255,12 @@ test('mobile judge workflow retains the previous result and recovers after a fai
   await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`, route => route.fulfill({
     status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Temporary test outage' }),
   }));
-  await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
+  await page.getByRole('button', { name: 'Cut budget below this bill’s cost' }).click();
   await expect(page.locator('#judge-status')).toContainText('The previous result is still displayed; no new experiment completed.');
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Sault');
-  await expect(page.getByRole('button', { name: 'Cut budget below this lineup’s cost' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Cut budget below this bill’s cost' })).toBeEnabled();
   await page.unroute(`**/api/judge/cases/${tracedCaseId}/experiment`);
-  await page.getByRole('button', { name: 'Cut budget below this lineup’s cost' }).click();
+  await page.getByRole('button', { name: 'Cut budget below this bill’s cost' }).click();
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Jordan Rakei');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
@@ -255,7 +307,7 @@ test('Proof Lab changes signal groups against the same recorded case', async ({ 
 });
 
 test('incomplete older case discloses missing agent events and insufficient ranking', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#5031a69f837e1c28ce045422`);
+  await page.goto(`${origin}/judge.html#5031a69f837e1c28ce045422`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('Mumbai');
   await expect(page.locator('#judge-agent-trace')).toContainText('no saved model-step event log');
   await expect(page.locator('#judge-qloo-preview')).toContainText('Not comparable: Qloo ranked 4 of 5 candidates');
@@ -409,8 +461,8 @@ test('signal switches retain keyboard focus and expose their pressed state', asy
   await first.focus();await page.keyboard.press('Space');
   await expect(first).toHaveAttribute('aria-pressed','false');await expect(first).toBeFocused();
   await page.keyboard.press('Space');await expect(first).toHaveAttribute('aria-pressed','true');
-  await page.locator('.booking-path').getByRole('link',{name:/Your decision/}).click();
-  await expect(page.locator('#booking-decision')).toBeFocused();
+  await page.locator('.booking-path').getByRole('link',{name:/Withdraw Qloo evidence/}).click();
+  await expect(page.locator('#step-withdraw')).toBeFocused();
   expect(new URL(page.url()).hash).toBe(`#${tracedCaseId}`);
 });
 
@@ -447,7 +499,7 @@ test('infeasible Paris brief preserves the missing evidence and supports an expl
 test('Autopilot replays the recorded provider-backed run without new research and opens its receipts', async ({page})=>{
   const errors=[],autopilotPosts=[];page.on('pageerror',error=>errors.push(error.message));
   page.on('request',request=>{if(request.method()==='POST'&&request.url().includes('/autopilot'))autopilotPosts.push(request.url());});
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED PROVIDER-BACKED RUN');
   await expect(panel.locator('.autopilot-banner')).toContainText('This page made no new provider calls');
@@ -473,7 +525,7 @@ test('Autopilot replays the recorded provider-backed run without new research an
 });
 
 test('Autopilot planning replay re-plans a changed budget with zero provider calls', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED');
   await panel.locator('#autopilot-budget').fill('12150');
@@ -492,7 +544,7 @@ test('Autopilot planning replay re-plans a changed budget with zero provider cal
 
 test('Autopilot plans other briefs from saved evidence and stays usable on a phone', async ({page})=>{
   await page.setViewportSize({width:375,height:812});
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#booking-autopilot .autopilot-banner')).toContainText('RECORDED');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.locator('#judge-case').selectOption({label:'Mumbai: why a comparison is unavailable'});
@@ -519,7 +571,7 @@ test('a cancellation card keeps an edited budget instead of resetting the experi
 });
 
 test('Autopilot 2.0 compares strategies on common scenarios and links the organizer example', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner').first()).toContainText('RECORDED PROVIDER-BACKED RUN');
   const table=panel.locator('table.autopilot-compare').first();
@@ -621,7 +673,7 @@ test('workspace and desk controls all have accessible names and headings stay in
     const skips=levels.filter((level,index)=>index&&level>levels[index-1]+1).length;
     return {unnamed,h1:levels.filter(level=>level===1).length,skips};
   });
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#booking-autopilot .autopilot-banner').first()).toBeVisible();
   const desk=await audit();expect(desk.unnamed).toEqual([]);expect(desk.h1).toBe(1);
   await page.goto(`${origin}/workspace.html`);

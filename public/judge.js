@@ -130,12 +130,26 @@
       reset();$('judge-tight-budget').disabled=!memo.slate.feasible;$('judge-tight-budget').title=memo.slate.feasible?'':'No feasible original lineup has a cost to cut below.';$('judge-workspace').hidden=false;history.replaceState(null,'','#'+id);say('Ready. Each experiment uses the same saved pool.');
     }catch(error){if(sequence===loadSequence){say(error.message);$('judge-qloo-preview').textContent='The saved comparison could not be loaded.';}}
   }
+  // The budget field is validated here (the form is novalidate): a clear error for
+  // missing or non-numeric input, and clamping to $0-$10,000,000 with a note.
+  const BUDGET_MAX=10000000;
+  function readBudget(){
+    const field=$('judge-budget'),error=$('judge-budget-error'),raw=String(field.value).trim().replace(/[$,s]/g,''),value=Number(raw);
+    const fail=message=>{field.setAttribute('aria-invalid','true');if(error){error.textContent=message;error.hidden=false;}field.focus();return null;};
+    if(!raw)return fail('Enter an artist budget in US dollars, for example 14500.');
+    if(!Number.isFinite(value))return fail('The budget must be a number of US dollars, for example 14500.');
+    const clamped=Math.min(BUDGET_MAX,Math.max(0,Math.round(value*100)/100));
+    field.removeAttribute('aria-invalid');if(error){error.hidden=clamped===value;error.textContent=clamped===value?'':`Budget adjusted to ${clamped.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0})}: the allowed range is $0 to $10,000,000.`;}
+    if(clamped!==value)field.value=String(clamped);
+    return clamped;
+  }
+  $('judge-budget')?.addEventListener('input',()=>{$('judge-budget').removeAttribute('aria-invalid');const error=$('judge-budget-error');if(error){error.hidden=true;error.textContent='';}});
   async function experiment(scrollToProof=false){
-    if(busy||!current)return;busy=true;const id=current.id;
+    if(busy||!current)return;const budgetValue=readBudget();if(budgetValue==null){say('Fix the budget to recalculate. The previous result is still displayed.');return;}busy=true;const id=current.id;
     const controls=document.querySelectorAll('#judge-form button, #judge-form input, #judge-form select, .judge-quick-actions button, [data-preview-compare]');
     $('judge-case').disabled=true;controls.forEach(control=>control.disabled=true);notify('calculating');say('Enumerating feasible lineups and checking evidence dependencies…');
     try{
-      const body={budget:Number($('judge-budget').value),lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
+      const body={budget:budgetValue,lockedIds:[...document.querySelectorAll('[data-judge-lock]:checked')].map(i=>i.dataset.judgeLock),excludedIds:[...document.querySelectorAll('[data-judge-exclude]:checked')].map(i=>i.dataset.judgeExclude),cancelId:$('judge-cancel').value,withdrawReceiptId:$('judge-withdraw').value,qlooOff:$('judge-qloo-off').checked};
       result=await request('/api/judge/cases/'+id+'/experiment',body);renderResult();notify('completed');say('Experiment complete. No provider calls, saved-plan changes, or approvals.');
       if(scrollToProof)$('judge-proof-title').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
     }catch(error){notify('failed');say(`${error.message} The previous result is still displayed; no new experiment completed.`);}finally{busy=false;$('judge-case').disabled=false;controls.forEach(control=>control.disabled=false);$('judge-tight-budget').disabled=!current.snapshot.memo.slate.feasible;notify();}

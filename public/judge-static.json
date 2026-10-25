@@ -1,0 +1,1109 @@
+{
+  "version": "1.0",
+  "caseId": "8be4d03ef4792ca9f1466983",
+  "caseTitle": "New York: watch a recorded Qloo research run",
+  "capturedAt": "2026-10-24T10:51:12.102Z",
+  "brief": {
+    "city": "New York",
+    "anchors": [
+      "Leon Bridges"
+    ],
+    "budget": 14500,
+    "slots": 2,
+    "candidates": 8,
+    "currency": "USD"
+  },
+  "withQloo": {
+    "names": [
+      "Michael Kiwanuka",
+      "Sault"
+    ],
+    "totalFee": 13500
+  },
+  "withoutQloo": {
+    "names": [
+      "Jordan Rakei",
+      "Hiatus Kaiyote"
+    ],
+    "totalFee": 9000
+  },
+  "diff": {
+    "feeChange": -4500,
+    "leaving": [
+      "Michael Kiwanuka",
+      "Sault"
+    ],
+    "entering": [
+      "Jordan Rakei",
+      "Hiatus Kaiyote"
+    ],
+    "changed": true
+  },
+  "sameBillUnderAffinity": true,
+  "fitBasis": {
+    "recordedRun": "Qloo affinity",
+    "bookingDesk": "ordinal fallback"
+  },
+  "nearTie": {
+    "names": [
+      "Sault",
+      "Jordan Rakei"
+    ],
+    "scores": [
+      0.9579929179757067,
+      0.9578552904208322
+    ],
+    "spread": 0.00013762755487456424,
+    "band": 0.002,
+    "tiedBill": [
+      "Michael Kiwanuka",
+      "Jordan Rakei"
+    ],
+    "restsOnNearTie": true
+  },
+  "acts": [
+    {
+      "name": "Michael Kiwanuka",
+      "affinity": 0.9770222376244421,
+      "rankReceipt": "r9",
+      "receipts": [
+        "r9",
+        "a3",
+        "a4"
+      ]
+    },
+    {
+      "name": "Sault",
+      "affinity": 0.9579929179757067,
+      "rankReceipt": "r9",
+      "receipts": [
+        "r9",
+        "r17",
+        "r10",
+        "r18"
+      ]
+    },
+    {
+      "name": "Jordan Rakei",
+      "affinity": 0.9578552904208322,
+      "rankReceipt": "r9",
+      "receipts": [
+        "r9",
+        "a5",
+        "a6"
+      ]
+    },
+    {
+      "name": "Hiatus Kaiyote",
+      "affinity": 0.9476541823444999,
+      "rankReceipt": "r9",
+      "receipts": [
+        "r9"
+      ]
+    }
+  ],
+  "integrity": {
+    "manifestDigest": "sha256:e049476c25c280b4403a0091593798908d1a3afc4c9f8d37ceb5885a97069b99",
+    "pinnedDigest": "sha256:e049476c25c280b4403a0091593798908d1a3afc4c9f8d37ceb5885a97069b99",
+    "pinMatches": true,
+    "providerProvenance": "Qloo responses are unsigned: digests show these records are unchanged since capture, not that Qloo sent them."
+  },
+  "receipts": [
+    {
+      "id": "r1",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:43.665Z",
+      "why": "Confirm “Leon Bridges”",
+      "originalDigest": "sha256:95b88c24a97583735641c05774b2da3496f543591dcba4d99dc7e3fbf12e2445",
+      "rows": [
+        {
+          "id": "96B907F3-9F2C-4E6E-BCCF-9C9F0173E162",
+          "name": "Leon Bridges",
+          "popularity": 0.9897540914473485
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:972ccc4f5e4d482689c19a8ef9d9e69bea5b1bda664b9af256ee5f4159f94007",
+        "manifestDigest": "sha256:972ccc4f5e4d482689c19a8ef9d9e69bea5b1bda664b9af256ee5f4159f94007",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r2",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:44.294Z",
+      "why": "Confirm “Michael Kiwanuka”",
+      "originalDigest": "sha256:3090325a712cfdd27956e00ae4b0159e5c6cbe3dd3c6b6f38630a195f200cc9a",
+      "rows": [
+        {
+          "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "name": "Michael Kiwanuka",
+          "popularity": 0.9936878186032232
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:02bd73597bab855176d4ad979c57a207a18b1e5ab3d4b3f6eb8c338be4ec471e",
+        "manifestDigest": "sha256:02bd73597bab855176d4ad979c57a207a18b1e5ab3d4b3f6eb8c338be4ec471e",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r3",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:44.903Z",
+      "why": "Confirm “Sault”",
+      "originalDigest": "sha256:aa5e1283d30c3bd799d4d3fadbf2403c009570020b6c6459d0791f2c48676677",
+      "rows": [
+        {
+          "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "name": "Sault",
+          "popularity": 0.9787322332841899
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:349dd5d7c2ee599a527f3df680ba917716cbcf0af4c2143b6368c75d5f8b8cb3",
+        "manifestDigest": "sha256:349dd5d7c2ee599a527f3df680ba917716cbcf0af4c2143b6368c75d5f8b8cb3",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r4",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:45.565Z",
+      "why": "Confirm “Jordan Rakei”",
+      "originalDigest": "sha256:ffb6db684cbfc06bce9b109442032edb2bf03d8dff2ec9086d8dff63d5bb840d",
+      "rows": [
+        {
+          "id": "57478178-BBBC-49A4-8755-5D942B388316",
+          "name": "Jordan Rakei",
+          "popularity": 0.9596337517838407
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:2d44a00c1da8ff3a946a593e8158fb747231ec07b99933dbe8b97e7c749dba2e",
+        "manifestDigest": "sha256:2d44a00c1da8ff3a946a593e8158fb747231ec07b99933dbe8b97e7c749dba2e",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r5",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:46.182Z",
+      "why": "Confirm “Khruangbin”",
+      "originalDigest": "sha256:6fb49be7ec45fb0cf9a55696c0a866e6f3b3210e9fa6ed6cf6b05ab2ea254e49",
+      "rows": [
+        {
+          "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+          "name": "Khruangbin",
+          "popularity": 0.9919334977446856
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:8167044e99232fb4822ffa9c7ce16dbd2735deb17255953d3158f1d163934fad",
+        "manifestDigest": "sha256:8167044e99232fb4822ffa9c7ce16dbd2735deb17255953d3158f1d163934fad",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r6",
+      "origin": "case",
+      "tool": "describe",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:46.785Z",
+      "why": "Confirm “Hiatus Kaiyote”",
+      "originalDigest": "sha256:266eb5acf042642c525ff6f86cf0c4f58506788b6f99b7c8c20ef45dc8451062",
+      "rows": [
+        {
+          "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+          "name": "Hiatus Kaiyote",
+          "popularity": 0.9856786691452072
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:5bcead8e6fc5a643c338743ad007cb2dbf2632b5b5f92f3eda2436cd34752ab8",
+        "manifestDigest": "sha256:5bcead8e6fc5a643c338743ad007cb2dbf2632b5b5f92f3eda2436cd34752ab8",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r7",
+      "origin": "case",
+      "tool": "entity_tags",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:47.742Z",
+      "why": "Taste vocabulary associated with the anchor artists",
+      "originalDigest": "sha256:6620fd54053ca9ab4d8fd34f602fb7b266e1fda2c780c51f3926a56759c71ee6",
+      "rows": [
+        {
+          "id": "urn:tag:credit_card:place:discover",
+          "name": "Discover",
+          "affinity": 1,
+          "popularity": 0.9999869619097692
+        },
+        {
+          "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+          "name": "Identifies as women-owned",
+          "affinity": 1,
+          "popularity": 0.9999950518091293
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:brussels_sprouts",
+          "name": "Brussels Sprouts",
+          "affinity": 1,
+          "popularity": 0.9960663453431947
+        },
+        {
+          "id": "urn:tag:cost_description:place:inexpensive",
+          "name": "Inexpensive",
+          "affinity": 1,
+          "popularity": 0.9999875117087548
+        },
+        {
+          "id": "urn:tag:hotel_rating:place:four_star",
+          "name": "Four Star",
+          "affinity": 1,
+          "popularity": 0.9998966377907004
+        },
+        {
+          "id": "urn:tag:genre:brand:fashion",
+          "name": "Fashion",
+          "affinity": 1,
+          "popularity": 0.9991951728277403
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:bar",
+          "name": "Bar",
+          "affinity": 1,
+          "popularity": 0.9999871189951937
+        },
+        {
+          "id": "urn:tag:keyword:media:african_american",
+          "name": "african american",
+          "affinity": 0.9997200970330286,
+          "popularity": 0.9980537448955621
+        },
+        {
+          "id": "urn:tag:artist:qloo:retro_inspired",
+          "name": "Retro-Inspired",
+          "affinity": 0.99939292117858,
+          "popularity": 0.9848953724676063
+        },
+        {
+          "id": "urn:tag:keyword:media:new_york_city",
+          "name": "new york city",
+          "affinity": 0.9992955926102323,
+          "popularity": 0.9985562286852423
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:9b6c3a04bb8f5d8907839589f603ca87d55e193362510388bb6bfc7db62418c4",
+        "manifestDigest": "sha256:9b6c3a04bb8f5d8907839589f603ca87d55e193362510388bb6bfc7db62418c4",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r8",
+      "origin": "case",
+      "tool": "recommend",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:51.901Z",
+      "why": "Discover adjacent artists for this city",
+      "originalDigest": "sha256:1f0d185bc4bc14e65a92709b4243f2d562712e10c156c62ef164a8694c2706f6",
+      "rows": [
+        {
+          "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "name": "Michael Kiwanuka",
+          "affinity": 0.9592840607168065,
+          "popularity": 0.9939740086113678
+        },
+        {
+          "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+          "name": "Lady Wray",
+          "affinity": 0.9571253885215387,
+          "popularity": 0.9107078491896533
+        },
+        {
+          "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "name": "Charlotte Day Wilson",
+          "affinity": 0.9534525487020068,
+          "popularity": 0.9523720582741875
+        },
+        {
+          "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+          "name": "St. Paul & The Broken Bones",
+          "affinity": 0.9533160691167892,
+          "popularity": 0.9759484628642956
+        },
+        {
+          "id": "751653C6-CCFA-4270-A266-97BD959E5FBF",
+          "name": "Son Little",
+          "affinity": 0.9514589137870534,
+          "popularity": 0.934805261191829
+        },
+        {
+          "id": "BC7F1D4B-4F32-4F7C-B01B-F21E03885A34",
+          "name": "The Teskey Brothers",
+          "affinity": 0.9506754226463112,
+          "popularity": 0.9491739247258977
+        },
+        {
+          "id": "58EF0268-C035-4AE8-933E-AC0733C2FFF5",
+          "name": "Brittany Howard",
+          "affinity": 0.946364449682141,
+          "popularity": 0.9348019844156525
+        },
+        {
+          "id": "EF70B8D5-9AFE-49E5-959A-88CF198DAD48",
+          "name": "Durand Jones & The Indications",
+          "affinity": 0.9431077377381097,
+          "popularity": 0.9671667027112046
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:2a9b867402791a113b05d37667358ed74714c92fbb62af854a5c3b36a62ca9c6",
+        "manifestDigest": "sha256:2a9b867402791a113b05d37667358ed74714c92fbb62af854a5c3b36a62ca9c6",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r9",
+      "origin": "case",
+      "tool": "rank",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:53.705Z",
+      "why": "Relative audience fit for this candidate pool and city",
+      "originalDigest": "sha256:4c5cabbd61d0b14956fb1f00477d5c8d68a73fdacbc56596d76d451fbc3b7bc6",
+      "rows": [
+        {
+          "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "name": "Michael Kiwanuka",
+          "affinity": 0.9770222376244421,
+          "popularity": 0.9939740086113678
+        },
+        {
+          "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "name": "Charlotte Day Wilson",
+          "affinity": 0.9718436658564358,
+          "popularity": 0.9523720582741875
+        },
+        {
+          "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+          "name": "Lady Wray",
+          "affinity": 0.9707438477441362,
+          "popularity": 0.9107078491896533
+        },
+        {
+          "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+          "name": "St. Paul & The Broken Bones",
+          "affinity": 0.9705521798685506,
+          "popularity": 0.9759484628642956
+        },
+        {
+          "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "name": "SAULT",
+          "affinity": 0.9579929179757067,
+          "popularity": 0.9816172856496864
+        },
+        {
+          "id": "57478178-BBBC-49A4-8755-5D942B388316",
+          "name": "Jordan Rakei",
+          "affinity": 0.9578552904208322,
+          "popularity": 0.9614159605214007
+        },
+        {
+          "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+          "name": "Khruangbin",
+          "affinity": 0.9533889718385528,
+          "popularity": 0.9920702016528059
+        },
+        {
+          "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+          "name": "Hiatus Kaiyote",
+          "affinity": 0.9476541823444999,
+          "popularity": 0.9863981020912386
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:bc1d39a6f029e5d4758d4a68a780eb63de6cc47fd13ed159d006f2f4e05a2cb8",
+        "manifestDigest": "sha256:bc1d39a6f029e5d4758d4a68a780eb63de6cc47fd13ed159d006f2f4e05a2cb8",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r10",
+      "origin": "case",
+      "tool": "trends",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:54.777Z",
+      "why": "Observed trend direction over the last six months",
+      "originalDigest": "sha256:631bd86fb412421cb34e489b5bbea5f7d6d29a8f6d5cdcb71e30ff174a65ba84",
+      "rows": [
+        {
+          "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "name": "Charlotte Day Wilson"
+        },
+        {
+          "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+          "name": "Lady Wray"
+        },
+        {
+          "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+          "name": "St. Paul & The Broken Bones"
+        },
+        {
+          "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "name": "Sault"
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:5667d5902b7d9114d422be933fa35f59fc681e93609b37bb39a6e5b63085a44b",
+        "manifestDigest": "sha256:5667d5902b7d9114d422be933fa35f59fc681e93609b37bb39a6e5b63085a44b",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r11",
+      "origin": "case",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:55.730Z",
+      "why": "Geographic popularity evidence for Charlotte Day Wilson within New York",
+      "originalDigest": "sha256:5902655646b35a01e801c2bbe203f7c3b313c151b97bb27ac4d9729e2b3e98e6",
+      "rows": [
+        {
+          "id": "",
+          "name": "",
+          "affinity": 1,
+          "popularity": 0.9932584269662922
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9977528089887641,
+          "popularity": 0.9977528089887641
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9955056179775281,
+          "popularity": 0.9910112359550561
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9932584269662922,
+          "popularity": 1
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9910112359550561,
+          "popularity": 0.9955056179775281
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9887640449438202,
+          "popularity": 0.9887640449438202
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9865168539325843,
+          "popularity": 0.9865168539325843
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9842696629213483,
+          "popularity": 0.9842696629213483
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9820224719101124,
+          "popularity": 0.9820224719101124
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9797752808988764,
+          "popularity": 0.9595505617977528
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:0b0f682d16919a217857775b80c042a8d0739bc4267fafc7cba984f7003e6d14",
+        "manifestDigest": "sha256:0b0f682d16919a217857775b80c042a8d0739bc4267fafc7cba984f7003e6d14",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r12",
+      "origin": "case",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:56.336Z",
+      "why": "Compare Charlotte Day Wilson and the anchor audience; no net-new percentage inferred",
+      "originalDigest": "sha256:1b0ce94daaf2178297ecce054cabf69c1fef44b7b3f61701c2f1fda37ab13ec6",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:f89c1900faaa3b68de195eadb503180ecfce2023dd236a523aa6a57c10ae256f",
+        "manifestDigest": "sha256:f89c1900faaa3b68de195eadb503180ecfce2023dd236a523aa6a57c10ae256f",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r13",
+      "origin": "case",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:57.206Z",
+      "why": "Geographic popularity evidence for Lady Wray within New York",
+      "originalDigest": "sha256:18c9e48edaf8673d4ed0f97a82f86cdbd12f84468db25679242669efa67493af",
+      "rows": [
+        {
+          "id": "",
+          "name": "",
+          "affinity": 1,
+          "popularity": 0.9871794871794872
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9957264957264957,
+          "popularity": 0.9829059829059829
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9914529914529915,
+          "popularity": 0.9743589743589743
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9871794871794872,
+          "popularity": 0.9487179487179487
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9829059829059829,
+          "popularity": 0.9572649572649573
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9786324786324786,
+          "popularity": 0.9957264957264957
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9743589743589743,
+          "popularity": 0.9786324786324786
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9700854700854701,
+          "popularity": 1
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9658119658119658,
+          "popularity": 0.9273504273504274
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9615384615384616,
+          "popularity": 0.9914529914529915
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:0b52fc8d1d3c9ae7c647818a021d4d58a92cad52c1817a6c9cdde04320569f98",
+        "manifestDigest": "sha256:0b52fc8d1d3c9ae7c647818a021d4d58a92cad52c1817a6c9cdde04320569f98",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r14",
+      "origin": "case",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:57.805Z",
+      "why": "Compare Lady Wray and the anchor audience; no net-new percentage inferred",
+      "originalDigest": "sha256:f75e7ecb7129d02fae45fc25ac26d1d142135eb1844b55b59141ea75af4a2402",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:a573674ea140f4e961b33c3d95f0359d5b6e590de8812d5fb85fb465fa5af691",
+        "manifestDigest": "sha256:a573674ea140f4e961b33c3d95f0359d5b6e590de8812d5fb85fb465fa5af691",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r15",
+      "origin": "case",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:58.624Z",
+      "why": "Geographic popularity evidence for St. Paul & The Broken Bones within New York",
+      "originalDigest": "sha256:9b0428ee0e30563c4d9a5d31935d3fa53a91e4649b676fb79245224405e095a6",
+      "rows": [
+        {
+          "id": "",
+          "name": "",
+          "affinity": 1,
+          "popularity": 0.9734789391575663
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9984399375975039,
+          "popularity": 0.9984399375975039
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9968798751950078,
+          "popularity": 1
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9953198127925117,
+          "popularity": 0.9968798751950078
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9937597503900156,
+          "popularity": 0.9953198127925117
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9921996879875195,
+          "popularity": 0.968798751950078
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9906396255850234,
+          "popularity": 0.9921996879875195
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9890795631825273,
+          "popularity": 0.9875195007800313
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9875195007800313,
+          "popularity": 0.9906396255850234
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9859594383775351,
+          "popularity": 0.9890795631825273
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:e27c457f0d5c8d2a3a41beb0ed0cb0999fb88dad664c1691fb6d4174003f5e96",
+        "manifestDigest": "sha256:e27c457f0d5c8d2a3a41beb0ed0cb0999fb88dad664c1691fb6d4174003f5e96",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r16",
+      "origin": "case",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:24:59.219Z",
+      "why": "Compare St. Paul & The Broken Bones and the anchor audience; no net-new percentage inferred",
+      "originalDigest": "sha256:197d44db8138aad88e6541e8d6f2ca1e8d89f0f867c80913fe985d1d9f8d7f01",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:3d075ac7839303f1ce66385f1002ff623e567dfc1b96128280bdad15bf0871e2",
+        "manifestDigest": "sha256:3d075ac7839303f1ce66385f1002ff623e567dfc1b96128280bdad15bf0871e2",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r17",
+      "origin": "case",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:25:00.096Z",
+      "why": "Geographic popularity evidence for Sault within New York",
+      "originalDigest": "sha256:863a8b9ae94fd9540f7615a812bf689aea3d57417579cd4fc536f5729d6b44bd",
+      "rows": [
+        {
+          "id": "",
+          "name": "",
+          "affinity": 1,
+          "popularity": 0.9911242603550295
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9970414201183432,
+          "popularity": 0.9970414201183432
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9940828402366864,
+          "popularity": 0.9881656804733728
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9911242603550295,
+          "popularity": 0.985207100591716
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9881656804733728,
+          "popularity": 0.9822485207100592
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.985207100591716,
+          "popularity": 0.9940828402366864
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9822485207100592,
+          "popularity": 1
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9792899408284024,
+          "popularity": 0.9733727810650887
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9763313609467456,
+          "popularity": 0.9792899408284024
+        },
+        {
+          "id": "",
+          "name": "",
+          "affinity": 0.9733727810650887,
+          "popularity": 0.9763313609467456
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:f650d377dc1275fef60cf8448b7028147cb04502d189caf6fae51b2977d4486b",
+        "manifestDigest": "sha256:f650d377dc1275fef60cf8448b7028147cb04502d189caf6fae51b2977d4486b",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "r18",
+      "origin": "case",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-23T13:25:00.689Z",
+      "why": "Compare Sault and the anchor audience; no net-new percentage inferred",
+      "originalDigest": "sha256:d897fc399ba42438ac08d9211bdd2ee016ad9e4f89a61ce13655e3b709747bdb",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:b5c45f9b9f5804b82e98b1e4b86fb8a4e32d6320baa62ca43e48cf3d9e0e62a3",
+        "manifestDigest": "sha256:b5c45f9b9f5804b82e98b1e4b86fb8a4e32d6320baa62ca43e48cf3d9e0e62a3",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a1",
+      "origin": "run",
+      "tool": "trends",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:18.842Z",
+      "why": "Autopilot decision: Does Qloo return an interpretable recent trend direction for Jordan Rakei?",
+      "originalDigest": "sha256:648569301ac10dffebad084016eb90da6cc12106cd20b5dde91eabf51d83e4c0",
+      "rows": [
+        {
+          "id": "57478178-BBBC-49A4-8755-5D942B388316",
+          "name": "Jordan Rakei"
+        },
+        {
+          "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "name": "Michael Kiwanuka"
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:0bc233e8a288cdc92028a4228465cb5e834a46f58b9810058883b54737c5f20d",
+        "manifestDigest": "sha256:0bc233e8a288cdc92028a4228465cb5e834a46f58b9810058883b54737c5f20d",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a2",
+      "origin": "run",
+      "tool": "rank",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:28.319Z",
+      "why": "Autopilot decision: Does the audience ranking hold without the New York location signal?",
+      "originalDigest": "sha256:9df087a20ea556c3e24276ffae49f18ddf6472863dbb0c90108ce659492e9eae",
+      "rows": [
+        {
+          "id": "368316C7-795A-46AF-8BBC-270F6633BE04",
+          "name": "Michael Kiwanuka",
+          "affinity": 0.9592840607168065,
+          "popularity": 0.9939740086113678
+        },
+        {
+          "id": "F7D2F7B4-D2A6-44B4-A991-E7E4819B8AB6",
+          "name": "Lady Wray",
+          "affinity": 0.9571253885215387,
+          "popularity": 0.9107078491896533
+        },
+        {
+          "id": "57970D7A-5D86-401A-8BE4-961DAEC943E4",
+          "name": "Charlotte Day Wilson",
+          "affinity": 0.9534525487020068,
+          "popularity": 0.9523720582741875
+        },
+        {
+          "id": "AFDEDBC3-D20A-41D3-8E2A-D3C4AC041604",
+          "name": "St. Paul & The Broken Bones",
+          "affinity": 0.9533160691167892,
+          "popularity": 0.9759484628642956
+        },
+        {
+          "id": "57478178-BBBC-49A4-8755-5D942B388316",
+          "name": "Jordan Rakei",
+          "affinity": 0.927955082006584,
+          "popularity": 0.9614159605214007
+        },
+        {
+          "id": "B8A29D31-35E3-4DB7-8BDA-92F505BD24C0",
+          "name": "SAULT",
+          "affinity": 0.9225840869503553,
+          "popularity": 0.9816172856496864
+        },
+        {
+          "id": "BAF6317A-DF94-4C90-92AE-63F86560C21B",
+          "name": "Khruangbin",
+          "affinity": 0.9092227889148484,
+          "popularity": 0.9920702016528059
+        },
+        {
+          "id": "AC007829-3D79-438E-9F02-11228C82AD38",
+          "name": "Hiatus Kaiyote",
+          "affinity": 0.8974584819005388,
+          "popularity": 0.9863981020912386
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:551da7bffdc8a0dadaf0d5e0a706b6d0ec3301400b84b3ed30853102eb941de0",
+        "manifestDigest": "sha256:551da7bffdc8a0dadaf0d5e0a706b6d0ec3301400b84b3ed30853102eb941de0",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a3",
+      "origin": "run",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:34.676Z",
+      "why": "Autopilot decision: Is there Qloo geographic evidence for Michael Kiwanuka in New York?",
+      "originalDigest": "sha256:4db77d8776719b24bbf19f00faa33b83d4f706d632d6d709256f3601cc36b19b",
+      "rows": [
+        {
+          "id": null,
+          "name": null,
+          "affinity": 1,
+          "popularity": 0.9971387696709585
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9985693848354793,
+          "popularity": 0.9957081545064378
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9971387696709585,
+          "popularity": 1
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9957081545064378,
+          "popularity": 0.9985693848354793
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.994277539341917,
+          "popularity": 0.994277539341917
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9928469241773963,
+          "popularity": 0.9914163090128756
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9914163090128756,
+          "popularity": 0.9928469241773963
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9899856938483548,
+          "popularity": 0.9899856938483548
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9885550786838341,
+          "popularity": 0.9871244635193133
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9871244635193133,
+          "popularity": 0.9885550786838341
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:3c108cd967e124e147715c87b1cef71877fa46604a97f8dd3bc41ce4aff07688",
+        "manifestDigest": "sha256:3c108cd967e124e147715c87b1cef71877fa46604a97f8dd3bc41ce4aff07688",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a4",
+      "origin": "run",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:36.239Z",
+      "why": "Autopilot decision: How does Michael Kiwanuka's audience compare with the anchor audience?",
+      "originalDigest": "sha256:80ad1cc6c8dcbebc6b564872d3187417a3b75522c02c50baafac9a3ea5a2ec9c",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:d9e3a53ee42594dec9014b490c6035ec367fb906be874ba190c82287eea68732",
+        "manifestDigest": "sha256:d9e3a53ee42594dec9014b490c6035ec367fb906be874ba190c82287eea68732",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a5",
+      "origin": "run",
+      "tool": "where_popular",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:40.721Z",
+      "why": "Autopilot decision: Is there Qloo geographic evidence for Jordan Rakei in New York?",
+      "originalDigest": "sha256:b786898abfbbfb45b23fd48117a33ea322a654256313d5240f9c4e086ccdff79",
+      "rows": [
+        {
+          "id": null,
+          "name": null,
+          "affinity": 1,
+          "popularity": 0.9974293059125964
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9974293059125964,
+          "popularity": 0.9922879177377892
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9948586118251928,
+          "popularity": 1
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9922879177377892,
+          "popularity": 0.9948586118251928
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9897172236503856,
+          "popularity": 0.9897172236503856
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.987146529562982,
+          "popularity": 0.987146529562982
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9845758354755784,
+          "popularity": 0.9845758354755784
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9820051413881749,
+          "popularity": 0.9820051413881749
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9794344473007712,
+          "popularity": 0.9794344473007712
+        },
+        {
+          "id": null,
+          "name": null,
+          "affinity": 0.9768637532133676,
+          "popularity": 0.9768637532133676
+        }
+      ],
+      "integrity": {
+        "contentDigest": "sha256:87989c7784c18e4f35f8566d3ef3c29643cdf89705c47df39013d7940c3d9691",
+        "manifestDigest": "sha256:87989c7784c18e4f35f8566d3ef3c29643cdf89705c47df39013d7940c3d9691",
+        "matchesManifest": true
+      }
+    },
+    {
+      "id": "a6",
+      "origin": "run",
+      "tool": "compare_audiences",
+      "status": "ok",
+      "fetchedAt": "2026-10-24T10:51:42.265Z",
+      "why": "Autopilot decision: How does Jordan Rakei's audience compare with the anchor audience?",
+      "originalDigest": "sha256:31e263b805303e76dea9576ada5c10b8f491d6629f6844cb75cdc2b62e8e126c",
+      "rows": [],
+      "integrity": {
+        "contentDigest": "sha256:59c51a1b1a45b6fe1266cc0ff7fff6eefc753b2b59f043a3516bc5cc9bd33b36",
+        "manifestDigest": "sha256:59c51a1b1a45b6fe1266cc0ff7fff6eefc753b2b59f043a3516bc5cc9bd33b36",
+        "matchesManifest": true
+      }
+    }
+  ]
+}
