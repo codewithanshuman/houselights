@@ -1,5 +1,33 @@
 # Sharing an existing Oracle server
 
+## Deployment of d997b60 — 25 October 2026
+
+The public host runs `d997b606307505dd44a3b6cecf592f1887169483`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release adds the server-rendered navigation, the inlined claim table, deferred below-the-fold layout, subset fonts, the cached-experiment rate-limit fix, and the Caddyfile change (zstd/gzip compression and HSTS).
+
+**Before the switch (backup, restore and rollback drill, redone on this release)**
+
+- The online backup `pre-d997b60` passed an isolated restore: status verified, integrity ok. A copy is held off-host.
+- The release environment, the service list and the livestream PID (1317979) were saved.
+- The running image was tagged `houselights-shared:pre-d997b60`.
+- Rollback drill: that image ran on a restored copy of the database at loopback port 18091. It reported `02f7228`, served 12 cases and `judge.html`, and logged no errors. The drill container was then removed.
+- The new Caddyfile passed `caddy validate` in a throwaway `caddy:2` container with no network.
+
+**Switch**
+
+- Exact checkout with nothing modified. The tracked tree contains none of the provider keys or the organizer token. Only `RELEASE_COMMIT` changed in the release environment.
+- Capped build, then the app container was recreated. The Caddy container was force-recreated so it reads the new Caddyfile (a file bind mount keeps the old file until then). Public HTTPS answered again within about 2 seconds, and the certificate was kept in the `caddy-data` volume.
+- Every other container and the livestream PID were unchanged. Disk use is 85%.
+
+**Checks after the deployment**
+
+- `npm run release:verify` passed. HTML and JSON are served with zstd or gzip, stamped CSS and JS are immutable for a year, and HSTS is set.
+- Private routes return 401. The 404 page has the navigation.
+- Lighthouse on the live site, Booking Desk: 86 on mobile (LCP 2.7 s, CLS 0.005) and 99 on desktop (LCP 0.7 s). Evidence page: 81 on mobile and 99 on desktop. Accessibility scored 100 on all four runs.
+- In headless Chromium, Firefox and WebKit on the live site, at phone and desktop sizes, the Qloo switch changes the bill, the receipt drawer opens and the Autopilot panel loads its styles lazily. No page logged a console error.
+- **Regression found:** on this release, "Try a budget cut ↓" scrolls its button under the sticky step bar. On `02f7228` it landed mid-screen only because content above it moved afterwards. Focus still goes to the button. The fix is `6590a3a`, which is on `development` and not deployed.
+
+**Rollback:** tag `houselights-shared:pre-d997b60` as `houselights-shared:local`, set `RELEASE_COMMIT=02f7228e0203bbc2b714a54f678c6b53a34e58b0`, check out that commit, then run `up --no-build -d houselights` with both Compose files. Then force-recreate the `https` service so Caddy reads that commit's Caddyfile.
+
 ## Deployments of 764824d and 02f7228 — 24 October 2026
 
 The public host runs `02f7228e0203bbc2b714a54f678c6b53a34e58b0`, and `/healthz` over public HTTPS reports it.
