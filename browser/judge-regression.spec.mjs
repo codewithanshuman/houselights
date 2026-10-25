@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test, expect } from '@playwright/test';
 import { DatabaseSync } from 'node:sqlite';
+import AxeBuilder from '@axe-core/playwright';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const seedManifest=JSON.parse(readFileSync(join(root,'deploy','judge-cases.json'),'utf8'));
@@ -77,7 +78,7 @@ test.afterAll(async () => {
     rmSync(dataDir, { recursive: true, force: true });
 });
 
-test('first paint shows the real bill and the Qloo-off change with no API call', async ({ page }) => {
+test('first paint shows the real bill and the Qloo-off change with no API call', { tag: '@cross-browser' }, async ({ page }) => {
   // The first screen is inlined at build time: block every API call and it still renders.
   await page.route('**/api/**',route=>route.abort());
   await page.goto(`${origin}/judge.html`,{waitUntil:'domcontentloaded'});
@@ -92,12 +93,14 @@ test('first paint shows the real bill and the Qloo-off change with no API call',
   expect(below).toBe(true);
 });
 
-test('keyboard only: the Qloo switch changes the decision, announces it once and keeps focus', async ({ page }) => {
+test('keyboard only: the Qloo switch changes the decision, announces it once and keeps focus', { tag: '@cross-browser' }, async ({ page, browserName }) => {
   const experimentPosts=[];page.on('request',request=>{if(request.method()==='POST'&&/\/experiment$/.test(request.url()))experimentPosts.push(request.url());});
   await page.goto(`${origin}/judge.html`);
   const sw=page.getByRole('switch',{name:/Qloo evidence/});
   await expect(sw).toHaveAttribute('aria-checked','true');
-  await page.keyboard.press('Tab');await expect(page.locator('.skip-link')).toBeFocused();
+  // WebKit, like Safari, does not move Tab focus to links by default (and its Windows
+  // build ignores Option/Alt+Tab), so the skip-link step is checked in Chromium and Firefox.
+  if(browserName!=='webkit'){await page.keyboard.press('Tab');await expect(page.locator('.skip-link')).toBeFocused();}
   await page.keyboard.press('Enter');
   await sw.focus();await page.keyboard.press('Space');
   await expect(sw).toHaveAttribute('aria-checked','false');await expect(sw).toBeFocused();
@@ -111,7 +114,7 @@ test('keyboard only: the Qloo switch changes the decision, announces it once and
   expect(experimentPosts).toEqual([]);
 });
 
-test('the bill step explains the choice, draws the near-tie and badges the fit basis', async ({ page }) => {
+test('the bill step explains the choice, draws the near-tie and badges the fit basis', { tag: '@cross-browser' }, async ({ page }) => {
   const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
   await page.goto(`${origin}/judge.html`);
   const glance=page.locator('#decision-glance');
@@ -130,7 +133,7 @@ test('the bill step explains the choice, draws the near-tie and badges the fit b
   await expect(page.locator('.glance-glossary')).toContainText('Qloo publishes no margin of error');
 });
 
-test('receipt drawer shows the saved Qloo row with the act highlighted, digests and integrity', async ({ page }) => {
+test('receipt drawer shows the saved Qloo row with the act highlighted, digests and integrity', { tag: '@cross-browser' }, async ({ page }) => {
   await page.goto(`${origin}/judge.html`);
   const trigger=page.locator('#step-receipt-body [data-entity="Sault"]');
   await trigger.focus();await page.keyboard.press('Enter');
@@ -144,7 +147,7 @@ test('receipt drawer shows the saved Qloo row with the act highlighted, digests 
   await expect(drawer).toBeHidden();await expect(trigger).toBeFocused();
 });
 
-test('step 3 re-runs the withdrawal live, and the opened receipt clears the sticky form', async ({ page }) => {
+test('step 3 re-runs the withdrawal live, and the opened receipt clears the sticky form', { tag: '@cross-browser' }, async ({ page }) => {
   await page.goto(`${origin}/judge.html`);
   await page.locator('.booking-path').getByRole('link',{name:/Check the receipt/}).click();
   await expect(page.locator('#step-receipt')).toBeFocused();
@@ -698,4 +701,75 @@ test('shock study headlines report the like-for-like solvable rate, never the po
   await expect(page.locator('#shock-stats')).toContainText('Briefs without a comparable Qloo ranking');
   await expect(page.locator('#shock-rows')).toContainText('not comparable (incomplete Qloo ranking)');
   await expect(page.locator('body')).not.toContainText('9.7%');
+});
+
+const PUBLIC_PAGES=['/judge.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
+
+test('every page passes axe WCAG 2.1 AA with no serious or critical issues, at desktop and phone width', async ({ page }) => {
+  test.setTimeout(240000);
+  const failures=[];
+  for(const path of PUBLIC_PAGES)for(const width of [1280,375]){
+    await page.setViewportSize({width,height:900});
+    await page.goto(`${origin}${path}`,{waitUntil:'networkidle'});
+    const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
+    for(const v of results.violations.filter(v=>['serious','critical'].includes(v.impact)))failures.push(`${path} @${width}: ${v.id} (${v.nodes.length}) ${v.nodes[0].target.join(' ')}`);
+    if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))failures.push(`${path} @${width}: horizontal overflow`);
+  }
+  expect(failures).toEqual([]);
+});
+
+test('no page logs a console error or uncaught exception on load', async ({ page }) => {
+  test.setTimeout(120000);
+  const errors=[];
+  page.on('console',message=>{if(message.type()==='error')errors.push(`${page.url()}: ${message.text().slice(0,160)}`);});
+  page.on('pageerror',error=>errors.push(`${page.url()}: ${error.message}`));
+  for(const path of PUBLIC_PAGES.filter(path=>path!=='/no-such-page')){await page.goto(`${origin}${path}`,{waitUntil:'networkidle'});await page.waitForTimeout(400);}
+  expect(errors).toEqual([]);
+});
+
+test('with the API down, the four-step path still works from recorded JSON', { tag: '@cross-browser' }, async ({ page }) => {
+  await page.route('**/api/**',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Service unavailable'})}));
+  await page.goto(`${origin}/judge.html`);
+  await expect(page.locator('#first-screen-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  await page.getByRole('switch',{name:/Qloo evidence/}).click();
+  await expect(page.locator('#fs-diff')).toContainText('−$4,500');
+  await expect(page.locator('#decision-glance .glance-book strong')).toHaveText('Michael Kiwanuka + Sault');
+  await page.locator('#step-receipt-body [data-entity="Sault"]').click();
+  await expect(page.locator('#receipt-drawer .integrity-ok')).toContainText('Integrity check passed');
+  await expect(page.locator('body')).not.toContainText('{"error"');
+});
+
+// Visual regression at the key states. Baselines live next to this spec, per browser and
+// platform (Windows and Linux); the footer release hash differs between builds and is masked.
+test.describe('visual states', { tag: '@visual' }, () => {
+  test.beforeEach(async ({ page }) => { await page.emulateMedia({ reducedMotion: 'reduce' }); });
+  const mask = page => [page.locator('.site-release'), page.locator('.judge-status-strip')];
+  test('first screen', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await expect(page.locator('#first-screen')).toHaveScreenshot('first-screen.png');
+  });
+  test('Qloo evidence off', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.getByRole('switch', { name: /Qloo evidence/ }).click();
+    await expect(page.locator('#first-screen')).toHaveScreenshot('qloo-off.png');
+  });
+  test('near-tie', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await expect(page.locator('figure.near-tie')).toHaveScreenshot('near-tie.png');
+  });
+  test('receipt drawer', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.locator('#step-receipt-body [data-entity="Sault"]').click();
+    await expect(page.locator('#receipt-drawer .integrity-ok')).toBeVisible();
+    await expect(page.locator('#receipt-drawer')).toHaveScreenshot('receipt-drawer.png');
+  });
+  test('mobile first screen', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await expect(page).toHaveScreenshot('mobile-first-screen.png', { mask: mask(page) });
+  });
 });

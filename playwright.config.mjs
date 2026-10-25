@@ -13,9 +13,14 @@ export default defineConfig({
   fullyParallel: false,
   // On CI, failures also become GitHub annotations, which are readable without signing in.
   reporter: process.env.CI ? [['list'], ['github']] : 'list',
-  use: {
-    browserName: 'chromium',
-    headless: true,
-    launchOptions: executablePath ? { executablePath } : {},
-  },
+  use: { headless: true },
+  // Screenshot baselines are per browser and platform; small anti-aliasing noise is allowed.
+  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.02, animations: 'disabled' } },
+  projects: [
+    // The whole suite runs in Chromium.
+    { name: 'chromium', use: { browserName: 'chromium', launchOptions: executablePath ? { executablePath } : {} } },
+    // The judge path also runs in Firefox and WebKit: tests tagged @cross-browser.
+    { name: 'firefox', use: { browserName: 'firefox' }, grep: /@cross-browser/, grepInvert: /@visual/ },
+    { name: 'webkit', use: { browserName: 'webkit' }, grep: /@cross-browser/, grepInvert: /@visual/ },
+  ],
 });
