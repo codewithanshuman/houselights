@@ -34,7 +34,9 @@ test('unknown pages get the styled 404 page, not a bare error', async () => {
   const response = await fetch(`${url}/no-such-page`);
   assert.equal(response.status, 404);
   assert.match(response.headers.get('content-type'), /text\/html/);
-  assert.match(await response.text(), /This page isn’t on the bill\./);
+  const html = await response.text();
+  assert.match(html, /Error 404: this page does not exist/);
+  assert.match(html, /Back to home<\/a>/);
 });
 
 test('rate limits say when to retry', async () => {
@@ -93,14 +95,20 @@ test('the global experiment cap counts only new calculations, so cached answers 
   db.prepare('DELETE FROM quotas').run();
 });
 
-test('pages are served with the navigation already in place, including the 404 page', async () => {
+test('pages are served with their navigation already in place: pill nav on the landing page, the app sidebar elsewhere, none on the 404 page', async () => {
   const desk = await (await fetch(`${url}/judge.html`)).text();
   assert.match(desk, /<header class="site-header" data-site-nav="booking"><nav class="site-nav"/);
   assert.match(desk, /<a href="\/judge.html" aria-current="page">Booking Desk<\/a>/);
   assert.match(desk, /Demand Lab and Audience Twin <span class="badge badge-warn">uncalibrated<\/span>/);
   const missing = await fetch(`${url}/no-such-page`);
   assert.equal(missing.status, 404);
-  assert.match(await missing.text(), /<nav class="site-nav"/);
+  const missingHtml = await missing.text();
+  assert.doesNotMatch(missingHtml, /site-nav|app-side/);
+  const evidence = await (await fetch(`${url}/evidence.html`)).text();
+  assert.match(evidence, /<body class="app-shell /);
+  assert.match(evidence, /<header class="app-side" data-site-nav="evidence">/);
+  assert.match(evidence, /<a class="app-row is-current" href="\/evidence.html" data-row aria-current="page">/);
+  assert.doesNotMatch(evidence, /class="site-nav"/);
 });
 
 test('healthz reports disk headroom as a boolean only', async () => {
@@ -109,11 +117,13 @@ test('healthz reports disk headroom as a boolean only', async () => {
   assert.ok(!JSON.stringify(health).match(/bytes|bavail|free/i), 'no disk figures are published');
 });
 
-test('every page gets the same server-rendered footer with the festival drawing', async () => {
-  for (const path of ['/judge.html', '/evidence.html', '/proof-lab.html', '/no-such-page']) {
-    const html = await (await fetch(`${url}${path}`)).text();
-    assert.match(html, /<footer class="site-footer plan-footer" data-site-footer><div class="plan-footer-inner">/, path);
-    assert.match(html, /footer-festival\.webp/, path);
-    assert.match(html, /<code id="site-release">/, path);
+test('only the landing page gets the server-rendered footer on the bridge drawing', async () => {
+  const html = await (await fetch(`${url}/judge.html`)).text();
+  assert.match(html, /<footer class="site-footer plan-footer" data-site-footer><picture class="footer-art">/);
+  assert.match(html, /footer-bridge\.webp/);
+  assert.match(html, /<code id="site-release">/);
+  for (const path of ['/evidence.html', '/proof-lab.html', '/workspace.html', '/no-such-page']) {
+    const page = await (await fetch(`${url}${path}`)).text();
+    assert.doesNotMatch(page, /data-site-footer/, path);
   }
 });

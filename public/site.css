@@ -187,3 +187,15 @@ input[type=checkbox],input[type=radio]{flex-shrink:0}
 .claim-table th[scope=row]{font-weight:500;max-width:420px}
 
 .claim-table{grid-column:1/-1;min-width:0;max-width:100%;overflow-wrap:anywhere}.claim-table .table-scroll{max-width:100%}
+/* Claims table on phones: one card per claim instead of four squeezed columns */
+@media (max-width:640px){
+  .claim-table table,.claim-table tbody,.claim-table tr,.claim-table th,.claim-table td{display:block;width:auto;max-width:none}
+  .claim-table thead{display:none}
+  .claim-table caption{display:block;padding:12px 16px 4px;text-align:left}
+  .claim-table :is(th,td){overflow-wrap:normal;word-break:normal;padding:4px 0;border:0}
+  .claim-table tbody tr{padding:16px;border-bottom:1px solid var(--pp-line,#e5e2ee)}
+  .claim-table th[scope=row]{font-size:15px;line-height:22px}
+  .claim-table td:nth-of-type(2)::before,.claim-table td:nth-of-type(3)::before{content:attr(data-label);display:block;margin-top:8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#635F78}
+  .claim-table td:nth-of-type(2)::before{content:"Limit"}
+  .claim-table td:nth-of-type(3)::before{content:"Reproduce"}
+}

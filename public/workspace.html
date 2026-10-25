@@ -22,18 +22,21 @@
   <link rel="stylesheet" href="/workspace.css">
   <script src="/access.js" defer></script>
   <script src="/autopilot-view.js" defer></script>
+  <script src="/dashboard.js" defer></script>
   <script src="/workspace.js" defer></script>
 <link rel="stylesheet" href="/site.css">
   <link rel="stylesheet" href="/v2.css">
+  <link rel="stylesheet" href="/dashboard.css">
 <script src="/site.js" defer></script>
 </head>
 <body class="v2 judge-page workspace-page">
   <a class="skip-link" href="#main">Skip to the workspace</a>
-  <header class="site-header" data-site-nav=""></header>
+  <header class="site-header" data-site-nav="workspace"></header>
+  <div class="dash">
   <main id="main" class="judge-main workspace-main" tabindex="-1">
     <header class="workspace-hero">
       <p class="judge-eyebrow"><span aria-hidden="true"></span> YOUR EVENT. YOUR TERMS. QLOO EVIDENCE.</p>
-      <h1>Plan a new event, <em>end to end.</em></h1>
+      <h1>Plan a new event, <em>end to end.<svg class="dash-squiggle" viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M3 12c40-9 78-9 118-4s70 6 104 1 52-6 72-3"/></svg></em></h1>
       <p class="judge-intro">Write the brief with your own fees and availability. Houselights researches the audience with Qloo, compares feasible bills, stress-tests them and writes a decision packet. Revise the brief and compare decisions without re-running research.</p>
       <div id="workspace-mode" class="workspace-mode" role="status" aria-live="polite">Checking access…</div>
     </header>
@@ -143,6 +146,8 @@
     <section id="workspace-example" class="workspace-example" hidden aria-labelledby="example-title"></section>
     <p id="ws-status" class="workspace-status" role="status" aria-live="polite"></p>
   </main>
+  <aside id="dash-rail" class="dash-rail" aria-label="Event info" tabindex="0" hidden></aside>
+  </div>
 <footer class="site-footer" data-site-footer></footer>
 </body>
 </html>

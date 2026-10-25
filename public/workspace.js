@@ -195,18 +195,32 @@
       const file=await (await fetch('/workspace-example.json',{signal:AbortSignal.timeout(15000)})).json();state.example=file;
       const event=file.event,brief=event.revisions[0].brief,money=moneyFor(brief.currency);
       const [first,second]=file.runs;
-      target.innerHTML=`<div class="autopilot-banner autopilot-banner-recorded"><strong>RECORDED ORGANIZER SESSION</strong><span>${e(file.disclosure)} Captured ${e(file.capturedAt.replace('T',' ').slice(0,16))} UTC with ${e(file.providerCalls)} live Qloo workflow calls. This page replays the record and makes no calls.${file.runs.some(row=>row.run?.fitBasis==='ordinal-rank')?' These decisions scored cultural fit by Qloo rank order, because the session was recorded before Houselights used Qloo affinity scores; a new event researched today uses affinity.':''}</span></div>
+      const second_=event.revisions[1],runFacts=run=>run?{sub:run.run.packet.recommendation.names.join(' + '),meta:`${money(run.run.packet.recommendation.totalFee)} · ${run.createdAt.slice(11,16)} UTC`}:{sub:'',meta:''};
+      const steps=[
+        {id:'ex-brief',title:'Brief',sub:`${brief.candidates.length} candidates · ${brief.constraints.slots} slots`,meta:`${money(brief.constraints.budget)} budget`,note:brief.direction??brief.name},
+        {id:'ex-research',title:'Qloo research',sub:`${file.research.receipts.length} receipts saved`,meta:`${file.providerCalls} live Qloo calls`,note:`Fans of ${brief.anchors.join(' and ')} in ${brief.city}`},
+        {id:'ex-run-1',kind:'decision',title:'First decision',...runFacts(first),note:'Autopilot compares feasible bills and stress-tests them'},
+        {id:'ex-revise',title:'Revision',sub:second_?`Budget ${money(second_.brief.constraints.budget)}`:'',meta:second_?`${second_.createdAt.slice(11,16)} UTC`:'',note:second_?.note??''},
+        {id:'ex-run-2',kind:'decision',title:'Second decision',...runFacts(second),note:'Same Qloo evidence, new fees and budget'},
+        {id:'ex-compare',kind:'decision',title:'Compare',sub:'Decision 1 against 2',meta:`${file.runs.length} decisions`,note:'What changed in the bill and why'},
+      ];
+      $('main').classList.add('is-example');
+      target.innerHTML=`${window.HLDash?window.HLDash.head({title:event.name,where:`${brief.city} · ${brief.venue} · ${brief.date}`,action:{href:'/workspace.html',label:'Open your workspace'}}):''}
+        <details class="autopilot-banner autopilot-banner-recorded dx-disclosure"><summary><strong>RECORDED ORGANIZER SESSION</strong><span class="dx-disclosure-short">Read-only replay · live Qloo research · illustrative fees</span></summary><span>${e(file.disclosure)} Captured ${e(file.capturedAt.replace('T',' ').slice(0,16))} UTC with ${e(file.providerCalls)} live Qloo workflow calls. This page replays the record and makes no calls.${file.runs.some(row=>row.run?.fitBasis==='ordinal-rank')?' These decisions scored cultural fit by Qloo rank order, because the session was recorded before Houselights used Qloo affinity scores; a new event researched today uses affinity.':''}</span></details>
+        ${window.HLDash?window.HLDash.folders(steps):''}
         <ol class="workspace-story">
-          <li><h2><span>1</span> The organizer writes a new brief</h2><div class="panel workspace-brief-card">${briefCard(brief,money)}</div></li>
-          <li><h2><span>2</span> Houselights researches it with Qloo</h2><div class="panel">${researchSummary({...event,researchStale:null})}</div></li>
-          <li><h2><span>3</span> Autopilot builds the first decision</h2><div class="panel" id="example-run-1"></div></li>
-          <li><h2><span>4</span> The organizer revises the brief</h2><div class="panel"><p>${e(event.revisions[1]?.note??'')}</p><ul>${(event.revisions[1]?.changes??[]).map(row=>`<li>${e(row)}</li>`).join('')}</ul><p class="autopilot-note">Fees and constraints changed; the Qloo evidence is reused, so the second decision needs no new research calls.</p></div></li>
-          <li><h2><span>5</span> Autopilot decides again</h2><div class="panel" id="example-run-2"></div></li>
-          <li><h2><span>6</span> Compare the two decisions</h2><div class="panel">${comparisonHtml(file.comparison,money)}</div></li>
+          <li id="ex-brief"><h2><span>1</span> The organizer writes a new brief</h2><div class="panel workspace-brief-card">${briefCard(brief,money)}</div></li>
+          <li id="ex-research"><h2><span>2</span> Houselights researches it with Qloo</h2><div class="panel">${researchSummary({...event,researchStale:null})}</div></li>
+          <li id="ex-run-1"><h2><span>3</span> Autopilot builds the first decision</h2><div class="panel" id="example-run-1"></div></li>
+          <li id="ex-revise"><h2><span>4</span> The organizer revises the brief</h2><div class="panel"><p>${e(event.revisions[1]?.note??'')}</p><ul>${(event.revisions[1]?.changes??[]).map(row=>`<li>${e(row)}</li>`).join('')}</ul><p class="autopilot-note">Fees and constraints changed; the Qloo evidence is reused, so the second decision needs no new research calls.</p></div></li>
+          <li id="ex-run-2"><h2><span>5</span> Autopilot decides again</h2><div class="panel" id="example-run-2"></div></li>
+          <li id="ex-compare"><h2><span>6</span> Compare the two decisions</h2><div class="panel">${comparisonHtml(file.comparison,money)}</div></li>
         </ol><p class="workspace-example-cta">Ready to try it? <a href="/workspace.html">Open the workspace</a> (organizer token required on the public server) or return to the <a href="/judge.html">Booking Desk</a>.</p>`;
       renderRun(first,{target:$('example-run-1'),example:true});
       if(second)renderRun(second,{target:$('example-run-2'),example:true});
-    }catch{target.innerHTML='<p class="workspace-error">The recorded example could not be loaded.</p>';}
+      window.HLDash?.bindFolders(target);
+      window.HLDash?.rail(file);
+    }catch{target.innerHTML='<p class="workspace-error">The recorded example could not be loaded.</p>';window.HLDash?.hideRail();}
   }
   function briefCard(brief,money){
     return `<h3>${e(brief.name)}</h3><p>${e(brief.city)}${brief.venue?` · ${e(brief.venue)}`:''}${brief.date?` · ${e(brief.date)}`:''}</p><p>${e(brief.direction??'')}${brief.audience?` — ${e(brief.audience)}`:''}</p><p><strong>Audience references:</strong> ${e(brief.anchors.join(', '))} · <strong>Budget:</strong> ${e(money(brief.constraints.budget))} for ${e(brief.constraints.slots)} acts</p>
@@ -249,6 +263,7 @@
   async function openApp(){
     state.example=null;$('workspace-example').hidden=true;$('workspace-gate').hidden=true;$('workspace-app').hidden=false;
     $('workspace-mode').innerHTML=state.protected?'<strong>ORGANIZER ACCESS</strong> · private workspace on this server':'<strong>LOCAL DEVELOPMENT</strong> · this server does not require an organizer token';
+    window.HLDash?.hideRail();$('main').classList.remove('is-example');
     newEvent();await loadList();
     const health=await fetch('/healthz').then(r=>r.json()).catch(()=>null);
     if(health?.mock)$('workspace-mode').innerHTML+=' · <strong class="workspace-synthetic">SYNTHETIC QLOO MODE</strong>: research uses development fixtures, not real evidence';
@@ -258,7 +273,7 @@
     const access=await fetch('/api/access').then(r=>r.json()).catch(()=>({protected:true,editable:false}));
     state.protected=access.protected;state.editable=access.editable;
     if(access.editable)await openApp();
-    else{$('workspace-app').hidden=true;$('workspace-example').hidden=true;$('workspace-gate').hidden=false;$('workspace-mode').innerHTML='<strong>PRIVATE</strong> · organizer token required';}
+    else{window.HLDash?.hideRail();$('main').classList.remove('is-example');$('workspace-app').hidden=true;$('workspace-example').hidden=true;$('workspace-gate').hidden=false;$('workspace-mode').innerHTML='<strong>PRIVATE</strong> · organizer token required';}
   }
   addEventListener('hashchange',()=>{if(location.hash==='#example'||(!$('workspace-example').hidden&&location.hash!=='#example'))void route();});
   void route().catch(error=>say(error.message));

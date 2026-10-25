@@ -28,39 +28,44 @@
   <header class="site-header" data-site-nav="booking"></header>
   <main id="main" class="plan-main">
     <section class="plan-hero" aria-labelledby="hero-title">
-      <p class="hero-badge"><span class="hero-badge-dot" aria-hidden="true"></span>Built with Qloo’s taste graph</p>
-      <h1 id="hero-title" class="hero-title">Book the bill <span class="title-pill title-pill-a" aria-hidden="true"><img src="/assets/brand/pill-turntable.webp" alt="" width="120" height="64"></span> your<br> city’s fans <span class="title-pill title-pill-b" aria-hidden="true"><img src="/assets/brand/pill-hall.webp" alt="" width="120" height="64"></span> will show up for.</h1>
+      <p class="hero-badge"><span>Built with</span><img class="hero-qloo" src="/assets/brand/qloo-logo.webp" alt="Qloo" width="120" height="47"><span>taste graph</span></p>
+      <h1 id="hero-title" class="hero-title">Book the bill your<br> city’s fans will show up for.</h1>
+      <div class="card-fan" aria-hidden="true">
+        <figure class="fan-card fan-art" style="--i:0"><img src="/assets/brand/landing/art-1.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:1"><img src="/assets/brand/landing/art-2.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:2"><img src="/assets/brand/landing/art-3.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:3"><img src="/assets/brand/landing/art-4.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:4"><img src="/assets/brand/landing/art-5.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:5"><img src="/assets/brand/landing/art-6.webp" alt="" width="440" height="440" loading="eager"></figure>
+        <figure class="fan-card fan-art" style="--i:6"><img src="/assets/brand/landing/art-7.webp" alt="" width="440" height="440" loading="eager"></figure>
+      </div>
       <p class="hero-sub">Name a city and an artist your audience loves. Houselights asks Qloo who else those fans love there, then books the best bill your budget allows, with a receipt behind every claim.</p>
       <div class="hero-actions">
-        <a class="hero-cta" href="#planner">Plan a show <span aria-hidden="true">→</span></a>
+        <a class="hero-cta sketch-btn" href="#planner">Plan a show <span aria-hidden="true">→</span></a>
         <a class="hero-link" href="#plan-result">See a real decision</a>
       </div>
-
-      <div class="card-fan" aria-label="What a Houselights decision looks like">
-        <figure class="fan-card fan-photo fan-1"><img src="/assets/brand/cards/turntable-galaxy.webp" alt="" width="480" height="600" loading="eager"></figure>
-        <div class="fan-card fan-ui fan-2">
+      <div class="hero-facts" aria-label="What a Houselights decision looks like">
+        <div class="fact-card">
           <p class="fan-label">Qloo ranks for Leon Bridges fans</p>
           <p class="fan-big" data-fan="top-act">Michael Kiwanuka</p>
           <div class="fan-bar"><span></span></div>
           <p class="fan-small" data-fan="top-score">Affinity 0.977 · rank 1 of 8</p>
         </div>
-        <figure class="fan-card fan-photo fan-3"><img src="/assets/brand/cards/flowers-collage.webp" alt="" width="480" height="600" loading="eager"></figure>
-        <div class="fan-card fan-ui fan-hero">
+        <div class="fact-card fact-main">
           <p class="fan-label">New York · $14,500 · 2 acts</p>
           <p class="fan-kicker">Book</p>
           <p class="fan-bill" data-fan="bill">Michael Kiwanuka + Sault</p>
           <p class="fan-fee" data-fan="fee">$13,500</p>
           <p class="fan-pass"><span aria-hidden="true">✓</span> Every booking rule passes</p>
         </div>
-        <figure class="fan-card fan-photo fan-5"><img src="/assets/brand/cards/jazz.webp" alt="" width="480" height="600" loading="eager"></figure>
-        <div class="fan-card fan-ui fan-dark fan-6">
+        <div class="fact-card fan-dark">
           <p class="fan-label">Qloo off</p>
           <p class="fan-big" data-fan="off-bill">Jordan Rakei + Hiatus Kaiyote</p>
           <p class="fan-small" data-fan="off-fee">$9,000 · a different bill</p>
         </div>
-        <figure class="fan-card fan-photo fan-7"><img src="/assets/brand/cards/sunflower-hand.webp" alt="" width="480" height="600" loading="eager"></figure>
       </div>
       <p class="hero-proof">Live Qloo data · An exact optimizer checks every possible bill · Free, no sign in</p>
+      <svg class="sketch-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="hl-rough" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter></svg>
     </section>
 
     <section id="planner" class="planner" aria-labelledby="plan-form-title">
@@ -101,7 +106,7 @@
           </fieldset>
         </div>
         <p id="plan-error" class="plan-error" role="alert" hidden></p>
-        <button type="submit" class="plan-submit" id="plan-submit">Plan my bill <span aria-hidden="true">→</span></button>
+        <button type="submit" class="plan-submit sketch-btn" id="plan-submit">Plan my bill <span aria-hidden="true">→</span></button>
         <p class="plan-note">Fees for new acts are estimates from Qloo popularity. Up to 3 live plans every 10 minutes.</p>
         <div class="plan-examples">
           <p id="examples-label">Or open a saved plan</p>
@@ -179,15 +184,17 @@
           <input id="final-city" name="city" autocomplete="off" maxlength="60" placeholder="City">
           <label class="sr-only" for="final-anchor">Your audience loves</label>
           <input id="final-anchor" name="anchor" autocomplete="off" maxlength="80" placeholder="An artist your audience loves">
-          <button type="submit">Plan a show <span aria-hidden="true">→</span></button>
+          <button type="submit" class="sketch-btn">Plan a show <span aria-hidden="true">→</span></button>
         </form>
       </div>
     </section>
   </main>
 
   <dialog id="receipt-drawer" class="receipt-drawer" aria-labelledby="receipt-title">
-    <div class="receipt-drawer-head"><h2 id="receipt-title">Qloo receipt</h2><button type="button" class="button subtle small" id="receipt-close">Close</button></div>
-    <div id="receipt-body"></div>
+    <div class="receipt-sheet">
+      <div class="receipt-drawer-head"><div><p class="receipt-kicker"><img src="/assets/brand/qloo-logo.webp" alt="Qloo" width="60" height="24"><span>receipt</span></p><h2 id="receipt-title">Qloo receipt</h2></div><button type="button" class="receipt-x" id="receipt-close" aria-label="Close the receipt"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div id="receipt-body"></div>
+    </div>
   </dialog>
   <footer class="site-footer" data-site-footer></footer>
 </body>

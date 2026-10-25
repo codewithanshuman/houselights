@@ -237,11 +237,24 @@
     const same=(a,b)=>String(a??'').toLowerCase()===String(b??'').toLowerCase();
     const rows=receipt.evidence?.rows??[];
     $('receipt-title').textContent=describeReceipt(receipt,snapshot);
-    $('receipt-body').innerHTML=`<p class="receipt-meta">Receipt <code>${e(receipt.id)}</code> · Qloo <code>${e(receipt.tool)}</code> · ${e(receipt.status)}${receipt.fetchedAt?` · fetched ${e(new Date(receipt.fetchedAt).toUTCString().replace(' GMT',' UTC'))}`:''}${receipt.cached?' · served from cache':''}</p>
-      ${rows.some(r=>r.name)?`<div class="table-scroll"><table class="data-table"><caption>What Qloo returned${entity?` (highlighted: ${e(entity)})`:''}</caption><thead><tr><th scope="col">Artist</th><th scope="col">Qloo affinity</th><th scope="col">Popularity</th></tr></thead><tbody>${rows.filter(r=>r.name).map(r=>`<tr${same(r.name,entity)?' class="is-highlight"':''}><th scope="row">${e(r.name)}</th><td>${r.affinity==null?'—':e(r.affinity.toFixed(4))}</td><td>${r.popularity==null?'—':e(r.popularity.toFixed(3))}</td></tr>`).join('')}</tbody></table></div>`:'<p>This call returned no named rows in the public record.</p>'}
+    const top=Math.max(0,...rows.map(r=>r.affinity??0))||1,chip=(label,value)=>`<span class="receipt-chip"><small>${e(label)}</small><code>${e(value)}</code></span>`;
+    $('receipt-body').innerHTML=`<p class="receipt-meta">${chip('Receipt',receipt.id)}${chip('Qloo tool',receipt.tool)}${chip('Status',receipt.status)}${receipt.fetchedAt?chip('Fetched',new Date(receipt.fetchedAt).toUTCString().replace(' GMT',' UTC')):''}${receipt.cached?chip('Source','cache'):''}</p>
+      ${rows.some(r=>r.name)?`<div class="table-scroll"><table class="data-table receipt-table"><caption>What Qloo returned${entity?` (highlighted: ${e(entity)})`:''}</caption><thead><tr><th scope="col">Artist</th><th scope="col">Qloo affinity</th><th scope="col">Popularity</th></tr></thead><tbody>${rows.filter(r=>r.name).map((r,index)=>`<tr style="--i:${index}"${same(r.name,entity)?' class="is-highlight"':''}><th scope="row">${e(r.name)}</th><td>${r.affinity==null?'—':`<span class="receipt-aff"><span class="receipt-bar" aria-hidden="true"><span style="--w:${(Math.max(0,r.affinity)/top*100).toFixed(1)}%"></span></span>${e(r.affinity.toFixed(4))}</span>`}</td><td>${r.popularity==null?'—':e(r.popularity.toFixed(3))}</td></tr>`).join('')}</tbody></table></div>`:'<p>This call returned no named rows in the public record.</p>'}
       <p class="receipt-note">Affinity is Qloo’s measure of how strongly this audience is drawn to an artist; it is cultural fit, not ticket demand. ${receipt.originalDigest?`Original record digest <code class="receipt-digest">${e(receipt.originalDigest)}</code>.`:''}</p>`;
     drawer.showModal();
-    $('receipt-close').onclick=()=>drawer.close();
+    // Closing plays the sheet's exit animation first (Escape, the close button or a click outside).
+    const sheet=drawer.querySelector('.receipt-sheet');
+    const close=()=>{
+      if(drawer.classList.contains('is-closing'))return;
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches||!sheet){drawer.close();return;}
+      drawer.classList.add('is-closing');
+      const done=()=>{drawer.classList.remove('is-closing');if(drawer.open)drawer.close();};
+      sheet.addEventListener('animationend',event=>{if(event.target===sheet)done();},{once:true});
+      setTimeout(done,400);
+    };
+    $('receipt-close').onclick=close;
+    drawer.oncancel=event=>{event.preventDefault();close();};
+    drawer.onclick=event=>{if(event.target===drawer)close();};
     drawer.addEventListener('close',()=>opener?.focus(),{once:true});
   }
 

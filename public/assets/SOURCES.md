@@ -1,5 +1,15 @@
 # Houselights artwork
 
+## Purple and white app shell — 26 October 2026
+
+- On 26 October 2026 the owner supplied seven artworks for the landing page (`design/source-assets/brand/landing-page/1.jpg` to `7.jpg`, with `6.png`) and stated the project has the rights to publish them. `brand/landing/art-1.webp` to `art-7.webp` are 440 × 440 centre crops made with Pillow, shown as the image-only card fan on the Booking Desk. They are decorative: not Qloo evidence and not pictures of recommended acts.
+- The owner replaced `footer.png` with a pencil drawing of the Golden Gate Bridge. `brand/footer-bridge.webp` (2000 px wide) and `brand/footer-bridge-phone.webp` (a crop around the south tower) are made from it and used as the landing page footer.
+- The owner marked the sunflower image `no-use.png`; it is no longer served. The old festival footer, the headline image pills and the earlier card crops were removed from `public/` (they remain in Git history). `brand/concert-hall-band.webp` is still used by the closing call to action.
+- `brand/qloo-logo.webp` is a 240 px trimmed copy of the supplied `Qloo-Logo.png`, used only as a "Built with Qloo" attribution in the landing page header badge, the landing footer and the Qloo receipt.
+- `brand/record-404.webp` and `brand/record-404-label.webp` are cut from the supplied `404.png` (a turntable). On the 404 page only the label spins, and CSS tints it purple.
+- The GitHub mark on the 404 page and in the sidebar is GitHub's published Octicon mark, used only to link to this project's repository.
+- Requested typefaces (Gotham, Biski, Lulu Font TH) are not bundled: no font files or licences were supplied, and Gotham is a commercial typeface. The CSS has one variable per role (`--font-ui`, `--font-display`, `--font-hand`), so licensed files can be dropped in later. The sidebar signature uses the visitor's installed script face (Segoe Script, Snell Roundhand and similar).
+
 ## Booking Desk landing — 25 October 2026
 
 - On 25 October 2026 the owner supplied four more images and stated the project has the rights to publish them. The originals are kept, unserved, in `design/source-assets/brand/`: `turntable-galaxy.webp`, `flowers-collage.webp`, `sunflower-hand.webp` and `concert-hall.webp`. Three further supplied images were deliberately not used: concert photos of a recognisable real artist (one watermarked) and a real album cover with its title. On a booking product these could read as an endorsement or as recommended acts.

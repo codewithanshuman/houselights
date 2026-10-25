@@ -1,0 +1,31 @@
+/* Slate studio (index.html) keeps its own view-switching sidebar, restyled here to match the
+   shared app sidebar in v2.css: white rail, Geist, 40px rows, the soft violet current row. */
+@font-face{font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/geist-variable.woff2) format('woff2')}
+.slate-page{--font-ui:'Geist',system-ui,sans-serif;background:radial-gradient(900px 420px at 85% -10%,#ECE6FF 0,transparent 70%),#F7F6FC;background-attachment:fixed}
+@media (min-width:901px){
+  .slate-page .sidebar{width:260px;padding:16px 12px 14px;background:#fff;border-right:1px solid #ECE9F4;font-family:var(--font-ui);scrollbar-width:none}
+  .slate-page .app-shell{margin-left:260px}
+}
+.slate-page .sidebar .brand{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:6px;text-decoration:none}
+.slate-page .sidebar .brand-logo-frame{width:30px;height:30px}
+.slate-page .sidebar .brand-logo{width:30px;height:30px;border-radius:9px}
+.slate-page .sidebar .brand-wordmark{font:650 18px/1 var(--font-ui);letter-spacing:-.03em;color:#16131F;text-transform:capitalize}
+.slate-page .sidebar .workspace-label{margin:16px 12px 6px;font:500 11px/16px var(--font-ui);letter-spacing:.08em;color:#69657F}
+.slate-page .sidebar nav{gap:2px}
+.slate-page .sidebar .nav-item{display:flex;align-items:center;gap:12px;height:40px;min-height:40px;padding:0 12px;border:0;border-radius:12px;background:transparent;color:#3D3950;font:500 14.5px/1 var(--font-ui);letter-spacing:0;text-decoration:none;transition:background .15s,color .15s,transform .15s}
+.slate-page .sidebar .nav-item:hover{background:#F3F1F9;color:#16131F}
+.slate-page .sidebar .nav-item:active{transform:scale(.98)}
+.slate-page .sidebar .nav-item.active{color:#16131F;font-weight:600;background:linear-gradient(180deg,#fff 0%,#F3F0FD 100%);box-shadow:0 0 0 1px #E2DCF6,0 1px 2px #4F35A814,inset 0 1px #fff}
+.slate-page .sidebar .nav-icon{color:#77738C}
+.slate-page .sidebar .nav-item.active .nav-icon{color:#5E44B8}
+.slate-page .sidebar :is(.nav-key,.nav-count){margin-left:auto;font:500 11px/16px 'IBM Plex Mono',ui-monospace,monospace;color:#69657F;background:none;padding:0}
+.slate-page .sidebar .nav-more summary{color:#69657F;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.slate-page .sidebar-note{margin:20px 4px auto;padding:16px 8px 0;border-top:1px solid #ECE9F4}
+.slate-page .sidebar-note p{font:600 17px/1.35 var(--font-ui);letter-spacing:-.02em;color:#16131F}
+.slate-page .connection{margin-top:12px;padding:12px 8px 0;border-top:1px solid #ECE9F4;font-family:var(--font-ui)}
+.v2.slate-page .sidebar-note{display:none}
+.v2.slate-page .sidebar .connection{margin-top:auto}
+.v2.v2.v2.slate-page main h1{font:600 clamp(40px,5vw,64px)/1.02 var(--font-display);letter-spacing:-.04em}
+.v2.v2.v2.slate-page main h1 span,.v2.slate-page main .hero h1 em{color:var(--pp-accent)}
+.v2.slate-page .topbar{background:#ffffffd9;border-bottom:1px solid #ECE9F4;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+@media (max-width:900px){.v2.slate-page .sidebar{background:#fff;border-bottom:1px solid #ECE9F4}}

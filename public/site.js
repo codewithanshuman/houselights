@@ -51,13 +51,43 @@
   // The navigation is rendered into each page by the server (server/site-chrome.mjs) so it
   // is part of the first paint; this adds the Organizer tools menu behaviour.
   function bindNav(header){
+    if(header.classList.contains('app-side')){bindSide(header);return;}
+    const burger=header.querySelector('.site-burger'),nav=header.querySelector('.site-nav');
+    burger?.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');burger.setAttribute('aria-expanded',String(open));burger.setAttribute('aria-label',open?'Close menu':'Open menu');});
+    header.querySelectorAll('.site-links>a').forEach(link=>link.addEventListener('click',()=>{nav.classList.remove('is-open');burger?.setAttribute('aria-expanded','false');}));
     const tools_=header.querySelector('.site-tools');if(!tools_)return;
     document.addEventListener('click',event=>{if(tools_.open&&!tools_.contains(event.target))tools_.open=false;});
     tools_.addEventListener('keydown',event=>{if(event.key==='Escape'){tools_.open=false;tools_.querySelector('summary').focus();}});
   }
+  // The app sidebar: a highlight that glides between rows under the pointer, a collapse
+  // toggle remembered per browser, and a menu button on narrow screens.
+  function bindSide(side){
+    const nav=side.querySelector('.app-nav'),glide=side.querySelector('.app-glide'),toggle=side.querySelector('[data-side-toggle]'),menu=side.querySelector('[data-side-menu]');
+    nav?.addEventListener('pointerover',event=>{
+      const row=event.target.closest('[data-row]');if(!row||!nav.contains(row))return;
+      const top=row.getBoundingClientRect().top-nav.getBoundingClientRect().top;
+      if(!nav.classList.contains('is-gliding'))glide.style.transition='none';
+      glide.style.setProperty('--y',`${top}px`);glide.style.height=`${row.offsetHeight}px`;
+      glide.getBoundingClientRect();glide.style.transition='';nav.classList.add('is-gliding');
+    });
+    nav?.addEventListener('pointerleave',()=>nav.classList.remove('is-gliding'));
+    // On a page section with its own sub-row (the recorded session), the sub-row holds the highlight.
+    const markSub=()=>{const current=side.querySelector('.app-row.is-current');let here=false;side.querySelectorAll('.app-subrow').forEach(row=>{const on=Boolean(row.hash)&&row.hash===location.hash;row.classList.toggle('is-here',on);if(on){row.setAttribute('aria-current','location');here=true;}else row.removeAttribute('aria-current');});current?.classList.toggle('has-child-here',here);};
+    markSub();addEventListener('hashchange',markSub);
+    document.querySelector('[data-share]')?.addEventListener('click',async event=>{
+      const label=event.currentTarget.querySelector('span');
+      try{await navigator.clipboard.writeText(location.href);label.textContent='Link copied';}catch{label.textContent='Copy the address bar';}
+      setTimeout(()=>{label.textContent='Share';},2200);
+    });
+    const setCollapsed=on=>{document.body.classList.toggle('side-collapsed',on);toggle?.setAttribute('aria-expanded',String(!on));toggle?.setAttribute('aria-label',on?'Expand sidebar':'Collapse sidebar');};
+    try{if(localStorage.getItem('hl-side')==='collapsed')setCollapsed(true);}catch{}
+    toggle?.addEventListener('click',()=>{const on=!document.body.classList.contains('side-collapsed');setCollapsed(on);try{localStorage.setItem('hl-side',on?'collapsed':'open');}catch{}});
+    menu?.addEventListener('click',()=>{const open=side.classList.toggle('is-open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu');});
+    side.addEventListener('keydown',event=>{if(event.key==='Escape'&&side.classList.contains('is-open')){side.classList.remove('is-open');menu.setAttribute('aria-expanded','false');menu.focus();}});
+  }
   function renderFooter(footer){
     if(!footer.querySelector('#site-release'))footer.innerHTML=`<div class="site-footer-inner"><span>Houselights<span class="site-brand-dot">.</span> Booking decisions with Qloo receipts.</span><span class="site-footer-links"><a href="/evidence.html">Evidence &amp; limits</a><a href="https://github.com/codewithanshuman/houselights">Source (MIT)</a></span><span class="site-release">Release <code id="site-release">…</code></span></div>`;
-    fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{const node=document.getElementById('site-release');if(node)node.textContent=health.release?String(health.release).slice(0,7):'local build';}).catch(()=>{const node=document.getElementById('site-release');if(node)node.textContent='unavailable';});
+    fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{const node=document.getElementById('site-release');if(node)node.textContent=health.release?String(health.release).slice(0,7):'local build';document.querySelectorAll('[data-release]').forEach(code=>{code.textContent=health.release?String(health.release).slice(0,7):'local build';});}).catch(()=>{const node=document.getElementById('site-release');if(node)node.textContent='unavailable';});
   }
   // Scrollable tables and logs must be reachable by keyboard (WCAG 2.1.1): every scroll
   // container, including ones rendered later, gets tabindex and a name.
@@ -78,6 +108,7 @@
     const opened=openedHash.length>1?document.getElementById(decodeURIComponent(openedHash.slice(1))):null;
     if(opened&&!document.getElementById('first-screen')?.contains(opened))settle();else['pointerdown','keydown'].forEach(type=>addEventListener(type,settle,{once:true,capture:true}));
     document.querySelectorAll('[data-site-footer]').forEach(renderFooter);
+    if(!document.querySelector('[data-site-footer]')&&document.querySelector('[data-release]'))fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>document.querySelectorAll('[data-release]').forEach(code=>{code.textContent=health.release?String(health.release).slice(0,7):'local build';})).catch(()=>{});
     focusableScrollers();
     new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});
   }
