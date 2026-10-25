@@ -46,7 +46,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('protected-financial-validation',(await request('/api/financial/validation')).status===401);
     record('protected-financial-job',(await request('/api/financial/jobs/000000000000000000000000')).status===401);
     record('protected-proof-experiment',(await request('/api/experiments/000000000000000000000000')).status===401);
-    for(const path of ['/judge.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html','/workspace.html']){
+    for(const path of ['/judge.html','/desk.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html','/workspace.html']){
       const page=await request(path,{format:'text'});
       record('page:'+path,page.status===200&&/<!doctype html/i.test(page.data));
       if(path==='/demand.html')record('audience-twin-ui',page.data.includes('id="research-twin"')&&page.data.includes('id="twin-seeds"')&&
@@ -54,11 +54,12 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       if(path==='/financial.html')record('financial-risk-ui',page.data.includes('id="chart"')&&page.data.includes('id="frontier"')&&page.data.includes('id="stress"'));
       if(path==='/proof-lab.html')record('qloo-proof-ui',page.data.includes('id="methods"')&&page.data.includes('id="signal-controls"')&&page.data.includes('id="receipts"')&&page.data.includes('id="without-lineup"')&&page.data.includes('id="with-lineup"'));
       if(path==='/evidence.html')record('recorded-run-provenance-ui',page.data.includes('id="agent-trace-status"')&&page.data.includes('id="agent-trace-link"'));
-      if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/judge.html#8be4d03ef4792ca9f1466983'));
-      if(path==='/judge.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
-      if(path==='/judge.html')record('unified-booking-desk',page.data.includes('id="booking-evidence"')&&page.data.includes('id="booking-decision-card"')&&page.data.includes('/booking-journey.js'));
-      if(path==='/judge.html')record('autopilot-booking-desk',page.data.includes('id="booking-autopilot"')&&page.data.includes('id="autopilot-modes"')&&page.data.includes('/autopilot.js'));
+      if(path==='/index.html')record('homepage-booking-challenge',page.data.includes('Try the booking challenge')&&page.data.includes('/desk.html#8be4d03ef4792ca9f1466983'));
+      if(path==='/desk.html')record('guided-receipt-replay',page.data.includes('id="judge-tight-budget"')&&page.data.includes('id="judge-agent-trace"')&&page.data.includes('id="judge-proof-link"'));
+      if(path==='/desk.html')record('unified-booking-desk',page.data.includes('id="booking-evidence"')&&page.data.includes('id="booking-decision-card"')&&page.data.includes('/booking-journey.js'));
+      if(path==='/desk.html')record('autopilot-booking-desk',page.data.includes('id="booking-autopilot"')&&page.data.includes('id="autopilot-modes"')&&page.data.includes('/autopilot.js'));
       if(path==='/workspace.html')record('organizer-workspace-ui',page.data.includes('id="brief-form"')&&page.data.includes('id="workspace-gate"')&&page.data.includes('/workspace.js')&&page.csp.includes("script-src 'self'"));
+      if(path==='/judge.html')record('plan-your-show',page.data.includes('id="plan-form"')&&page.data.includes('/plan.js'));
       if(path==='/judge.html')record('content-security-policy',page.csp.includes("script-src 'self'")&&page.csp.includes("frame-ancestors 'none'"));
     }
     const bookingScript=await request('/booking-journey.js',{format:'text'});

@@ -12,7 +12,9 @@ export const defaultConstraints = { budget: 20000, slots: 3, discoveryMin: 0, ma
 
 // Resolve, discover, rank, allocate evidence checks, and solve the whole portfolio.
 // Written factual statements come from a closed, per-candidate claim ledger.
-export async function buildMemo({ city, anchors, offers, picks = {}, terms = {}, constraints = {}, currency = 'USD', exampleBookingTerms = false }, run) {
+// `discover` lets a public run with no buyer-entered offers discover up to `limit` artists
+// and give each illustrative terms (`terms(row)`), so they can enter a bookable slate.
+export async function buildMemo({ city, anchors, offers, picks = {}, terms = {}, constraints = {}, currency = 'USD', exampleBookingTerms = false, discover = {} }, run) {
   constraints = { ...defaultConstraints, ...constraints };
   const say = text => run.emit({ type: 'stage', text });
   const candidates = new Map(), lookup = new Map(), pending = [], anchorRefs = [], anchorIdentities = new Set(), excludedAnchors = [];
@@ -59,9 +61,10 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const discovery = await run.call('recommend', { target_type: 'artist', signals: anchorRefs, filter_location: city, limit: 8 }, 'Discover adjacent artists for this city');
   if (usable(discovery.env)) for (const row of rows(discovery.env)) {
     const name = nameOf(row), ref = idOf(row) || name;
-    if (!name || lookup.has(low(ref)) || lookup.has(low(name)) || candidates.size >= Math.min(offers.length + 3, 9)) continue;
+    if (!name || lookup.has(low(ref)) || lookup.has(low(name)) || candidates.size >= Math.min(discover.limit ?? offers.length + 3, 9)) continue;
     remember(ref, name);
-    candidates.set(ref, { id: ref, name, found: true, terms: termsFor(name, name), identityReceipt: discovery.receipt.id });
+    const discoveredTerms = typeof discover.terms === 'function' ? discover.terms(row) : null;
+    candidates.set(ref, { id: ref, name, found: true, terms: discoveredTerms ?? termsFor(name, name), identityReceipt: discovery.receipt.id });
   }
   if (!candidates.size) { run.emit({ type: 'error', text: 'No candidates could be resolved or discovered.' }); return; }
   say('Rank · testing the candidate pool against your anchors');

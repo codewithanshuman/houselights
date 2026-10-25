@@ -6,15 +6,12 @@
 
 ## The two-minute judge path
 
-1. Open the Booking Desk. No sign-in is needed. The first screen shows:
-   - the recommended booking, under BOOK;
-   - why, from Qloo audience affinity;
-   - the main risks;
-   - what the promoter must decide;
-   - **what Qloo changed:** the same optimizer, pool, fees and budget with Qloo evidence on and off.
-2. Select **Try a budget cut ↓** and run it. The exact optimizer returns a feasible bill or explains why there is none. No provider calls are made.
-3. In the Booking Desk, turn Qloo evidence off, or withdraw one receipt, and compare. This tests whether the decision depends on the evidence. It does not estimate Qloo's commercial value.
-4. Optionally, open **See it plan a brand-new event** to replay a recorded organizer session, or the evidence page to see the shock study and its limits.
+1. Open the Booking Desk (no sign-in). It shows a saved live Qloo run: New York, fans of Leon Bridges, Michael Kiwanuka + Sault for $13,500, with every candidate as a card showing its Qloo rank and affinity.
+2. Turn **Qloo evidence** off. The same rules book Jordan Rakei + Hiatus Kaiyote for $9,000. This tests whether the decision depends on the evidence; it does not estimate ticket sales.
+3. Cut the budget or drop a booked act. The exact optimizer rebooks with no provider calls.
+4. Open a **Qloo receipt** on any card to see the saved ranking with that act highlighted.
+5. Plan a new show: any city, an artist the audience loves, a budget and 1–4 acts. Fees for new acts are estimated from Qloo popularity and labelled.
+6. Optionally, open the [full Booking Desk lab](https://houselights.80-225-218-239.sslip.io/desk.html) (Autopilot, research timeline, method comparisons) or the evidence page.
 
 ## Evidence and limits
 

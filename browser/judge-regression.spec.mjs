@@ -81,7 +81,7 @@ test.afterAll(async () => {
 test('first paint shows the real bill and the Qloo-off change with no API call', { tag: '@cross-browser' }, async ({ page }) => {
   // The first screen is inlined at build time: block every API call and it still renders.
   await page.route('**/api/**',route=>route.abort());
-  await page.goto(`${origin}/judge.html`,{waitUntil:'domcontentloaded'});
+  await page.goto(`${origin}/desk.html`,{waitUntil:'domcontentloaded'});
   await expect(page.locator('#first-screen-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
   await expect(page.locator('#fs-change')).toContainText('$13,500 → $9,000');
   await expect(page.locator('#first-screen h1')).toHaveCount(1);
@@ -95,7 +95,7 @@ test('first paint shows the real bill and the Qloo-off change with no API call',
 
 test('keyboard only: the Qloo switch changes the decision, announces it once and keeps focus', { tag: '@cross-browser' }, async ({ page, browserName }) => {
   const experimentPosts=[];page.on('request',request=>{if(request.method()==='POST'&&/\/experiment$/.test(request.url()))experimentPosts.push(request.url());});
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   const sw=page.getByRole('switch',{name:/Qloo evidence/});
   await expect(sw).toHaveAttribute('aria-checked','true');
   // WebKit, like Safari, does not move Tab focus to links by default (and its Windows
@@ -116,7 +116,7 @@ test('keyboard only: the Qloo switch changes the decision, announces it once and
 
 test('the bill step explains the choice, draws the near-tie and badges the fit basis', { tag: '@cross-browser' }, async ({ page }) => {
   const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   const glance=page.locator('#decision-glance');
   await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
   await expect(glance).toContainText('WATCH OUT');await expect(glance).toContainText('YOUR CALL');
@@ -136,7 +136,7 @@ test('the bill step explains the choice, draws the near-tie and badges the fit b
 });
 
 test('receipt drawer shows the saved Qloo row with the act highlighted, digests and integrity', { tag: '@cross-browser' }, async ({ page }) => {
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   const trigger=page.locator('#step-receipt-body [data-entity="Sault"]');
   await trigger.focus();await page.keyboard.press('Enter');
   const drawer=page.locator('#receipt-drawer');
@@ -150,7 +150,7 @@ test('receipt drawer shows the saved Qloo row with the act highlighted, digests 
 });
 
 test('step 3 re-runs the withdrawal live, and the opened receipt clears the sticky form', { tag: '@cross-browser' }, async ({ page }) => {
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   await page.locator('.booking-path').getByRole('link',{name:/Check the receipt/}).click();
   await expect(page.locator('#step-receipt')).toBeFocused();
   await page.getByRole('button',{name:'Re-run it live in the Booking Desk ↓'}).click();
@@ -168,7 +168,7 @@ test('step 3 re-runs the withdrawal live, and the opened receipt clears the stic
 });
 
 test('the budget field explains bad input and clamps out-of-range values', async ({ page }) => {
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   await expect(page.locator('#judge-workspace')).toBeVisible();
   const field=page.locator('#judge-budget'),error=page.locator('#judge-budget-error');
   await expect(field).toHaveAttribute('inputmode','decimal');await expect(field).toHaveAttribute('max','10000000');
@@ -179,7 +179,7 @@ test('the budget field explains bad input and clamps out-of-range values', async
 });
 
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#${caseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${caseId}`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.getByRole('button', { name: 'Compare with Qloo evidence removed' }).click();
   const comparison = page.locator('.judge-evidence-comparison');
@@ -201,7 +201,7 @@ test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) 
 
 test('budget plus evidence withdrawal is labeled as a combined change on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${origin}/judge.html#${caseId}`);
+  await page.goto(`${origin}/desk.html#${caseId}`);
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.getByRole('button', { name: 'Compare with Qloo evidence removed' }).click();
   await expect(page.locator('.judge-evidence-comparison')).toContainText('MATCHED EVIDENCE TEST');
@@ -218,7 +218,7 @@ test('budget plus evidence withdrawal is labeled as a combined change on mobile'
 test('anonymous visitor can follow the homepage challenge through proof and limits', async ({ page }) => {
   await page.goto(`${origin}/index.html`);
   await page.getByRole('link', { name: /Try the booking challenge/ }).click();
-  await expect(page).toHaveURL(new RegExp(`/judge\\.html#${tracedCaseId}$`));
+  await expect(page).toHaveURL(new RegExp(`/desk\\.html#${tracedCaseId}$`));
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.getByRole('button', { name: 'Cut budget below this bill’s cost' }).click();
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Jordan Rakei');
@@ -234,7 +234,7 @@ test('anonymous visitor can follow the homepage challenge through proof and limi
 });
 
 test('genuine agent run exposes recorded plan, ordered tool events, and matched Qloo decision proof', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('recorded Qloo research run');
   await expect(page.locator('#judge-qloo-preview')).toContainText('The choice changes under matched assumptions.');
   await expect(page.locator('.judge-trace-summary')).toContainText('31 recorded events · 18/18 receipts linked');
@@ -255,7 +255,7 @@ test('genuine agent run exposes recorded plan, ordered tool events, and matched 
 
 test('mobile judge workflow retains the previous result and recovers after a failed replay', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('#judge-result h3')).toHaveText('Michael Kiwanuka + Sault');
   await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`, route => route.fulfill({
     status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Temporary test outage' }),
@@ -273,9 +273,9 @@ test('mobile judge workflow retains the previous result and recovers after a fai
 test('anonymous core path has no page-level horizontal overflow on narrow phone and tablet', async ({ page }) => {
   for (const width of [320, 768]) {
     await page.setViewportSize({ width, height: 800 });
-    for (const path of ['/index.html', `/judge.html#${tracedCaseId}`, `/proof-lab.html#${tracedCaseId}`, '/evidence.html']) {
+    for (const path of ['/index.html', `/desk.html#${tracedCaseId}`, `/proof-lab.html#${tracedCaseId}`, '/evidence.html']) {
       await page.goto(origin + path);
-      if (path.startsWith('/judge.html')) await expect(page.locator('#judge-title')).toContainText('New York');
+      if (path.startsWith('/desk.html')) await expect(page.locator('#judge-title')).toContainText('New York');
       if (path.startsWith('/proof-lab.html')) await expect(page.locator('#with-lineup')).toContainText('Michael Kiwanuka');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px ${path}`).toBe(true);
     }
@@ -283,7 +283,7 @@ test('anonymous core path has no page-level horizontal overflow on narrow phone 
 });
 
 test('judge can withdraw one receipt, rehearse a cancellation, and cannot write private records', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#${caseId}`);
+  await page.goto(`${origin}/desk.html#${caseId}`);
   await expect(page.locator('#judge-title')).toContainText('New York');
   await page.locator('.judge-guided-challenges summary').click();
   await page.getByRole('button', { name: 'Remove ranking evidence' }).click();
@@ -312,7 +312,7 @@ test('Proof Lab changes signal groups against the same recorded case', async ({ 
 });
 
 test('incomplete older case discloses missing agent events and insufficient ranking', async ({ page }) => {
-  await page.goto(`${origin}/judge.html#5031a69f837e1c28ce045422`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#5031a69f837e1c28ce045422`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('Mumbai');
   await expect(page.locator('#judge-agent-trace')).toContainText('no saved model-step event log');
   await expect(page.locator('#judge-qloo-preview')).toContainText('Not comparable: Qloo ranked 4 of 5 candidates');
@@ -366,7 +366,7 @@ test('Proof Lab restores the displayed brief after a failed case switch and perm
 test('recorded case clearly limits the comparison and remains usable on desktop and phone', async ({ page }, testInfo) => {
   for(const width of [1440,390]){
     await page.setViewportSize({width,height:900});
-    await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+    await page.goto(`${origin}/desk.html#${tracedCaseId}`);
     await expect(page.locator('#judge-qloo-preview')).toContainText('No matched saved first-trial LLM-only control');
     await expect(page.locator('#judge-qloo-preview')).toContainText('cannot establish superiority');
     await page.screenshot({path:testInfo.outputPath(`recorded-judge-${width}.png`),fullPage:false});
@@ -379,7 +379,7 @@ test('recorded case clearly limits the comparison and remains usable on desktop 
 
 test('booking desk connects all signals to a matched local comparison without more research', async ({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   const lab=page.locator('#booking-signal-lab');
   await expect(lab.getByRole('button',{pressed:true})).toHaveCount(4);
   await expect(lab.locator('.booking-lab-active')).toContainText('Michael Kiwanuka + Sault');
@@ -396,7 +396,7 @@ test('booking desk connects all signals to a matched local comparison without mo
 });
 
 test('budget presets and promoter export reflect the exact completed simulator result', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('#booking-budget-output')).toContainText('14,500');
   await page.getByRole('button',{name:'80%',exact:true}).click();
   await expect(page.locator('#judge-budget')).toHaveValue('11600');
@@ -419,7 +419,7 @@ test('budget presets and promoter export reflect the exact completed simulator r
 
 test('booking desk cancellation preserves survivors and zero budget stays explicitly infeasible', async ({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('[data-booking-cancel]')).toHaveCount(2);
   const completed=page.waitForResponse(`**/api/judge/cases/${tracedCaseId}/experiment`);
   await page.locator('[data-booking-cancel]').first().click();
@@ -436,7 +436,7 @@ test('booking desk cancellation preserves survivors and zero budget stays explic
 
 test('failed signal loading offers a retry without breaking the booking simulator', async ({page})=>{
   await page.route(`**/api/experiments/public/${tracedCaseId}`,route=>route.fulfill({status:503,body:'Unavailable'}));
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('#booking-signal-lab')).toContainText('booking simulator and saved receipts remain available');
   await expect(page.locator('.booking-selected')).toContainText('Michael Kiwanuka');
   await page.unroute(`**/api/experiments/public/${tracedCaseId}`);
@@ -445,7 +445,7 @@ test('failed signal loading offers a retry without breaking the booking simulato
 });
 
 test('failed booking replay keeps the decision visibly pending and exports only completed inputs', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('.booking-selected')).toContainText('Michael Kiwanuka');
   await page.route(`**/api/judge/cases/${tracedCaseId}/experiment`,route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Test outage'})}));
   await page.getByRole('button',{name:'70%',exact:true}).click();
@@ -460,7 +460,7 @@ test('failed booking replay keeps the decision visibly pending and exports only 
 });
 
 test('signal switches retain keyboard focus and expose their pressed state', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   const first=page.locator('[data-booking-signal="0"]');
   await expect(first).toHaveAttribute('aria-pressed','true');
   await first.focus();await page.keyboard.press('Space');
@@ -472,7 +472,7 @@ test('signal switches retain keyboard focus and expose their pressed state', asy
 });
 
 test('separate later LLM replication retains all trials and makes the cheaper control visible', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   const study=page.locator('#booking-independent-study');
   await expect(study).toContainText('3 / 3 declared attempts retained');
   await expect(study).toContainText('Michael Kiwanuka + Jordan Rakei');
@@ -490,7 +490,7 @@ test('infeasible Paris brief preserves the missing evidence and supports an expl
   const row=seedManifest.cases.find(row=>row.snapshot.memo.input.city==='Paris');
   const catalog=await (await page.request.get(origin+'/api/judge/cases')).json();
   const selected=catalog.cases.find(item=>item.title===row.title);
-  await page.goto(`${origin}/judge.html#${selected.id}`);
+  await page.goto(`${origin}/desk.html#${selected.id}`);
   await expect(page.locator('.booking-verdict')).toHaveText('NO FEASIBLE BOOKING');
   await expect(page.locator('.booking-decision-metrics')).toContainText('No selection');
   await expect(page.locator('#judge-tight-budget')).toBeDisabled();
@@ -504,7 +504,7 @@ test('infeasible Paris brief preserves the missing evidence and supports an expl
 test('Autopilot replays the recorded provider-backed run without new research and opens its receipts', async ({page})=>{
   const errors=[],autopilotPosts=[];page.on('pageerror',error=>errors.push(error.message));
   page.on('request',request=>{if(request.method()==='POST'&&request.url().includes('/autopilot'))autopilotPosts.push(request.url());});
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED PROVIDER-BACKED RUN');
   await expect(panel.locator('.autopilot-banner')).toContainText('This page made no new provider calls');
@@ -530,7 +530,7 @@ test('Autopilot replays the recorded provider-backed run without new research an
 });
 
 test('Autopilot planning replay re-plans a changed budget with zero provider calls', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED');
   await panel.locator('#autopilot-budget').fill('12150');
@@ -549,7 +549,7 @@ test('Autopilot planning replay re-plans a changed budget with zero provider cal
 
 test('Autopilot plans other briefs from saved evidence and stays usable on a phone', async ({page})=>{
   await page.setViewportSize({width:375,height:812});
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#booking-autopilot .autopilot-banner')).toContainText('RECORDED');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.locator('#judge-case').selectOption({label:'Mumbai: why a comparison is unavailable'});
@@ -562,7 +562,7 @@ test('Autopilot plans other briefs from saved evidence and stays usable on a pho
 });
 
 test('a cancellation card keeps an edited budget instead of resetting the experiment', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await expect(page.locator('[data-booking-cancel]')).toHaveCount(2);
   await page.getByRole('button',{name:'90%',exact:true}).click();
   await expect(page.locator('#judge-budget')).toHaveValue('13050');
@@ -576,7 +576,7 @@ test('a cancellation card keeps an edited budget instead of resetting the experi
 });
 
 test('Autopilot 2.0 compares strategies on common scenarios and links the organizer example', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   const panel=page.locator('#booking-autopilot');
   await expect(panel.locator('.autopilot-banner').first()).toContainText('RECORDED PROVIDER-BACKED RUN');
   const table=panel.locator('table.autopilot-compare').first();
@@ -678,7 +678,7 @@ test('workspace and desk controls all have accessible names and headings stay in
     const skips=levels.filter((level,index)=>index&&level>levels[index-1]+1).length;
     return {unnamed,h1:levels.filter(level=>level===1).length,skips};
   });
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);await openDeeper(page);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);await openDeeper(page);
   await expect(page.locator('#booking-autopilot .autopilot-banner').first()).toBeVisible();
   const desk=await audit();expect(desk.unnamed).toEqual([]);expect(desk.h1).toBe(1);
   await page.goto(`${origin}/workspace.html`);
@@ -692,7 +692,7 @@ test('workspace and desk controls all have accessible names and headings stay in
 });
 
 test('shock study headlines report the like-for-like solvable rate, never the pooled 9.7%', async ({page})=>{
-  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await page.goto(`${origin}/desk.html#${tracedCaseId}`);
   await page.locator('.judge-shock-study summary').click();
   const teaser=page.locator('#judge-shock-teaser');
   await expect(teaser.locator('strong')).toHaveText('3/231');
@@ -705,7 +705,7 @@ test('shock study headlines report the like-for-like solvable rate, never the po
   await expect(page.locator('body')).not.toContainText('9.7%');
 });
 
-const PUBLIC_PAGES=['/judge.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
+const PUBLIC_PAGES=['/judge.html','/desk.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
 
 test('every page passes axe WCAG 2.1 AA with no serious or critical issues, at desktop and phone width', async ({ page }) => {
   test.setTimeout(240000);
@@ -731,7 +731,7 @@ test('no page logs a console error or uncaught exception on load', async ({ page
 
 test('with the API down, the four-step path still works from recorded JSON', { tag: '@cross-browser' }, async ({ page }) => {
   await page.route('**/api/**',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Service unavailable'})}));
-  await page.goto(`${origin}/judge.html`);
+  await page.goto(`${origin}/desk.html`);
   await expect(page.locator('#first-screen-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
   await page.getByRole('switch',{name:/Qloo evidence/}).click();
   await expect(page.locator('#fs-diff')).toContainText('−$4,500');
@@ -748,30 +748,30 @@ test.describe('visual states', { tag: '@visual' }, () => {
   const mask = page => [page.locator('.site-release'), page.locator('.judge-status-strip')];
   test('first screen', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await expect(page.locator('#first-screen')).toHaveScreenshot('first-screen.png');
   });
   test('Qloo evidence off', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await page.getByRole('switch', { name: /Qloo evidence/ }).click();
     await expect(page.locator('#first-screen')).toHaveScreenshot('qloo-off.png');
   });
   test('near-tie', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await expect(page.locator('figure.near-tie')).toHaveScreenshot('near-tie.png');
   });
   test('receipt drawer', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await page.locator('#step-receipt-body [data-entity="Sault"]').click();
     await expect(page.locator('#receipt-drawer .integrity-ok')).toBeVisible();
     await expect(page.locator('#receipt-drawer')).toHaveScreenshot('receipt-drawer.png');
   });
   test('mobile first screen', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(`${origin}/judge.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await expect(page).toHaveScreenshot('mobile-first-screen.png', { mask: mask(page) });
   });
 });
@@ -788,4 +788,94 @@ test('the evidence page lists every claim with its status, limit and a copyable 
   await rows.first().getByRole('button', { name: /Copy command/ }).click();
   await expect(page.locator('#copy-status')).toHaveText(`Copied: ${table.rows[0].reproduce}`);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(table.rows[0].reproduce);
+});
+
+test.describe('Booking Desk: plan your show', () => {
+  test('first view shows the featured decision and what Qloo changes @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#hero-title')).toContainText('Book the bill');
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+    await expect(page.locator('#plan-switch-note')).toContainText('Without Qloo evidence, the same rules book Jordan Rakei + Hiatus Kaiyote for $9,000');
+    await expect(page.locator('.act-grid[aria-label="Booked acts"] .act-card')).toHaveCount(2);
+    await expect(page.locator('.plan-chip')).not.toHaveCount(0);
+    await expect(page.locator('.plan-chip').first()).toContainText('fans of Leon Bridges');
+  });
+
+  test('the Qloo switch changes the decision, keeps focus and announces it @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+    await page.locator('#plan-switch').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('#result-title')).toHaveText('Book Jordan Rakei + Hiatus Kaiyote for $9,000.');
+    await expect(page.locator('#plan-switch')).toBeFocused();
+    await expect(page.locator('#result-status')).toContainText('Qloo evidence off');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  });
+
+  test('budget cuts and dropping an act re-run the optimizer and can be reset', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#result-title')).toContainText('Michael Kiwanuka + Sault');
+    await page.getByRole('button', { name: '80%', exact: true }).click();
+    await expect(page.locator('#result-status')).toContainText('Budget set to $11,600');
+    await expect(page.locator('#result-title')).not.toContainText('$13,500');
+    await page.locator('#plan-reset').click();
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+    await page.getByRole('button', { name: 'Drop Michael Kiwanuka and rebook' }).click();
+    await expect(page.locator('#result-status')).toContainText('Michael Kiwanuka dropped');
+    await expect(page.locator('#result-title')).not.toContainText('Michael Kiwanuka');
+    await expect(page.locator('.act-card.is-dropped')).toContainText('Dropped');
+  });
+
+  test('a receipt shows what Qloo returned with the act highlighted, and returns focus @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    const opener = page.locator('.act-grid[aria-label="Booked acts"] [data-receipt]').nth(1);
+    await opener.click();
+    await expect(page.locator('#receipt-drawer')).toHaveAttribute('open', '');
+    await expect(page.locator('#receipt-title')).toContainText('ranking of every candidate for Leon Bridges fans in New York');
+    await expect(page.locator('#receipt-drawer tr.is-highlight')).toContainText(/sault/i);
+    await page.keyboard.press('Escape');
+    await expect(opener).toBeFocused();
+  });
+
+  test('a live plan streams progress and lands on a shareable, honestly labelled plan @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city', 'Leeds');
+    await page.fill('#plan-anchor', 'Arlo Parks');
+    await page.fill('#plan-budget', '12000');
+    await page.locator('#plan-submit').click();
+    await expect(page.locator('#plan-progress')).toBeVisible();
+    await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/, { timeout: 30000 });
+    await expect(page.locator('#result-title')).toContainText('Book ');
+    await expect(page.locator('.result-badges')).toContainText('Live plan');
+    await expect(page.locator('.result-badges')).toContainText('Synthetic test data');
+    await expect(page.locator('.result-badges')).toContainText('Estimated fees');
+    await expect(page.locator('.result-terms')).toContainText('not a quote');
+    const shared = page.url();
+    await page.goto(shared);
+    await expect(page.locator('.result-meta')).toContainText('Leeds');
+  });
+
+  test('invalid input is explained inline and nothing is sent', async ({ page }) => {
+    let planned = false;
+    page.on('request', request => { if (request.url().endsWith('/api/plan')) planned = true; });
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city', 'Leeds');
+    await page.locator('#plan-submit').click();
+    await expect(page.locator('#plan-error')).toHaveText('Enter an artist your audience loves.');
+    await expect(page.locator('#plan-anchor')).toBeFocused();
+    await expect(page.locator('#plan-anchor')).toHaveAttribute('aria-invalid', 'true');
+    expect(planned).toBe(false);
+  });
+
+  test('on a phone the form comes first, nothing overflows, and other candidates fold away', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#result-title')).toContainText('Michael Kiwanuka');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(page.locator('.act-others')).not.toHaveAttribute('open', '');
+    const small = await page.locator('#plan-form button, #plan-form input, #plan-result button').evaluateAll(nodes => nodes.filter(node => { const r = node.getBoundingClientRect(); return r.width && r.height && r.height < 40 && node.type !== 'radio'; }).length);
+    expect(small).toBe(0);
+  });
 });

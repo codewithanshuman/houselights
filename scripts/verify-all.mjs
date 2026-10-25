@@ -16,7 +16,7 @@ const steps = [
   ['Qloo proof report', ['scripts/reproduce-qloo-proof.mjs'], ['results/qloo-proof.json', 'results/qloo-proof.md']],
   ['Judge stress audit', ['scripts/audit-judge-evaluation.mjs'], ['results/judge-evaluation-audit.json']],
   ['Every pinned Autopilot recording replays exactly', ['scripts/reproduce-autopilot.mjs'], []],
-  ['Booking Desk first screen and receipts match the record', ['scripts/build-judge-static.mjs'], ['public/judge-static.json', 'public/judge.html']],
+  ['Booking Desk first screen and receipts match the record', ['scripts/build-judge-static.mjs'], ['public/judge-static.json', 'public/desk.html']],
   ['With/without-Qloo comparison file', ['scripts/build-qloo-contribution.mjs'], ['public/qloo-contribution.json']],
   ['README, Devpost and audit numbers match the results', ['scripts/claims.mjs', '--check'], []],
 ];

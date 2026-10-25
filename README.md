@@ -1,23 +1,22 @@
 # Houselights
 
-**Constraint-correct, auditable booking decisions for live events, with Qloo receipts.** A promoter gives Houselights a brief: the city, the artists whose audience they want, candidate acts, fees, availability and booking rules. Houselights:
+**Book the bill your city's fans will show up for.** A promoter names a city, an artist their audience loves, a budget and how many acts they need. Houselights:
 
-- uses Qloo audience affinity to rank the candidates;
-- finds the best bill that satisfies every rule;
-- links each conclusion to the saved Qloo response behind it.
+- asks Qloo's taste graph which artists those fans love *in that city*, ranks them for that audience and checks where the fans are;
+- runs an exact optimizer over every possible bill and books the best one that fits the budget and rules;
+- links each claim to the saved Qloo response behind it, and lets you turn Qloo off to see what the same rules would book without it.
 
 **Try it:** [Booking Desk](https://houselights.80-225-218-239.sslip.io/judge.html) (no sign-in) · **Source:** MIT · **Built for** the Qloo Agentic Hackathon 2026
 
-## The two-minute path
+## Try it in two minutes
 
-The Booking Desk opens straight into four steps:
+1. **Open the Booking Desk.** It shows a saved live Qloo run: New York, fans of Leon Bridges, $14,500, 2 acts. Houselights books Michael Kiwanuka + Sault for $13,500.
+2. **Turn Qloo off.** The same optimizer, candidates, fees and budget book Jordan Rakei + Hiatus Kaiyote for $9,000 instead. Qloo changes this decision in <!--claim:featuredNoise-->200 of 200<!--/claim--> random ±20% fee variations ([sensitivity](results/sensitivity.md)).
+3. **Change the plan.** Cut the budget or drop a booked act; the optimizer rebooks instantly on the same saved evidence.
+4. **Open a receipt.** Each act links to the saved Qloo ranking with its row highlighted.
+5. **Plan your own show.** Enter any city and artist. A live run makes up to 12 Qloo calls (usually under a minute) and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled as such.
 
-1. **The brief.** New York: 2 slots for fans of Leon Bridges, a $14,500 artist budget and 8 candidates with illustrative fees.
-2. **The bill.** Book Michael Kiwanuka + Sault for $13,500. Every booking rule passes. A Sault/Jordan Rakei near-tie (0.9580 vs 0.9579 Qloo affinity) is drawn and handed to the promoter: "coin flip, your call".
-3. **Withdraw Qloo evidence.** One switch turns the saved Qloo evidence off. The same optimizer, candidates, fees and budget then book Jordan Rakei + Hiatus Kaiyote for $9,000: −$4,500, with the acts leaving and entering shown. There are zero provider calls.
-4. **Check the receipt.** Open the saved Qloo rank response behind each act. You see the act's row highlighted, its digests, and whether it matches the independently pinned manifest.
-
-The first screen is built from the published record at build time, so it renders even if the API is down.
+The full lab with Autopilot, the original research timeline and the method comparisons is at [desk.html](https://houselights.80-225-218-239.sslip.io/desk.html).
 
 ## What is measured, and what is not
 
@@ -47,8 +46,8 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->338<!--/claim--> unit tests, including a 5,000-case independent optimizer reference |
-| `npm run test:browser` | <!--claim:browserTests-->45<!--/claim--> browser tests in Chromium. They include axe WCAG 2.1 AA checks on every page, and the judge path also runs in Firefox and WebKit. |
+| `npm test` | <!--claim:unitTests-->343<!--/claim--> unit tests, including a 5,000-case independent optimizer reference |
+| `npm run test:browser` | <!--claim:browserTests-->52<!--/claim--> browser tests in Chromium. They include axe WCAG 2.1 AA checks on every page, and the judge path also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |
 | `node scripts/evaluate-sensitivity.mjs` | Fee-noise and near-tie band sweeps |

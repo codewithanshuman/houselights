@@ -1,4 +1,4 @@
-import {createHash} from 'node:crypto';
+import {createHash,randomBytes} from 'node:crypto';
 import {db,consumeQuota} from './database.mjs';
 import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
@@ -111,7 +111,16 @@ export function loadJudgeCase(id) {
   if(typeof id!=='string'||! /^[a-f0-9]{24}$/.test(id))return null;
   const row=db.prepare('SELECT body FROM judge_cases WHERE id=?').get(id);return row?JSON.parse(row.body):null;
 }
-export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body));}
+// Visitors' live plans share this table (so every judge experiment works on them) but are
+// never listed as published cases.
+export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body)).filter(record=>record.live!==true);}
+export function saveLivePlan(source,{title,terms,feeBasis}) {
+  const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title,snapshot,live:true};
+  const id=randomBytes(12).toString('hex');
+  const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
+  record.methods=judgeMethods(snapshot,record.proof);
+  db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));return loadJudgeCase(id);
+}
 export function judgeExperiment(record,raw={},options={}) {
   const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId','qlooOff'];
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!allowed.includes(k)))throw fault('Only budget, locks, exclusions, cancellation, a 15% fee increase, unavailability and receipt withdrawal can be changed.');
@@ -188,7 +197,8 @@ export function registerJudgeRoutes(app) {
     return res.status(500).json({error:'The request could not be completed.'});
   }};
   app.get('/api/judge/cases',(_req,res)=>res.json({cases:listJudgeCases().map(r=>({id:r.id,title:r.title,city:r.snapshot.memo.input.city,synthetic:r.snapshot.mock,
-    recordedTrace:r.snapshot.traceMeta?.complete===true,currency:r.snapshot.memo.currency,createdAt:r.createdAt}))}));
+    recordedTrace:r.snapshot.traceMeta?.complete===true,currency:r.snapshot.memo.currency,createdAt:r.createdAt,
+    anchors:r.snapshot.memo.input.anchors??[],feasible:r.snapshot.memo.slate?.feasible===true}))}));
   app.post('/api/judge/cases',handle((req,res)=>{
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
     experimentCache.clear();res.status(201).json(publishJudgeCase(source,req.body?.title));

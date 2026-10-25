@@ -5,6 +5,7 @@ Last reviewed 25 October 2026. This page covers the public demo and the private 
 ## Access model
 
 - **Public, read-only:** the Booking Desk and its zero-call experiments, the evidence page, the Qloo Proof Lab, published cases and recorded runs.
+- **Public, live research:** `POST /api/plan` ("Plan a show") runs one capped Qloo workflow (at most 12 calls, 120-second deadline) for a visitor's city, artist, budget and act count. Input is validated and cleaned before any call. The result is saved as a live plan that is never listed with the published cases.
 - **Private:** organizer events, research, studies and every write. These require a single organizer token of at least 32 characters, sent as a Bearer header. This is single-organizer access, not a multi-user account system.
 - **Shared decision reports** are readable by anyone who has the link (bearer links). Do not put confidential offers into a public demo.
 - **Blind-review ballots** are authenticated by a per-reviewer invitation token. A token can submit only once ("already submitted"), and the review page does not link to the evidence pages, so blinding is preserved.
@@ -25,7 +26,8 @@ X-Request-Id: <per request>
 ## Rate limits and abuse
 
 - **Persistent per-IP quotas** are stored in SQLite: 180 API requests a minute. Paid research is limited to 6 a minute per IP and 100 a day.
-- **Judge experiments:** 20 per IP and 60 in total per minute. Identical experiments are served from a server cache after the quota is counted.
+- **Judge experiments:** 20 per IP a minute. Identical experiments are served from a server cache; only new calculations count toward the global cap of 60 a minute.
+- **Live plans:** 3 per IP every 10 minutes, 10 per IP a day and a shared daily cap (`PUBLIC_PLAN_DAILY_CAP`, default 40). They also count toward the paid-research limits above and the shared daily Qloo workflow cap.
 - **Festival policy:** briefs above 2,500 combinations are rejected, because the policy runs synchronously.
 - **429 responses** include `Retry-After`. Every error response is `{error, requestId}` and never includes stack traces or internals.
 - **Tested:** a flood of forged ballots gets only 4xx responses, nothing is stored, and the per-IP limit engages (`tests/http-hygiene.test.mjs`).

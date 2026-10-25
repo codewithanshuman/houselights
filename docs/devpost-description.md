@@ -6,14 +6,15 @@ Talent buyers often know the room they want to fill. They still have to turn aud
 
 ## What it does
 
-Houselights makes constraint-correct, auditable booking decisions with Qloo receipts. A promoter gives it a city, the artists whose audience they want, candidate acts, fees, availability and booking rules. It uses Qloo audience affinity to rank the candidates, finds the best bill that satisfies every rule, and links each conclusion to the saved Qloo response behind it.
+Houselights books the bill your city's fans will show up for. A promoter names a city, an artist their audience loves, a budget and the number of acts. Houselights asks Qloo's taste graph which artists those fans love in that city, ranks them for that audience, checks where the fans are, and then runs an exact optimizer over every possible bill to book the best one that fits the budget and rules. Every claim links to the saved Qloo response behind it, and one switch turns Qloo off to show what the same rules would book without it.
 
-**The two-minute path.** The public Booking Desk (no sign-in) opens straight into it:
+**Try it in two minutes** on the public Booking Desk (no sign-in):
 
-1. **The brief:** New York, 2 slots for listeners of Leon Bridges, a $14,500 artist budget and 8 candidates.
-2. **The optimized slate:** Michael Kiwanuka + Sault ($13,500), with every booking rule passing, the near-tie flagged and the promoter's decision named.
-3. **Withdraw Qloo evidence:** the same optimizer, pool, fees and budget now book Jordan Rakei + Hiatus Kaiyote ($9,000). The decision changes, with zero provider calls.
-4. **Check the receipt:** open the saved Qloo rank response behind the change.
+1. **A saved live Qloo run:** New York, fans of Leon Bridges, $14,500, 2 acts. Houselights books Michael Kiwanuka + Sault for $13,500.
+2. **Turn Qloo off:** the same optimizer, pool, fees and budget book Jordan Rakei + Hiatus Kaiyote for $9,000. Qloo changes this decision in <!--claim:featuredNoise-->200 of 200<!--/claim--> random ±20% fee variations.
+3. **Change the plan:** cut the budget or drop a booked act, and the optimizer rebooks instantly with no new provider calls.
+4. **Open a receipt:** the saved Qloo ranking behind each act, with its row highlighted.
+5. **Plan your own show:** any city and artist. A live run makes up to 12 Qloo calls (usually under a minute) and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled everywhere.
 
 Beyond that path:
 
@@ -40,7 +41,7 @@ All figures below are reproduced offline by the commands named in the [claims au
 - **Constraint safety (by construction):** an exact optimizer cannot propose a bill that breaks a hard rule. For comparison, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - <!--claim:unitTests-->338<!--/claim--> unit tests and <!--claim:browserTests-->45<!--/claim--> browser tests: an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge path in Chromium, Firefox and WebKit;
+  - <!--claim:unitTests-->343<!--/claim--> unit tests and <!--claim:browserTests-->52<!--/claim--> browser tests: an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge path in Chromium, Firefox and WebKit;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 

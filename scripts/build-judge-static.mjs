@@ -3,7 +3,7 @@
 //
 // Writes public/judge-static.json (bill with and without Qloo evidence, the diff, the
 // near-tie, fit basis, receipts with integrity results) and inlines the first screen
-// into public/judge.html between the first-screen markers. Everything is computed by
+// into public/desk.html between the first-screen markers. Everything is computed by
 // the same server code the live Booking Desk uses; tests/judge-static.test.mjs fails if
 // either output drifts from a fresh computation. No provider calls.
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -74,14 +74,14 @@ export function firstScreenHtml(data) {
 
 export function inlineFirstScreen(page, data) {
   const start = page.indexOf('<!-- first-screen:begin'), end = page.indexOf('<!-- first-screen:end -->');
-  if (start < 0 || end < 0) throw new Error('public/judge.html is missing the first-screen markers.');
+  if (start < 0 || end < 0) throw new Error('public/desk.html is missing the first-screen markers.');
   return page.slice(0, start) + firstScreenHtml(data) + page.slice(end + '<!-- first-screen:end -->'.length);
 }
 
 if (import.meta.url === `file:///${process.argv[1]?.replaceAll('\\', '/').replace(/^\//, '')}`) {
   const data = await computeJudgeStatic();
   writeFileSync(join(repo, 'public', 'judge-static.json'), JSON.stringify(data, null, 2) + '\n');
-  const pagePath = join(repo, 'public', 'judge.html');
+  const pagePath = join(repo, 'public', 'desk.html');
   writeFileSync(pagePath, inlineFirstScreen(readFileSync(pagePath, 'utf8'), data));
-  console.log(JSON.stringify({ written: ['public/judge-static.json', 'public/judge.html (first screen)'], bill: data.withQloo.names, withoutQloo: data.withoutQloo.names, receipts: data.receipts.length, allMatch: data.receipts.every(row => row.integrity.matchesManifest), pinMatches: data.integrity.pinMatches }));
+  console.log(JSON.stringify({ written: ['public/judge-static.json', 'public/desk.html (first screen)'], bill: data.withQloo.names, withoutQloo: data.withoutQloo.names, receipts: data.receipts.length, allMatch: data.receipts.every(row => row.integrity.matchesManifest), pinMatches: data.integrity.pinMatches }));
 }

@@ -28,6 +28,7 @@ import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
+import { registerLivePlanRoutes } from './live-plan.mjs';
 import { dataRoot } from './database.mjs';
 import { registerAutopilotRoutes } from './autopilot-api.mjs';
 import { registerEventRoutes } from './events-api.mjs';
@@ -107,6 +108,7 @@ export function createApp() {
   registerFinancialRoutes(app);
   registerExperimentRoutes(app);
   registerJudgeRoutes(app);
+  registerLivePlanRoutes(app);
   registerAutopilotRoutes(app);
   registerEventRoutes(app);
   registerOperationalRoutes(app);

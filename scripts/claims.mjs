@@ -28,6 +28,8 @@ export function computeClaims() {
     shockRate: pct(shocks.violationResponses, shocks.returnedResponses),
     noiseMean: `${Math.round(sensitivity.meanShare * 100)}%`,
     noiseRobust: `${sensitivity.robustUnderNoise} of ${sensitivity.briefs}`,
+    // The featured Booking Desk brief (the recorded New York run) under the same fee noise.
+    featuredNoise: (row => `${row.feeNoise.withdrawalChanges} of ${row.feeNoise.draws}`)(json('results/sensitivity.json').rows.find(row => row.brief === 'New York: watch a recorded Qloo research run')),
     unitTests: String(countTests('tests')),
     browserTests: String(countTests('browser')),
   };
