@@ -129,6 +129,8 @@ test('the bill step explains the choice, draws the near-tie and badges the fit b
   await expect(glance).toContainText('Qloo affinity 0.9770');
   await glance.getByRole('link',{name:'Try a budget cut ↓'}).click();
   await expect(page.locator('#judge-tight-budget')).toBeFocused();await expect(page.locator('#judge-tight-budget')).toBeInViewport();
+  // Not just in the viewport: visible, not under the sticky step bar.
+  await expect.poll(()=>page.evaluate(()=>{const r=document.getElementById('judge-tight-budget').getBoundingClientRect();return !!document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('#judge-tight-budget');})).toBe(true);
   await page.locator('.glance-glossary summary').click();
   await expect(page.locator('.glance-glossary')).toContainText('Qloo publishes no margin of error');
 });

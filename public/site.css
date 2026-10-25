@@ -108,6 +108,11 @@
 /* The four steps */
 .booking-path{position:sticky;top:0;z-index:20}
 .path-step{max-width:1240px;margin:var(--hl-space-4) auto;scroll-margin-top:80px}
+/* In-page jumps land below the sticky step bar instead of underneath it. */
+.judge-main [id],.judge-main summary{scroll-margin-top:84px}
+/* The experiment form is about 1,200px tall: on a shorter screen a sticky form hides its own
+   lower controls (budget cuts, cancellations) until the end of the workspace, so it scrolls. */
+@media (max-height:1299px){.judge-page #judge-form{position:static}}
 /* Below-the-fold sections skip style and layout until they near the viewport. */
 .judge-main>.path-step,.judge-main>.desk-intro,.judge-main>.judge-break-panel,.judge-main>.judge-case-picker,.judge-main>#judge-workspace{content-visibility:auto;contain-intrinsic-size:auto 600px}
 .path-step h2{font:500 var(--hl-text-xl)/1.2 var(--hl-serif);margin:4px 0 var(--hl-space-4)}
