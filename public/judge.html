@@ -14,12 +14,13 @@
   <meta property="og:image" content="https://houselights.80-225-218-239.sslip.io/assets/brand/crowd.webp">
   <link rel="icon" type="image/png" href="/assets/brand/favicon-64.png">
   <link rel="preload" href="/assets/fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/fraunces-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts.css">
+  <link rel="stylesheet" href="/icons.css">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/gm.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/judge.css">
-  <link rel="stylesheet" href="/autopilot.css">
   <link rel="stylesheet" href="/site.css">
   <script src="/site.js" defer></script>
   <script src="/first-screen.js" defer></script>
@@ -120,7 +121,7 @@
       <details class="go-deeper" id="go-deeper-research"><summary>Go deeper: the original Qloo research</summary>
         <section id="booking-research" class="panel judge-agent-panel" aria-labelledby="judge-agent-title"><p class="judge-section-label"><span>↳</span> RECORDED EVIDENCE TIMELINE</p><h2 id="judge-agent-title">From research to decision</h2><p class="judge-section-intro">Recorded application events show the actual research sequence where available. Older cases show only receipt completion order. Neither view invents the agent’s reasoning or makes a new provider call.</p><div id="booking-research-cards"></div><div id="judge-agent-trace"></div></section>
       </details>
-      <details class="go-deeper" id="go-deeper-autopilot" data-lazy-scripts="/autopilot-view.js /autopilot.js"><summary>Go deeper: how Autopilot decided</summary>
+      <details class="go-deeper" id="go-deeper-autopilot" data-lazy-scripts="/autopilot-view.js /autopilot.js" data-lazy-styles="/autopilot.css"><summary>Go deeper: how Autopilot decided</summary>
         <section id="booking-autopilot" class="panel autopilot-panel" aria-labelledby="autopilot-title" aria-busy="false">
           <div class="booking-panel-heading"><div><p class="judge-section-label"><span>↳</span> HOUSELIGHTS AUTOPILOT</p><h2 id="autopilot-title">Brief in. Defensible decision out.</h2><p>The agent lists every unanswered question about this booking and tests each one against the exact optimizer. It spends Qloo calls only where an answer could change a bill or is needed to justify one, then builds strategies, stress-tests them and writes the packet.</p></div><span class="booking-scope">BOUNDED · RECEIPT-BACKED</span></div>
           <div class="autopilot-controls"><div id="autopilot-modes" role="group" aria-label="Autopilot run source"></div><div class="autopilot-replan"><label for="autopilot-budget">Artist budget for a new plan (USD)</label><div><input id="autopilot-budget" type="number" inputmode="numeric" min="0" max="10000000" step="100"><button type="button" class="button subtle" id="autopilot-replan">Re-plan at this budget</button></div></div></div>

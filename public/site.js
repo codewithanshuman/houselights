@@ -2,6 +2,8 @@
    hash), one fetch helper (timeout, retry, friendly errors) and one number format. */
 'use strict';
 (()=>{
+  // The hash as the page was opened: pages rewrite it later (the Booking Desk adds the case).
+  const openedHash=location.hash;
   const e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   // Numbers: whole currency with a symbol and separators; affinity always to 4 places.
@@ -46,16 +48,10 @@
     if(retry)target.querySelector('[data-state-retry]').addEventListener('click',()=>retry(),{once:true});
   }
 
-  // One navigation and footer for all pages. Organizer tools are uncalibrated and sit
-  // behind a menu so judges land on the Booking Desk.
-  const pages=[['booking','/judge.html','Booking Desk'],['evidence','/evidence.html','Evidence & limits'],['proof','/proof-lab.html','Qloo Proof Lab']];
-  const tools=[['/workspace.html','Organizer workspace',false],['/index.html','Slate studio',false],['/demand.html','Demand Lab and Audience Twin',true],['/financial.html','Financial Risk Lab',true],['/index.html#gauntlet','Festival GM and Gauntlet',true]];
-  function renderNav(header){
-    const current=header.dataset.siteNav;
-    header.innerHTML=`<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>
-      <div class="site-links">${pages.map(([key,href,label])=>`<a href="${href}"${key===current?' aria-current="page"':''}>${e(label)}</a>`).join('')}
-      <details class="site-tools"><summary>Organizer tools</summary><div class="site-tools-menu">${tools.map(([href,label,uncalibrated])=>`<a href="${href}">${e(label)}${uncalibrated?' <span class="badge badge-warn">uncalibrated</span>':''}</a>`).join('')}<p>Private planning tools. Their forecasts are not calibrated against real outcomes.</p></div></details></div></nav>`;
-    const tools_=header.querySelector('.site-tools');
+  // The navigation is rendered into each page by the server (server/site-chrome.mjs) so it
+  // is part of the first paint; this adds the Organizer tools menu behaviour.
+  function bindNav(header){
+    const tools_=header.querySelector('.site-tools');if(!tools_)return;
     document.addEventListener('click',event=>{if(tools_.open&&!tools_.contains(event.target))tools_.open=false;});
     tools_.addEventListener('keydown',event=>{if(event.key==='Escape'){tools_.open=false;tools_.querySelector('summary').focus();}});
   }
@@ -74,7 +70,13 @@
     });
   }
   function start(){
-    document.querySelectorAll('[data-site-nav]').forEach(renderNav);
+    document.querySelectorAll('[data-site-nav]').forEach(bindNav);
+    // Below-the-fold sections skip layout while the page loads (content-visibility in site.css).
+    // Lay them out before the first click or key press, so in-page jumps land where they should
+    // in every browser (Firefox and Safari do not correct a smooth scroll for estimated sizes).
+    const settle=()=>document.querySelectorAll('.judge-main>*').forEach(node=>{node.style.contentVisibility='visible';});
+    const opened=openedHash.length>1?document.getElementById(decodeURIComponent(openedHash.slice(1))):null;
+    if(opened&&!document.getElementById('first-screen')?.contains(opened))settle();else['pointerdown','keydown'].forEach(type=>addEventListener(type,settle,{once:true,capture:true}));
     document.querySelectorAll('[data-site-footer]').forEach(renderFooter);
     focusableScrollers();
     new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});

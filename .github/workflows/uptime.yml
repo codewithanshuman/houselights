@@ -1,13 +1,16 @@
 name: Public demo uptime
-# Checks the public demo from outside the VM every 30 minutes. A failed run is
-# emailed by GitHub to the account that last changed this schedule. Public
-# repository minutes are free; no secrets are used and nothing is changed.
+# Checks the public demo from outside the VM every 30 minutes. Two alert routes:
+# GitHub emails a failed run to the account that last changed this schedule, and
+# the run opens (or comments on) an "uptime" issue, which notifies repository
+# watchers by email and in the GitHub mobile app. A passing run closes the issue.
+# Public repository minutes are free; only the built-in GITHUB_TOKEN is used.
 on:
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
 permissions:
   contents: read
+  issues: write
 env:
   ORIGIN: https://houselights.80-225-218-239.sslip.io
 jobs:
@@ -31,3 +34,30 @@ jobs:
           case "$cases" in *'"cases"'*) ;; *) echo "::error::public cases did not load"; exit 1;; esac
           status=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$ORIGIN/api/events")
           test "$status" = 401 || { echo "::error::private events returned $status, expected 401"; exit 1; }
+      - name: TLS certificate renews in time
+        run: |
+          # Caddy renews about 30 days before expiry; under 14 days left means renewal is failing.
+          end=$(echo | openssl s_client -connect "${ORIGIN#https://}:443" -servername "${ORIGIN#https://}" 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+          days=$(( ($(date -d "$end" +%s) - $(date +%s)) / 86400 ))
+          echo "Certificate expires $end ($days days)"
+          test "$days" -ge 14 || { echo "::error::TLS certificate expires in $days days"; exit 1; }
+      - name: Open or update the uptime issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --label uptime --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body "Still failing: $RUN_URL"
+          else
+            gh label create uptime --repo "$GITHUB_REPOSITORY" --color B60205 --description "Public demo uptime alerts" 2>/dev/null || true
+            gh issue create --repo "$GITHUB_REPOSITORY" --label uptime --title "Public demo check failing" --body "The uptime check for $ORIGIN failed: $RUN_URL"
+          fi
+      - name: Close the uptime issue after recovery
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --label uptime --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Recovered: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          done

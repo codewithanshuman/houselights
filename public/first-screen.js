@@ -124,11 +124,12 @@
   $('step-receipt-body').addEventListener('click',event=>{const button=event.target.closest('[data-receipt]');if(button)void openReceipt(button.dataset.receipt,button.dataset.entity,button);});
 
   // Step links are wired by booking-journey.js, which moves focus to each step.
-  // Autopilot's scripts load only when its "Go deeper" panel is opened (or linked to), so
+  // Autopilot's scripts and styles load only when its "Go deeper" panel is opened (or linked to), so
   // the first screen does not pay for them. autopilot.js announces booking:ready and judge.js
   // answers with the current case, so a late load still receives the state.
   function loadLazyScripts(panel){
     if(!panel||panel.dataset.lazyLoaded)return;panel.dataset.lazyLoaded='true';
+    for(const href of (panel.dataset.lazyStyles||'').split(/\s+/).filter(Boolean)){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.appendChild(link);}
     let chain=Promise.resolve();
     for(const src of panel.dataset.lazyScripts.split(/\s+/).filter(Boolean))chain=chain.then(()=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=reject;document.head.appendChild(script);}));
     chain.catch(()=>{panel.querySelector('#autopilot-status')&&(panel.querySelector('#autopilot-status').textContent='Autopilot could not load. Reload the page to try again.');});

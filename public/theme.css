@@ -1,5 +1,3 @@
-@import url('/fonts.css');
-@import url('/icons.css');
 /* Houselights light editorial identity. */
 :root{color-scheme:light;--paper:#F7F6F2;--panel:#fff;--ink:#191919;--purple:#7357C8;--lavender:#E9E3F8;--gray:#85858E;--muted:#62616B;--line:#DEDBE5;--surface:#F2EFF8;--amber:#7357C8;--amber-light:#F0EBFA;--green:#7357C8;--green-light:#E9E3F8;--red:#A33346;--red-light:#FCEDF0;--serif:'Fraunces',Georgia,serif;--sans:'IBM Plex Sans',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace}
 body{font:15px/1.65 var(--sans);background:var(--paper);color:var(--ink)}

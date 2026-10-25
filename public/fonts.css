@@ -1,4 +1,5 @@
-/* Self-hosted Google Fonts. See assets/fonts/OFL-*.txt. */
+/* Self-hosted Google Fonts, subset to Latin and the symbols the site uses (about 40% smaller).
+   See assets/fonts/OFL-*.txt. The Booking Desk preloads its above-the-fold faces. */
 @font-face {
   font-family: 'Fraunces';
   font-style: normal;

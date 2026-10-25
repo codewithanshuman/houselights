@@ -47,7 +47,7 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->335<!--/claim--> unit tests, including a 5,000-case independent optimizer reference |
+| `npm test` | <!--claim:unitTests-->337<!--/claim--> unit tests, including a 5,000-case independent optimizer reference |
 | `npm run test:browser` | <!--claim:browserTests-->45<!--/claim--> browser tests in Chromium. They include axe WCAG 2.1 AA checks on every page, and the judge path also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |

@@ -147,7 +147,8 @@ export function createApp() {
   registerPortfolioRoutes(app);
   registerBenchmarkRoutes(app);
   if(process.env.PUBLIC_LANDING_PAGE==='judge')app.get('/',(_req,res)=>res.redirect(302,'/judge.html'));
-  app.use(...staticAssets(pub, express));
+  const [pages, files] = staticAssets(pub, express);
+  app.use(pages, files);
   app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),
     protected:protectedMode(),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
@@ -357,7 +358,7 @@ export function createApp() {
   });
   app.use('/api', unknownApiRoute);
   // Anything else that matched no file or route gets the styled 404 page.
-  app.use((req, res) => req.method === 'GET' || req.method === 'HEAD' ? res.status(404).sendFile('404.html', { root: pub }) : res.status(404).json({ error: 'Not found.' }));
+  app.use((req, res) => req.method === 'GET' || req.method === 'HEAD' ? res.status(404).type('html').send(pages.render('404.html')) : res.status(404).json({ error: 'Not found.' }));
   app.use((error, _req, res, _next) => {
     if (error.status === 413) return res.status(413).json({ error: 'Request is too large.' });
     if (error.type === 'entity.parse.failed' || error.status === 400) return res.status(400).json({ error: 'Invalid request body.' });

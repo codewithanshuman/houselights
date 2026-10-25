@@ -79,3 +79,26 @@ test('a flood of forged ballots is rejected without storing anything, then rate-
   assert.ok(limited, 'the per-IP limit engages');assert.ok(Number(limited.headers.get('retry-after')) >= 1);
   db.prepare('DELETE FROM quotas').run();
 });
+
+test('the global experiment cap counts only new calculations, so cached answers still serve a busy room', async () => {
+  db.prepare('DELETE FROM quotas').run();
+  const id = seed.caseIds[1], post = body => fetch(`${url}/api/judge/cases/${id}/experiment`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  assert.equal((await post({ qlooOff: true, budget: 11000 })).headers.get('x-cache'), 'miss');
+  const minute = Math.floor(Date.now() / 60000);
+  db.prepare('INSERT INTO quotas(key,count,expires) VALUES(?,60,?) ON CONFLICT(key) DO UPDATE SET count=60').run(`judge-global:${minute}`, (minute + 1) * 60000);
+  const cached = await post({ qlooOff: true, budget: 11000 });
+  assert.equal(cached.status, 200, 'a cached answer is served at the global cap');assert.equal(cached.headers.get('x-cache'), 'hit');
+  const fresh = await post({ qlooOff: true, budget: 11100 });
+  assert.equal(fresh.status, 429, 'a new calculation waits for the next minute');assert.ok(Number(fresh.headers.get('retry-after')) >= 1);
+  db.prepare('DELETE FROM quotas').run();
+});
+
+test('pages are served with the navigation already in place, including the 404 page', async () => {
+  const desk = await (await fetch(`${url}/judge.html`)).text();
+  assert.match(desk, /<header class="site-header" data-site-nav="booking"><nav class="site-nav"/);
+  assert.match(desk, /<a href="\/judge.html" aria-current="page">Booking Desk<\/a>/);
+  assert.match(desk, /Demand Lab and Audience Twin <span class="badge badge-warn">uncalibrated<\/span>/);
+  const missing = await fetch(`${url}/no-such-page`);
+  assert.equal(missing.status, 404);
+  assert.match(await missing.text(), /<nav class="site-nav"/);
+});

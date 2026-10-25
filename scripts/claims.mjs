@@ -50,6 +50,19 @@ export function claimTable(c) {
   ] };
 }
 
+// The same table as HTML, written into evidence.html between markers so it is part of the
+// first paint. public/claims-table.js fills in the live review count and the copy buttons.
+const esc = value => String(value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+const badgeClass = status => /^verified/.test(status) ? 'badge-good' : /pending/.test(status) ? 'badge-warn' : 'badge-muted';
+const copyButton = command => `<code>${esc(command)}</code> <button type="button" class="button subtle small" data-copy="${esc(command)}" aria-label="Copy command: ${esc(command)}">Copy</button>`;
+export function claimTableHtml(table) {
+  const rows = table.rows.map(row => `<tr><th scope="row">${esc(row.claim)} <a href="${esc(row.source)}">source</a></th><td><span class="badge ${badgeClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.limit)}${row.live ? ` <strong data-live="${esc(row.live)}">…</strong> completed so far.` : ''}</td><td>${row.reproduce ? copyButton(row.reproduce) : '—'}</td></tr>`).join('');
+  return `<div class="table-scroll"><table class="data-table"><caption>Claims and their evidence</caption><thead><tr><th scope="col">Claim</th><th scope="col">Status</th><th scope="col">Limit</th><th scope="col">Reproduce</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    + `<p class="path-note">Reproduce everything at once with ${copyButton('npm run verify:all')}</p>`;
+}
+const TABLE_MARKER = /(<!-- claim-table:begin[^>]*-->)[\s\S]*?(<!-- claim-table:end -->)/;
+export const inlineClaimTable = (html, table) => html.replace(TABLE_MARKER, (_, begin, end) => begin + claimTableHtml(table) + end);
+
 export const CLAIM_FILES = ['README.md', 'docs/devpost-description.md', 'docs/claims-audit.md', 'docs/submission.md'];
 const MARKER = /<!--claim:([a-zA-Z]+)-->(.*?)<!--\/claim-->/g;
 
@@ -77,6 +90,11 @@ if (import.meta.url === `file:///${process.argv[1]?.replaceAll('\\', '/').replac
   const current = (() => { try { return readFileSync(tablePath, 'utf8'); } catch { return ''; } })();
   if (update && current !== table) writeFileSync(tablePath, table);
   if (!update && current.replace(/\r\n/g, '\n') !== table) { failed = true; report.push('public/claims.json: stale'); } else report.push(`public/claims.json: ${update && current !== table ? 'updated' : 'current'}`);
+  const pagePath = join(repo, 'public', 'evidence.html'), page = readFileSync(pagePath, 'utf8'), inlined = inlineClaimTable(page, claimTable(claims));
+  if (!TABLE_MARKER.test(page)) { failed = true; report.push('public/evidence.html: no claim-table markers'); }
+  else if (update && inlined !== page) { writeFileSync(pagePath, inlined); report.push('public/evidence.html: claim table updated'); }
+  else if (!update && inlined !== page) { failed = true; report.push('public/evidence.html: claim table stale'); }
+  else report.push('public/evidence.html: claim table current');
   console.log(JSON.stringify(claims));
   console.log(report.join('\n'));
   if (failed) { console.error('Claim numbers drifted from the results JSON. Run: node scripts/claims.mjs --update'); process.exit(1); }

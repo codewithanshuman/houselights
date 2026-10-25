@@ -5,6 +5,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFileSync, statSync } from 'node:fs';
 import { join as joinPath, normalize, sep } from 'node:path';
+import { withSiteNav } from './site-chrome.mjs';
 
 const SAFE_ID = /^[A-Za-z0-9._-]{8,64}$/;
 export function requestContext(req, res, next) {
@@ -60,7 +61,8 @@ export function unknownApiRoute(req, res) {
 
 // Static assets with safe long-term caching. HTML pages are served with every local
 // script and stylesheet URL stamped ?v=<release>, so those assets can be immutable:
-// a new release changes the URL. HTML and unstamped CSS/JS always revalidate (ETag);
+// a new release changes the URL. The shared navigation is rendered in at the same time.
+// HTML and unstamped CSS/JS always revalidate (ETag);
 // fonts and images, whose names change when their content does, are cached for a week.
 const htmlCache = new Map();
 export function staticAssets(root, express) {
@@ -72,11 +74,18 @@ export function staticAssets(root, express) {
     if (!path.endsWith('.html')) return next();
     const file = normalize(joinPath(root, path));
     if (!file.startsWith(normalize(root) + sep)) return next();
-    let mtime; try { mtime = statSync(file).mtimeMs; } catch { return next(); }
-    let entry = htmlCache.get(file);
-    if (!entry || entry.mtime !== mtime) { entry = { mtime, body: stamp(readFileSync(file, 'utf8')) }; htmlCache.set(file, entry); }
-    res.set('Cache-Control', 'no-cache').type('html').send(entry.body);
+    const body = render(file);
+    if (body === null) return next();
+    res.set('Cache-Control', 'no-cache').type('html').send(body);
   };
+  // Stamped asset URLs and the server-rendered navigation, cached until the file changes.
+  function render(file) {
+    let mtime; try { mtime = statSync(file).mtimeMs; } catch { return null; }
+    let entry = htmlCache.get(file);
+    if (!entry || entry.mtime !== mtime) { entry = { mtime, body: withSiteNav(stamp(readFileSync(file, 'utf8'))) }; htmlCache.set(file, entry); }
+    return entry.body;
+  }
+  pages.render = name => render(joinPath(root, name));
   const files = express.static(root, { cacheControl: false, setHeaders(res, path) {
     const versioned = res.req?.query?.v === release;
     if (/\.(js|css)$/.test(path)) res.set('Cache-Control', versioned ? 'public, max-age=31536000, immutable' : 'no-cache');

@@ -198,10 +198,13 @@ export function registerJudgeRoutes(app) {
   app.post('/api/judge/cases/:id/experiment',handle((req,res)=>{
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
     const minute=Math.floor(Date.now()/60000),address=digest(req.ip??'unknown');
-    if(!consumeQuota([{key:`judge:${minute}:${address}`,limit:20,expires:(minute+1)*60000},{key:`judge-global:${minute}`,limit:60,expires:(minute+1)*60000}]))throw fault('Experiment limit reached. Wait a minute before another calculation.',429);
+    const limited=()=>fault('Experiment limit reached. Wait a minute before another calculation.',429);
+    if(!consumeQuota([{key:`judge:${minute}:${address}`,limit:20,expires:(minute+1)*60000}]))throw limited();
     const key=sortedJson([req.params.id,record.createdAt??null,req.body??{}]);
     let result=experimentCache.get(key);
     if(result){res.set('X-Cache','hit');}
+    // The global cap protects the CPU, so only new calculations count; cached answers cost nothing.
+    else if(!consumeQuota([{key:`judge-global:${minute}`,limit:60,expires:(minute+1)*60000}]))throw limited();
     else{result=judgeExperiment(record,req.body);if(experimentCache.size>=EXPERIMENT_CACHE_MAX)experimentCache.delete(experimentCache.keys().next().value);experimentCache.set(key,result);res.set('X-Cache','miss');}
     res.json(result);
   }));
