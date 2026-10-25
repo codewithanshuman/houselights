@@ -23,7 +23,7 @@ jobs:
           # Responses are captured first: piping curl into grep -q fails under pipefail.
           body=$(curl -fsS --retry 3 --retry-delay 20 --max-time 20 "$ORIGIN/healthz")
           echo "$body"
-          for field in '"ok":true' '"mock":false' '"protected":true'; do
+          for field in '"ok":true' '"mock":false' '"protected":true' '"diskOk":true'; do
             case "$body" in *"$field"*) ;; *) echo "::error::healthz is missing $field"; exit 1;; esac
           done
       - name: Booking Desk, public cases and private routes

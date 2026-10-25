@@ -102,3 +102,9 @@ test('pages are served with the navigation already in place, including the 404 p
   assert.equal(missing.status, 404);
   assert.match(await missing.text(), /<nav class="site-nav"/);
 });
+
+test('healthz reports disk headroom as a boolean only', async () => {
+  const health = await (await fetch(`${url}/healthz`)).json();
+  assert.equal(typeof health.diskOk, 'boolean');
+  assert.ok(!JSON.stringify(health).match(/bytes|bavail|free/i), 'no disk figures are published');
+});

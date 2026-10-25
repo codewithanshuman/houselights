@@ -3,7 +3,7 @@
 // 0.5-CPU host; responses still carry Cache-Control: no-store, so browsers and proxies
 // always revalidate and updated cases appear at once.
 import { randomUUID } from 'node:crypto';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, statSync, statfsSync } from 'node:fs';
 import { join as joinPath, normalize, sep } from 'node:path';
 import { withSiteNav } from './site-chrome.mjs';
 
@@ -93,4 +93,13 @@ export function staticAssets(root, express) {
     else res.set('Cache-Control', 'no-cache');
   } });
   return [pages, files];
+}
+
+// Disk headroom for the uptime monitor: false when the data volume has under 10% or 1 GB
+// free (a full disk stops SQLite writes and backups). Only the boolean is published.
+export function diskOk(path) {
+  try {
+    const { bavail, blocks, bsize } = statfsSync(path);
+    return bavail / blocks >= 0.10 && bavail * bsize >= 1024 ** 3;
+  } catch { return null; }
 }

@@ -18,7 +18,7 @@ import { hasLLM } from './llm.mjs';
 import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived, preserveRankProvenance } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode, routeQuota } from './access.mjs';
-import { requestContext, publicReadCache, unknownApiRoute, staticAssets } from './http-hygiene.mjs';
+import { requestContext, publicReadCache, unknownApiRoute, staticAssets, diskOk } from './http-hygiene.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
 import { registerOperationalRoutes } from './operational-evidence.mjs';
@@ -28,6 +28,7 @@ import { registerPortfolioRoutes } from './portfolio-api.mjs';
 import { registerBenchmarkRoutes } from './benchmark-api.mjs';
 import { registerResearchRoutes } from './research-api.mjs';
 import { registerJudgeRoutes } from './judge.mjs';
+import { dataRoot } from './database.mjs';
 import { registerAutopilotRoutes } from './autopilot-api.mjs';
 import { registerEventRoutes } from './events-api.mjs';
 import { registerDemandRoutes } from './demand-api.mjs';
@@ -150,7 +151,7 @@ export function createApp() {
   const [pages, files] = staticAssets(pub, express);
   app.use(pages, files);
   app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),
-    protected:protectedMode(),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
+    protected:protectedMode(),diskOk:diskOk(dataRoot),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
