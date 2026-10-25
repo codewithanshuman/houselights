@@ -1,35 +1,7 @@
-/* The Booking Desk: a landing page that is also the product. One typeface (Geist), flat warm
-   background, black pill actions, purple only for Qloo data. Motion uses one spring curve and
-   is removed under prefers-reduced-motion. */
-@font-face{font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/geist-variable.woff2) format('woff2')}
-
-.plan-page{
-  --pp-bg:#F5F1E9;--pp-card:#FFFFFF;--pp-ink:#111111;--pp-soft:#3A3A40;--pp-muted:#62616A;--pp-line:#E6E3DC;--pp-line-strong:#D6D2C8;
-  --pp-accent:#5E44B8;--pp-accent-soft:#EEEAFB;--pp-good:#1E6B45;--pp-good-soft:#E4F2EA;--pp-warn:#8A5A00;--pp-warn-soft:#FBF0D9;--pp-bad:#A33346;--pp-bad-soft:#FCEDF0;
-  --pp-ease:cubic-bezier(.32,.72,0,1);--pp-shadow:0 1px 2px #1111110d,0 12px 32px #1111110f;--pp-shadow-lift:0 2px 4px #11111112,0 24px 48px #1111111f;
-  --hl-sans:'Geist',system-ui,sans-serif;--hl-serif:'Geist',system-ui,sans-serif;--hl-mono:'Geist',system-ui,sans-serif;
-  --hl-paper:var(--pp-bg);--hl-ink:var(--pp-ink);--hl-accent:var(--pp-accent);
-  background:var(--pp-bg);color:var(--pp-ink);font-family:'Geist',system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-.plan-page{margin:0}
+/* The Booking Desk: a landing page that is also the product. The shared look (tokens, nav,
+   footer, type) is in v2.css; this file holds the page's own sections. */
 .agent-card.is-done .agent-count{display:none}
 @media (pointer:coarse),(max-width:768px){.agent-stage{--stage-h:44px}.agent-label{white-space:normal}}
-.plan-page *,.plan-page *::before,.plan-page *::after{box-sizing:border-box}
-.plan-page h1,.plan-page h2,.plan-page h3,.plan-page h4{font-family:'Geist',system-ui,sans-serif;text-wrap:balance}
-.plan-page p{text-wrap:pretty}
-.plan-page :where(a,button,input,summary,[tabindex]):focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
-
-/* Floating glass pill navigation (this page only) */
-.plan-page .site-header{position:sticky;top:0;z-index:50;background:transparent;border:0;padding:16px 16px 0;pointer-events:none}
-.plan-page .site-nav{pointer-events:auto;width:max-content;max-width:100%;margin:0 auto;padding:6px 6px 6px 16px;gap:16px;border-radius:999px;background:#FFFFFFb8;border:1px solid #11111112;box-shadow:0 8px 24px #1111110f;backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
-.plan-page .site-brand{font:600 16px/1 'Geist',sans-serif;letter-spacing:-.2px;min-height:40px}
-.plan-page .site-brand img{width:28px;height:28px}
-.plan-page .site-links{margin-left:0;gap:2px}
-.plan-page .site-links>a,.plan-page .site-tools>summary{min-height:40px;padding:0 14px;border-radius:999px;font:500 14px/1 'Geist',sans-serif;color:var(--pp-soft)}
-.plan-page .site-links>a[aria-current="page"]{background:var(--pp-ink);color:#fff}
-.plan-page .site-tools-menu{border-radius:16px}
-
 .plan-main{max-width:1200px;margin:0 auto;padding:0 24px 96px}
 
 /* Hero */
@@ -143,24 +115,6 @@
   @keyframes agent-spin{to{transform:rotate(360deg)}}
   @keyframes fade-up{from{opacity:0;transform:translateY(6px);filter:blur(2px)}}
 }
-
-/* Footer: links on paper, then the festival drawing */
-.plan-page .plan-footer{margin-top:0;background:#F5F1E9;border-top:1px solid var(--pp-line);overflow:hidden}
-.plan-footer-inner{max-width:1200px;margin:0 auto;padding:64px 24px 24px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2fr);gap:48px}
-.footer-logo{display:inline-flex;align-items:center;gap:10px;font:600 20px/1 'Geist',sans-serif;letter-spacing:-.4px;color:var(--pp-ink);text-decoration:none;min-height:44px}
-.footer-logo img{width:32px;height:32px}
-.footer-dot{color:var(--pp-accent)}
-.footer-brand p{margin:16px 0 0;max-width:320px;font:400 16px/24px 'Geist',sans-serif;color:var(--pp-muted)}
-.footer-brand .footer-release{font-size:14px}
-.footer-release code{font:500 12px/16px 'Geist',sans-serif;padding:2px 8px;border-radius:999px;background:#fff;border:1px solid var(--pp-line);color:var(--pp-ink)}
-.footer-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.footer-cols h2{margin:0 0 16px;padding-bottom:12px;font:600 12px/16px 'Geist',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--pp-ink);border-bottom:1px solid var(--pp-line-strong);max-width:120px}
-.footer-cols a{display:flex;align-items:center;min-height:44px;font:400 15px/20px 'Geist',sans-serif;color:var(--pp-soft);text-decoration:none;transition:color .2s,transform .5s var(--pp-ease)}
-.footer-cols a:hover{color:var(--pp-ink);transform:translateX(3px)}
-.footer-cols p{margin:0;font:400 15px/22px 'Geist',sans-serif;color:var(--pp-muted)}
-.footer-legal{max-width:1200px;margin:0 auto;padding:0 24px;font:400 12px/16px 'Geist',sans-serif;color:var(--pp-muted)}
-.footer-art{display:block;margin-top:8px}
-.footer-art img{display:block;width:100%;height:auto;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 30%);mask-image:linear-gradient(to bottom,transparent 0,#000 30%)}
 
 /* Sections */
 .section-eyebrow{margin:0 0 12px;font:500 14px/20px 'Geist',sans-serif;color:var(--pp-accent)}
@@ -400,8 +354,6 @@
   .fan-2{--x:-230px}.fan-6{--x:230px}.fan-3{--x:-120px}.fan-5{--x:120px}
 }
 @media (max-width:900px){
-  .plan-footer-inner{grid-template-columns:1fr;gap:32px}
-  .footer-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
   .agent-card-wrap{max-width:none}
   .planner{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:64px}
   .hero-title{font-size:48px;letter-spacing:-1.6px}
@@ -420,9 +372,6 @@
 }
 @media (max-width:640px){
   .plan-main{padding:0 16px 64px}
-  .plan-page .site-header{position:relative;padding:12px 12px 0}
-  .plan-page .site-nav{border-radius:24px;padding:8px 12px;gap:8px;justify-content:center}
-  .plan-page .site-links{justify-content:center}
   .plan-hero{padding:48px 0 32px}
   .hero-title{font-size:36px;line-height:40px;letter-spacing:-1.2px}
   .hero-sub{font-size:16px;line-height:24px}

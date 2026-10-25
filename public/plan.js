@@ -361,8 +361,6 @@
     event.preventDefault();$('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});$('plan-city').focus({preventScroll:true});
   }));
 
-  fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{$('footer-release').textContent=health.release?String(health.release).slice(0,7):'local build';}).catch(()=>{$('footer-release').textContent='unavailable';});
-
   // ── Start ──────────────────────────────────────────────────────────────────────
   const fromUrl=new URLSearchParams(location.search).get('plan')||(/^#[a-f0-9]{24}$/.test(location.hash)?location.hash.slice(1):null);
   void loadExamples();

@@ -108,3 +108,12 @@ test('healthz reports disk headroom as a boolean only', async () => {
   assert.equal(typeof health.diskOk, 'boolean');
   assert.ok(!JSON.stringify(health).match(/bytes|bavail|free/i), 'no disk figures are published');
 });
+
+test('every page gets the same server-rendered footer with the festival drawing', async () => {
+  for (const path of ['/judge.html', '/evidence.html', '/proof-lab.html', '/no-such-page']) {
+    const html = await (await fetch(`${url}${path}`)).text();
+    assert.match(html, /<footer class="site-footer plan-footer" data-site-footer><div class="plan-footer-inner">/, path);
+    assert.match(html, /footer-festival\.webp/, path);
+    assert.match(html, /<code id="site-release">/, path);
+  }
+});

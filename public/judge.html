@@ -17,12 +17,13 @@
   <link rel="stylesheet" href="/icons.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/v2.css">
   <link rel="stylesheet" href="/plan.css">
   <script src="/site.js" defer></script>
   <script src="/agent-trace.js" defer></script>
   <script src="/plan.js" defer></script>
 </head>
-<body class="plan-page">
+<body class="plan-page v2">
   <a class="skip-link" href="#plan-form">Skip to planning a show</a>
   <header class="site-header" data-site-nav="booking"></header>
   <main id="main" class="plan-main">
@@ -188,25 +189,6 @@
     <div class="receipt-drawer-head"><h2 id="receipt-title">Qloo receipt</h2><button type="button" class="button subtle small" id="receipt-close">Close</button></div>
     <div id="receipt-body"></div>
   </dialog>
-  <footer class="plan-footer">
-    <div class="plan-footer-inner">
-      <div class="footer-brand">
-        <a class="footer-logo" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="32" height="32"><span>Houselights<span class="footer-dot">.</span></span></a>
-        <p>Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>
-        <p class="footer-release">Release <code id="footer-release">…</code></p>
-      </div>
-      <nav class="footer-cols" aria-label="Footer">
-        <div><h2>Product</h2><a href="#planner">Plan a show</a><a href="#plan-result">The decision</a><a href="/desk.html">Booking Desk lab</a></div>
-        <div><h2>Evidence</h2><a href="/evidence.html">Evidence and limits</a><a href="/proof-lab.html">Qloo Proof Lab</a><a href="https://github.com/codewithanshuman/houselights/blob/main/docs/claims-audit.md">Claims audit</a></div>
-        <div><h2>Project</h2><a href="https://github.com/codewithanshuman/houselights">Source on GitHub</a><a href="https://github.com/codewithanshuman/houselights/blob/main/docs/security.md">Security</a><a href="https://github.com/codewithanshuman/houselights/blob/main/LICENSE">MIT license</a></div>
-        <div><h2>Built for</h2><p>The Qloo Agentic Hackathon 2026, on Qloo’s taste graph.</p></div>
-      </nav>
-    </div>
-    <p class="footer-legal">Fees on saved plans are illustrative and fees for new acts are estimates. Nothing is booked.</p>
-    <picture class="footer-art">
-      <source media="(max-width: 640px)" srcset="/assets/brand/footer-festival-phone.webp">
-      <img src="/assets/brand/footer-festival.webp" alt="Pen and ink drawing of a festival crowd facing an outdoor stage by the water, under string lights" width="2000" height="528" loading="lazy">
-    </picture>
-  </footer>
+  <footer class="site-footer" data-site-footer></footer>
 </body>
 </html>

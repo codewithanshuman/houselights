@@ -896,7 +896,7 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('#agent-caption')).toHaveText('Live run: Leeds, fans of Arlo Parks');
     await expect(page.locator('#agent-trace .agent-label-text')).toHaveText(/^Planned with \d+ Qloo calls$/, { timeout: 30000 });
     await expect(page.locator('#agent-trace .agent-call').first()).toBeAttached();
-    await expect(page.locator('#footer-release')).not.toHaveText('…');
+    await expect(page.locator('#site-release')).not.toHaveText('…');
   });
 
   test('invalid input is explained inline and nothing is sent', async ({ page }) => {
