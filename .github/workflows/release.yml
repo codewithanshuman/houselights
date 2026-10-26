@@ -45,8 +45,16 @@ jobs:
         run: |
           npm run audit:judge-evaluation
           git diff --exit-code -- results/judge-evaluation-audit.json
-      - run: npx playwright install --with-deps chromium firefox webkit
+      # The system-package download occasionally stalls on the runner; give each attempt a
+      # time limit and retry, instead of letting one stall use the whole job budget.
+      - name: Install browsers
         if: matrix.runner == 'ubuntu-24.04'
+        run: |
+          for attempt in 1 2 3; do
+            timeout 300 npx playwright install --with-deps chromium firefox webkit && exit 0
+            echo "::warning::Browser install attempt $attempt did not finish; retrying."
+          done
+          exit 1
       - run: npm run test:browser
         if: matrix.runner == 'ubuntu-24.04'
       - name: Configure container-only fixtures after unit tests
