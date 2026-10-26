@@ -16,7 +16,6 @@
 .hero-cta:active{transform:scale(.98)}
 .hero-link{display:inline-flex;align-items:center;min-height:48px;padding:0 12px;color:var(--pp-ink);font:500 16px/24px var(--font-ui);text-decoration:underline;text-decoration-color:var(--pp-line-strong);text-underline-offset:6px}
 .hero-link:hover{text-decoration-color:var(--pp-ink)}
-.hero-proof{margin:24px 0 0;font:400 14px/20px var(--font-ui);color:var(--pp-muted)}
 
 /* The card fan: owner supplied artwork between real product cards */
 .card-fan{position:relative;width:100%;max-width:1100px;height:380px;margin:64px auto 0}
@@ -523,9 +522,9 @@
 
 /* Tickets at a calmer size: the decision ticket is 320 px wide on desktop, the poster
    tucked behind its left edge; the smallest labels keep a readable floor. */
-@media (min-width:1001px){.plan-page .decision{grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:48px}}
-.ticket-art{width:min(320px,100%)}
-.ticket-poster{width:min(232px,50%);left:4px}
+@media (min-width:1001px){.plan-page .decision{grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:48px}}
+.ticket-art{width:min(264px,100%)}
+.ticket-poster{width:min(210px,48%);left:0}
 .plan-page .ticket-art .result-meta{font-size:max(11.5px,3.6cqw)}
 .plan-page .ticket-art .badge{font-size:max(9.5px,2.7cqw);padding:max(2px,.8cqw) max(7px,2.4cqw)}
 .tk-admit{font-size:max(9.5px,3.2cqw)}
@@ -534,8 +533,8 @@
 .plan-page .ticket-art .result-sub{font-size:max(11.5px,3.7cqw)}
 .tk-stats dt{font-size:max(8px,2.4cqw)}
 .tk-stats dd{font-size:max(13px,4.4cqw)}
-@media (max-width:1000px){.ticket-poster{left:calc(50% - 250px);width:200px}}
-@media (max-width:640px){.ticket-art{width:min(300px,100%)}}
+@media (max-width:1000px){.ticket-poster{left:calc(50% - 230px);width:180px}}
+@media (max-width:640px){.ticket-art{width:min(264px,100%)}}
 
 /* The Qloo switch as a hand-drawn light switch: an ink-outlined plate with a grey side,
    two screws and a rocker that tips toward ON or OFF. The wobble is #hl-rough. */
@@ -625,22 +624,10 @@
 @media (max-width:760px){.facts-stage{padding:28px 16px 40px;margin-top:44px}.sel-cursor{right:-12px}.sel-tag{display:none}}
 @media (prefers-reduced-motion:reduce){.sel{transition:opacity .2s}}
 
-/* Frosted glass tiles: a deep purple glow drifting under a grid of soft rounded squares.
-   Rows near the top thin out into white with a stepped edge; every tile breathes on its own
-   delay. public/plan.js lays the grid out to fit; reduced motion keeps it still. */
-.tiles{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:36px;pointer-events:none;background:#F6F4FB}
-.tiles-glow{position:absolute;left:-10%;right:30%;top:45%;bottom:-45%;border-radius:50%;background:radial-gradient(closest-side,#8B3CF0 0%,#A766F4 38%,#C9A4FA 68%,#C9A4FA00 100%);filter:blur(10px)}
-.tiles-glow-b{left:40%;right:-15%;top:55%;bottom:-55%;background:radial-gradient(closest-side,#B57AF7 0%,#D2B2FB 55%,#D2B2FB00 100%)}
-.tiles-grid{position:absolute;inset:-2px;display:grid;grid-template-columns:repeat(var(--tc,14),1fr);grid-auto-rows:var(--ts,74px);gap:3px}
-.tiles-grid i{display:block;border-radius:10px;background:linear-gradient(180deg,#FFFFFF66 0%,#FFFFFF26 60%,#FFFFFF14 100%);box-shadow:inset 0 1px 0 #FFFFFFA6,inset 0 0 0 1px #FFFFFF33,inset 0 -10px 18px #FFFFFF1F;opacity:var(--o,1);
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.tiles-grid i.is-paper{background:#F6F4FB;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
-@media (prefers-reduced-motion:no-preference){
-  .tiles-grid i:not(.is-paper){animation:tile-breathe var(--dur,7s) ease-in-out var(--dl,0s) infinite alternate}
-  .tiles-glow{animation:glow-drift 16s ease-in-out infinite alternate}
-  .tiles-glow-b{animation:glow-drift-b 19s ease-in-out infinite alternate}
-  @keyframes tile-breathe{0%{opacity:var(--o,1)}100%{opacity:calc(var(--o,1) * .45)}}
-  @keyframes glow-drift{to{transform:translate(18%,-8%) scale(1.12)}}
-  @keyframes glow-drift-b{to{transform:translate(-22%,-6%) scale(.92)}}
-}
+/* The pixel field behind the facts: a soft purple glow broken into frosted square pixels,
+   drawn on a canvas by public/plan.js. The glow drifts, so the pixels and the stepped edge
+   into the light page shift slowly; faint column lines run through the light part. */
+.tiles{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:36px;pointer-events:none;
+  -webkit-mask:linear-gradient(90deg,#0000 0,#000 7%,#000 93%,#0000 100%);mask:linear-gradient(90deg,#0000 0,#000 7%,#000 93%,#0000 100%)}
+.tiles-canvas{display:block;width:100%;height:100%}
 @media (max-width:760px){.facts-stage{padding:36px 16px 150px}.tiles{border-radius:28px}}
