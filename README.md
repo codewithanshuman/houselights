@@ -54,6 +54,8 @@ npm run verify:all
 | `npm run reproduce:shocks` | The shock study |
 | `npm run reproduce:autopilot` | Exact replay of every pinned recording |
 
+The visual tests compare against screenshots for each platform. Windows screenshots are made locally with `npx playwright test --project=chromium --grep @visual --update-snapshots`; the Linux ones are regenerated on GitHub by the [Linux visual baselines](.github/workflows/linux-baselines.yml) workflow whenever a change to the pages reaches `development`.
+
 To run the app locally with synthetic Qloo data:
 
 ```bash
