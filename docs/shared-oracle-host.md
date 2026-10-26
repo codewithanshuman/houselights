@@ -1,5 +1,23 @@
 # Sharing an existing Oracle server
 
+## Deployment of 4484bea — 26 October 2026
+
+The public host runs `4484bead7884c9599c591c5b116637e9da042afb`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. It is `08b3cd2` plus the regenerated Linux visual baselines and one fix:
+- **`08b3cd2`:** the sidebar's GitHub button now matches the 404 page, and the app pages share one style for labels, cards, buttons and the sticky step bar.
+- **The fix:** "Try a budget cut" on the Booking Desk lab now waits for the button to be enabled before focusing it, so focus is no longer lost while the case loads.
+
+- **Before the switch:** the backup `pre-4484bea` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-4484bea`. The rollback drill reported `8056b4c`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit. The run on `b28d110` failed the budget-cut focus check, which is fixed here, and two WebKit tests that timed out on a slow runner; both passed on the next run.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged. Disk use is 90%.
+- **Checks:**
+  - `release:verify` passed all 86 checks. The sidebar serves the GitHub button, and private routes still return 401.
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow.
+  - A settled per-page probe logged no console errors.
+  - **One live "Plan a show" run on production:** Austin, fans of Khruangbin, $25,000, 3 acts. It completed in 2.3 seconds with 0 new Qloo calls, because every response was served from the provider cache after the earlier Austin runs. It booked Glass Beams + KOKOROKO + Arc De Soleil for $16,000 (estimated fees). With Qloo off, the same rules book Mildlife + Common Saints + Robohands for $8,000. No console errors.
+- **Watch:** disk use is now 90%. Older rollback images can be pruned when convenient, keeping at least the last two.
+
+**Rollback:** tag `houselights-shared:pre-4484bea` as `houselights-shared:local`, set `RELEASE_COMMIT=8056b4ca08142d1b933f49fcfe71b202c5514538`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 8056b4c — 26 October 2026
 
 The public host runs `8056b4ca08142d1b933f49fcfe71b202c5514538`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release covers the latest landing page work:
