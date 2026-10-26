@@ -1,5 +1,28 @@
 # Sharing an existing Oracle server
 
+## Deployment of eee5cbf — 26 October 2026
+
+The public host runs `eee5cbf8a1a20366f363792c1d0b7b881e4b31cc`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release polishes the landing page and app chrome:
+- the new Houselights mark and "Get started" style purple buttons;
+- a small water-themed Qloo switch, and decision and poster tickets of equal height;
+- a canvas pixel field behind clean hero facts, and a pencil dotted pipeline;
+- a minimal FAQ, and a footer without the small print;
+- the pixel GitHub button in the sidebar.
+
+- **Before the switch:** the backup `pre-eee5cbf` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-eee5cbf`. The rollback drill reported `e21f563`, served 12 cases and logged no errors. CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged. Disk use is 88%.
+- **Checks:**
+  - `release:verify` passed all 86 checks. Every page returns 200 and the 404 page returns 404. The new logo and FAQ are served, the footer small print is gone, and private routes still return 401.
+  - In Chromium, Firefox and WebKit at phone and desktop sizes:
+    - the bill shows on the ticket and flips with Qloo off;
+    - receipts open and close;
+    - the workspace folders and the Slate studio views work;
+    - nothing overflows.
+  - A settled per-page probe in WebKit and Firefox logged no console errors.
+  - **One live "Plan a show" run on production:** Austin, fans of Khruangbin, $25,000, 3 acts. It took 6.1 seconds and 3 new Qloo calls; most responses were served from cache after the previous Austin run. It booked Glass Beams + KOKOROKO + Arc De Soleil for $16,000 (estimated fees, $9,000 under budget). With Qloo off, the same rules book Mildlife + Common Saints + Robohands for $8,000. No console errors.
+
+**Rollback:** tag `houselights-shared:pre-eee5cbf` as `houselights-shared:local`, set `RELEASE_COMMIT=e21f563eff0fe035a31dcff472c15bbcb67bd74d`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of e21f563 — 26 October 2026
 
 The public host runs `e21f563eff0fe035a31dcff472c15bbcb67bd74d`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release is the purple and white redesign:
