@@ -333,7 +333,7 @@
   function fillFan(snapshot,off){
     const set=(key,text)=>document.querySelectorAll(`[data-fan="${key}"]`).forEach(node=>{node.textContent=text;});
     const top=[...itemsOf(snapshot)].filter(item=>item.rank).sort((a,b)=>a.rank-b.rank)[0],score=top?affinityOf(snapshot,top):null;
-    if(top){set('top-act',top.name);if(score!=null){set('top-score',`Affinity ${score.toFixed(3)} · rank ${top.rank} of ${top.of}`);document.querySelectorAll('[data-fan-meter]').forEach(node=>node.style.setProperty('--w',`${(Math.max(0,Math.min(1,score))*100).toFixed(1)}%`));}}
+    if(top){set('top-act',top.name);if(score!=null)set('top-score',`Affinity ${score.toFixed(3)} · rank ${top.rank} of ${top.of}`);}
     set('bill',billNames(snapshot).join(' + '));set('fee',usd(snapshot.memo.slate.totalFee));
     if(off){set('off-bill',billNames(off).join(' + '));set('off-fee',`${usd(off.memo.slate.totalFee)} · a different bill`);}
   }
@@ -357,6 +357,48 @@
     const pipeWatch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){pipeWatch.disconnect();countUp();}},{rootMargin:'0px 0px -25% 0px'});
     pipeWatch.observe(pipeline);
   }else pipeline?.classList.add('is-in');
+  // The frosted tile field behind the facts: fill the stage with square tiles. The top rows
+  // become paper with a stepped edge (deeper columns rise higher), the rest get random
+  // strength and breathing delays.
+  (()=>{
+    const grid=document.querySelector('.tiles-grid');if(!grid)return;
+    const build=()=>{
+      const box=grid.getBoundingClientRect(),size=box.width<640?58:74,cols=Math.max(4,Math.round(box.width/size)),rows=Math.ceil(box.height/size)+1;
+      grid.style.setProperty('--tc',cols);grid.style.setProperty('--ts',`${box.width/cols}px`);grid.textContent='';
+      const edge=Array.from({length:cols},(_,c)=>Math.max(1,Math.round(rows*.52+Math.sin(c*1.3+.6)*1.2+(c%4===1?1:0)-(c%5===3?1:0))));
+      const frag=document.createDocumentFragment();
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        const tile=document.createElement('i');
+        if(r<edge[c]-1)tile.className='is-paper';
+        else{tile.style.setProperty('--o',(r<edge[c]?.55:.7+Math.random()*.3).toFixed(2));tile.style.setProperty('--dl',`${(-Math.random()*7).toFixed(2)}s`);tile.style.setProperty('--dur',`${(5+Math.random()*4).toFixed(2)}s`);}
+        frag.append(tile);
+      }
+      grid.append(frag);
+    };
+    build();let timer;new ResizeObserver(()=>{clearTimeout(timer);timer=setTimeout(build,200);}).observe(grid);
+  })();
+  // The selection frame over the three facts follows the pointer; left alone it steps
+  // through the columns every few seconds (not with reduced motion, not off screen).
+  (()=>{
+    const stage=document.querySelector('.facts-stage'),sel=stage?.querySelector('.sel');if(!sel)return;
+    const facts=[...stage.querySelectorAll('.fact')],tag=sel.querySelector('.sel-tag'),names=['Qloo pick','Booked','Without Qloo'];
+    let current=1,hovering=false,timer=null;
+    const place=index=>{
+      const fact=facts[index],box=fact.getBoundingClientRect(),base=stage.getBoundingClientRect(),pad=6;
+      sel.style.transform=`translate(${box.left-base.left-pad}px,${box.top-base.top-pad}px)`;
+      sel.style.width=`${box.width+pad*2}px`;sel.style.height=`${box.height+pad*2}px`;
+      tag.textContent=`${names[index]} · ${Math.round(box.width)} × ${Math.round(box.height)}`;
+      sel.classList.add('is-on','is-moving');clearTimeout(place.t);place.t=setTimeout(()=>sel.classList.remove('is-moving'),500);
+      current=index;
+    };
+    facts.forEach((fact,index)=>fact.addEventListener('pointerenter',()=>{hovering=true;place(index);}));
+    stage.addEventListener('pointerleave',()=>{hovering=false;});
+    addEventListener('resize',()=>place(current));
+    place(1);
+    if(reduced())return;
+    const cycle=()=>{if(!hovering&&!document.hidden)place((current+1)%facts.length);};
+    if('IntersectionObserver' in window)new IntersectionObserver(([entry])=>{clearInterval(timer);if(entry.isIntersecting)timer=setInterval(cycle,3200);}).observe(stage);
+  })();
   // Sections fade up as they enter; the tagline lights word by word along the reading line.
   if('IntersectionObserver' in window){
     document.documentElement.classList.add('has-reveal');

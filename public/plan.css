@@ -405,10 +405,6 @@
   @keyframes art-float{50%{translate:0 -8px}}
 }
 .plan-page .hero-sub{margin-top:28px}
-.hero-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:980px;margin:64px auto 0;text-align:left}
-.fact-card{padding:24px;border:1px solid var(--pp-line);border-radius:24px;background:#fff;box-shadow:var(--pp-shadow)}
-.fact-card.fan-dark{background:var(--pp-ink);border-color:var(--pp-ink);color:#fff}
-.fact-main{box-shadow:var(--pp-shadow-lift)}
 
 @media (max-width:1100px){
   .plan-page .card-fan{height:280px}
@@ -417,13 +413,11 @@
 @media (max-width:760px){
   .plan-page .card-fan{height:230px;margin-top:32px}
   .fan-art{width:132px;--x:calc((var(--i) - 3) * 58px)}
-  .hero-facts{grid-template-columns:minmax(0,1fr);margin-top:44px}
 }
 @media (max-width:420px){
   .fan-art{width:112px;--x:calc((var(--i) - 3) * 46px)}
 }
 .plan-page .plan-hero{padding-top:44px}
-.hero-facts{align-items:center}
 .plan-page .plan-hero{overflow-x:clip}
 
 /* Qloo receipt: a floating sheet that slides in from the right over a blurred page */
@@ -568,42 +562,10 @@
 
 /* ── Hand-drawn connectors: dotted pencil arcs with an arrowhead, used between the three
    decision cards and between the four pipeline steps. They draw in when revealed. ── */
-.fact-link,.pipe-link{position:absolute;z-index:2;width:64px;height:40px;overflow:visible;pointer-events:none;filter:url(#hl-rough)}
-.fact-link path,.pipe-link path{fill:none;stroke:#5E44B8;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.fact-link path:first-child,.pipe-link path:first-child{stroke-dasharray:.1 6.5}
-.fact-link-head,.pipe-link-head{stroke-width:2.4}
-
-/* The three decision cards */
-.plan-page .hero-facts{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;max-width:1040px;margin:72px auto 0;align-items:stretch;text-align:left}
-.plan-page .fact-card{position:relative;display:flex;flex-direction:column;padding:22px 22px 20px;border:1.5px solid #16131F;border-radius:20px;background:#fff;box-shadow:4px 5px 0 #16131F;transition:transform .5s var(--pp-glide),box-shadow .5s var(--pp-glide)}
-.plan-page .fact-card:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 #16131F}
-.fact-head{display:flex;align-items:center;gap:10px;padding-bottom:14px;margin-bottom:14px;background:radial-gradient(circle,#B4AEC2 1.1px,transparent 1.3px) 0 100%/7px 3px repeat-x}
-.fact-head p{display:flex;align-items:baseline;gap:8px;margin:0;font:600 15px/20px var(--font-ui);color:#16131F}
-.fact-step{font:600 11px/16px var(--font-mono);letter-spacing:.1em;color:#5E44B8}
-.fact-icon{display:grid;place-items:center;width:34px;height:34px;border:1.5px solid #16131F;border-radius:10px;background:#EFEAFF;color:#16131F}
-.fact-sub{margin:0;font:400 13px/18px var(--font-ui);color:var(--pp-muted)}
-.fact-name{margin:10px 0 0;font:650 21px/1.2 var(--font-display);letter-spacing:-.025em;color:#16131F;text-wrap:balance}
-.fact-meter{position:relative;height:10px;margin:16px 0 0;border:1.5px solid #16131F;border-radius:99px;background:repeating-linear-gradient(90deg,#fff 0 6px,#F1EEFA 6px 7px);overflow:hidden}
-.fact-meter span{position:absolute;inset:0 auto 0 0;width:var(--w,90%);background:linear-gradient(90deg,#C9B8FF,#7B5CF0);border-right:1.5px solid #16131F;transition:width 1.2s var(--pp-glide)}
-.fact-foot{margin:auto 0 0;padding-top:14px;font:500 13px/18px var(--font-mono);color:#4A4560;font-variant-numeric:tabular-nums}
-.fact-kicker{margin:10px 0 0;font:600 12px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--pp-muted)}
-.fact-bill{margin-top:4px}
-.fact-fee{margin:8px 0 0;font:700 38px/1 var(--font-display);letter-spacing:-.04em;color:#5E44B8;font-variant-numeric:tabular-nums}
-.fact-pass{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin:auto 0 0;padding:6px 12px;border:1.5px solid #1E6B45;border-radius:999px;background:#E4F2EA;color:#1E6B45;font:600 13px/18px var(--font-ui)}
-.fact-main .fact-sub{margin-top:0}
-.fact-main .fact-fee{margin-bottom:16px}
-.plan-page .fact-main{background:linear-gradient(180deg,#F4F0FF 0%,#fff 60%);transform:translateY(-10px);box-shadow:5px 7px 0 #16131F}
-.plan-page .fact-main:hover{transform:translate(-2px,-13px)}
-.plan-page .fact-off{background:#16131F;color:#fff}
-.fact-off .fact-head{background-image:radial-gradient(circle,#5C5670 1.1px,transparent 1.3px)}
-.fact-off .fact-head p{color:#fff}
-.fact-off .fact-step{color:#C9B8FF}
-.fact-off .fact-icon{border-color:#fff;background:#2A2536;color:#fff}
-.fact-off .fact-sub{color:#B9B4C8}
-.fact-off .fact-name{color:#fff}
-.fact-off .fact-foot{color:#D9D4E6}
-.fact-tag{align-self:flex-start;margin:12px 0 0;padding:4px 10px;border:1.5px dashed #C9B8FF;border-radius:8px;font:600 12px/16px var(--font-mono);letter-spacing:.04em;color:#C9B8FF}
-.fact-link{right:-54px;top:26px}
+.pipe-link{position:absolute;z-index:2;width:64px;height:40px;overflow:visible;pointer-events:none;filter:url(#hl-rough)}
+.pipe-link path{fill:none;stroke:#5E44B8;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pipe-link path:first-child{stroke-dasharray:.1 6.5}
+.pipe-link-head{stroke-width:2.4}
 
 /* The pipeline: sketch cards joined by the same pencil arcs */
 .plan-page .pipeline-track{gap:48px}
@@ -615,21 +577,70 @@
 .plan-page .pipe-node-final{background:#16131F;border-color:#16131F}
 .pipe-node-final .pipe-step{background-image:radial-gradient(circle,#5C5670 1.1px,transparent 1.3px)}
 @media (prefers-reduced-motion:no-preference){
-  .has-reveal .pipe-link path:first-child,.has-reveal .fact-link path:first-child{stroke-dasharray:.1 6.5;clip-path:inset(0 100% 0 0);transition:clip-path .9s var(--pp-ease);transition-delay:calc(var(--i,0) * 160ms + 450ms)}
-  .has-reveal .pipe-link-head,.has-reveal .fact-link-head{opacity:0;transition:opacity .3s;transition-delay:calc(var(--i,0) * 160ms + 1.2s)}
-  .pipeline-track.is-in .pipe-link path:first-child,.hero-facts .fact-link path:first-child{clip-path:inset(0 0 0 0)}
-  .pipeline-track.is-in .pipe-link-head,.hero-facts .fact-link-head{opacity:1}
+  .has-reveal .pipe-link path:first-child{stroke-dasharray:.1 6.5;clip-path:inset(0 100% 0 0);transition:clip-path .9s var(--pp-ease);transition-delay:calc(var(--i,0) * 160ms + 450ms)}
+  .has-reveal .pipe-link-head{opacity:0;transition:opacity .3s;transition-delay:calc(var(--i,0) * 160ms + 1.2s)}
+  .pipeline-track.is-in .pipe-link path:first-child{clip-path:inset(0 0 0 0)}
+  .pipeline-track.is-in .pipe-link-head{opacity:1}
 }
 @media (max-width:1100px){
   .plan-page .pipeline-track{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pipe-node:nth-child(2) .pipe-link{display:none}
 }
-@media (max-width:860px){
-  .plan-page .hero-facts{grid-template-columns:minmax(0,1fr);gap:44px;max-width:420px}
-  .plan-page .fact-main{transform:none}
-  .fact-link{right:auto;left:40px;top:auto;bottom:-46px;transform:rotate(80deg)}
-}
 @media (max-width:640px){
   .plan-page .pipeline-track{grid-template-columns:minmax(0,1fr);gap:48px}
   .pipe-link,.pipe-node:nth-child(2) .pipe-link{display:block;right:auto;left:36px;top:auto;bottom:-50px;transform:rotate(80deg)}
 }
+
+/* The three facts under the hero: one quiet panel, three columns split by hairlines.
+   A small label, the name, one line of detail; purple only on the booked fee. */
+.plan-page .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:1040px;margin:64px auto 0;border:1px solid var(--pp-line);border-radius:20px;background:#fff;text-align:left}
+.fact{display:flex;flex-direction:column;gap:8px;padding:26px 28px}
+.fact+.fact{border-left:1px solid var(--pp-line)}
+.fact dt{font:500 13px/18px var(--font-ui);color:var(--pp-muted)}
+.fact dd{margin:0}
+.fact-value{font:600 20px/1.25 var(--font-display);letter-spacing:-.02em;color:var(--pp-ink);text-wrap:balance}
+.fact-note{margin-top:auto;padding-top:4px;font:400 14px/20px var(--font-ui);color:var(--pp-soft);font-variant-numeric:tabular-nums}
+.fact-note strong{font-weight:600;color:var(--pp-accent)}
+.fact-booked dt{color:var(--pp-accent)}
+@media (max-width:760px){
+  .plan-page .facts{grid-template-columns:minmax(0,1fr);margin-top:44px}
+  .fact{padding:20px 22px}
+  .fact+.fact{border-left:0;border-top:1px solid var(--pp-line)}
+}
+
+/* Behind the facts: frosted purple glass tiles fading in from below. Over them: a design-tool
+   selection frame (square handles, a size tag, a cursor) that glides to the hovered column
+   and, left alone, steps through the three in turn. */
+.facts-stage{position:relative;max-width:1100px;margin:64px auto 0;padding:48px 36px 220px;isolation:isolate}
+.plan-page .facts-stage .facts{margin:0;background:#ffffffd9;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 2px #16131F0a,0 20px 50px #5E44B81f}
+.fact{position:relative;cursor:default}
+.sel{position:absolute;left:0;top:0;width:0;height:0;border:1.5px solid #16131F;border-radius:4px;pointer-events:none;opacity:0;
+  transition:transform .55s var(--pp-glide),width .55s var(--pp-glide),height .55s var(--pp-glide),opacity .3s}
+.sel.is-on{opacity:1}
+.sel-h{position:absolute;width:9px;height:9px;border:1.5px solid #16131F;background:#fff;transform:translate(-50%,-50%)}
+.sel-tl{left:0;top:0}.sel-tm{left:50%;top:0}.sel-tr{left:100%;top:0}.sel-ml{left:0;top:50%}.sel-mr{left:100%;top:50%}.sel-bl{left:0;top:100%}.sel-bm{left:50%;top:100%}.sel-br{left:100%;top:100%}
+.sel-tag{position:absolute;left:-1.5px;bottom:calc(100% + 8px);padding:3px 8px;border-radius:5px;background:#16131F;color:#fff;font:500 11px/15px var(--font-mono);letter-spacing:.04em;white-space:nowrap}
+.sel-cursor{position:absolute;right:-20px;bottom:-22px;filter:drop-shadow(0 3px 4px #16131F40);transition:transform .7s var(--pp-glide)}
+.sel.is-moving .sel-cursor{transform:translate(-6px,-4px)}
+@media (max-width:760px){.facts-stage{padding:28px 16px 40px;margin-top:44px}.sel-cursor{right:-12px}.sel-tag{display:none}}
+@media (prefers-reduced-motion:reduce){.sel{transition:opacity .2s}}
+
+/* Frosted glass tiles: a deep purple glow drifting under a grid of soft rounded squares.
+   Rows near the top thin out into white with a stepped edge; every tile breathes on its own
+   delay. public/plan.js lays the grid out to fit; reduced motion keeps it still. */
+.tiles{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:36px;pointer-events:none;background:#F6F4FB}
+.tiles-glow{position:absolute;left:-10%;right:30%;top:45%;bottom:-45%;border-radius:50%;background:radial-gradient(closest-side,#8B3CF0 0%,#A766F4 38%,#C9A4FA 68%,#C9A4FA00 100%);filter:blur(10px)}
+.tiles-glow-b{left:40%;right:-15%;top:55%;bottom:-55%;background:radial-gradient(closest-side,#B57AF7 0%,#D2B2FB 55%,#D2B2FB00 100%)}
+.tiles-grid{position:absolute;inset:-2px;display:grid;grid-template-columns:repeat(var(--tc,14),1fr);grid-auto-rows:var(--ts,74px);gap:3px}
+.tiles-grid i{display:block;border-radius:10px;background:linear-gradient(180deg,#FFFFFF66 0%,#FFFFFF26 60%,#FFFFFF14 100%);box-shadow:inset 0 1px 0 #FFFFFFA6,inset 0 0 0 1px #FFFFFF33,inset 0 -10px 18px #FFFFFF1F;opacity:var(--o,1);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tiles-grid i.is-paper{background:#F6F4FB;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+@media (prefers-reduced-motion:no-preference){
+  .tiles-grid i:not(.is-paper){animation:tile-breathe var(--dur,7s) ease-in-out var(--dl,0s) infinite alternate}
+  .tiles-glow{animation:glow-drift 16s ease-in-out infinite alternate}
+  .tiles-glow-b{animation:glow-drift-b 19s ease-in-out infinite alternate}
+  @keyframes tile-breathe{0%{opacity:var(--o,1)}100%{opacity:calc(var(--o,1) * .45)}}
+  @keyframes glow-drift{to{transform:translate(18%,-8%) scale(1.12)}}
+  @keyframes glow-drift-b{to{transform:translate(-22%,-6%) scale(.92)}}
+}
+@media (max-width:760px){.facts-stage{padding:36px 16px 150px}.tiles{border-radius:28px}}
