@@ -1,5 +1,25 @@
 # Sharing an existing Oracle server
 
+## Deployment of 1116763 — 26 October 2026
+
+The public host runs `111676339cda5a1d54acc682f38cd5e5c7743eef`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. It is the dashboard upgrade `57a6ac9` plus the regenerated Linux visual baselines and a test-only timeout change. The upgrade:
+- adds "On this page" section navigation to Evidence, Proof Lab, the Booking Desk lab, Demand and Financial;
+- makes the page headers compact, and adds a claim-count strip to the Evidence page;
+- turns the Demand Lab access panels into one slim bar;
+- moves Slate studio's views into tabs;
+- stacks result tables on phones.
+
+- **Before the switch:** the backup `pre-1116763` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-1116763`. The rollback drill reported `4484bea`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit. The run on `57a6ac9` failed on the expected Linux screenshots and on a WebKit live-plan test that ran past its 30-second limit on the shared runner. That limit is now 60 seconds; the app allows three minutes.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged. Disk use is 90%.
+- **Checks:**
+  - `release:verify` passed all 86 checks. Every page returns 200 and the 404 page returns 404. All five long pages carry the section navigation, and Slate studio serves its tabs.
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow. Firefox at desktop size first timed out on the Qloo switch, right after about 20 experiments had used the per-IP limit of 20 a minute. It passed once the minute reset.
+  - A settled per-page probe logged no console errors.
+  - **One live "Plan a show" run on production:** Denver, fans of Japanese Breakfast, $25,000, 3 acts. It took 15.0 seconds and 11 Qloo calls. It booked Soccer Mommy + Snail Mail + Samia for $22,000 (estimated fees, $3,000 under budget). With Qloo off, the same rules book sasami + Jay Som + Samia for $14,000. No console errors.
+
+**Rollback:** tag `houselights-shared:pre-1116763` as `houselights-shared:local`, set `RELEASE_COMMIT=4484bead7884c9599c591c5b116637e9da042afb`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 4484bea — 26 October 2026
 
 The public host runs `4484bead7884c9599c591c5b116637e9da042afb`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. It is `08b3cd2` plus the regenerated Linux visual baselines and one fix:
