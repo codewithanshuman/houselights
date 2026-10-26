@@ -69,7 +69,8 @@
   }
 
   // ── Rendering ──────────────────────────────────────────────────────────────────
-  // The decision is printed on the owner's blank gig ticket, beside a poster ticket; the Qloo panel sets the two
+  // The decision is printed on the owner's blank gig ticket, beside a poster ticket (purple
+  // artwork while Qloo evidence is on, red while it is off); the Qloo panel sets the two
   // bills side by side; booked acts get cards with a rank ring and every other candidate
   // sits in one ranked table that says why it was not booked.
   const ring=(fraction,label,cls='')=>{
@@ -98,10 +99,10 @@
       </div>`;
     result.innerHTML=`
       <div class="decision">
-        <div class="ticket-stage">
-          <img class="ticket-poster" src="/assets/brand/ticket-vinyl.webp" alt="" width="445" height="820" loading="lazy">
+        <div class="ticket-stage ${view.qlooOff?'is-qloo-off':'is-qloo-on'}${view.flip?' is-swapping':''}">
+          <span class="ticket-poster"><img class="tk-on" src="/assets/brand/ticket-vinyl-on.webp" alt="" width="446" height="820"><img class="tk-off" src="/assets/brand/ticket-vinyl.webp" alt="" width="445" height="820"></span>
           <article class="ticket-art${changed?' is-changed':''}" aria-labelledby="result-title">
-            <img class="ticket-paper" src="/assets/brand/ticket-blank.webp" alt="" width="449" height="1120">
+            <span class="ticket-paper"><img class="tk-on" src="/assets/brand/ticket-blank-on.webp" alt="" width="449" height="1120"><img class="tk-off" src="/assets/brand/ticket-blank.webp" alt="" width="449" height="1120"></span>
             <div class="tk-head">
               <p class="tk-admit">Admit one</p>
               <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
@@ -155,7 +156,7 @@
         </div>
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
       </div>
-      <p class="result-terms">${e(record.terms)}${record.live?` <button type="button" class="link-button" id="plan-share">Copy link to this plan</button>`:''}</p>`;
+      ${record.live?`<p class="result-terms">${e(record.terms)} <button type="button" class="link-button" id="plan-share">Copy link to this plan</button></p>`:''}`;
     view.flip=null;
     wire();
   }

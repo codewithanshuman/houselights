@@ -319,3 +319,24 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
 .footer-logo{gap:8px}
 .footer-logo img{width:28px;height:28px;border-radius:7px}
 .footer-logo .footer-dot{display:none}
+
+/* Footer, left to right: brand and tagline, then the links, then the Qloo credit, on one
+   row above the bridge drawing; stacked on phones. */
+@media (min-width:861px){
+  .v2 .plan-footer>.plan-footer-inner{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"logo links built" "tag links built";align-items:center;column-gap:48px;row-gap:6px;max-width:1200px;padding:64px 32px 0;text-align:left}
+  .footer-logo{grid-area:logo;justify-self:start}
+  .v2 .footer-tag{grid-area:tag;max-width:340px;margin:0;font-size:14.5px;line-height:22px}
+  .footer-links{grid-area:links;margin:0;gap:4px 26px;justify-content:flex-end;flex-wrap:nowrap}
+  .v2 .footer-built{grid-area:built;margin:0}
+  .v2 .footer-built span:last-child{display:none}
+}
+
+/* Primary buttons, slimmer: a horizontal vivid-purple to violet gradient. Every stop keeps
+   white text at 4.8:1 or better. */
+.v2 .sketch-btn,.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action){min-height:40px;padding:8px 18px;border:1px solid #6A3BD9;border-radius:10px;
+  background:linear-gradient(90deg,#9333EA 0%,#7C4DFF 55%,#6E3FE6 100%);font:600 14.5px/20px var(--font-ui);letter-spacing:-.005em;
+  box-shadow:inset 0 1px 0 #ffffff40,0 1px 2px #4F35A833,0 4px 14px #7C4DFF33}
+.v2 .sketch-btn:hover,.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action):hover{filter:brightness(1.08) saturate(1.05);box-shadow:inset 0 1px 0 #ffffff4d,0 2px 4px #4F35A833,0 8px 20px #7C4DFF4d}
+.v2 .site-cta{min-height:38px!important;padding:7px 16px!important;font-size:14px!important}
+.plan-page .plan-submit.sketch-btn{min-height:46px}
+@media (min-width:861px){.v2 .plan-footer>.footer-art{margin-top:-8cqw}}

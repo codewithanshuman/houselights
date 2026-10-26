@@ -700,3 +700,22 @@
 /* The poster ticket rises in instead of sliding in from the right, so it never widens the
    page on a phone during its entrance. */
 @media (prefers-reduced-motion:no-preference){@keyframes tk-poster{from{opacity:0;translate:0 24px}}}
+
+/* Ticket art follows the Qloo switch: purple artwork with Qloo evidence on, red with it off.
+   Both are stacked; a flip crossfades them. Printed text takes the matching accent. */
+.ticket-paper{display:block}
+.ticket-paper img,.ticket-poster img{display:block;width:100%;height:100%;transition:opacity .6s ease}
+.ticket-paper img{position:absolute;inset:0}
+.ticket-poster{display:block}
+.ticket-poster img{width:auto;height:100%}
+.ticket-poster img.tk-on{position:absolute;inset:0 auto auto 0}
+.is-qloo-on .tk-off,.is-qloo-off .tk-on{opacity:0}
+.is-qloo-on .ticket-art{--tk-accent:#7A4FE0;--tk-accent-soft:#7A4FE055}
+.is-qloo-off .ticket-art{--tk-accent:#A8141B;--tk-accent-soft:#A8141B55}
+.plan-page .ticket-stage .tk-admit,.plan-page .ticket-stage .ticket-art .decision-fee{color:var(--tk-accent);transition:color .6s}
+.plan-page .ticket-stage .ticket-art .badge{border-color:var(--tk-accent-soft);color:var(--tk-accent)}
+@media (prefers-reduced-motion:no-preference){
+  .ticket-stage.is-swapping .ticket-art{animation:tk-flip .7s var(--pp-glide)}
+  @keyframes tk-flip{40%{transform:rotateY(8deg) scale(.98)}}
+}
+.is-qloo-on .tk-band{color:#2A1559}
