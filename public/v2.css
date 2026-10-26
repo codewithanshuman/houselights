@@ -226,7 +226,6 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
 .app-share:hover{background:#EEEBF8;color:var(--pp-ink)}
 .app-share .app-icon{color:currentColor}
 
-.app-sign{font:400 25px/1.05 'Segoe Script','Snell Roundhand','Apple Chancery','Brush Script MT','Lucida Handwriting',cursive;color:var(--pp-accent);letter-spacing:.01em;transform:rotate(-3deg);transform-origin:left center}
 @media (max-width:900px){
   body.app-shell>.app-top{padding:10px 16px 0;min-height:52px}
   .app-crumb:not([aria-current]),.app-crumbs>svg,.app-sep{display:none}
@@ -269,12 +268,6 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
   .px-btn:hover .px-div{border-color:#ffffffb3}
 }
 /* In the sidebar: full width, GitHub mark and the signature */
-.app-side-foot .px-btn{display:flex;width:100%;min-height:52px;border-radius:12px;border-color:#2A2536}
-.app-side-foot .px-text{flex:1;min-width:0;gap:12px;padding:0 14px}
-.app-side-foot .px-text svg{flex-shrink:0;width:20px;height:20px}
-.app-side-foot .px-arrow{padding:0 14px}
-.app-side-foot .app-sign{transform:rotate(-3deg) translateY(1px);font-size:24px;letter-spacing:0;text-transform:none}
-.app-side-foot .px-btn.is-on .app-sign{color:#fff}
 .side-collapsed .app-side-foot .px-btn{border-color:transparent;background:none}
 .side-collapsed .app-side-foot .px-div,.side-collapsed .app-side-foot .px-arrow{display:none}
 
@@ -334,3 +327,52 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
   .v2 .ft-cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 24px}
   .v2 .plan-footer>.footer-art{margin-top:24px}
 }
+
+/* Sidebar GitHub button: the same pixel-dissolve button as on the 404 page (GitHub mark,
+   GITHUB in mono capitals, a dashed divider and an arrow), spread to the sidebar's width. */
+.app-side-foot .px-btn{display:flex;width:100%;min-height:52px;border-radius:6px}
+.app-side-foot .px-text{flex:1;min-width:0;padding:0 18px}
+.app-side-foot .px-arrow{padding:0 18px}
+.v2.v2.v2 .app-side-foot :is(.px-btn,.px-text){font-family:var(--font-mono)}
+
+/* ── App pages, one quiet system ─────────────────────────────────────────────────────
+   The same section labels, cards, headings and sticky bars on every page in the app shell.
+   Nothing is removed; only the leftover warm surfaces and mismatched styles are aligned. */
+/* Section labels: small purple mono capitals; a leading number becomes a soft chip */
+body.app-shell main :is(.judge-eyebrow,.eyebrow,.judge-section-label,.section-label,.lab-eyebrow,.hero-kicker){display:flex;align-items:center;gap:8px;margin-bottom:10px;font:500 12px/16px var(--font-mono)!important;letter-spacing:.12em!important;text-transform:uppercase;color:#5E44B8!important}
+body.app-shell main .judge-section-label>span:first-child{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:7px;background:#EFEAFF;font:600 11px/1 var(--font-mono);letter-spacing:0;color:#5E44B8}
+body.app-shell main .judge-eyebrow>span:first-child:empty{width:18px;height:1.5px;border-radius:0;background:#5E44B8}
+body.app-shell main .section-pictogram{color:#5E44B8}
+/* Headings and intro text */
+.v2.app-shell main h1{font-size:clamp(34px,3.8vw,52px);line-height:1.05;letter-spacing:-.04em}
+.v2.app-shell main h2{font-size:clamp(22px,2.2vw,28px);letter-spacing:-.025em}
+.v2.app-shell main :is(.judge-intro,.lede,.intro>p){max-width:640px;font-size:17px;line-height:27px;color:var(--pp-muted)}
+/* Cards: hairline border, a whisper of shadow */
+.v2.app-shell main :is(.panel,.card,.proof-card,.method-card,.lab-card,.metric-card){border-color:#ECE9F4;box-shadow:0 1px 2px #16131F08,0 8px 24px #4F35A80a}
+/* Leftover warm surfaces become lavender or white */
+.v2.app-shell .workspace-gate-example{border:1px solid #E2DCF6;border-radius:16px;background:#F7F4FF}
+.v2.app-shell #booking-independent-study{background:#FAF9FE;border-color:#ECE9F4}
+.v2.app-shell .booking-lab-choice.booking-lab-active{background:#F3EFFF;border-color:#5E44B8}
+.v2.app-shell #download.quiet{background:#fff}
+/* The Booking Desk lab's sticky step bar, as white glass with a purple current step */
+.v2.app-shell .booking-path{padding:6px;border:1px solid #ECE9F4;border-radius:14px;background:#ffffffe0;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 2px #16131F08}
+.v2.app-shell .booking-path a{border-radius:10px;color:var(--pp-soft);transition:background .2s,color .2s}
+.v2.app-shell .booking-path a:hover{background:#F3F1F9;color:var(--pp-ink)}
+.v2.app-shell .booking-path a[aria-current],.v2.app-shell .booking-path a.is-active,.v2.app-shell .booking-path a.active{background:#EFEAFF;color:#3B2A78}
+.v2.app-shell .booking-path a span{font-family:var(--font-mono);color:#7A74A0}
+/* Slate studio's own top bar, aligned with the other pages' breadcrumb bar; the app pages
+   have no footer, so its small credit line is hidden like theirs */
+.v2.slate-page .topbar{height:64px;padding:0 32px;background:transparent;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+.v2.slate-page .breadcrumb{font:500 14px/20px var(--font-ui);color:var(--pp-muted)}
+.v2.slate-page .breadcrumb strong{font:500 14px/20px var(--font-ui);color:var(--pp-ink)}
+.v2.slate-page .page-footer{display:none}
+/* Evidence claims table: room for the claim, the copy button beside its command */
+.v2.app-shell .claim-table th[scope=row]{min-width:220px}
+.v2.app-shell .claim-table td:last-child{min-width:230px}
+/* Buttons in the app share the primary button's 10px corners */
+.v2.app-shell main :is(button,.button):not(.fs-switch):not(.link-button):not(.agent-toggle):not(.agent-stage-head):not(.dx-folder):not(.qa-icon){border-radius:10px}
+@media (min-width:1200px){.v2.app-shell .claim-table td:last-child{white-space:nowrap}}
+.v2.app-shell main :is(.button.subtle,.button.ghost,button.subtle,button.quiet,.button.quiet){background:#fff;border:1px solid var(--pp-line-strong);color:var(--pp-ink)}
+.v2.app-shell main :is(.button.subtle,.button.ghost,button.subtle,button.quiet,.button.quiet):hover{background:#F5F2FF;border-color:#C9B8FF}
+/* Labels on the dark panels stay light */
+body.app-shell main :is(.judge-break-panel,.fan-dark,.pipe-node-final) :is(.judge-eyebrow,.eyebrow,.judge-section-label,.section-label){color:#D5CBF8!important}
