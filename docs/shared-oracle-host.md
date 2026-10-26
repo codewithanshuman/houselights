@@ -1,5 +1,24 @@
 # Sharing an existing Oracle server
 
+## Deployment of 8056b4c — 26 October 2026
+
+The public host runs `8056b4ca08142d1b933f49fcfe71b202c5514538`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release covers the latest landing page work:
+- ticket art that follows the Qloo switch (purple on, red off);
+- a column footer on the bridge drawing, and slimmer gradient buttons;
+- a winding "How it decides" timeline with the owner's graph artwork;
+- the 404 page's sketch button.
+
+- **Before the switch:** the backup `pre-8056b4c` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-8056b4c`. The rollback drill reported `eee5cbf`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit. The run on `3009a02` failed only because the browser download stalled on the runner, and an empty commit (`8056b4c`) re-ran it green. The run before that failed a single Chromium focus check on the unchanged Booking Desk lab page; it did not recur.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged. Disk use is 89%.
+- **Checks:**
+  - `release:verify` passed all 86 checks. The new artwork, purple tickets and column footer are served, and private routes still return 401.
+  - Chromium, Firefox and WebKit at phone and desktop sizes all passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow.
+  - A settled per-page probe logged no console errors.
+  - **One live "Plan a show" run on production:** Austin, fans of Khruangbin, $25,000, 3 acts. It took 13.9 seconds and 11 Qloo calls. It booked SAULT + KOKOROKO + Arc De Soleil for $19,000 (estimated fees, $6,000 under budget). With Qloo off, the same rules book Mildlife + Common Saints + Robohands for $8,000. No console errors.
+
+**Rollback:** tag `houselights-shared:pre-8056b4c` as `houselights-shared:local`, set `RELEASE_COMMIT=eee5cbf8a1a20366f363792c1d0b7b881e4b31cc`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of eee5cbf — 26 October 2026
 
 The public host runs `eee5cbf8a1a20366f363792c1d0b7b881e4b31cc`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release polishes the landing page and app chrome:
