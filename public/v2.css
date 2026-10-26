@@ -106,9 +106,6 @@ body.app-shell>.plan-footer{margin-top:48px}
 .footer-links a:hover{color:var(--pp-accent);background-size:100% 1.5px}
 .v2 .footer-built{display:inline-flex;align-items:center;gap:10px;margin:22px 0 0;padding:6px 16px;border:1px solid #E2DCF6;border-radius:999px;background:#ffffffb3;font:400 13px/18px var(--font-ui);color:var(--pp-muted)}
 .footer-qloo{display:block;width:auto;height:18px}
-.v2 .plan-footer>.footer-bottom{grid-area:2/1;align-self:end;z-index:1;display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;width:100%;max-width:1200px;margin:0 auto;padding:0 24px 16px}
-.v2 .footer-bottom p{margin:0;padding:4px 12px;border-radius:999px;background:#ffffffa6;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:500 12px/18px var(--font-ui);color:#3D3950}
-.footer-release code{font:500 11px/16px var(--font-mono);padding:1px 8px;border-radius:999px;background:var(--pp-accent-soft);color:var(--pp-accent)}
 
 @media (max-width:900px){
   /* The sidebar becomes a top bar with a menu */
@@ -127,7 +124,6 @@ body.app-shell>.plan-footer{margin-top:48px}
   .v2 .plan-footer>.footer-art{margin-top:-10cqw}
   .v2 .plan-footer>.plan-footer-inner{padding-top:56px}
   .footer-links{gap:0 18px}
-  .v2 .plan-footer>.footer-bottom{justify-content:center;padding-bottom:12px}
 }
 @media (prefers-reduced-motion:reduce){body.app-shell,.app-glide,.app-copy{transition:none}}
 
@@ -154,9 +150,6 @@ body.app-shell>.plan-footer{margin-top:48px}
 /* Controls */
 .v2:not(.plan-page) main :is(button,.button):not(.fs-switch):not(.link-button):not(.agent-toggle):not(.agent-stage-head):not(.dx-folder){border-radius:999px;font-weight:500;transition:background .25s,border-color .25s,transform .4s var(--pp-ease)}
 .v2:not(.plan-page) main :is(button,.button):not(.fs-switch):not(.link-button):not(.dx-folder):active{transform:scale(.98)}
-.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action){background:#D6C9FF;border:1.5px solid #16131F;color:#16131F;font-weight:600;box-shadow:3px 4px 0 #16131F}
-.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action):hover{background:#C9B8FF;transform:translate(-1px,-1px);box-shadow:4px 5px 0 #16131F}
-.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action):active{transform:translate(2px,3px);box-shadow:1px 1px 0 #16131F}
 .v2:not(.plan-page) main :is(select,input[type=text],input[type=number],input[type=search],input:not([type]),textarea){border-radius:12px;border:1px solid var(--pp-line-strong);background:#FAF9FE;color:var(--pp-ink);font:400 16px/24px var(--font-ui)}
 .v2:not(.plan-page) main :is(select,input,textarea):focus{border-color:var(--pp-ink);background:#fff;box-shadow:0 0 0 4px #1111110f;outline:none}
 .v2:not(.plan-page) main details>summary{font-weight:600;cursor:pointer}
@@ -202,22 +195,6 @@ body.app-shell .app-side .app-sub{position:relative;margin:0 0 4px 21px;padding:
 .v2 .plan-footer .footer-logo .footer-dot{color:var(--pp-accent)}
 @media (max-width:640px){.v2 .footer-built span:last-child{display:none}.v2 .footer-built{white-space:nowrap}}
 
-/* Painted sketch buttons: a light purple wash inside a hand-drawn ink line, floating over
-   an offset ink shadow. The wobble comes from an SVG displacement filter (#hl-rough). */
-.v2 .sketch-btn{position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 28px;border:0;border-radius:16px;background:none;color:#16131F;font:650 16px/24px var(--font-ui);letter-spacing:-.01em;text-decoration:none;box-shadow:none;cursor:pointer;transition:transform .45s var(--pp-ease)}
-.v2 .sketch-btn::before,.v2 .sketch-btn::after{content:"";position:absolute;inset:0;border-radius:17px 13px 18px 14px;filter:url(#hl-rough);transition:transform .45s var(--pp-ease),background .3s}
-.v2 .sketch-btn::before{z-index:-1;border:2px solid #16131F;background:#D6C9FF}
-.v2 .sketch-btn::after{z-index:-2;background:#16131F;transform:translate(4px,5px)}
-.v2 .sketch-btn:hover{transform:translate(-2px,-2px);background:none}
-.v2 .sketch-btn:hover::before{background:#C9B8FF}
-.v2 .sketch-btn:hover::after{transform:translate(6px,7px)}
-.v2 .sketch-btn:active{transform:translate(2px,3px)}
-.v2 .sketch-btn:active::after{transform:translate(2px,2px)}
-.v2 .sketch-btn:disabled{opacity:.6;cursor:wait}
-@media (prefers-reduced-motion:no-preference){
-  .v2 .hero-cta.sketch-btn{animation:sketch-float 4.5s ease-in-out infinite}
-  @keyframes sketch-float{50%{translate:0 -4px}}
-}
 
 
 /* Organizer tools: a soft popover that scales in from its button, with an icon tile and a
@@ -320,3 +297,25 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
 .app-side-foot .px-btn.is-on .app-sign{color:#fff}
 .side-collapsed .app-side-foot .px-btn{border-color:transparent;background:none}
 .side-collapsed .app-side-foot .px-div,.side-collapsed .app-side-foot .px-arrow{display:none}
+
+/* Primary buttons, after a "Get started" button: a 10px-rounded rectangle with a diagonal
+   light-to-deeper purple gradient, a crisp top highlight, a thin darker edge and white text.
+   Used by .sketch-btn (landing page, 404) and the app's primary buttons. */
+.v2 .sketch-btn,.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action){position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:44px;padding:10px 22px;border:1px solid #6B4BE0;border-radius:10px;
+  background:linear-gradient(135deg,#A88BFF 0%,#8E6BF8 50%,#7550EE 100%);color:#fff;font:600 15px/22px var(--font-ui);letter-spacing:-.01em;text-align:center;white-space:normal;text-decoration:none;cursor:pointer;
+  box-shadow:inset 0 1px 0 #ffffff66,0 1px 2px #4F35A82e,0 4px 12px #7550EE33;
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.v2 .sketch-btn:hover,.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action):hover{filter:brightness(1.06);box-shadow:inset 0 1px 0 #ffffff73,0 2px 4px #4F35A833,0 8px 18px #7550EE40}
+.v2 .sketch-btn:active,.v2:not(.plan-page) :is(.button.primary,.button.dark,button.primary,.primary-action):active{transform:translateY(1px);filter:brightness(.97);box-shadow:inset 0 1px 0 #ffffff40,0 1px 2px #4F35A82e}
+.v2 .sketch-btn:disabled{opacity:.6;cursor:wait}
+.v2 .sketch-btn:focus-visible{outline:3px solid #C9B8FF;outline-offset:3px}
+/* Brand lockup, compact: a small rounded-square mark right beside a bold wordmark */
+.v2 .site-brand{gap:7px;font:700 17px/1 var(--font-ui);letter-spacing:-.035em;color:var(--pp-ink)}
+.v2 .site-brand img{width:22px;height:22px;border-radius:6px}
+.v2 .site-brand-dot{display:none}
+.app-brand{gap:8px}
+.app-brand img{width:24px;height:24px;border-radius:6px}
+.app-brand .site-brand-dot{display:none}
+.footer-logo{gap:8px}
+.footer-logo img{width:28px;height:28px;border-radius:7px}
+.footer-logo .footer-dot{display:none}

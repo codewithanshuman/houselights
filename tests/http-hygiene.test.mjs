@@ -121,7 +121,8 @@ test('only the landing page gets the server-rendered footer on the bridge drawin
   const html = await (await fetch(`${url}/judge.html`)).text();
   assert.match(html, /<footer class="site-footer plan-footer" data-site-footer><picture class="footer-art">/);
   assert.match(html, /footer-bridge\.webp/);
-  assert.match(html, /<code id="site-release">/);
+  assert.match(html, /footer-qloo/);
+  assert.doesNotMatch(html, /footer-legal|site-release/);
   for (const path of ['/evidence.html', '/proof-lab.html', '/workspace.html', '/no-such-page']) {
     const page = await (await fetch(`${url}${path}`)).text();
     assert.doesNotMatch(page, /data-site-footer/, path);

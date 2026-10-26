@@ -122,11 +122,11 @@
         </div>
         <section class="result-qloo" aria-label="What Qloo changes">
           <div class="qloo-head">
-            <button type="button" class="light-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
-              <span class="ls-plate" aria-hidden="true"><span class="ls-word ls-on">ON</span><span class="ls-screw ls-screw-l"></span><span class="ls-rocker"><span></span></span><span class="ls-screw ls-screw-r"></span><span class="ls-word ls-off">OFF</span></span>
-              <span class="ls-label"><span class="ls-title">Qloo evidence</span> <span class="ls-state">${view.qlooOff?'off':'on'}</span></span>
+            <button type="button" class="runway-switch${view.flip?` is-flip-${view.flip}`:''}" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
+              <span class="rw-track" aria-hidden="true"><span class="rw-ink rw-ink-a"></span><span class="rw-ink rw-ink-b"></span><svg class="rw-water" viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 22Q10 17 20 22T40 22T60 22T80 22T100 22T120 22T140 22T160 22V40H0z"/></svg><svg class="rw-wake" viewBox="0 0 200 40" preserveAspectRatio="none"><path pathLength="100" d="M0 20Q12.5 8 25 20T50 20T75 20T100 20T125 20T150 20T175 20T200 20"/></svg><span class="rw-knob"></span></span>
+              <span class="rw-label"><span class="rw-title">Qloo evidence</span> <span class="rw-state">${view.qlooOff?'off':'on'}</span></span>
             </button>
-            <p id="plan-switch-note" class="result-qloo-note">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
+            <p id="plan-switch-note" class="result-qloo-note${view.flip?' is-arriving':''}">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
               ?`Without Qloo evidence, the same rules book the same bill. Here Qloo explains the choice but does not change it.`
               :`Without Qloo evidence, the same rules book <strong>${e(offBill.join(' + '))}</strong> for ${e(usd(offFee))}. Qloo changes this decision.`)
               :view.offError?'The comparison without Qloo could not load just now. Use the switch to try again.':'Checking what the same rules book without Qloo…'}</p>
@@ -156,6 +156,7 @@
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
       </div>
       <p class="result-terms">${e(record.terms)}${record.live?` <button type="button" class="link-button" id="plan-share">Copy link to this plan</button>`:''}</p>`;
+    view.flip=null;
     wire();
   }
 
@@ -217,7 +218,7 @@
   function wire(){
     const say=text=>{const status=$('result-status');if(status)status.textContent=text;};
     $('plan-switch').addEventListener('click',async()=>{
-      view.qlooOff=!view.qlooOff;if(view.qlooOff)view.cancelId=null;
+      view.qlooOff=!view.qlooOff;if(view.qlooOff)view.cancelId=null;view.flip=view.qlooOff?'off':'on';
       // A refused request leaves the shown bill unchanged, so the switch must not stay flipped.
       if(!await rerun()){view.qlooOff=!view.qlooOff;const message=$('result-status').textContent;render();$('result-status').textContent=message;$('plan-switch').focus();return;}
       $('plan-switch').focus();
@@ -437,6 +438,7 @@
   if('IntersectionObserver' in window){
     document.documentElement.classList.add('has-reveal');
     const reveal=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-in');reveal.unobserve(entry.target);}},{rootMargin:'0px 0px -10% 0px'});
+    document.querySelectorAll('.qa').forEach(node=>reveal.observe(node));
     document.querySelectorAll('.reveal').forEach(node=>reveal.observe(node));
     const tagline=$('tagline-text');
     if(tagline){

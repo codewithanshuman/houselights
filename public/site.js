@@ -86,7 +86,7 @@
     side.addEventListener('keydown',event=>{if(event.key==='Escape'&&side.classList.contains('is-open')){side.classList.remove('is-open');menu.setAttribute('aria-expanded','false');menu.focus();}});
   }
   function renderFooter(footer){
-    if(!footer.querySelector('#site-release'))footer.innerHTML=`<div class="site-footer-inner"><span>Houselights<span class="site-brand-dot">.</span> Booking decisions with Qloo receipts.</span><span class="site-footer-links"><a href="/evidence.html">Evidence &amp; limits</a><a href="https://github.com/codewithanshuman/houselights">Source (MIT)</a></span><span class="site-release">Release <code id="site-release">…</code></span></div>`;
+    if(!footer.children.length)footer.innerHTML=`<div class="site-footer-inner"><span>Houselights<span class="site-brand-dot">.</span> Booking decisions with Qloo receipts.</span><span class="site-footer-links"><a href="/evidence.html">Evidence &amp; limits</a><a href="https://github.com/codewithanshuman/houselights">Source (MIT)</a></span><span class="site-release">Release <code id="site-release">…</code></span></div>`;
     fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>{const node=document.getElementById('site-release');if(node)node.textContent=health.release?String(health.release).slice(0,7):'local build';document.querySelectorAll('[data-release]').forEach(code=>{code.textContent=health.release?String(health.release).slice(0,7):'local build';});}).catch(()=>{const node=document.getElementById('site-release');if(node)node.textContent='unavailable';});
   }
   // Scrollable tables and logs must be reachable by keyboard (WCAG 2.1.1): every scroll

@@ -8,7 +8,7 @@ const tools = [['/workspace.html', 'Organizer workspace', false], ['/index.html'
 const e = value => String(value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
 export function navHtml(current) {
-  return `<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>`
+  return `<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>`
     + `<button class="site-burger" type="button" aria-expanded="false" aria-controls="site-links" aria-label="Open menu"><span aria-hidden="true"></span></button>`
     + `<div id="site-links" class="site-links">${pages.map(([key, href, label]) => `<a href="${href}"${key === current ? ' aria-current="page"' : ''}>${e(label)}</a>`).join('')}`
     + `<details class="site-tools"><summary>Organizer tools</summary><div class="site-tools-menu">${tools.map(([href, label, uncalibrated]) => `<a href="${href}">${e(label)}${uncalibrated ? ' <span class="badge badge-warn">uncalibrated</span>' : ''}</a>`).join('')}<p>Private planning tools. Their forecasts are not calibrated against real outcomes.</p></div></details></div>`
@@ -69,7 +69,7 @@ export function sideHtml(current) {
       + (children && here ? `<ul class="app-sub">${children.map(([subHref, subLabel]) => `<li><a class="app-row app-subrow" href="${subHref}" data-row><span class="app-copy">${e(subLabel)}</span></a></li>`).join('')}</ul>` : '')
       + '</li>';
   };
-  return `<div class="app-side-top"><a class="app-brand" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="32" height="32"><span class="app-copy">Houselights<span class="site-brand-dot">.</span></span></a>`
+  return `<div class="app-side-top"><a class="app-brand" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span class="app-copy">Houselights<span class="site-brand-dot">.</span></span></a>`
     + `<button class="app-collapse" type="button" data-side-toggle aria-label="Collapse sidebar" aria-expanded="true">${icon('collapse')}</button>`
     + `<button class="app-menu" type="button" data-side-menu aria-label="Open menu" aria-expanded="false" aria-controls="app-nav">${icon('menu')}</button></div>`
     + `<nav id="app-nav" class="app-nav" aria-label="Main navigation"><span class="app-glide" aria-hidden="true"></span>`
@@ -83,11 +83,10 @@ export function sideHtml(current) {
 const GH = 'https://github.com/codewithanshuman/houselights';
 export function footerHtml() {
   return `<picture class="footer-art"><source media="(max-width: 640px)" srcset="/assets/brand/footer-bridge-phone.webp"><img src="/assets/brand/footer-bridge.webp" alt="Pencil drawing of the Golden Gate Bridge in morning fog, with the city skyline behind it" width="2000" height="667" loading="lazy"></picture>`
-    + `<div class="plan-footer-inner"><a class="footer-logo" href="/judge.html"><img src="/assets/brand/portal-logo-v2.webp" alt="" width="32" height="32"><span>Houselights<span class="footer-dot">.</span></span></a>`
+    + `<div class="plan-footer-inner"><a class="footer-logo" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span>Houselights<span class="footer-dot">.</span></span></a>`
     + `<p class="footer-tag">Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>`
     + `<nav class="footer-links" aria-label="Footer"><a href="/judge.html#planner">Plan a show</a><a href="/evidence.html">Evidence</a><a href="/proof-lab.html">Qloo Proof Lab</a><a href="/workspace.html">Workspace</a><a href="${GH}">GitHub</a><a href="${GH}/blob/main/docs/security.md">Security</a></nav>`
-    + `<p class="footer-built"><span>Built with</span><img class="footer-qloo" src="/assets/brand/qloo-logo.webp" alt="Qloo" width="96" height="38" loading="lazy"><span>for the Qloo Agentic Hackathon 2026</span></p></div>`
-    + `<div class="footer-bottom"><p class="footer-legal">Fees on saved plans are illustrative and fees for new acts are estimates. Nothing is booked.</p><p class="footer-release site-release">MIT license · Release <code id="site-release">…</code></p></div>`;
+    + `<p class="footer-built"><span>Built with</span><img class="footer-qloo" src="/assets/brand/qloo-logo.webp" alt="Qloo" width="96" height="38" loading="lazy"><span>for the Qloo Agentic Hackathon 2026</span></p></div>`;
 }
 
 // Fills every empty <header ... data-site-nav="key"></header> and, on the landing page, the empty site footer.

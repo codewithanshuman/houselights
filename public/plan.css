@@ -301,25 +301,8 @@
 
 /* FAQ: a sticky heading with proof, and a numbered accordion that opens smoothly */
 .plan-faq{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:64px;align-items:start;padding:96px 0 64px}
-.faq-side{position:sticky;top:112px}
-.proof-stats{margin-top:40px;display:grid;gap:12px}
-.proof-stat{display:grid;gap:6px;margin:0;padding:20px 22px;background:#fff;border:1px solid var(--pp-line);border-radius:20px;font:400 14px/20px var(--font-ui);color:var(--pp-muted)}
-.proof-stat strong{font:600 36px/1 var(--font-ui);letter-spacing:-1.2px;color:var(--pp-ink);font-variant-numeric:tabular-nums}
-.proof-stat strong span{font-size:20px;color:var(--pp-muted)}
-.faq-list{display:grid;gap:12px}
-.faq-list details{background:#fff;border:1px solid var(--pp-line);border-radius:22px;padding:0 24px;transition:box-shadow .4s var(--pp-ease),border-color .4s}
-.faq-list details[open]{box-shadow:var(--pp-shadow);border-color:var(--pp-line-strong)}
-.faq-list summary{list-style:none;cursor:pointer;min-height:76px;display:flex;align-items:center;gap:16px;font:600 18px/26px var(--font-ui);color:var(--pp-ink)}
-.faq-list summary::-webkit-details-marker{display:none}
-.faq-no{flex-shrink:0;width:28px;font:600 13px/20px var(--font-ui);color:var(--pp-accent);font-variant-numeric:tabular-nums}
-.faq-list summary::after{content:"";margin-left:auto;flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#F2EFFB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center no-repeat;transition:transform .5s var(--pp-ease),background-color .3s}
-.faq-list details[open] summary::after{transform:rotate(135deg);background-color:#EEEAFB}
-.faq-body p{margin:0 0 24px 44px;max-width:640px;font:400 16px/24px var(--font-ui);color:var(--pp-muted)}
-.faq-body a{color:var(--pp-ink)}
 @supports (interpolate-size:allow-keywords){
   .plan-page{interpolate-size:allow-keywords}
-  .faq-list details::details-content{block-size:0;overflow:clip;transition:block-size .5s var(--pp-ease),content-visibility .5s allow-discrete}
-  .faq-list details[open]::details-content{block-size:auto}
 }
 
 /* Closing call to action: the concert hall, a dimmed layer, and a mini planner */
@@ -345,7 +328,6 @@
   .pipeline-track{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pipe-node:nth-child(2)::after{display:none}
   .plan-faq{grid-template-columns:minmax(0,1fr);gap:40px}
-  .faq-side{position:static}
   .result-controls{grid-template-columns:minmax(0,1fr)}
   .rank-head{display:none}
   .rank-row{grid-template-columns:44px minmax(0,1fr) 44px;gap:6px 12px;align-items:start}
@@ -536,28 +518,43 @@
 @media (max-width:1000px){.ticket-poster{left:calc(50% - 230px);width:180px}}
 @media (max-width:640px){.ticket-art{width:min(264px,100%)}}
 
-/* The Qloo switch as a hand-drawn light switch: an ink-outlined plate with a grey side,
-   two screws and a rocker that tips toward ON or OFF. The wobble is #hl-rough. */
-.plan-page .light-switch{display:inline-flex;align-items:center;gap:18px;padding:4px 6px 8px 2px;border:0;border-radius:16px;background:none;color:var(--pp-ink);text-align:left;cursor:pointer}
-.ls-plate{position:relative;display:grid;grid-template-columns:16px 1fr 16px;grid-template-rows:auto 1fr auto;align-items:center;justify-items:center;width:92px;height:96px;padding:9px 6px 8px;background:#fff;border:3px solid #16131F;border-radius:12px 10px 13px 11px;box-shadow:6px 5px 0 -1px #D6CEE2,6px 5px 0 1px #16131F;filter:url(#hl-rough);transition:transform .35s var(--pp-ease),box-shadow .35s var(--pp-ease)}
-.ls-word{grid-column:1/-1;font:800 13px/1 var(--font-display);letter-spacing:.1em;color:#6F6A82;transition:color .3s}
-.ls-on{grid-row:1}.ls-off{grid-row:3}
-.ls-screw{grid-row:2;width:10px;height:10px;border:2px solid #16131F;border-radius:50%;background:linear-gradient(135deg,transparent 40%,#16131F 40% 60%,transparent 60%)}
-.ls-screw-l{grid-column:1}.ls-screw-r{grid-column:3}
-.ls-rocker{grid-row:2;grid-column:2;position:relative;width:30px;height:42px;perspective:140px}
-.ls-rocker>span{position:absolute;inset:0;border:3px solid #16131F;border-radius:5px 4px 5px 4px;background:#fff;transition:transform .45s cubic-bezier(.3,1.5,.5,1),box-shadow .45s}
-.light-switch[aria-checked="true"] .ls-rocker>span{transform:rotateX(-18deg);box-shadow:inset 0 -11px 0 #DCD1FF}
-.light-switch[aria-checked="false"] .ls-rocker>span{transform:rotateX(18deg);box-shadow:inset 0 11px 0 #D9D4E2}
-.light-switch[aria-checked="true"] .ls-on{color:#5E44B8}
-.light-switch[aria-checked="false"] .ls-off{color:#16131F}
-.light-switch:hover .ls-plate{transform:translate(-1px,-1px);box-shadow:7px 6px 0 -1px #D6CEE2,7px 6px 0 1px #16131F}
-.light-switch:active .ls-plate{transform:translate(2px,2px);box-shadow:3px 2px 0 -1px #D6CEE2,3px 2px 0 1px #16131F}
-.light-switch:focus-visible{outline:3px solid var(--pp-accent);outline-offset:4px}
-.ls-label{display:grid;gap:6px}
-.ls-title{font:600 17px/1.2 var(--font-ui);letter-spacing:-.01em}
-.ls-state{justify-self:start;padding:3px 12px;border:1.5px solid #16131F;border-radius:999px;background:#DCD1FF;font:700 11px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;transition:background .3s}
-.light-switch[aria-checked="false"] .ls-state{background:#EEEAF4;color:#4A4560}
-@media (prefers-reduced-motion:reduce){.ls-rocker>span,.ls-plate{transition:none}}
+/* The Qloo switch: a small pill of pale water. ON, soft purple ink drifts through it under
+   a slow wave line; switching ON, a wave sweeps across with no label showing, then "on"
+   comes in from a blur. The flip classes are set for one render only (view.flip). */
+.plan-page .runway-switch{display:inline-flex;align-items:center;gap:12px;padding:3px;border:0;border-radius:999px;background:none;color:var(--pp-ink);text-align:left;cursor:pointer}
+.rw-track{position:relative;display:block;flex-shrink:0;width:76px;height:36px;border-radius:999px;overflow:hidden;isolation:isolate;background:#EEEAF8;box-shadow:inset 0 1px 3px #4F35A826,0 0 0 1px #5E44B81f;transition:background .6s}
+.runway-switch[aria-checked="true"] .rw-track{background:#E4D9FF}
+.rw-ink{position:absolute;width:46px;height:46px;border-radius:50%;filter:blur(7px);opacity:0;transition:opacity .7s ease}
+.rw-ink-a{left:-6px;top:-10px;background:radial-gradient(closest-side,#7B4FE0,#9F7BF0 55%,#9F7BF000)}
+.rw-ink-b{left:26px;top:4px;background:radial-gradient(closest-side,#9A6BF2,#C2A6F7 60%,#C2A6F700)}
+.runway-switch[aria-checked="true"] .rw-ink{opacity:.9}
+.rw-water{position:absolute;left:0;bottom:0;width:200%;height:100%;opacity:.55}
+.rw-water path{fill:#FFFFFF59}
+.rw-wake{position:absolute;left:4px;top:50%;height:18px;margin-top:-9px;width:calc(100% - 8px);overflow:visible;opacity:0}
+.rw-wake path{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;vector-effect:non-scaling-stroke}
+.rw-knob{position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px #4F35A833;transform:translateX(0);transition:transform .55s var(--pp-glide)}
+.runway-switch[aria-checked="true"] .rw-knob{transform:translateX(40px)}
+.rw-label{display:grid;gap:5px}
+.rw-title{font:600 16px/1.2 var(--font-ui);letter-spacing:-.01em}
+.rw-state{justify-self:start;padding:2px 10px;border-radius:999px;background:#E4D9FF;color:#3B2A78;font:600 11px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase}
+.runway-switch[aria-checked="false"] .rw-state{background:#EEEAF4;color:#4A4560}
+.runway-switch:focus-visible{outline:3px solid var(--pp-accent);outline-offset:4px}
+@media (prefers-reduced-motion:no-preference){
+  .rw-water{animation:rw-water 4s linear infinite}
+  .runway-switch[aria-checked="true"] .rw-ink-a{animation:rw-drift-a 7s ease-in-out infinite alternate}
+  .runway-switch[aria-checked="true"] .rw-ink-b{animation:rw-drift-b 9s ease-in-out infinite alternate}
+  .runway-switch.is-flip-on .rw-wake{animation:rw-wake-show .9s ease both}
+  .runway-switch.is-flip-on .rw-wake path{animation:rw-wake-draw .7s var(--pp-ease) both}
+  .runway-switch.is-flip-on .rw-ink{animation:rw-flood .9s var(--pp-glide) both}
+  .runway-switch[class*="is-flip"] .rw-state,.result-qloo-note.is-arriving{animation:rw-unblur .7s .7s ease both}
+  @keyframes rw-water{to{transform:translateX(-50%)}}
+  @keyframes rw-drift-a{to{transform:translate(22px,8px) scale(1.15)}}
+  @keyframes rw-drift-b{to{transform:translate(-20px,-6px) scale(.9)}}
+  @keyframes rw-flood{from{opacity:0;transform:translateX(-30px) scale(.6)}}
+  @keyframes rw-wake-show{0%,15%{opacity:0}30%,70%{opacity:.9}100%{opacity:0}}
+  @keyframes rw-wake-draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+  @keyframes rw-unblur{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:blur(0)}}
+}
 
 /* ── Hand-drawn connectors: dotted pencil arcs with an arrowhead, used between the three
    decision cards and between the four pipeline steps. They draw in when revealed. ── */
@@ -631,3 +628,75 @@
   -webkit-mask:linear-gradient(90deg,#0000 0,#000 7%,#000 93%,#0000 100%);mask:linear-gradient(90deg,#0000 0,#000 7%,#000 93%,#0000 100%)}
 .tiles-canvas{display:block;width:100%;height:100%}
 @media (max-width:760px){.facts-stage{padding:36px 16px 150px}.tiles{border-radius:28px}}
+
+/* Both tickets at the same height: the decision ticket 240 px wide (561:1400), the poster
+   ticket scaled to the same height (445:820), side by side with a small overlap. */
+.ticket-stage{justify-content:center;align-items:center;gap:0}
+.ticket-art{width:240px}
+.ticket-poster{position:relative;left:auto;top:auto;flex-shrink:0;width:auto;height:calc(240px * 1400 / 561);margin-right:-34px;transform:rotate(-3deg)}
+.ticket-stage:hover .ticket-poster{transform:translateX(-8px) rotate(-6deg)}
+@media (prefers-reduced-motion:no-preference){@keyframes tk-poster{from{opacity:0;transform:translateX(40px) rotate(3deg)}}}
+@media (min-width:1001px){.plan-page .decision{grid-template-columns:minmax(0,560px) minmax(0,1fr)}}
+@media (max-width:1000px){.ticket-poster{left:auto}}
+@media (max-width:640px){.ticket-stage{justify-content:flex-end;padding-right:6px}.ticket-poster{display:block;position:absolute;left:4px;top:50%;margin:0;transform:translateY(-50%) rotate(-4deg)}.ticket-stage:hover .ticket-poster{transform:translateY(-50%) rotate(-6deg)}.ticket-art{width:240px}}
+
+/* FAQ: headline and three numbers on the left, the questions as a quiet list on the right.
+   The last word of the headline is inked in purple as the section enters; questions show a
+   thin purple bar on hover, the plus turns to a minus, and answers open with their text
+   coming up from a blur. */
+.plan-page .qa-section{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);gap:72px;align-items:start;padding:120px 0 72px}
+.qa-head{position:sticky;top:112px}
+.v2 .qa-title{margin:14px 0 0;font:600 clamp(40px,4.6vw,64px)/1.02 var(--font-display);letter-spacing:-.045em;color:var(--pp-ink)}
+.qa-ink{position:relative;display:inline-block;color:var(--pp-accent)}
+.qa-ink svg{position:absolute;left:-2%;bottom:-.12em;width:104%;height:.2em;overflow:visible}
+.qa-ink path{fill:none;stroke:#B9A3FF;stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:100}
+.v2 .qa-lede{max-width:380px;margin:20px 0 0;font:400 16px/25px var(--font-ui);color:var(--pp-muted)}
+.qa-stats{display:grid;gap:0;margin:40px 0 0;border-top:1px solid var(--pp-line)}
+.qa-stats div{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid var(--pp-line)}
+.qa-stats dt{font:600 30px/1 var(--font-display);letter-spacing:-.04em;color:var(--pp-ink);font-variant-numeric:tabular-nums}
+.qa-stats dt span{font-size:18px;color:var(--pp-muted)}
+.qa-stats dd{margin:0;font:400 14px/20px var(--font-ui);color:var(--pp-soft)}
+.qa-list{border-top:1px solid var(--pp-line)}
+.qa{position:relative;border-bottom:1px solid var(--pp-line)}
+.qa::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:2px;border-radius:2px;background:var(--pp-accent);transform:scaleY(0);transition:transform .45s var(--pp-glide)}
+.qa:hover::before,.qa[open]::before{transform:scaleY(1)}
+.qa>summary{list-style:none;display:flex;align-items:center;gap:18px;min-height:84px;padding:12px 4px 12px 22px;cursor:pointer;font:600 19px/1.3 var(--font-display);letter-spacing:-.015em;color:var(--pp-ink);transition:padding .45s var(--pp-glide)}
+.qa>summary::-webkit-details-marker{display:none}
+.qa:hover>summary{padding-left:28px}
+.qa-no{flex-shrink:0;width:26px;font:500 12px/16px var(--font-mono);color:var(--pp-muted);font-variant-numeric:tabular-nums;transition:color .3s}
+.qa[open] .qa-no,.qa:hover .qa-no{color:var(--pp-accent)}
+.qa-icon{position:relative;flex-shrink:0;width:30px;height:30px;margin-left:auto;border-radius:50%;border:1px solid var(--pp-line-strong);transition:background .3s,border-color .3s,transform .45s var(--pp-glide)}
+.qa-icon::before,.qa-icon::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.6px;border-radius:2px;background:var(--pp-ink);transform:translate(-50%,-50%);transition:transform .45s var(--pp-glide),background .3s}
+.qa-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.qa[open] .qa-icon{background:var(--pp-accent);border-color:var(--pp-accent);transform:rotate(180deg)}
+.qa[open] .qa-icon::before,.qa[open] .qa-icon::after{background:#fff}
+.qa[open] .qa-icon::after{transform:translate(-50%,-50%) rotate(0deg)}
+.qa-body p{margin:0;padding:0 56px 26px 66px;max-width:680px;font:400 16px/26px var(--font-ui);color:var(--pp-soft)}
+.qa-body a{color:var(--pp-ink);text-underline-offset:3px}
+.qa:focus-within>summary:focus-visible{outline:3px solid var(--pp-accent);outline-offset:-3px;border-radius:12px}
+@media (prefers-reduced-motion:no-preference){
+  .qa::details-content{block-size:0;overflow:clip;transition:block-size .55s var(--pp-glide),content-visibility .55s allow-discrete}
+  .qa[open]::details-content{block-size:auto}
+  .qa[open] .qa-body p{animation:qa-in .6s .08s var(--pp-ease) both}
+  .has-reveal .qa-head:not(.is-in) .qa-ink{color:var(--pp-ink)}
+  .qa-ink{transition:color .8s .3s ease}
+  .has-reveal .qa-head:not(.is-in) .qa-ink path{stroke-dashoffset:100}
+  .qa-ink path{transition:stroke-dashoffset 1.1s .5s var(--pp-ease)}
+  .has-reveal .qa{opacity:0;transform:translateY(16px);transition:opacity .7s var(--pp-ease),transform .7s var(--pp-ease)}
+  .has-reveal .qa.is-in{opacity:1;transform:none}
+  .qa:nth-child(2){transition-delay:.06s}.qa:nth-child(3){transition-delay:.12s}.qa:nth-child(4){transition-delay:.18s}.qa:nth-child(5){transition-delay:.24s}.qa:nth-child(6){transition-delay:.3s}
+  @keyframes qa-in{from{opacity:0;filter:blur(6px);transform:translateY(6px)}}
+}
+@media (max-width:900px){
+  .plan-page .qa-section{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:88px}
+  .qa-head{position:static}
+}
+@media (max-width:640px){
+  .qa>summary{gap:12px;min-height:72px;padding-left:14px;font-size:17px}
+  .qa:hover>summary{padding-left:14px}
+  .qa-body p{padding:0 8px 22px 52px}
+  .qa-stats div{grid-template-columns:104px minmax(0,1fr)}
+}
+/* The poster ticket rises in instead of sliding in from the right, so it never widens the
+   page on a phone during its entrance. */
+@media (prefers-reduced-motion:no-preference){@keyframes tk-poster{from{opacity:0;translate:0 24px}}}
