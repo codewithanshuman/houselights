@@ -778,3 +778,46 @@
   .tl-petals .tl-deco,.tl-star .tl-deco{display:none}
   .tl-spark{width:24px;height:24px}
 }
+
+/* The owner's graph artwork: a colour picture in each circle and a cut-out decoration
+   behind it (pixel glow, starburst, orbit ring, music notes). */
+.tl-node .tl-pic{filter:none}
+.tl-node img.tl-deco{position:absolute;z-index:-1;inset:auto;width:auto;height:auto;border-radius:0;box-shadow:none;filter:none;background:none;-webkit-mask:none;mask:none;clip-path:none;object-fit:contain}
+.tl-deco-0{left:-62px;top:-62px;width:308px!important;opacity:.95}
+.tl-deco-1{right:-58px;top:-54px;width:150px!important}
+.tl-deco-2{left:-70px;top:30px;width:324px!important}
+.tl-deco-3{left:-58px;top:-50px;width:118px!important}
+.tl-node:hover .tl-pic{filter:saturate(1.15)}
+@media (max-width:700px){
+  .tl-deco-0{left:-34px;top:-34px;width:180px!important}
+  .tl-deco-1{right:-30px;top:-28px;width:84px!important}
+  .tl-deco-2{left:-40px;top:16px;width:190px!important}
+  .tl-deco-3{left:-30px;top:-26px;width:66px!important}
+}
+@media (prefers-reduced-motion:no-preference){
+  .tl-node img.tl-deco{animation:none}
+  .tl-node img.tl-deco-0{animation:tl-pulse 5s ease-in-out infinite alternate}
+  .tl-node img.tl-deco-1{animation:tl-turn 30s linear infinite}
+  .tl-node img.tl-deco-2{animation:tl-tilt 7s ease-in-out infinite alternate}
+  .tl-node img.tl-deco-3{animation:tl-bob 3.2s ease-in-out infinite alternate}
+  @keyframes tl-pulse{to{scale:1.08;opacity:.75}}
+  @keyframes tl-tilt{to{rotate:-8deg;translate:0 -6px}}
+}
+@media (max-width:700px){.tl-node img.tl-deco{display:block}}
+/* Decorations sized and placed so each reads clearly beside its circle */
+.tl-deco-0{left:-70px!important;top:-70px!important;width:324px!important;opacity:1}
+.tl-deco-1{right:-74px!important;left:auto!important;top:-62px!important;width:170px!important}
+.tl-deco-2{left:-84px!important;top:auto!important;bottom:-34px;width:352px!important}
+.tl-deco-3{left:-74px!important;top:-58px!important;width:132px!important}
+.tl-right .tl-spark{display:none}
+@media (max-width:700px){
+  .tl-deco-0{left:-36px!important;top:-36px!important;width:184px!important}
+  .tl-deco-1{right:-34px!important;top:-30px!important;width:90px!important}
+  .tl-deco-2{left:-44px!important;bottom:-18px;width:200px!important}
+  .tl-deco-3{left:-36px!important;top:-30px!important;width:72px!important}
+}
+.tl-deco-0{left:-70px!important;top:-70px!important}
+.tl-deco-1{right:auto!important;left:-70px!important;top:-58px!important;width:150px!important}
+.tl-deco-3{left:auto!important;right:-60px;top:-62px!important;width:118px!important}
+.tl-node .tl-deco-0{width:324px!important;height:324px!important;object-fit:cover}
+@media (max-width:700px){.tl-deco-1{left:-34px!important}.tl-deco-3{right:-30px}.tl-node .tl-deco-0{width:184px!important;height:184px!important}}
