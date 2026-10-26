@@ -120,6 +120,62 @@
       let timer;new ResizeObserver(()=>{clearTimeout(timer);timer=setTimeout(build,200);}).observe(button);
     });
   }
+  // "On this page" for the long app pages (<main data-toc>): a list of the visible section
+  // headings, as a rail on wide screens and a menu in the top bar otherwise. The current
+  // section is highlighted while scrolling; sections that appear later (results, unlocked
+  // panels) join the list.
+  function pageToc(){
+    const main=document.querySelector('main[data-toc]');if(!main)return;
+    const slug=text=>text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'section';
+    const visible=node=>!node.closest('[hidden],dialog,details:not([open]),.receipt-drawer')&&node.getClientRects().length>0;
+    const rail=document.createElement('nav');rail.className='toc-rail';rail.setAttribute('aria-label','On this page');
+    const menu=document.createElement('details');menu.className='toc-menu';
+    menu.innerHTML='<summary><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg><span>On this page</span></summary><nav class="toc-menu-list" aria-label="On this page (menu)"></nav>';
+    document.body.append(rail);document.querySelector('.app-top .app-share')?.before(menu);
+    let heads=[],observer=null;
+    const build=()=>{
+      const found=[...main.querySelectorAll('h2:not([data-toc-skip])')].filter(visible);
+      if(found.length===heads.length&&found.every((h,i)=>h===heads[i]))return;
+      heads=found;const used=new Set();
+      heads.forEach(h=>{if(!h.id){let id=`s-${slug(h.textContent)}`,n=2;while(document.getElementById(id)||used.has(id))id=`s-${slug(h.textContent)}-${n++}`;h.id=id;}used.add(h.id);});
+      const items=heads.map((h,i)=>`<a href="#${h.id}" data-toc-id="${h.id}"><span class="toc-no">${String(i+1).padStart(2,'0')}</span><span class="toc-label">${h.textContent.trim().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</span></a>`).join('');
+      rail.innerHTML=`<p class="toc-title">On this page</p><div class="toc-list">${items}</div>`;
+      menu.querySelector('.toc-menu-list').innerHTML=items;
+      document.body.classList.toggle('has-toc',heads.length>1);
+      observer?.disconnect();
+      observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting)document.querySelectorAll('[data-toc-id]').forEach(link=>link.classList.toggle('is-current',link.dataset.tocId===entry.target.id));},{rootMargin:'-15% 0px -70% 0px'});
+      heads.forEach(h=>observer.observe(h));
+    };
+    document.addEventListener('click',event=>{
+      const link=event.target.closest('[data-toc-id]');if(!link)return;
+      const target=document.getElementById(link.dataset.tocId);if(!target)return;
+      event.preventDefault();menu.open=false;
+      document.querySelectorAll('.judge-main>*').forEach(node=>{node.style.contentVisibility='visible';});
+      target.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+      history.replaceState(null,'',`#${target.id}`);
+    });
+    document.addEventListener('click',event=>{if(menu.open&&!menu.contains(event.target))menu.open=false;});
+    build();
+    let timer;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(build,250);}).observe(main,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','open']});
+  }
+  // Evidence page: a strip of counts read from the claims table that is already on the page.
+  function evidenceKpis(){
+    const table=document.querySelector('.claim-table table'),header=document.querySelector('#evidence-main>header');if(!table||!header)return;
+    const status=[...table.querySelectorAll('tbody td .badge')].map(b=>b.textContent.trim());
+    const count=test=>status.filter(test).length,verified=count(t=>t.startsWith('verified')),pending=count(t=>t==='pending'),unmeasured=count(t=>t==='not measured');
+    header.insertAdjacentHTML('beforeend',`<dl class="kpi-strip" aria-label="Claims at a glance"><div><dt>Claims</dt><dd>${status.length}</dd></div><div class="is-good"><dt>Verified</dt><dd>${verified}<small>reproducible</small></dd></div><div class="is-warn"><dt>Pending</dt><dd>${pending}<small>not collected yet</small></dd></div><div><dt>Not measured</dt><dd>${unmeasured}</dd></div></dl>`);
+  }
+  // On phones, read-only result tables in the app stack as cards; each cell is labelled with
+  // its column header. Tables you type into keep their rows.
+  function stackTables(root=document){
+    if(!document.body.classList.contains('app-shell'))return;
+    root.querySelectorAll?.('main .table-scroll table').forEach(table=>{
+      if(table.closest('.claim-table')||table.querySelector('input,select,textarea'))return;
+      const heads=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim());if(!heads.length)return;
+      table.classList.add('stack-sm');
+      table.querySelectorAll('tbody tr').forEach(row=>[...row.children].forEach((cell,i)=>{if(heads[i]&&!cell.dataset.label)cell.dataset.label=heads[i];}));
+    });
+  }
   function start(){
     document.querySelectorAll('[data-site-nav]').forEach(bindNav);
     // Below-the-fold sections skip layout while the page loads (content-visibility in site.css).
@@ -132,7 +188,10 @@
     if(!document.querySelector('[data-site-footer]')&&document.querySelector('[data-release]'))fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>document.querySelectorAll('[data-release]').forEach(code=>{code.textContent=health.release?String(health.release).slice(0,7):'local build';})).catch(()=>{});
     focusableScrollers();
     pixelButtons();
-    new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});
+    evidenceKpis();
+    stackTables();
+    pageToc();
+    new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);stackTables(node.closest?.('.table-scroll')?.parentNode??node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});
   }
   // Every GET without its own signal gets a 20-second timeout, so no page waits forever
   // on a stalled request. POSTs keep their own progress handling (research can take 150 s).

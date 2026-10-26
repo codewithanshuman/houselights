@@ -51,10 +51,10 @@ export function topHtml(current) {
     + `<button class="app-share" type="button" data-share>${icon('share')}<span>Share</span></button></div>`;
 }
 
-// Slate studio switches views in place (public/app.js), so its views are buttons nested under
-// its row. decision.js, gm.js and advanced.js add the Decision Room, Festival GM, Event
+// Slate studio switches views in place (public/app.js); its views are a row of tabs under the
+// page's top bar. decision.js, gm.js and advanced.js add the Decision Room, Festival GM, Event
 // portfolio and Independent evaluation views to the same group when they load.
-const SLATE_VIEWS = '<div class="app-sub slate-views" role="group" aria-label="Slate studio views">'
+const SLATE_VIEWS = '<div class="slate-views" role="group" aria-label="Slate studio views">'
   + '<button class="nav-item active" type="button" data-view="slate" aria-current="page"><span class="app-copy">Slate studio</span><span class="nav-key">01</span></button>'
   + '<button class="nav-item" type="button" data-view="gauntlet"><span class="app-copy">Decision Gauntlet</span><span id="gauntlet-count" class="nav-count">0/6</span></button>'
   + '<button class="nav-item" type="button" data-view="evidence"><span class="app-copy">Evidence ledger</span><span id="receipt-count" class="nav-count">0</span></button>'
@@ -64,8 +64,7 @@ const CONNECTION = '<div class="connection app-copy"><span id="connection-dot" c
 export function sideHtml(current) {
   const row = ([key, href, label, glyph, children, tag]) => {
     const here = key === current;
-    return `<li><a class="app-row${here ? ' is-current' : ''}${here && key === 'slate' ? ' has-child-here' : ''}" href="${href}" data-row${here ? ' aria-current="page"' : ''}>${icon(glyph)}<span class="app-copy">${e(label)}</span>${tag ? `<span class="app-tag app-copy">${e(tag)}</span>` : ''}</a>`
-      + (key === 'slate' && here ? SLATE_VIEWS : '')
+    return `<li><a class="app-row${here ? ' is-current' : ''}" href="${href}" data-row${here ? ' aria-current="page"' : ''}>${icon(glyph)}<span class="app-copy">${e(label)}</span>${tag ? `<span class="app-tag app-copy">${e(tag)}</span>` : ''}</a>`
       + (children && here ? `<ul class="app-sub">${children.map(([subHref, subLabel]) => `<li><a class="app-row app-subrow" href="${subHref}" data-row><span class="app-copy">${e(subLabel)}</span></a></li>`).join('')}</ul>` : '')
       + '</li>';
   };
@@ -113,5 +112,6 @@ export function withSiteNav(html) {
   // Only the landing page has a footer; the app pages and the 404 page end with their content.
   const landing = /data-site-nav="booking"/.test(html);
   out = out.replace(/<footer class="site-footer" data-site-footer><\/footer>/g, landing ? `<footer class="site-footer plan-footer" data-site-footer>${footerHtml()}</footer>` : '');
+  if (/data-site-nav="slate"/.test(out)) out = out.replace(/(<header class="topbar">[\s\S]*?<\/header>)/, `$1${SLATE_VIEWS}`);
   return app ? out.replace(/<body class="/, '<body class="app-shell ').replace(/<body>/, '<body class="app-shell">') : out;
 }
