@@ -99,6 +99,27 @@
       if(!node.hasAttribute('aria-label')&&!node.hasAttribute('aria-labelledby')){const caption=node.querySelector('caption')?.textContent?.trim();node.setAttribute('aria-label',caption?caption.slice(0,80)+' (scrollable)':'Scrollable table');}
     });
   }
+  // Pixel-dissolve buttons (GitHub): a grid of square cells floods dark from left to right
+  // under the pointer, each cell stepping through greys, and drains away when it leaves.
+  function pixelButtons(){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    document.querySelectorAll('.px-btn').forEach(button=>{
+      const grid=button.querySelector('.px-cells');if(!grid)return;
+      const build=()=>{
+        const size=7,cols=Math.max(8,Math.round(button.offsetWidth/size)),rows=Math.max(3,Math.round(button.offsetHeight/size));
+        grid.style.setProperty('--cols',cols);grid.textContent='';
+        const frag=document.createDocumentFragment();
+        for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const cell=document.createElement('i');cell.style.setProperty('--d',`${(c/cols*.3+Math.random()*.14).toFixed(3)}s`);frag.append(cell);}
+        grid.append(frag);
+      };
+      build();
+      const on=()=>{button.classList.remove('is-off');button.classList.add('is-on');};
+      const off=()=>{if(!button.classList.contains('is-on'))return;button.classList.remove('is-on');button.classList.add('is-off');};
+      button.addEventListener('pointerenter',on);button.addEventListener('pointerleave',off);
+      button.addEventListener('focus',on);button.addEventListener('blur',off);
+      let timer;new ResizeObserver(()=>{clearTimeout(timer);timer=setTimeout(build,200);}).observe(button);
+    });
+  }
   function start(){
     document.querySelectorAll('[data-site-nav]').forEach(bindNav);
     // Below-the-fold sections skip layout while the page loads (content-visibility in site.css).
@@ -110,6 +131,7 @@
     document.querySelectorAll('[data-site-footer]').forEach(renderFooter);
     if(!document.querySelector('[data-site-footer]')&&document.querySelector('[data-release]'))fetchJSON('/healthz',{timeout:8000,retries:0}).then(health=>document.querySelectorAll('[data-release]').forEach(code=>{code.textContent=health.release?String(health.release).slice(0,7):'local build';})).catch(()=>{});
     focusableScrollers();
+    pixelButtons();
     new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1){focusableScrollers(node);if(node.matches?.('.table-scroll,#receipts'))focusableScrollers(node.parentNode);}}).observe(document.body,{childList:true,subtree:true});
   }
   // Every GET without its own signal gets a 20-second timeout, so no page waits forever

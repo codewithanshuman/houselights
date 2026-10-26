@@ -269,14 +269,7 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
 .app-share:hover{background:#EEEBF8;color:var(--pp-ink)}
 .app-share .app-icon{color:currentColor}
 
-/* The maker row: GitHub's mark and a signature */
-.app-maker{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;border:1px solid var(--pp-line);border-radius:14px;background:linear-gradient(180deg,#fff,#F8F6FE);color:var(--pp-ink);text-decoration:none;transition:border-color .2s,box-shadow .3s,transform .3s var(--pp-ease)}
-.app-maker:hover{border-color:#D3C8F8;box-shadow:0 8px 20px #4F35A81a;transform:translateY(-1px)}
-.app-gh{flex-shrink:0;width:30px;height:30px;padding:6px;border-radius:9px;background:#16131F;color:#fff;box-sizing:border-box}
-.app-maker-copy{display:grid;line-height:1}
-.app-maker-copy small{font:500 10px/14px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:#69657F}
 .app-sign{font:400 25px/1.05 'Segoe Script','Snell Roundhand','Apple Chancery','Brush Script MT','Lucida Handwriting',cursive;color:var(--pp-accent);letter-spacing:.01em;transform:rotate(-3deg);transform-origin:left center}
-.side-collapsed .app-maker{justify-content:center;padding:8px 0;border-color:transparent;background:none}
 @media (max-width:900px){
   body.app-shell>.app-top{padding:10px 16px 0;min-height:52px}
   .app-crumb:not([aria-current]),.app-crumbs>svg,.app-sep{display:none}
@@ -295,3 +288,35 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
 .app-side-foot .connection strong{display:block;font:600 12.5px/16px var(--font-ui);color:var(--pp-ink)}
 .app-side-foot .connection small{display:block;font:400 11.5px/15px var(--font-ui);color:var(--pp-muted)}
 .side-collapsed .slate-views,.side-collapsed .app-side-foot .connection{display:none}
+
+/* Pixel-dissolve button (GitHub, on the 404 page and in the sidebar): a grid of cells floods
+   dark from left to right in grey steps under the pointer; public/site.js builds the cells. */
+.px-btn{position:relative;display:inline-flex;align-items:stretch;min-height:52px;border:1.5px solid #2A2536;border-radius:6px;background:#fff;color:#16131F;font:500 15px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;overflow:hidden;isolation:isolate;box-shadow:0 1px 0 #16131F14}
+.px-cells{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(var(--cols,24),1fr);grid-auto-rows:1fr;pointer-events:none}
+.px-cells i{display:block;background:#16131F;opacity:0}
+.px-text{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:0 22px;transition:color .15s}
+.px-div{position:relative;z-index:1;width:0;margin:9px 0;border-left:1.5px dashed #A19DB2;transition:border-color .15s}
+.px-arrow{position:relative;z-index:1;display:grid;place-items:center;padding:0 18px;font:400 20px/1 var(--font-ui);transition:color .15s,transform .45s var(--pp-ease)}
+.px-btn.is-on .px-cells i{animation:px-in .36s steps(3,end) var(--d,0s) forwards}
+.px-btn.is-off .px-cells i{opacity:1;animation:px-out .3s steps(3,end) var(--d,0s) forwards}
+.px-btn.is-on .px-text{color:#fff;transition-delay:.2s}
+.px-btn.is-on .px-arrow{color:#fff;transform:translateX(3px);transition-delay:.26s,0s}
+.px-btn.is-on .px-div{border-color:#ffffffb3;transition-delay:.24s}
+@keyframes px-in{0%{opacity:0}100%{opacity:1}}
+@keyframes px-out{0%{opacity:1}100%{opacity:0}}
+.px-btn:focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
+
+.px-btn{font-family:var(--font-mono)}
+@media (prefers-reduced-motion:reduce){
+  .px-btn:hover,.px-btn:focus-visible{background:#16131F;color:#fff}
+  .px-btn:hover .px-div{border-color:#ffffffb3}
+}
+/* In the sidebar: full width, GitHub mark and the signature */
+.app-side-foot .px-btn{display:flex;width:100%;min-height:52px;border-radius:12px;border-color:#2A2536}
+.app-side-foot .px-text{flex:1;min-width:0;gap:12px;padding:0 14px}
+.app-side-foot .px-text svg{flex-shrink:0;width:20px;height:20px}
+.app-side-foot .px-arrow{padding:0 14px}
+.app-side-foot .app-sign{transform:rotate(-3deg) translateY(1px);font-size:24px;letter-spacing:0;text-transform:none}
+.app-side-foot .px-btn.is-on .app-sign{color:#fff}
+.side-collapsed .app-side-foot .px-btn{border-color:transparent;background:none}
+.side-collapsed .app-side-foot .px-div,.side-collapsed .app-side-foot .px-arrow{display:none}

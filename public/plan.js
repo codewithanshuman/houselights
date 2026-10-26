@@ -122,8 +122,9 @@
         </div>
         <section class="result-qloo" aria-label="What Qloo changes">
           <div class="qloo-head">
-            <button type="button" class="fs-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
-              <span class="fs-switch-track" aria-hidden="true"><span class="fs-switch-thumb"></span></span><span>Qloo evidence ${view.qlooOff?'off':'on'}</span>
+            <button type="button" class="light-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
+              <span class="ls-plate" aria-hidden="true"><span class="ls-word ls-on">ON</span><span class="ls-screw ls-screw-l"></span><span class="ls-rocker"><span></span></span><span class="ls-screw ls-screw-r"></span><span class="ls-word ls-off">OFF</span></span>
+              <span class="ls-label"><span class="ls-title">Qloo evidence</span> <span class="ls-state">${view.qlooOff?'off':'on'}</span></span>
             </button>
             <p id="plan-switch-note" class="result-qloo-note">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
               ?`Without Qloo evidence, the same rules book the same bill. Here Qloo explains the choice but does not change it.`
@@ -332,7 +333,7 @@
   function fillFan(snapshot,off){
     const set=(key,text)=>document.querySelectorAll(`[data-fan="${key}"]`).forEach(node=>{node.textContent=text;});
     const top=[...itemsOf(snapshot)].filter(item=>item.rank).sort((a,b)=>a.rank-b.rank)[0],score=top?affinityOf(snapshot,top):null;
-    if(top){set('top-act',top.name);if(score!=null)set('top-score',`Affinity ${score.toFixed(3)} · rank ${top.rank} of ${top.of}`);}
+    if(top){set('top-act',top.name);if(score!=null){set('top-score',`Affinity ${score.toFixed(3)} · rank ${top.rank} of ${top.of}`);document.querySelectorAll('[data-fan-meter]').forEach(node=>node.style.setProperty('--w',`${(Math.max(0,Math.min(1,score))*100).toFixed(1)}%`));}}
     set('bill',billNames(snapshot).join(' + '));set('fee',usd(snapshot.memo.slate.totalFee));
     if(off){set('off-bill',billNames(off).join(' + '));set('off-fee',`${usd(off.memo.slate.totalFee)} · a different bill`);}
   }

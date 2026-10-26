@@ -31,22 +31,6 @@
 .nf-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:16px 22px;margin-top:32px}
 .nf-actions svg{flex-shrink:0}
 
-/* Pixel-dissolve button (GitHub) */
-.px-btn{position:relative;display:inline-flex;align-items:stretch;min-height:52px;border:1.5px solid #2A2536;border-radius:6px;background:#fff;color:#16131F;font:500 15px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;overflow:hidden;isolation:isolate;box-shadow:0 1px 0 #16131F14}
-.px-cells{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(var(--cols,24),1fr);grid-auto-rows:1fr;pointer-events:none}
-.px-cells i{display:block;background:#16131F;opacity:0}
-.px-text{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:0 22px;transition:color .15s}
-.px-div{position:relative;z-index:1;width:0;margin:9px 0;border-left:1.5px dashed #A19DB2;transition:border-color .15s}
-.px-arrow{position:relative;z-index:1;display:grid;place-items:center;padding:0 18px;font:400 20px/1 var(--font-ui);transition:color .15s,transform .45s var(--pp-ease)}
-.px-btn.is-on .px-cells i{animation:px-in .36s steps(3,end) var(--d,0s) forwards}
-.px-btn.is-off .px-cells i{opacity:1;animation:px-out .3s steps(3,end) var(--d,0s) forwards}
-.px-btn.is-on .px-text{color:#fff;transition-delay:.2s}
-.px-btn.is-on .px-arrow{color:#fff;transform:translateX(3px);transition-delay:.26s,0s}
-.px-btn.is-on .px-div{border-color:#ffffffb3;transition-delay:.24s}
-@keyframes px-in{0%{opacity:0}100%{opacity:1}}
-@keyframes px-out{0%{opacity:1}100%{opacity:0}}
-.px-btn:focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
-
 /* Now playing ticker */
 .nf-ticker{position:absolute;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid #DCD3FA;background:#ffffffb3;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .nf-ticker-track{display:flex;width:max-content}
@@ -74,8 +58,6 @@
   @keyframes nf-marquee{to{transform:translateX(-50%)}}
 }
 @media (prefers-reduced-motion:reduce){
-  .px-btn:hover,.px-btn:focus-visible{background:#16131F;color:#fff}
-  .px-btn:hover .px-div{border-color:#ffffffb3}
 }
 @media (max-width:760px){
   .nf-main{justify-content:flex-start;padding-top:96px}

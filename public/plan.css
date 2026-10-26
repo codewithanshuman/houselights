@@ -526,3 +526,110 @@
   .ticket-poster{display:none}
   .ticket-art{width:min(340px,100%)}
 }
+
+/* Tickets at a calmer size: the decision ticket is 320 px wide on desktop, the poster
+   tucked behind its left edge; the smallest labels keep a readable floor. */
+@media (min-width:1001px){.plan-page .decision{grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:48px}}
+.ticket-art{width:min(320px,100%)}
+.ticket-poster{width:min(232px,50%);left:4px}
+.plan-page .ticket-art .result-meta{font-size:max(11.5px,3.6cqw)}
+.plan-page .ticket-art .badge{font-size:max(9.5px,2.7cqw);padding:max(2px,.8cqw) max(7px,2.4cqw)}
+.tk-admit{font-size:max(9.5px,3.2cqw)}
+.tk-band{font-size:max(10px,3.4cqw)}
+.tk-band-2{font-size:max(10.5px,3.5cqw)}
+.plan-page .ticket-art .result-sub{font-size:max(11.5px,3.7cqw)}
+.tk-stats dt{font-size:max(8px,2.4cqw)}
+.tk-stats dd{font-size:max(13px,4.4cqw)}
+@media (max-width:1000px){.ticket-poster{left:calc(50% - 250px);width:200px}}
+@media (max-width:640px){.ticket-art{width:min(300px,100%)}}
+
+/* The Qloo switch as a hand-drawn light switch: an ink-outlined plate with a grey side,
+   two screws and a rocker that tips toward ON or OFF. The wobble is #hl-rough. */
+.plan-page .light-switch{display:inline-flex;align-items:center;gap:18px;padding:4px 6px 8px 2px;border:0;border-radius:16px;background:none;color:var(--pp-ink);text-align:left;cursor:pointer}
+.ls-plate{position:relative;display:grid;grid-template-columns:16px 1fr 16px;grid-template-rows:auto 1fr auto;align-items:center;justify-items:center;width:92px;height:96px;padding:9px 6px 8px;background:#fff;border:3px solid #16131F;border-radius:12px 10px 13px 11px;box-shadow:6px 5px 0 -1px #D6CEE2,6px 5px 0 1px #16131F;filter:url(#hl-rough);transition:transform .35s var(--pp-ease),box-shadow .35s var(--pp-ease)}
+.ls-word{grid-column:1/-1;font:800 13px/1 var(--font-display);letter-spacing:.1em;color:#6F6A82;transition:color .3s}
+.ls-on{grid-row:1}.ls-off{grid-row:3}
+.ls-screw{grid-row:2;width:10px;height:10px;border:2px solid #16131F;border-radius:50%;background:linear-gradient(135deg,transparent 40%,#16131F 40% 60%,transparent 60%)}
+.ls-screw-l{grid-column:1}.ls-screw-r{grid-column:3}
+.ls-rocker{grid-row:2;grid-column:2;position:relative;width:30px;height:42px;perspective:140px}
+.ls-rocker>span{position:absolute;inset:0;border:3px solid #16131F;border-radius:5px 4px 5px 4px;background:#fff;transition:transform .45s cubic-bezier(.3,1.5,.5,1),box-shadow .45s}
+.light-switch[aria-checked="true"] .ls-rocker>span{transform:rotateX(-18deg);box-shadow:inset 0 -11px 0 #DCD1FF}
+.light-switch[aria-checked="false"] .ls-rocker>span{transform:rotateX(18deg);box-shadow:inset 0 11px 0 #D9D4E2}
+.light-switch[aria-checked="true"] .ls-on{color:#5E44B8}
+.light-switch[aria-checked="false"] .ls-off{color:#16131F}
+.light-switch:hover .ls-plate{transform:translate(-1px,-1px);box-shadow:7px 6px 0 -1px #D6CEE2,7px 6px 0 1px #16131F}
+.light-switch:active .ls-plate{transform:translate(2px,2px);box-shadow:3px 2px 0 -1px #D6CEE2,3px 2px 0 1px #16131F}
+.light-switch:focus-visible{outline:3px solid var(--pp-accent);outline-offset:4px}
+.ls-label{display:grid;gap:6px}
+.ls-title{font:600 17px/1.2 var(--font-ui);letter-spacing:-.01em}
+.ls-state{justify-self:start;padding:3px 12px;border:1.5px solid #16131F;border-radius:999px;background:#DCD1FF;font:700 11px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;transition:background .3s}
+.light-switch[aria-checked="false"] .ls-state{background:#EEEAF4;color:#4A4560}
+@media (prefers-reduced-motion:reduce){.ls-rocker>span,.ls-plate{transition:none}}
+
+/* ── Hand-drawn connectors: dotted pencil arcs with an arrowhead, used between the three
+   decision cards and between the four pipeline steps. They draw in when revealed. ── */
+.fact-link,.pipe-link{position:absolute;z-index:2;width:64px;height:40px;overflow:visible;pointer-events:none;filter:url(#hl-rough)}
+.fact-link path,.pipe-link path{fill:none;stroke:#5E44B8;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.fact-link path:first-child,.pipe-link path:first-child{stroke-dasharray:.1 6.5}
+.fact-link-head,.pipe-link-head{stroke-width:2.4}
+
+/* The three decision cards */
+.plan-page .hero-facts{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;max-width:1040px;margin:72px auto 0;align-items:stretch;text-align:left}
+.plan-page .fact-card{position:relative;display:flex;flex-direction:column;padding:22px 22px 20px;border:1.5px solid #16131F;border-radius:20px;background:#fff;box-shadow:4px 5px 0 #16131F;transition:transform .5s var(--pp-glide),box-shadow .5s var(--pp-glide)}
+.plan-page .fact-card:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 #16131F}
+.fact-head{display:flex;align-items:center;gap:10px;padding-bottom:14px;margin-bottom:14px;background:radial-gradient(circle,#B4AEC2 1.1px,transparent 1.3px) 0 100%/7px 3px repeat-x}
+.fact-head p{display:flex;align-items:baseline;gap:8px;margin:0;font:600 15px/20px var(--font-ui);color:#16131F}
+.fact-step{font:600 11px/16px var(--font-mono);letter-spacing:.1em;color:#5E44B8}
+.fact-icon{display:grid;place-items:center;width:34px;height:34px;border:1.5px solid #16131F;border-radius:10px;background:#EFEAFF;color:#16131F}
+.fact-sub{margin:0;font:400 13px/18px var(--font-ui);color:var(--pp-muted)}
+.fact-name{margin:10px 0 0;font:650 21px/1.2 var(--font-display);letter-spacing:-.025em;color:#16131F;text-wrap:balance}
+.fact-meter{position:relative;height:10px;margin:16px 0 0;border:1.5px solid #16131F;border-radius:99px;background:repeating-linear-gradient(90deg,#fff 0 6px,#F1EEFA 6px 7px);overflow:hidden}
+.fact-meter span{position:absolute;inset:0 auto 0 0;width:var(--w,90%);background:linear-gradient(90deg,#C9B8FF,#7B5CF0);border-right:1.5px solid #16131F;transition:width 1.2s var(--pp-glide)}
+.fact-foot{margin:auto 0 0;padding-top:14px;font:500 13px/18px var(--font-mono);color:#4A4560;font-variant-numeric:tabular-nums}
+.fact-kicker{margin:10px 0 0;font:600 12px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--pp-muted)}
+.fact-bill{margin-top:4px}
+.fact-fee{margin:8px 0 0;font:700 38px/1 var(--font-display);letter-spacing:-.04em;color:#5E44B8;font-variant-numeric:tabular-nums}
+.fact-pass{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin:auto 0 0;padding:6px 12px;border:1.5px solid #1E6B45;border-radius:999px;background:#E4F2EA;color:#1E6B45;font:600 13px/18px var(--font-ui)}
+.fact-main .fact-sub{margin-top:0}
+.fact-main .fact-fee{margin-bottom:16px}
+.plan-page .fact-main{background:linear-gradient(180deg,#F4F0FF 0%,#fff 60%);transform:translateY(-10px);box-shadow:5px 7px 0 #16131F}
+.plan-page .fact-main:hover{transform:translate(-2px,-13px)}
+.plan-page .fact-off{background:#16131F;color:#fff}
+.fact-off .fact-head{background-image:radial-gradient(circle,#5C5670 1.1px,transparent 1.3px)}
+.fact-off .fact-head p{color:#fff}
+.fact-off .fact-step{color:#C9B8FF}
+.fact-off .fact-icon{border-color:#fff;background:#2A2536;color:#fff}
+.fact-off .fact-sub{color:#B9B4C8}
+.fact-off .fact-name{color:#fff}
+.fact-off .fact-foot{color:#D9D4E6}
+.fact-tag{align-self:flex-start;margin:12px 0 0;padding:4px 10px;border:1.5px dashed #C9B8FF;border-radius:8px;font:600 12px/16px var(--font-mono);letter-spacing:.04em;color:#C9B8FF}
+.fact-link{right:-54px;top:26px}
+
+/* The pipeline: sketch cards joined by the same pencil arcs */
+.plan-page .pipeline-track{gap:48px}
+.plan-page .pipe-node{border:1.5px solid #16131F;border-radius:20px;box-shadow:4px 5px 0 #16131F;transition:transform .5s var(--pp-glide),box-shadow .5s var(--pp-glide)}
+.plan-page .pipe-node:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 #16131F}
+.plan-page .pipe-node:not(:last-child)::after{display:none}
+.pipe-step{padding-bottom:12px;background:radial-gradient(circle,#B4AEC2 1.1px,transparent 1.3px) 0 100%/7px 3px repeat-x}
+.pipe-link{right:-58px;top:40px}
+.plan-page .pipe-node-final{background:#16131F;border-color:#16131F}
+.pipe-node-final .pipe-step{background-image:radial-gradient(circle,#5C5670 1.1px,transparent 1.3px)}
+@media (prefers-reduced-motion:no-preference){
+  .has-reveal .pipe-link path:first-child,.has-reveal .fact-link path:first-child{stroke-dasharray:.1 6.5;clip-path:inset(0 100% 0 0);transition:clip-path .9s var(--pp-ease);transition-delay:calc(var(--i,0) * 160ms + 450ms)}
+  .has-reveal .pipe-link-head,.has-reveal .fact-link-head{opacity:0;transition:opacity .3s;transition-delay:calc(var(--i,0) * 160ms + 1.2s)}
+  .pipeline-track.is-in .pipe-link path:first-child,.hero-facts .fact-link path:first-child{clip-path:inset(0 0 0 0)}
+  .pipeline-track.is-in .pipe-link-head,.hero-facts .fact-link-head{opacity:1}
+}
+@media (max-width:1100px){
+  .plan-page .pipeline-track{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe-node:nth-child(2) .pipe-link{display:none}
+}
+@media (max-width:860px){
+  .plan-page .hero-facts{grid-template-columns:minmax(0,1fr);gap:44px;max-width:420px}
+  .plan-page .fact-main{transform:none}
+  .fact-link{right:auto;left:40px;top:auto;bottom:-46px;transform:rotate(80deg)}
+}
+@media (max-width:640px){
+  .plan-page .pipeline-track{grid-template-columns:minmax(0,1fr);gap:48px}
+  .pipe-link,.pipe-node:nth-child(2) .pipe-link{display:block;right:auto;left:36px;top:auto;bottom:-50px;transform:rotate(80deg)}
+}
