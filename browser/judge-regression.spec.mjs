@@ -842,13 +842,16 @@ test.describe('Booking Desk: plan your show', () => {
   });
 
   test('a live plan streams progress and lands on a shareable, honestly labelled plan @cross-browser', async ({ page }) => {
+    // The app allows a live plan up to three minutes; on a shared CI runner WebKit can need
+    // more than the default 30 seconds for the whole flow, so this test gets 60.
+    test.setTimeout(60000);
     await page.goto(`${origin}/judge.html`);
     await page.fill('#plan-city', 'Leeds');
     await page.fill('#plan-anchor', 'Arlo Parks');
     await page.fill('#plan-budget', '12000');
     await page.locator('#plan-submit').click();
     await expect(page.locator('#plan-progress')).toBeVisible();
-    await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/, { timeout: 30000 });
+    await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/, { timeout: 50000 });
     await expect(page.locator('#result-title')).toContainText('Book ');
     await expect(page.locator('.result-badges')).toContainText('Live plan');
     await expect(page.locator('.result-badges')).toContainText('Synthetic test data');
