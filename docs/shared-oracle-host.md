@@ -1,5 +1,28 @@
 # Sharing an existing Oracle server
 
+## Deployment of e21f563 — 26 October 2026
+
+The public host runs `e21f563eff0fe035a31dcff472c15bbcb67bd74d`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. The release is the purple and white redesign:
+- every page except the landing page and the 404 page sits in one app sidebar shell, including the Slate studio, whose eight views are nested under its row;
+- the recorded workspace session is a file-browser dashboard;
+- the Booking Desk prints its decision on the owner's ticket art and has a new hero, nav and bridge footer;
+- the 404 page is "Lost in music".
+
+- **Before the switch:** the backup `pre-e21f563` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-e21f563`. The rollback drill ran that image on a restored database copy: it reported `8a79b98`, served 12 cases and logged no errors, and it was removed afterwards. CI passed on the commit, including the regenerated Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged. Disk use is 87%.
+- **Checks:**
+  - `release:verify` passed all 86 checks. Every page returns 200 and the 404 page returns 404. The sidebar is served on app pages, and the footer only on the landing page. Private routes still return 401.
+  - In Chromium, Firefox and WebKit at phone and desktop sizes:
+    - the Booking Desk shows the bill on the ticket and flips it with Qloo off;
+    - the receipt sheet opens and closes on Escape;
+    - the workspace folders open their steps;
+    - the Slate studio lists its eight views;
+    - no page overflows.
+  - Two console messages in that run came from the script leaving pages mid-load: an aborted font download in Firefox and one refused stylesheet in WebKit. A settled per-page probe of five pages in WebKit and Firefox logged no errors.
+  - **One live "Plan a show" run on production**, through the page: Austin, fans of Khruangbin, $25,000, 3 acts. It took 13.4 seconds and 11 Qloo calls. It booked SAULT + KOKOROKO + Arc De Soleil for $19,000 (estimated fees, $6,000 under budget). With Qloo off, the same rules book Mildlife + Common Saints + Robohands for $8,000. No console errors.
+
+**Rollback:** tag `houselights-shared:pre-e21f563` as `houselights-shared:local`, set `RELEASE_COMMIT=8a79b989114ddbdbe5f4b0e93b9270ac94006271`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 8a79b98 — 25 October 2026
 
 The public host runs `8a79b989114ddbdbe5f4b0e93b9270ac94006271`. When the Qloo-off comparison is refused, the Booking Desk now says so and lets the switch retry, and the switch no longer stays flipped over an unchanged bill.
