@@ -719,3 +719,62 @@
   @keyframes tk-flip{40%{transform:rotateY(8deg) scale(.98)}}
 }
 .is-qloo-on .tk-band{color:#2A1559}
+
+/* "From what fans love to a bill you can book" as a winding timeline: a thick purple line
+   snakes down the page through four round, greyscale artworks, each with a purple shape
+   behind it, a sparkle and a sideways label, and a big number from the saved run beside it.
+   The line draws itself and the steps rise in as the section is reached. */
+.plan-page .pipeline-track.tl{position:relative;display:block;max-width:880px;margin:56px auto 0;padding:70px 0;list-style:none}
+.tl-path{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.tl-path path{fill:none;stroke:#7C4DFF;stroke-width:7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
+.tl-step{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:250px;padding:0}
+.tl-left .tl-node{grid-column:1;justify-self:end;margin-right:6%}
+.tl-left .tl-copy{grid-column:2;text-align:left}
+.tl-right .tl-node{grid-column:2;grid-row:1;justify-self:start;margin-left:6%}
+.tl-right .tl-copy{grid-column:1;grid-row:1;text-align:right;justify-self:end}
+.tl-node{position:relative;width:184px;height:184px;margin:0;isolation:isolate}
+.tl-node img{position:relative;display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;filter:grayscale(1) contrast(1.08);box-shadow:0 0 0 6px #F7F6FC,0 14px 30px #4F35A82e}
+.tl-deco{position:absolute;inset:-34px;z-index:-1}
+.tl-burst .tl-deco{border-radius:50%;background:repeating-conic-gradient(#B9A3FF 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(closest-side,transparent 62%,#000 63%);mask:radial-gradient(closest-side,transparent 62%,#000 63%)}
+.tl-petals .tl-deco{inset:-22px -40px auto auto;width:120px;height:120px;background:radial-gradient(circle at 50% 0,#D6C9FF 0 34%,transparent 35%),radial-gradient(circle at 100% 50%,#D6C9FF 0 34%,transparent 35%),radial-gradient(circle at 0 50%,#C9B8FF 0 34%,transparent 35%)}
+.tl-rays .tl-deco{inset:-40px;background:repeating-conic-gradient(from 8deg,#9B7BFF 0 3deg,transparent 3deg 12deg);-webkit-mask:radial-gradient(closest-side,transparent 70%,#000 71%,#000 99%,transparent 100%);mask:radial-gradient(closest-side,transparent 70%,#000 71%,#000 99%,transparent 100%)}
+.tl-star .tl-deco{inset:-30px auto auto -34px;width:110px;height:110px;background:#C9B8FF;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.tl-spark{position:absolute;width:34px;height:34px;fill:#7C4DFF;right:-6px;top:4px}
+.tl-right .tl-spark{right:auto;left:-10px;top:auto;bottom:10px}
+.tl-side{position:absolute;top:50%;font:600 12px/1 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:#5E44B8;white-space:nowrap}
+.tl-side::after{content:" •"}
+.tl-left .tl-side{left:-30px;transform:translate(-100%,-50%) rotate(-90deg) translateX(50%);transform-origin:right center}
+.tl-right .tl-side{right:-30px;transform:translate(100%,-50%) rotate(90deg) translateX(-50%);transform-origin:left center}
+.tl-copy{max-width:300px;padding:0 4%}
+.tl-big{display:flex;align-items:baseline;gap:10px;margin:0;font:700 clamp(46px,5vw,64px)/1 var(--font-display);letter-spacing:-.05em;color:var(--pp-ink);font-variant-numeric:tabular-nums}
+.tl-right .tl-big{justify-content:flex-end}
+.tl-big .pipe-num{font:inherit;letter-spacing:inherit;margin:0;color:inherit}
+.tl-step-no{font:500 12px/1 var(--font-mono);letter-spacing:.1em;color:#8A86A0}
+.tl-unit{margin:6px 0 0;font:600 16px/1.3 var(--font-ui);color:#5E44B8}
+.tl-text{margin:8px 0 0;font:italic 400 15px/23px var(--font-ui);color:var(--pp-soft)}
+.tl-step:last-child .tl-big{color:#5E44B8}
+@media (prefers-reduced-motion:no-preference){
+  .has-reveal .tl-path path{stroke-dashoffset:1;transition:stroke-dashoffset 2.6s cubic-bezier(.45,0,.2,1)}
+  .has-reveal .pipeline-track.tl.is-in .tl-path path{stroke-dashoffset:0}
+  .has-reveal .tl-step{opacity:0;transform:translateY(28px);transition:opacity .8s var(--pp-ease),transform .9s var(--pp-glide);transition-delay:calc(var(--i)*420ms + 200ms)}
+  .has-reveal .pipeline-track.tl.is-in .tl-step{opacity:1;transform:none}
+  .tl-deco{animation:tl-turn 40s linear infinite}
+  .tl-petals .tl-deco,.tl-star .tl-deco{animation:tl-bob 6s ease-in-out infinite alternate}
+  .tl-spark{animation:tl-twinkle 2.8s ease-in-out infinite}
+  .tl-node:hover img{filter:grayscale(0);transition:filter .5s}
+  @keyframes tl-turn{to{rotate:360deg}}
+  @keyframes tl-bob{to{translate:0 -8px;rotate:12deg}}
+  @keyframes tl-twinkle{50%{scale:.7;opacity:.6}}
+}
+@media (max-width:700px){
+  .tl-step,.tl-right .tl-node,.tl-right .tl-copy,.tl-left .tl-node,.tl-left .tl-copy{grid-column:auto;grid-row:auto}
+  .tl-step{grid-template-columns:120px minmax(0,1fr);gap:18px;min-height:200px;padding-left:4px}
+  .tl-left .tl-node,.tl-right .tl-node{justify-self:start;margin:0}
+  .tl-node{width:112px;height:112px}
+  .tl-deco{inset:-20px}
+  .tl-right .tl-copy{text-align:left;justify-self:start}
+  .tl-right .tl-big{justify-content:flex-start}
+  .tl-side{display:none}
+  .tl-petals .tl-deco,.tl-star .tl-deco{display:none}
+  .tl-spark{width:24px;height:24px}
+}

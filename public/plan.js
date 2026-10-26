@@ -339,6 +339,20 @@
     set('bill',billNames(snapshot).join(' + '));set('fee',usd(snapshot.memo.slate.totalFee));
     if(off){set('off-bill',billNames(off).join(' + '));set('off-fee',`${usd(off.memo.slate.totalFee)} · a different bill`);}
   }
+  // The timeline's line is drawn through the centres of its circles: it enters from the top,
+  // passes behind each circle and swings across between rows, so it never crosses the text.
+  function drawTimeline(){
+    const list=document.querySelector('.pipeline-track.tl'),svg=list?.querySelector('.tl-path'),path=svg?.querySelector('path');if(!path)return;
+    const box=list.getBoundingClientRect(),pts=[...list.querySelectorAll('.tl-node')].map(node=>{const r=node.getBoundingClientRect();return [r.left-box.left+r.width/2,r.top-box.top+r.height/2];});
+    if(!pts.length)return;
+    svg.setAttribute('viewBox',`0 0 ${box.width.toFixed(0)} ${box.height.toFixed(0)}`);
+    const [x0,y0]=pts[0],mid=box.width/2;let d=`M${mid.toFixed(1)} 0C${mid.toFixed(1)} ${(y0*.6).toFixed(1)} ${x0.toFixed(1)} ${(y0*.4).toFixed(1)} ${x0.toFixed(1)} ${y0.toFixed(1)}`;
+    for(let k=1;k<pts.length;k++){const [xa,ya]=pts[k-1],[xb,yb]=pts[k],dy=(yb-ya)*.62;d+=`C${xa.toFixed(1)} ${(ya+dy).toFixed(1)} ${xb.toFixed(1)} ${(yb-dy).toFixed(1)} ${xb.toFixed(1)} ${yb.toFixed(1)}`;}
+    const [xl,yl]=pts.at(-1);d+=`C${xl.toFixed(1)} ${(yl+(box.height-yl)*.6).toFixed(1)} ${mid.toFixed(1)} ${(box.height-(box.height-yl)*.4).toFixed(1)} ${mid.toFixed(1)} ${box.height.toFixed(1)}`;
+    path.setAttribute('d',d);
+  }
+  drawTimeline();
+  if(document.querySelector('.pipeline-track.tl')){let tlTimer;new ResizeObserver(()=>{clearTimeout(tlTimer);tlTimer=setTimeout(drawTimeline,120);}).observe(document.querySelector('.pipeline-track.tl'));}
   // The pipeline shows the featured run's real numbers and counts up when it scrolls in.
   function fillPipeline(snapshot){
     const values={calls:snapshot.receipts.length,candidates:itemsOf(snapshot).length,checked:snapshot.memo.slate.checkedCount,bookable:snapshot.memo.slate.feasibleCount,booked:snapshot.memo.slate.feasible?1:0};
@@ -350,7 +364,7 @@
     pipeline.classList.add('is-in');
     if(reduced())return;
     pipeline.querySelectorAll('.pipe-num').forEach((node,index)=>{
-      const target=Number(node.dataset.value??node.textContent),start=performance.now()+index*260,duration=900;
+      const target=Number(node.dataset.value??node.textContent),start=performance.now()+index*420+500,duration=900;
       const step=time=>{const t=Math.min(1,Math.max(0,(time-start)/duration)),eased=1-Math.pow(1-t,3);node.textContent=String(Math.round(target*eased));if(t<1)requestAnimationFrame(step);};
       node.textContent='0';requestAnimationFrame(step);
     });

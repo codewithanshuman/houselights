@@ -78,15 +78,27 @@ export function sideHtml(current) {
     + `<p class="app-release app-copy">Release <code data-release>…</code></p></div>`;
 }
 
-// The landing page footer: a quiet, centred block of text written on the pale sky of the
-// owner's pencil drawing of the Golden Gate Bridge, with the small print on the water.
+// The landing page footer: the brand, tagline and project links on the left, three link
+// columns and the Qloo credit, all on the pale sky of the owner's pencil drawing of the
+// Golden Gate Bridge, which runs along the bottom.
 const GH = 'https://github.com/codewithanshuman/houselights';
+const ICO = {
+  github: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>',
+  doc: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5"/></svg>',
+  pin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+};
+const col = (title, links) => `<div class="ft-col"><h2>${e(title)}</h2>${links.map(([href, label]) => `<a href="${href}">${e(label)}</a>`).join('')}</div>`;
 export function footerHtml() {
   return `<picture class="footer-art"><source media="(max-width: 640px)" srcset="/assets/brand/footer-bridge-phone.webp"><img src="/assets/brand/footer-bridge.webp" alt="Pencil drawing of the Golden Gate Bridge in morning fog, with the city skyline behind it" width="2000" height="667" loading="lazy"></picture>`
-    + `<div class="plan-footer-inner"><a class="footer-logo" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span>Houselights<span class="footer-dot">.</span></span></a>`
-    + `<p class="footer-tag">Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>`
-    + `<nav class="footer-links" aria-label="Footer"><a href="/judge.html#planner">Plan a show</a><a href="/evidence.html">Evidence</a><a href="/proof-lab.html">Qloo Proof Lab</a><a href="/workspace.html">Workspace</a><a href="${GH}">GitHub</a><a href="${GH}/blob/main/docs/security.md">Security</a></nav>`
-    + `<p class="footer-built"><span>Built with</span><img class="footer-qloo" src="/assets/brand/qloo-logo.webp" alt="Qloo" width="96" height="38" loading="lazy"><span>for the Qloo Agentic Hackathon 2026</span></p></div>`;
+    + `<div class="plan-footer-inner ft"><div class="ft-brand"><a class="footer-logo" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span>Houselights</span></a>`
+    + `<p class="ft-tag">Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>`
+    + `<ul class="ft-meta"><li>${ICO.github}<a href="${GH}">codewithanshuman/houselights</a></li><li>${ICO.doc}<a href="/evidence.html">Every claim, with its limits</a></li><li>${ICO.pin}<span>Any city Qloo knows</span></li></ul></div>`
+    + `<nav class="ft-cols footer-links" aria-label="Footer">`
+    + col('Product', [['/judge.html#planner', 'Plan a show'], ['/judge.html', 'Booking Desk'], ['/desk.html', 'Booking Desk lab'], ['/workspace.html', 'Workspace']])
+    + col('Evidence', [['/evidence.html', 'Evidence and limits'], ['/proof-lab.html', 'Qloo Proof Lab'], [`${GH}/blob/main/docs/claims-audit.md`, 'Claims audit']])
+    + col('Project', [[GH, 'Source on GitHub'], [`${GH}/blob/main/docs/security.md`, 'Security'], [`${GH}/blob/main/LICENSE`, 'MIT license']])
+    + `<div class="ft-col ft-built"><h2>Built with</h2><img class="footer-qloo" src="/assets/brand/qloo-logo.webp" alt="Qloo" width="96" height="38" loading="lazy"><p>For the Qloo Agentic Hackathon 2026, on Qloo’s taste graph.</p></div>`
+    + `</nav></div>`;
 }
 
 // Fills every empty <header ... data-site-nav="key"></header> and, on the landing page, the empty site footer.

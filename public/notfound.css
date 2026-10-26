@@ -71,3 +71,15 @@
   .nf-main{padding-top:150px}
   .nf-headphones{left:-12px;top:10px;width:104px}
 }
+
+/* On the 404 page only, the painted sketch button: a light purple wash in a hand-drawn ink
+   line over an offset ink shadow (the wobble is #hl-rough). */
+.v2.nf-page .sketch-btn{isolation:isolate;min-height:52px;padding:12px 28px;border:0;border-radius:16px;background:none;color:#16131F;font:650 16px/24px var(--font-ui);box-shadow:none;filter:none;transition:transform .45s var(--pp-ease)}
+.v2.nf-page .sketch-btn::before,.v2.nf-page .sketch-btn::after{content:"";position:absolute;inset:0;border-radius:17px 13px 18px 14px;filter:url(#hl-rough);transition:transform .45s var(--pp-ease),background .3s}
+.v2.nf-page .sketch-btn::before{z-index:-1;border:2px solid #16131F;background:#D6C9FF}
+.v2.nf-page .sketch-btn::after{z-index:-2;background:#16131F;transform:translate(4px,5px)}
+.v2.nf-page .sketch-btn:hover{transform:translate(-2px,-2px);filter:none;box-shadow:none}
+.v2.nf-page .sketch-btn:hover::before{background:#C9B8FF}
+.v2.nf-page .sketch-btn:hover::after{transform:translate(6px,7px)}
+.v2.nf-page .sketch-btn:active{transform:translate(2px,3px)}
+.v2.nf-page .sketch-btn:active::after{transform:translate(2px,2px)}
