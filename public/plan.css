@@ -324,22 +324,6 @@
 }
 
 /* Closing call to action: the concert hall, a dimmed layer, and a mini planner */
-.final-cta{position:relative;display:grid;place-items:center;min-height:580px;margin-top:48px;padding:72px 24px;border-radius:36px;overflow:hidden;background:#1F1F1F;isolation:isolate}
-.final-photo{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform 1.8s var(--pp-ease)}
-.final-cta::before{content:"";position:absolute;inset:0;z-index:-1;background:#0C0C0C99}
-.final-cta:hover .final-photo{transform:scale(1)}
-.final-card{max-width:680px;text-align:center}
-.final-card .section-eyebrow{color:#D5C8FF}
-.final-card h2{margin:0;font:600 64px/1 var(--font-ui);letter-spacing:-2.4px;color:#FFFFFF}
-.final-sub{margin:16px 0 36px;font:400 18px/28px var(--font-ui);color:#E6E2DA}
-.final-form{display:flex;align-items:center;gap:6px;max-width:640px;margin:0 auto;padding:6px;border-radius:999px;background:#FFFFFFeb;box-shadow:0 20px 48px #00000059;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.final-form input{flex:1;min-width:0;min-height:48px;padding:0 18px;border:0;border-radius:999px;background:transparent;font:400 16px/24px var(--font-ui);color:var(--pp-ink)}
-.final-form input::placeholder{color:#6B6A73}
-.final-form input:focus{outline:none;background:#fff;box-shadow:0 0 0 2px var(--pp-accent)}
-#final-anchor{border-left:1px solid var(--pp-line);border-radius:0 999px 999px 0}
-.final-form button{flex-shrink:0;min-height:48px;padding:0 22px;border:0;border-radius:999px;background:var(--pp-ink);color:#fff;font:600 16px/24px var(--font-ui);cursor:pointer;transition:transform .5s var(--pp-ease),background .3s}
-.final-form button:hover{background:#000;transform:translateY(-1px)}
-.final-form button:active{transform:scale(.98)}
 
 /* Scroll reveal: a heavy fade up, only when scripts run and motion is allowed */
 @media (prefers-reduced-motion:no-preference){
@@ -368,7 +352,6 @@
   .rank-row{grid-template-columns:44px minmax(0,1fr) 44px;gap:6px 12px;align-items:start}
   .rank-aff,.rank-fee,.rank-why{grid-column:2}
   .rank-receipt{grid-column:3;grid-row:1}
-  .final-card h2{font-size:48px;letter-spacing:-1.6px}
 }
 @media (max-width:640px){
   .plan-main{padding:0 16px 64px}
@@ -402,10 +385,6 @@
   .act-actions{grid-column:1/-1}
   .result-controls{padding:20px}
   .preset-reset{margin-left:0}
-  .final-cta{min-height:520px;padding:56px 16px;border-radius:24px}
-  .final-card h2{font-size:36px;line-height:40px;letter-spacing:-1.2px}
-  .final-form{flex-direction:column;align-items:stretch;border-radius:24px;padding:8px}
-  #final-anchor{border-left:0;border-top:1px solid var(--pp-line);border-radius:0}
 }
 
 /* ── Hero v3: an image-only fan of the owner's artwork (Pallet Ross layout), the
@@ -497,4 +476,53 @@
   .plan-page .receipt-drawer.is-closing .receipt-sheet{animation-name:sheet-down}
   @keyframes sheet-up{from{opacity:0;transform:translateY(40px)}}
   @keyframes sheet-down{to{opacity:0;transform:translateY(40px)}}
+}
+
+/* ── The decision, printed on the owner's blank gig ticket ──────────────────────────
+   Every text block is positioned in percentages of the ticket and sized in container
+   units, so it stays inside the red frame and on the two red bars at any width.
+   Geometry (of the 561 × 1400 crop): frame 7.5–92.3% across, 3–71% down; bar one at
+   18.7% / 28.2% (27.6% wide); bar two from 35.3% to the edge at 61.5%; stub below 77%. */
+.plan-page .decision{grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:40px;align-items:center}
+.ticket-stage{position:relative;display:flex;justify-content:flex-end;min-height:0;padding:12px 0}
+.ticket-poster{position:absolute;left:0;top:50%;width:min(300px,52%);height:auto;transform:translateY(-50%) rotate(-4deg);filter:drop-shadow(0 24px 34px #16131F38);transition:transform .7s var(--pp-glide)}
+.ticket-stage:hover .ticket-poster{transform:translateY(-50%) translateX(-10px) rotate(-7deg)}
+.ticket-art{position:relative;z-index:1;width:min(400px,100%);aspect-ratio:561/1400;container-type:inline-size;color:#221A16;filter:drop-shadow(0 28px 40px #16131F33) drop-shadow(0 2px 4px #16131F1f);transition:transform .7s var(--pp-glide)}
+.ticket-stage:hover .ticket-art{transform:rotate(1.2deg) translateY(-4px)}
+.ticket-paper{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none}
+.ticket-art>*:not(.ticket-paper){position:absolute;margin:0}
+.tk-head{left:14%;right:14%;top:7%;display:grid;gap:2.4cqw}
+.tk-admit{margin:0;font:700 3.2cqw/1.2 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:#A8141B}
+.plan-page .ticket-art .result-meta{margin:0;font:500 3.6cqw/1.45 var(--font-ui);color:#4A3F38;letter-spacing:0;text-transform:none}
+.plan-page .ticket-art .result-badges{display:flex;flex-wrap:wrap;gap:1.6cqw}
+.plan-page .ticket-art .badge{padding:.8cqw 2.4cqw;border:1px solid #A8141B55;border-radius:999px;background:#FFFDF5;color:#7D1015;font:600 2.7cqw/1.3 var(--font-ui);letter-spacing:.02em;text-transform:none}
+.tk-band{display:flex;align-items:center;font:700 3.4cqw/1 var(--font-mono);letter-spacing:.2em;text-transform:uppercase;color:#FFF7EA;white-space:nowrap;overflow:hidden}
+.tk-band-1{left:18.7%;width:27.6%;top:28.2%;height:2.86%;justify-content:center}
+.tk-band-2{left:35.3%;right:1.8%;top:61.5%;height:2.8%;padding-left:4cqw;letter-spacing:.06em;text-transform:none;font-size:3.5cqw}
+.tk-body{left:14%;right:14%;top:34%;bottom:41%;display:flex;flex-direction:column;justify-content:center;gap:4cqw}
+.plan-page .ticket-art .result-decision{margin:0;font:700 8.4cqw/1.08 var(--font-display);letter-spacing:-.035em;color:#1F1814;text-wrap:balance}
+.plan-page .ticket-art .decision-bill{color:#1F1814}
+.plan-page .ticket-art .decision-fee{color:#A8141B}
+.plan-page .ticket-art .result-sub{margin:0;font:400 3.7cqw/1.45 var(--font-ui);color:#4A3F38}
+.tk-stats{left:14%;right:14%;top:65%;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw}
+.tk-stats div{display:grid;gap:.6cqw}
+.tk-stats dt{font:600 2.4cqw/1.2 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:#8A7C71}
+.tk-stats dd{margin:0;font:700 4.4cqw/1 var(--font-ui);color:#1F1814;font-variant-numeric:tabular-nums}
+.ticket-art.is-changed .tk-band-1{color:#FFF7EA}
+.plan-page .result-qloo .result-why,.plan-page .result-qloo .result-changed{margin:16px 0 0;font:400 15px/23px var(--font-ui);color:var(--pp-soft)}
+.plan-page .result-qloo .result-changed{padding:10px 14px;border-radius:12px;background:#FFF4E5;color:#7A4B00}
+@media (prefers-reduced-motion:no-preference){
+  .ticket-art{animation:tk-in .9s var(--pp-glide) both}
+  .ticket-poster{animation:tk-poster .9s .1s var(--pp-glide) both}
+  @keyframes tk-in{from{opacity:0;transform:translateY(24px) rotate(-2deg)}}
+  @keyframes tk-poster{from{opacity:0;transform:translateY(-50%) translateX(40px) rotate(4deg)}}
+}
+@media (max-width:1000px){
+  .plan-page .decision{grid-template-columns:minmax(0,1fr);gap:24px}
+  .ticket-stage{justify-content:center}
+  .ticket-poster{left:calc(50% - 300px);width:240px}
+}
+@media (max-width:640px){
+  .ticket-poster{display:none}
+  .ticket-art{width:min(340px,100%)}
 }

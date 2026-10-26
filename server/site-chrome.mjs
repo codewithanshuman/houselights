@@ -51,10 +51,21 @@ export function topHtml(current) {
     + `<button class="app-share" type="button" data-share>${icon('share')}<span>Share</span></button></div>`;
 }
 
+// Slate studio switches views in place (public/app.js), so its views are buttons nested under
+// its row. decision.js, gm.js and advanced.js add the Decision Room, Festival GM, Event
+// portfolio and Independent evaluation views to the same group when they load.
+const SLATE_VIEWS = '<div class="app-sub slate-views" role="group" aria-label="Slate studio views">'
+  + '<button class="nav-item active" type="button" data-view="slate" aria-current="page"><span class="app-copy">Slate studio</span><span class="nav-key">01</span></button>'
+  + '<button class="nav-item" type="button" data-view="gauntlet"><span class="app-copy">Decision Gauntlet</span><span id="gauntlet-count" class="nav-count">0/6</span></button>'
+  + '<button class="nav-item" type="button" data-view="evidence"><span class="app-copy">Evidence ledger</span><span id="receipt-count" class="nav-count">0</span></button>'
+  + '<button class="nav-item" type="button" data-view="method"><span class="app-copy">Decision policy</span><span class="nav-key">04</span></button></div>';
+const CONNECTION = '<div class="connection app-copy"><span id="connection-dot" class="status-dot"></span><div><strong id="connection-label">Connecting</strong><small id="connection-detail">Checking data source</small></div></div>';
+
 export function sideHtml(current) {
   const row = ([key, href, label, glyph, children, tag]) => {
     const here = key === current;
-    return `<li><a class="app-row${here ? ' is-current' : ''}" href="${href}" data-row${here ? ' aria-current="page"' : ''}>${icon(glyph)}<span class="app-copy">${e(label)}</span>${tag ? `<span class="app-tag app-copy">${e(tag)}</span>` : ''}</a>`
+    return `<li><a class="app-row${here ? ' is-current' : ''}${here && key === 'slate' ? ' has-child-here' : ''}" href="${href}" data-row${here ? ' aria-current="page"' : ''}>${icon(glyph)}<span class="app-copy">${e(label)}</span>${tag ? `<span class="app-tag app-copy">${e(tag)}</span>` : ''}</a>`
+      + (key === 'slate' && here ? SLATE_VIEWS : '')
       + (children && here ? `<ul class="app-sub">${children.map(([subHref, subLabel]) => `<li><a class="app-row app-subrow" href="${subHref}" data-row><span class="app-copy">${e(subLabel)}</span></a></li>`).join('')}</ul>` : '')
       + '</li>';
   };
@@ -63,7 +74,7 @@ export function sideHtml(current) {
     + `<button class="app-menu" type="button" data-side-menu aria-label="Open menu" aria-expanded="false" aria-controls="app-nav">${icon('menu')}</button></div>`
     + `<nav id="app-nav" class="app-nav" aria-label="Main navigation"><span class="app-glide" aria-hidden="true"></span>`
     + APP.map(([group, rows]) => `${group ? `<p class="app-group app-copy">${e(group)}</p>` : ''}<ul>${rows.map(row).join('')}</ul>`).join('')
-    + `</nav><div class="app-side-foot"><a class="app-maker" href="https://github.com/codewithanshuman/houselights" aria-label="Source on GitHub, built by Anshu"><svg class="app-gh" width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="app-copy app-maker-copy"><small>Built by</small><span class="app-sign">Anshu</span></span></a>`
+    + `</nav><div class="app-side-foot">${current === 'slate' ? CONNECTION : ''}<a class="app-maker" href="https://github.com/codewithanshuman/houselights" aria-label="Source on GitHub, built by Anshu"><svg class="app-gh" width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="app-copy app-maker-copy"><small>Built by</small><span class="app-sign">Anshu</span></span></a>`
     + `<p class="app-release app-copy">Release <code data-release>…</code></p></div>`;
 }
 
@@ -85,7 +96,7 @@ export function withSiteNav(html) {
   let app = false;
   let out = html.replace(/(<header\b[^>]*\bdata-site-nav="([\w-]*)"[^>]*>)(<\/header>)/g, (_, open, key, close) => {
     if (key === 'none') return '';
-    if (APP_KEYS.has(key)) { app = true; return `<header class="app-side" data-site-nav="${key}">${sideHtml(key)}</header>${key === 'workspace' ? '' : topHtml(key)}`; }
+    if (APP_KEYS.has(key)) { app = true; return `<header class="app-side" data-site-nav="${key}">${sideHtml(key)}</header>${key === 'workspace' || key === 'slate' ? '' : topHtml(key)}`; }
     return open + navHtml(key) + close;
   });
   // Only the landing page has a footer; the app pages and the 404 page end with their content.

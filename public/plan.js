@@ -69,7 +69,7 @@
   }
 
   // ── Rendering ──────────────────────────────────────────────────────────────────
-  // The decision reads like a gig ticket with a budget stub; the Qloo panel sets the two
+  // The decision is printed on the owner's blank gig ticket, beside a poster ticket; the Qloo panel sets the two
   // bills side by side; booked acts get cards with a rank ring and every other candidate
   // sits in one ranked table that says why it was not booked.
   const ring=(fraction,label,cls='')=>{
@@ -98,25 +98,28 @@
       </div>`;
     result.innerHTML=`
       <div class="decision">
-        <article class="ticket${changed?' is-changed':''}" aria-labelledby="result-title">
-          <div class="ticket-main">
-            <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
-            <div class="result-badges">${badges}</div>
-            <h2 id="result-title" class="result-decision">${decision}</h2>
-            <p class="result-sub">${sub}</p>
-            ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest scoring set that fits the budget.</p>`:''}
-            ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
-          </div>
-          <div class="ticket-stub">
-            ${slate.feasible?ring(used,`${Math.round(used*100)}%`,'ring-budget'):''}
-            <p class="stub-small">${slate.feasible?'of the budget':'No bookable bill'}</p>
-            <dl class="stub-stats">
-              <div><dt>Bills checked</dt><dd>${e(slate.checkedCount)}</dd></div>
+        <div class="ticket-stage">
+          <img class="ticket-poster" src="/assets/brand/ticket-vinyl.webp" alt="" width="445" height="820" loading="lazy">
+          <article class="ticket-art${changed?' is-changed':''}" aria-labelledby="result-title">
+            <img class="ticket-paper" src="/assets/brand/ticket-blank.webp" alt="" width="449" height="1120">
+            <div class="tk-head">
+              <p class="tk-admit">Admit one</p>
+              <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
+              <div class="result-badges">${badges}</div>
+            </div>
+            <p class="tk-band tk-band-1" aria-hidden="true">The bill</p>
+            <div class="tk-body">
+              <h2 id="result-title" class="result-decision">${decision}</h2>
+              <p class="result-sub">${slate.feasible?`Every booking rule passes. Best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked.`:sub}</p>
+            </div>
+            <p class="tk-band tk-band-2">${slate.feasible?`${e(usd(slate.remainingBudget))} under budget`:'No bookable bill'}</p>
+            <dl class="tk-stats">
+              <div><dt>Budget used</dt><dd>${slate.feasible?`${Math.round(used*100)}%`:'—'}</dd></div>
+              <div><dt>Checked</dt><dd>${e(slate.checkedCount)}</dd></div>
               <div><dt>Bookable</dt><dd>${e(slate.feasibleCount)}</dd></div>
-              <div><dt>Left over</dt><dd>${slate.feasible?e(usd(slate.remainingBudget)):'—'}</dd></div>
             </dl>
-          </div>
-        </article>
+          </article>
+        </div>
         <section class="result-qloo" aria-label="What Qloo changes">
           <div class="qloo-head">
             <button type="button" class="fs-switch" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
@@ -133,6 +136,8 @@
             <span class="compare-arrow" aria-hidden="true">→</span>
             ${side('off','Without Qloo evidence',offBill,offFee,view.qlooOff)}
           </div>
+          ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and books the highest scoring set that fits the budget.</p>`:''}
+          ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
         </section>
       </div>
       ${actSections()}
@@ -351,13 +356,6 @@
     const pipeWatch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){pipeWatch.disconnect();countUp();}},{rootMargin:'0px 0px -25% 0px'});
     pipeWatch.observe(pipeline);
   }else pipeline?.classList.add('is-in');
-  // The closing form hands its answers to the planner and starts a live plan.
-  $('final-form')?.addEventListener('submit',event=>{
-    event.preventDefault();
-    $('plan-city').value=$('final-city').value.trim();$('plan-anchor').value=$('final-anchor').value.trim();
-    $('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
-    const input=readInput();if(input)void planLive(input);
-  });
   // Sections fade up as they enter; the tagline lights word by word along the reading line.
   if('IntersectionObserver' in window){
     document.documentElement.classList.add('has-reveal');

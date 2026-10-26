@@ -64,7 +64,7 @@
   function bindSide(side){
     const nav=side.querySelector('.app-nav'),glide=side.querySelector('.app-glide'),toggle=side.querySelector('[data-side-toggle]'),menu=side.querySelector('[data-side-menu]');
     nav?.addEventListener('pointerover',event=>{
-      const row=event.target.closest('[data-row]');if(!row||!nav.contains(row))return;
+      const row=event.target.closest('[data-row],.nav-item');if(!row||!nav.contains(row))return;
       const top=row.getBoundingClientRect().top-nav.getBoundingClientRect().top;
       if(!nav.classList.contains('is-gliding'))glide.style.transition='none';
       glide.style.setProperty('--y',`${top}px`);glide.style.height=`${row.offsetHeight}px`;
@@ -72,7 +72,7 @@
     });
     nav?.addEventListener('pointerleave',()=>nav.classList.remove('is-gliding'));
     // On a page section with its own sub-row (the recorded session), the sub-row holds the highlight.
-    const markSub=()=>{const current=side.querySelector('.app-row.is-current');let here=false;side.querySelectorAll('.app-subrow').forEach(row=>{const on=Boolean(row.hash)&&row.hash===location.hash;row.classList.toggle('is-here',on);if(on){row.setAttribute('aria-current','location');here=true;}else row.removeAttribute('aria-current');});current?.classList.toggle('has-child-here',here);};
+    const markSub=()=>{const current=side.querySelector('.app-row.is-current');let here=false;side.querySelectorAll('.app-subrow').forEach(row=>{const on=Boolean(row.hash)&&row.hash===location.hash;row.classList.toggle('is-here',on);if(on){row.setAttribute('aria-current','location');here=true;}else row.removeAttribute('aria-current');});if(side.querySelector('.app-subrow'))current?.classList.toggle('has-child-here',here);};
     markSub();addEventListener('hashchange',markSub);
     document.querySelector('[data-share]')?.addEventListener('click',async event=>{
       const label=event.currentTarget.querySelector('span');

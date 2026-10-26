@@ -2,7 +2,7 @@
 (() => {
   const e = escapeHTML;
   let busy = false, editable = true, lastId = null;
-  document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend', '<button class="nav-item" data-view="gm"><span class="ui-icon nav-icon" data-icon="network" aria-hidden="true"></span>Festival GM<span class="nav-key">05</span></button>');
+  document.querySelector('.slate-views').insertAdjacentHTML('beforeend', '<button class="nav-item" data-view="gm"><span class="ui-icon nav-icon" data-icon="network" aria-hidden="true"></span>Festival GM<span class="nav-key">05</span></button>');
   $('results').insertAdjacentHTML('afterbegin', '<div class="gm-status"><strong>Take this slate into the festival workflow.</strong> Compare markets, inspect the whole lineup, and rehearse a headliner cancellation. <button type="button" class="button dark small" data-view="gm">Open Festival GM <span class="ui-icon" data-icon="arrow-right" aria-hidden="true"></span></button></div>');
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gm" aria-label="Festival GM" hidden>
     <div class="page-heading compact-heading"><div><p class="eyebrow">THE FESTIVAL DECISION, END TO END</p><h1>Your lineup.<br>Your next move.</h1><p class="lede">Research the market. Build a connected bill. Recover when plans change.</p><p class="gm-steps"><span>01 Brief & budget</span><span>02 Cultural research</span><span>03 Lineup decision</span><span>04 Cancellation & recovery</span></p></div></div>

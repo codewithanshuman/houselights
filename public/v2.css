@@ -281,3 +281,17 @@ body.app-shell>.app-top{display:flex;align-items:center;justify-content:space-be
   body.app-shell>.app-top{padding:10px 16px 0;min-height:52px}
   .app-crumb:not([aria-current]),.app-crumbs>svg,.app-sep{display:none}
 }
+
+/* Slate studio's views: buttons nested under its row, on the same tree line */
+.slate-views{display:grid;gap:2px}
+.app-side .slate-views .nav-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;width:100%;height:36px;min-height:36px;padding:0 12px;border:0;border-radius:12px;background:none;color:var(--pp-muted);font:500 14px/1 var(--font-ui);text-align:left;white-space:nowrap;cursor:pointer;transition:color .15s,transform .15s}
+.app-side .slate-views .nav-item:hover{color:var(--pp-ink)}
+.app-side .slate-views .nav-item:active{transform:scale(.98)}
+.app-side .slate-views .nav-item .ui-icon{display:none}
+.app-side .slate-views .nav-item :is(.nav-key,.nav-count){margin-left:auto;padding:0;background:none;font:500 11px/16px var(--font-mono);color:#69657F}
+.app-side .slate-views .nav-item.active{color:var(--pp-ink);font-weight:600;background:var(--pp-grad-soft);box-shadow:0 0 0 1px #E2DCF6,0 1px 2px #4F35A814}
+.slate-views>.nav-item::before{content:"";position:absolute;left:-18px;top:-8px;width:12px;height:26px;border-left:1.5px solid var(--pp-line-strong);border-bottom:1.5px solid var(--pp-line-strong);border-bottom-left-radius:10px}
+.app-side-foot .connection{display:flex;align-items:center;gap:10px;margin:0 0 6px;padding:10px 12px;border-radius:12px;background:#FAF9FE;font:400 12px/16px var(--font-ui)}
+.app-side-foot .connection strong{display:block;font:600 12.5px/16px var(--font-ui);color:var(--pp-ink)}
+.app-side-foot .connection small{display:block;font:400 11.5px/15px var(--font-ui);color:var(--pp-muted)}
+.side-collapsed .slate-views,.side-collapsed .app-side-foot .connection{display:none}
