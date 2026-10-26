@@ -1,0 +1,45 @@
+name: Linux visual baselines
+# The visual regression tests compare against screenshots taken on the same platform, and the
+# Linux ones must come from the same Ubuntu image the release workflow uses. When a change to
+# the pages reaches development, this regenerates only the Linux screenshots that differ,
+# checks them again from a clean run, and commits them back. Windows screenshots are made
+# locally. Commits made with the built-in token do not start other workflows, so the next
+# push to development is the first full release run against the new screenshots.
+on:
+  push:
+    branches: [development]
+    paths:
+      - "public/**"
+      - "browser/**"
+      - "server/site-chrome.mjs"
+      - ".github/workflows/linux-baselines.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: linux-baselines-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  baselines:
+    if: github.event.repository.private == false && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - run: npm ci
+      - run: npm run build:worker
+      - run: npx playwright install --with-deps chromium
+      - name: Regenerate the Linux screenshots that differ
+        run: npx playwright test --project=chromium --grep @visual --update-snapshots
+      - name: Check them again from a clean run
+        run: npx playwright test --project=chromium --grep @visual
+      - name: Commit changed Linux screenshots
+        run: |
+          git add 'browser/*-snapshots/*-linux.png'
+          if git diff --cached --quiet; then echo "Linux screenshots already current."; exit 0; fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m "Update Linux visual baselines for ${GITHUB_SHA::7}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
