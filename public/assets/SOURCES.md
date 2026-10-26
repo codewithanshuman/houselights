@@ -7,6 +7,7 @@
 - The owner marked the sunflower image `no-use.png`; it is no longer served. The old festival footer, the headline image pills and the earlier card crops were removed from `public/` (they remain in Git history). `brand/concert-hall-band.webp` is still used by the closing call to action.
 - `brand/qloo-logo.webp` is a 240 px trimmed copy of the supplied `Qloo-Logo.png`, used only as a "Built with Qloo" attribution in the landing page header badge, the landing footer and the Qloo receipt.
 - `brand/record-404.webp` and `brand/record-404-label.webp` are cut from the supplied `404.png` (a turntable). On the 404 page only the label spins, and CSS tints it purple.
+- `brand/sticker-headphones.webp` and `brand/sticker-cassette.webp` are trimmed 560 px copies of the supplied `404-elements-1.png` and `404-elements-2.png` (transparent stickers), used only as decoration on the 404 page. The cassette's small stickers are part of the supplied artwork.
 - The GitHub mark on the 404 page and in the sidebar is GitHub's published Octicon mark, used only to link to this project's repository.
 - Requested typefaces (Gotham, Biski, Lulu Font TH) are not bundled: no font files or licences were supplied, and Gotham is a commercial typeface. The CSS has one variable per role (`--font-ui`, `--font-display`, `--font-hand`), so licensed files can be dropped in later. The sidebar signature uses the visitor's installed script face (Segoe Script, Snell Roundhand and similar).
 

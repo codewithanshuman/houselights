@@ -1,34 +1,91 @@
-/* 404: full-bleed and nothing else. The record is the zero in 4 0 4 and only its label
-   spins, so the tonearm stays put. Two light purple planes sit behind it. */
-.nf-page{min-height:100vh}
-.nf-main{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;min-height:100vh;padding:48px 20px 64px;overflow:hidden;isolation:isolate;background:#fff}
-.nf-block{position:absolute;z-index:-1;pointer-events:none}
-.nf-blue{inset:0 0 auto auto;width:56%;height:70%;background:#DDD3FF;clip-path:polygon(24% 0,100% 0,100% 100%,0 100%)}
-.nf-yellow{inset:auto 0 0 0;height:42%;background:#F1EDFF;clip-path:polygon(0 34%,62% 34%,70% 0,100% 0,100% 100%,0 100%)}
+/* 404, "Lost in music": full-bleed paper, 4 (record) 4 with only the label spinning, two
+   stickers drifting at the edges, a now-playing ticker, and two buttons: the painted sketch
+   button home and a pixel-dissolve GitHub button that floods dark under the pointer. */
+.nf-page{min-height:100vh;background:#F7F5FD}
+.nf-main{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:56px 20px 96px;overflow:hidden;isolation:isolate;text-align:center;
+  background:radial-gradient(900px 520px at 50% 42%,#FFFFFF 0,#FFFFFF00 70%),radial-gradient(700px 420px at 90% 110%,#E4DBFF 0,#E4DBFF00 70%),#F4F1FC}
+/* Paper grain */
+.nf-main::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .5 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-.nf-stage{--nf:clamp(120px,24vw,320px);display:flex;align-items:flex-end;justify-content:center;gap:clamp(4px,1vw,16px)}
+/* Stickers */
+.nf-sticker{position:absolute;z-index:-1;height:auto;filter:drop-shadow(0 14px 22px #4F35A82e);user-select:none;transition:transform .6s var(--pp-glide),filter .4s}
+.nf-headphones{left:max(2%,calc(50% - 640px));top:9%;width:clamp(120px,17vw,250px);--r:-14deg;transform:rotate(var(--r))}
+.nf-cassette{right:max(2%,calc(50% - 660px));bottom:15%;width:clamp(150px,20vw,300px);--r:9deg;transform:rotate(var(--r))}
+.nf-sticker:hover{transform:rotate(calc(var(--r) * -.4)) scale(1.06);filter:drop-shadow(0 22px 30px #4F35A840)}
+
+/* Copy */
+.nf-kicker{display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;padding:6px 14px;border:1px solid #DCD3FA;border-radius:999px;background:#ffffffc7;font:500 12px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:#4F35A8}
+.nf-live{width:7px;height:7px;border-radius:50%;background:#7B5CF0}
+.nf-stage{--nf:clamp(96px,17vw,230px);display:flex;align-items:flex-end;justify-content:center;gap:clamp(4px,1vw,14px)}
 .nf-four{font:600 var(--nf)/.72 var(--font-display);letter-spacing:-.06em;color:#16131F;padding-bottom:calc(var(--nf)*.04)}
 .nf-record{position:relative;width:calc(var(--nf)*1.3);aspect-ratio:1;margin:0 calc(var(--nf)*-.08)}
 .nf-platter{position:absolute;left:49.4%;top:63.1%;width:72%;aspect-ratio:1;border-radius:50%;background:#fff;box-shadow:0 18px 40px #16131F2e,0 0 0 1px #16131F08;transform:translate(-50%,-50%)}
 .nf-disc{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 10px 18px #16131F40)}
 .nf-label{position:absolute;left:49.44%;top:63.08%;width:22.01%;height:auto;transform:translate(-50%,-50%);filter:grayscale(1) sepia(1) hue-rotate(215deg) saturate(2.4) brightness(.97)}
-
-.nf-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:16px 20px}
+.v2 .nf-title{margin:30px 0 0;font:600 clamp(36px,5.4vw,68px)/1 var(--font-display);letter-spacing:-.045em;color:#16131F}
+.nf-music{position:relative;display:inline-block;color:var(--pp-accent)}
+.nf-music svg{position:absolute;left:-2%;bottom:-.14em;width:104%;height:.22em;overflow:visible}
+.nf-music path{fill:none;stroke:#9B82F5;stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:100}
+.v2 .nf-sub{max-width:440px;margin:22px auto 0;font:400 17px/26px var(--font-ui);color:#4A4560}
+.nf-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:16px 22px;margin-top:32px}
 .nf-actions svg{flex-shrink:0}
-.nf-github{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:12px 24px;border:1.5px solid #16131F;border-radius:16px;background:#fff;color:#16131F;font:650 16px/24px var(--font-ui);text-decoration:none;box-shadow:3px 4px 0 #16131F;transition:transform .4s var(--pp-ease),box-shadow .4s var(--pp-ease)}
-.nf-github:hover{transform:translate(-2px,-2px);box-shadow:5px 6px 0 #16131F}
-.nf-github:active{transform:translate(2px,3px);box-shadow:1px 1px 0 #16131F}
+
+/* Pixel-dissolve button (GitHub) */
+.px-btn{position:relative;display:inline-flex;align-items:stretch;min-height:52px;border:1.5px solid #2A2536;border-radius:6px;background:#fff;color:#16131F;font:500 15px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;overflow:hidden;isolation:isolate;box-shadow:0 1px 0 #16131F14}
+.px-cells{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(var(--cols,24),1fr);grid-auto-rows:1fr;pointer-events:none}
+.px-cells i{display:block;background:#16131F;opacity:0}
+.px-text{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:0 22px;transition:color .15s}
+.px-div{position:relative;z-index:1;width:0;margin:9px 0;border-left:1.5px dashed #A19DB2;transition:border-color .15s}
+.px-arrow{position:relative;z-index:1;display:grid;place-items:center;padding:0 18px;font:400 20px/1 var(--font-ui);transition:color .15s,transform .45s var(--pp-ease)}
+.px-btn.is-on .px-cells i{animation:px-in .36s steps(3,end) var(--d,0s) forwards}
+.px-btn.is-off .px-cells i{opacity:1;animation:px-out .3s steps(3,end) var(--d,0s) forwards}
+.px-btn.is-on .px-text{color:#fff;transition-delay:.2s}
+.px-btn.is-on .px-arrow{color:#fff;transform:translateX(3px);transition-delay:.26s,0s}
+.px-btn.is-on .px-div{border-color:#ffffffb3;transition-delay:.24s}
+@keyframes px-in{0%{opacity:0}100%{opacity:1}}
+@keyframes px-out{0%{opacity:1}100%{opacity:0}}
+.px-btn:focus-visible{outline:3px solid var(--pp-accent);outline-offset:3px}
+
+/* Now playing ticker */
+.nf-ticker{position:absolute;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid #DCD3FA;background:#ffffffb3;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.nf-ticker-track{display:flex;width:max-content}
+.nf-ticker span{display:inline-flex;align-items:center;gap:28px;padding:14px 0 14px 28px;font:500 12px/16px var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:#4F35A8;white-space:nowrap}
+.nf-ticker span::after{content:"";width:6px;height:6px;border-radius:50%;background:#B9A8F8}
 
 @media (prefers-reduced-motion:no-preference){
   .nf-label{animation:nf-spin 3.6s linear infinite}
-  .nf-record{animation:nf-drop 1.1s cubic-bezier(.32,.72,0,1) both}
-  .nf-four{animation:nf-rise .9s cubic-bezier(.32,.72,0,1) both}.nf-four:last-child{animation-delay:.12s}
-  .nf-actions{animation:nf-rise .9s .25s cubic-bezier(.32,.72,0,1) both}
+  .nf-record{animation:nf-drop 1.1s var(--pp-glide) both}
+  .nf-four{animation:nf-rise .9s var(--pp-glide) both}.nf-four:last-child{animation-delay:.12s}
+  .nf-title,.nf-sub,.nf-actions,.nf-kicker{animation:nf-rise .9s var(--pp-glide) both}
+  .nf-title{animation-delay:.18s}.nf-sub{animation-delay:.26s}.nf-actions{animation-delay:.34s}
+  .nf-music path{animation:nf-draw 1.2s .7s var(--pp-ease) both}
+  .nf-live{animation:nf-pulse 2s ease-out infinite}
+  .nf-headphones{animation:nf-float-a 7s ease-in-out infinite}
+  .nf-cassette{animation:nf-float-b 8s ease-in-out infinite}
+  .nf-ticker-track{animation:nf-marquee 38s linear infinite}
   @keyframes nf-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
   @keyframes nf-drop{from{opacity:0;transform:translateY(-24px) rotate(-8deg)}}
-  @keyframes nf-rise{from{opacity:0;transform:translateY(32px)}}
+  @keyframes nf-rise{from{opacity:0;transform:translateY(28px)}}
+  @keyframes nf-draw{from{stroke-dashoffset:100}}
+  @keyframes nf-pulse{0%{box-shadow:0 0 0 0 #7B5CF066}70%,100%{box-shadow:0 0 0 8px #7B5CF000}}
+  @keyframes nf-float-a{50%{translate:0 -14px;rotate:3deg}}
+  @keyframes nf-float-b{50%{translate:0 12px;rotate:-3deg}}
+  @keyframes nf-marquee{to{transform:translateX(-50%)}}
 }
-@media (max-width:640px){
-  .nf-blue{width:80%;height:58%}
-  .nf-yellow{height:50%}
+@media (prefers-reduced-motion:reduce){
+  .px-btn:hover,.px-btn:focus-visible{background:#16131F;color:#fff}
+  .px-btn:hover .px-div{border-color:#ffffffb3}
+}
+@media (max-width:760px){
+  .nf-main{justify-content:flex-start;padding-top:96px}
+  .nf-headphones{left:-18px;top:18px;width:118px}
+  .nf-cassette{right:-30px;bottom:64px;width:150px}
+  .v2 .nf-sub{font-size:16px;line-height:24px}
+}
+/* Mono for the label-style text (beats the older pages' font reset in v2.css) */
+.v2.v2.v2.nf-page main :is(.px-btn,.px-text,.nf-kicker,.nf-ticker span){font-family:var(--font-mono)}
+@media (max-width:760px){
+  .nf-main{padding-top:150px}
+  .nf-headphones{left:-12px;top:10px;width:104px}
 }
