@@ -11,7 +11,13 @@
   const data=JSON.parse(dataNode.textContent),cur=data.brief.currency||'USD';
   const $=id=>document.getElementById(id);
   const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const reveal=target=>{target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});target.focus({preventScroll:true});};
+  // A control can still be disabled while the case loads; focus it as soon as it is ready
+  // (for up to ten seconds) so the jump never leaves focus behind.
+  const reveal=target=>{
+    target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
+    const until=Date.now()+10000,focus=()=>{if(!target.disabled){target.focus({preventScroll:true});return;}if(Date.now()<until)setTimeout(focus,120);};
+    focus();
+  };
   const badge=basis=>`<span class="fit-badge ${basis==='Qloo affinity'?'fit-badge-affinity':'fit-badge-ordinal'}">Fit: ${e(basis)}</span>`;
   const bill=row=>`${row.names.join(' + ')} (${money(row.totalFee,cur)})`;
 
