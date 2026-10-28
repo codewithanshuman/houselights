@@ -40,10 +40,11 @@ X-Request-Id: <per request>
 
 ## Dependencies
 
-- **CI audit:** `npm audit --omit=dev --audit-level=critical` runs in CI.
-- **Current audit:** 3 remaining runtime dependency findings (1 high, 2 moderate), through `@qloo/qloo-harness` → `@earendil-works/pi-coding-agent` → npm `undici`; the audit offers no fix. The installed Undici finding now includes HTTP decompression, redirects/cache, TLS, WebSocket buffering, EventSource and SRI advisories. It must not be dismissed solely because EventSource is unused. The canonical adapter build manifest has 666 inputs and includes neither npm Undici nor the terminal agent; Node's built-in fetch uses a separate bundled Undici. This limits the observed package execution scope, not proof that every advisory is inapplicable. The audit is **not clean**; review before release and rerun after dependency updates. See [hardening scope and limits](production-hardening.md).
+- **CI audit:** `npm audit --omit=dev --audit-level=high` rejects high and critical runtime dependency advisories.
+- **Dependency follow-up, 28 October:** the locked-tree audit reports zero known vulnerabilities after updating the existing scoped Undici override from `8.10.2` to `8.12.2`. Previously, the harness → terminal-agent dependency chain produced one high and two moderate findings. The audit's `fixAvailable: false` did not mean no patched release existed: the project's explicit override prevented automatic remediation. The [upstream security release](https://github.com/nodejs/undici/releases/tag/v8.12.2) addresses the reported decompression, redirect/cache, TLS, WebSocket, EventSource and SRI advisories. No other package version changed. Node 24 satisfies the package's `>=22.19.0` engine requirement. Node's built-in fetch uses its separately bundled Undici; updating this npm package does not update Node itself. See [hardening scope and limits](production-hardening.md).
 - **Fixed on 25 October:** `body-parser` (DoS via trailing bytes), `fast-uri` and `zod`.
 - **Docker base image:** pinned by multi-arch digest (`node:24-slim@sha256:55fb5f5a…`).
+- **Runtime verification:** both pinned Linux platform configurations contain Node `24.22.1`, whose [security release](https://nodejs.org/en/blog/release/v24.22.1) updates bundled Undici to `7.30.1`. The actual CI container check asserts that bundled-library minimum separately from the installed npm `8.12.2` pin. Use the patched Node 24 runtime for release verification; a clean npm audit does not cover Node's bundled dependencies. Local follow-up validation uses a checksum-verified, project-local binary without replacing the system Node installation.
 
 ## Proxy trust
 
