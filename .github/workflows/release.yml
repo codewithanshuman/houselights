@@ -57,6 +57,9 @@ jobs:
           exit 1
       - run: npm run test:browser
         if: matrix.runner == 'ubuntu-24.04'
+      - name: Repeat the WebKit live-plan pointer journey without retries
+        if: matrix.runner == 'ubuntu-24.04'
+        run: npx playwright test --project=webkit --grep 'live plan streams progress and lands' --repeat-each=5
       - name: Configure container-only fixtures after unit tests
         run: |
           cat >> "$GITHUB_ENV" <<'EOF'

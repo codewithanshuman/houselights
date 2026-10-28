@@ -288,11 +288,18 @@
   // ── Live planning ──────────────────────────────────────────────────────────────
   // The agent card first replays the saved New York run; a live plan takes it over.
   const agent=$('agent-trace');
-  let replaying=null,replayStarted=false,watchReady=false;
-  function startReplay(){
+  let replaying=null,replayStarted=false,watchReady=false,replayStatic=false;
+  function startReplay({animate=!form.contains(document.activeElement)}={}){
     if(replayStarted||!view||view.record.id!==FEATURED||!window.HLTrace)return;
-    replayStarted=true;replaying=window.HLTrace.replay(agent,view.base,{speed:2});
+    replayStarted=true;replayStatic=!animate||reduced();
+    replaying=window.HLTrace.replay(agent,view.base,{speed:2,animate,onReplay:()=>{replaying?.cancel();replayStarted=false;startReplay({animate:true});}});
   }
+  // Once someone starts their own brief, keep the complete genuine saved record
+  // inspectable without timed updates moving the adjacent controls.
+  form.addEventListener('focusin',()=>{
+    if(!replaying||replayStatic||view?.record.id!==FEATURED)return;
+    replaying.cancel();replayStarted=false;startReplay({animate:false});
+  });
   if('IntersectionObserver' in window){
     const watch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){watch.disconnect();watchReady=true;startReplay();}},{rootMargin:'0px 0px -20% 0px'});
     watch.observe(agent);
@@ -309,7 +316,7 @@
   }
   async function planLive(input){
     const submit=$('plan-submit'),status=$('progress-status');
-    replaying?.cancel();replayStarted=true;
+    replaying?.cancel();replaying=null;replayStarted=true;
     submit.disabled=true;submit.textContent='Planning…';$('progress-choose').hidden=true;
     $('agent-caption').textContent=`Live run: ${input.city}, fans of ${input.anchor}`;
     const trace=window.HLTrace.create(agent,{city:input.city,anchor:input.anchor,label:`Researching ${input.city} with Qloo`});

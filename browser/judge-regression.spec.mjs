@@ -970,13 +970,32 @@ test.describe('Booking Desk: plan your show', () => {
     test.setTimeout(60000);
     const errors=[],requests=[];page.on('pageerror',error=>errors.push(error.message));
     page.on('request',request=>{if(request.method()==='POST'&&request.url().endsWith('/api/plan'))requests.push(request.postData());});
+    const navigations=[];page.on('request',request=>{if(request.isNavigationRequest())navigations.push(request.url());});
+    await page.addInitScript(()=>{
+      window.__planInputEvents=[];let active=false;
+      for(const type of ['pointerdown','mousedown','mouseup','click','submit'])document.addEventListener(type,event=>{
+        const target=event.target instanceof Element?event.target:null;
+        if(target?.closest('#plan-submit'))active=true;
+        if(!active||window.__planInputEvents.length>=12)return;
+        const rect=document.getElementById('plan-submit')?.getBoundingClientRect();
+        const item={type,target:target?.id||target?.className||target?.tagName,x:event.clientX,y:event.clientY,scrollY,buttonY:rect?.y,buttonHeight:rect?.height,prevented:false};window.__planInputEvents.push(item);
+        queueMicrotask(()=>{item.prevented=event.defaultPrevented;});
+      },true);
+    });
     await page.goto(`${origin}/judge.html`);
     await page.fill('#plan-city', 'Leeds');
+    expect(await page.locator('#plan-form').evaluate(node=>{const s=getComputedStyle(node);return {transform:s.transform,filter:s.filter,opacity:s.opacity};})).toEqual({transform:'none',filter:'none',opacity:'1'});
     await page.fill('#plan-anchor', 'Arlo Parks');
     await page.fill('#plan-budget', '12000');
-    await page.locator('#plan-submit').click();
+    await expect(page.locator('#agent-trace .agent-label-text')).toHaveText('Researched in 20.5s · 18 Qloo calls');
+    await expect(page.locator('#agent-trace .agent-stage')).toHaveCount(7);
+    await expect(page.locator('#agent-trace .agent-foot')).toContainText('shown without animation');
+    await page.locator('#plan-submit').click({delay:120});
+    expect(JSON.stringify(await page.evaluate(()=>window.__planInputEvents))).toContain('"type":"submit"');
+    const pressScroll=await page.evaluate(()=>window.__planInputEvents.filter(event=>['pointerdown','mouseup'].includes(event.type)).map(event=>event.scrollY));
+    expect(Math.max(...pressScroll)-Math.min(...pressScroll)).toBeLessThanOrEqual(1);
     await expect(page.locator('#plan-progress')).toBeVisible();
-    await expect.poll(async()=>JSON.stringify({ready:/\?plan=[a-f0-9]{24}$/.test(page.url()),requests:requests.length,errors,error:await page.locator('#plan-error').textContent(),button:await page.locator('#plan-submit').textContent()}),{timeout:50000}).toContain('"ready":true');
+    await expect.poll(async()=>JSON.stringify({ready:/\?plan=[a-f0-9]{24}$/.test(page.url()),requests:requests.length,errors,navigations,events:await page.evaluate(()=>window.__planInputEvents),error:await page.locator('#plan-error').textContent(),button:await page.locator('#plan-submit').textContent()}),{timeout:50000}).toContain('"ready":true');
     await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/);
     await expect(page.locator('#result-title')).toContainText('Book ');
     await expect(page.locator('.result-badges')).toContainText('Live plan');
@@ -1041,7 +1060,17 @@ test.describe('Booking Desk: plan your show', () => {
     await verify.locator('.agent-stage-head').click();
     await expect(verify.locator('.agent-call')).toHaveCount(8);
     await expect(verify.locator('.agent-chip').first()).toHaveText('Charlotte Day Wilson');
-    await expect(card.locator('.agent-foot')).toContainText('replayed at 2× speed');
+    await expect(card.locator('.agent-foot')).toContainText('shown without animation');
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    for(const field of ['#plan-city','#plan-anchor']){
+      await card.getByRole('button',{name:'Replay',exact:true}).click();
+      await expect(card.locator('.agent-label-text')).toContainText('Replaying the saved');
+      await page.locator(field).fill('Leeds');
+      await expect(card.locator('.agent-label-text')).toHaveText('Researched in 20.5s · 18 Qloo calls');
+      await expect(card.locator('.agent-stage')).toHaveCount(7);
+      await expect(card.locator('.agent-foot')).toContainText('shown without animation');
+      await expect(card.locator('.agent-time')).toHaveText('20.5s');
+    }
   });
 
   test('a live plan streams its Qloo calls into the agent card', async ({ page }) => {

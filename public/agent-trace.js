@@ -34,7 +34,7 @@
   const LOADER=Array.from({length:9},(_,i)=>{const r=Math.floor(i/3),c=i%3;return `<span style="--d:${(c+Math.abs(r-1))*90}ms"></span>`;}).join('');
 
   function create(root,{city='',anchor='',label='Researching with Qloo',clock}={}){
-    root.classList.remove('is-done','is-failed');root.classList.add('agent-card-on');
+    root.classList.remove('is-done','is-failed','is-static');root.classList.add('agent-card-on');
     root.innerHTML=`<div class="agent-head">
         <span class="agent-loader" aria-hidden="true">${LOADER}</span>
         <span class="agent-label"><span class="agent-label-text">${e(label)}</span></span>
@@ -59,7 +59,12 @@
       if(n){li.querySelector('.agent-stage-count').textContent=`${n} call${n===1?'':'s'}`;li.classList.add('is-folded');li.querySelector('.agent-stage-head').setAttribute('aria-expanded','false');}
     };
     const inner=$('.agent-body-inner');
-    const follow=()=>requestAnimationFrame(()=>inner.scrollTo({top:inner.scrollHeight,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+    const follow=()=>requestAnimationFrame(()=>{
+      // Research continues while a visitor edits the adjacent brief, but must
+      // not drive scrolling while their focus belongs to a form control.
+      if(root.classList.contains('is-static')||root.ownerDocument.activeElement?.closest('form'))return;
+      inner.scrollTo({top:inner.scrollHeight,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    });
     const api={
       stage(text){
         const index=STAGES.findIndex(([key])=>String(text).startsWith(key));if(index<0)return;
@@ -95,21 +100,23 @@
   }
 
   // Replays a saved run's recorded application events with their real relative timing.
-  function replay(root,snapshot,{speed=2,label,onDone}={}){
+  function replay(root,snapshot,{speed=2,label,onDone,animate=true,onReplay}={}){
     const city=snapshot.memo.input.city,anchor=(snapshot.memo.input.anchors??[]).join(', ');
     const events=(snapshot.trace??[]).filter(event=>['stage','receipt','memo'].includes(event.type));
     const total=events.at(-1)?.elapsedMs??0;
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animated=animate&&!reduce;
     const started=performance.now();
-    const trace=create(root,{city,anchor,label:label??`Replaying the saved ${city} run`,clock:()=>Math.min(total,(performance.now()-started)*speed)});
+    const trace=create(root,{city,anchor,label:label??`Replaying the saved ${city} run`,clock:()=>animated?Math.min(total,(performance.now()-started)*speed):total});
+    if(!animated)root.classList.add('is-static');
     const timers=[];
     const apply=event=>{
       if(event.type==='stage'&&event.text)trace.stage(event.text);
       else if(event.type==='receipt'){const r=snapshot.receipts.find(x=>x.id===event.receiptId);if(r)trace.call({tool:r.tool,why:r.why,count:r.evidence?.rows?.length,status:r.status});}
-      else if(event.type==='memo'){trace.done(`Researched in ${(total/1000).toFixed(1)}s · ${trace.calls} Qloo calls`,`Recorded live run, replayed at ${speed}× speed. Every call is saved as a receipt. <button type="button" class="link-button agent-replay">Replay</button>`);
-        root.querySelector('.agent-replay')?.addEventListener('click',()=>replay(root,snapshot,{speed,label,onDone}));onDone?.();}
+      else if(event.type==='memo'){trace.done(`Researched in ${(total/1000).toFixed(1)}s · ${trace.calls} Qloo calls`,`Recorded live run, ${animated?`replayed at ${speed}× speed`:'shown without animation'}. Every call is saved as a receipt. <button type="button" class="link-button agent-replay">Replay</button>`);
+        root.querySelector('.agent-replay')?.addEventListener('click',()=>onReplay?onReplay():replay(root,snapshot,{speed,label,onDone}));onDone?.();}
     };
-    if(reduce){events.forEach(apply);return{cancel(){}};}
+    if(!animated){events.forEach(apply);return{cancel(){trace.stop();}};}
     for(const event of events)timers.push(setTimeout(()=>apply(event),event.elapsedMs/speed));
     return{cancel(){timers.forEach(clearTimeout);trace.stop();}};
   }
