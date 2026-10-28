@@ -15,7 +15,7 @@ export function estimateFee(popularity) {
   if (typeof popularity !== 'number' || !Number.isFinite(popularity) || popularity < 0 || popularity > 1) return null;
   return FEE_TIERS.find(([floor]) => popularity >= floor)[1];
 }
-export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. This is a planning experiment, not a booking or a sales forecast.';
+export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
 
 const fault = (message, status = 400) => Object.assign(new Error(message), { status });
 const clean = (value, max) => typeof value === 'string' ? value.replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max) : '';
@@ -87,13 +87,13 @@ export function registerLivePlanRoutes(app) {
         else send({ type: 'error', text: `Qloo could not confirm “${input.anchor}” or find similar artists in ${input.city}. Check the spelling or try a better-known artist.` });
         return;
       }
-      if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. Try a better-known artist or a larger city.` }); return; }
+      if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. A comparison needs at least two candidates, even for a one-act show. Try a better-known artist or a larger city.` }); return; }
       const source = { input: memo.input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace };
       const record = saveLivePlan(source, { title: `${input.city}: fans of ${input.anchor}`, terms: LIVE_TERMS, feeBasis: 'estimated-from-qloo-popularity' });
       send({ type: 'ready', id: record.id, synthetic: record.snapshot.mock === true, calls: run.used });
     } catch (error) {
       if (!res.destroyed) send({ type: 'error', text: error?.status ? error.message : 'The live plan could not complete. No booking was made. Try again, or open an example plan.' });
-      if (!error?.status) console.error(JSON.stringify({ level: 'error', msg: 'live plan failed', requestId: req.id, error: String(error?.message ?? error).slice(0, 300) }));
+      if (!error?.status) console.error(JSON.stringify({ level: 'error', msg: 'live plan failed', requestId: req.id }));
     } finally { clearInterval(heartbeat); res.end(); }
   });
 }

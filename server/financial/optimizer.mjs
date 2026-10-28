@@ -12,12 +12,12 @@ function dominates(a, b) {
 export function pareto(rows) { return rows.filter(row => !rows.some(other => other !== row && dominates(other, row))); }
 function rank(a, b) { return b.metrics.profit.mean - a.metrics.profit.mean || a.metrics.conditionalValueAtRisk95 - b.metrics.conditionalValueAtRisk95 || b.culturalFit - a.culturalFit; }
 export function selectPolicy(rows, policy) {
-  const eligible = rows.filter(row => policy.maxCvarLossCents == null || row.metrics.conditionalValueAtRisk95 * 100 <= policy.maxCvarLossCents);
+  const eligible = rows.filter(row => policy.maxCvarLossCents == null || minor(row.metrics.conditionalValueAtRisk95, 'CVaR loss') <= policy.maxCvarLossCents);
   if (policy.objective === 'downside') return eligible.sort(rank)[0] ?? null;
   if (policy.objective === 'balanced') return pareto(eligible).sort((a, b) =>
     (b.metrics.profit.mean / Math.max(1, b.metrics.conditionalValueAtRisk95 + 10000) + (b.culturalFit ?? 0) / 100) -
     (a.metrics.profit.mean / Math.max(1, a.metrics.conditionalValueAtRisk95 + 10000) + (a.culturalFit ?? 0) / 100))[0] ?? null;
-  return [...rows].sort(rank)[0] ?? null;
+  return eligible.sort(rank)[0] ?? null;
 }
 export function exactFeasibleLineups(input, config, modelReport, twin) {
   const rows = enumerateSlates(input.candidates, input.constraints).filter(row => row.feasible);

@@ -1,6 +1,6 @@
 # Security
 
-Last reviewed 25 October 2026. This page covers the public demo and the private organizer tools.
+Last reviewed 28 October 2026. This page covers the public demo and the private organizer tools.
 
 ## Access model
 
@@ -41,7 +41,7 @@ X-Request-Id: <per request>
 ## Dependencies
 
 - **CI audit:** `npm audit --omit=dev --audit-level=critical` runs in CI.
-- **Current state:** 3 remaining advisories in runtime dependencies (1 high, 2 moderate), all reachable only through the official `@qloo/qloo-harness` and its bundled agent dependency (`undici`), with no fix available. The high-severity `undici` advisories concern EventSource parsing and SRI tokens, which Houselights does not use with untrusted servers. **Accepted risk until the harness updates.**
+- **Current audit:** 3 remaining runtime dependency findings (1 high, 2 moderate), through `@qloo/qloo-harness` → `@earendil-works/pi-coding-agent` → npm `undici`; the audit offers no fix. The installed Undici finding now includes HTTP decompression, redirects/cache, TLS, WebSocket buffering, EventSource and SRI advisories. It must not be dismissed solely because EventSource is unused. The canonical adapter build manifest has 666 inputs and includes neither npm Undici nor the terminal agent; Node's built-in fetch uses a separate bundled Undici. This limits the observed package execution scope, not proof that every advisory is inapplicable. The audit is **not clean**; review before release and rerun after dependency updates. See [hardening scope and limits](production-hardening.md).
 - **Fixed on 25 October:** `body-parser` (DoS via trailing bytes), `fast-uri` and `zod`.
 - **Docker base image:** pinned by multi-arch digest (`node:24-slim@sha256:55fb5f5a…`).
 

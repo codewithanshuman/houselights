@@ -69,7 +69,7 @@ Checked on 24 October 2026. I re-checked each significant claim Houselights make
 
 **Claim.** 82 recommended, alternative and fallback selections across 12 briefs had 0 hard-constraint violations.
 
-**Source.** `results/autopilot-evaluation.md`. An independent reference check also runs in `tests/optimizer-reference.test.mjs`: 600 seeded combinations of budget, slots, fees, availability, locks, exclusions, discovery minimum and genre cap.
+**Source.** `results/autopilot-evaluation.md`. An independent reference check also runs in `tests/optimizer-reference.test.mjs`: 5,000 seeded combinations of budget, slots, fees, availability, locks, exclusions, discovery minimum and genre cap.
 
 **Status.** Verified.
 

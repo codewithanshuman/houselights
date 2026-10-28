@@ -56,6 +56,22 @@ test('optimizer only compares exact-feasible lineups and emits explicit scenario
   assert.ok(pareto(base.rows).length); assert.ok(selectPolicy(base.rows, { objective: 'expected_profit' }));
   assert.equal(selectPolicy(base.rows, { objective: 'downside', maxCvarLossCents: 0 }), null);
 });
+test('every financial objective enforces a supplied CVaR ceiling, including expected profit', () => {
+  const rows = [
+    { selectedIds: ['high-risk'], culturalFit: 80, metrics: { profit: { mean: 200 }, conditionalValueAtRisk95: 100 } },
+    { selectedIds: ['within-limit'], culturalFit: 70, metrics: { profit: { mean: 150 }, conditionalValueAtRisk95: 50 } },
+  ];
+  assert.deepEqual(selectPolicy(rows, { objective: 'expected_profit' }).selectedIds, ['high-risk']);
+  for (const objective of ['expected_profit', 'downside', 'balanced']) {
+    assert.deepEqual(selectPolicy(rows, { objective, maxCvarLossCents: 5000 }).selectedIds, ['within-limit']);
+    assert.equal(selectPolicy(rows, { objective, maxCvarLossCents: 4999 }), null);
+  }
+  assert.equal(rows.length, 2, 'policy selection must not mutate the reports');
+  const boundary = [{ ...rows[0], metrics: { ...rows[0].metrics, conditionalValueAtRisk95: 1.1 } }];
+  assert.ok(selectPolicy(boundary, { objective: 'expected_profit', maxCvarLossCents: 110 }));
+  assert.equal(selectPolicy(boundary, { objective: 'expected_profit', maxCvarLossCents: 109 }), null);
+});
+
 test('audience twin feeds overlap-adjusted segment ticket scenarios into the financial sampler', () => {
   const { input, config } = setup(), selectedIds = input.candidates.slice(0, 3).map(row => row.id);
   const twin = { id: 'synthetic-test', rankedCandidateIds: selectedIds, overlapAssumption: .5,

@@ -30,6 +30,10 @@ The existing exact optimizer first enforces the artist-fee budget, slot count, g
 
 Three policies are available: maximum mean profit among finalists, maximum mean profit under a specified CVaR-loss ceiling, and Pareto comparison across mean profit, worst-tail loss and cultural score. The balanced policy chooses one Pareto candidate for display; it also retains the full frontier. If every finalist has negative expected profit, the result says **do not book under these assumptions**. If no candidate meets the downside ceiling, it says so instead of silently relaxing the constraint.
 
+A supplied CVaR ceiling is a hard eligibility constraint for **all three policies**, including `expected_profit`. Without a ceiling, `expected_profit` maximizes mean profit within the simulated finalists. Monetary boundary comparisons use integer minor units.
+
+This correction is versioned as `financial-scenario-v1.1`. Saved v1 reports are unchanged and remain readable; the existing replay endpoint rejects a different model version with HTTP 409 instead of promising the same result under changed policy semantics. The historical public demo is not regenerated.
+
 The output includes mean/median/5th/25th/75th/95th profit, break-even and loss-threshold probabilities, 95% VaR and mean worst-5%-tail loss (CVaR), exact break-even paid-ticket volume under base costs, revenue/cost/cash distributions and named stress results. These are simulated **conditional frequencies**, not externally validated probabilities. A controlled sensitivity table describes which declared shocks move expected profit. A line-item bridge compares the preferred lineup with an alternative across ticket receipts, ancillary revenue, refunds, fees, tax and artist/event costs; common random numbers reduce comparison noise. Tier prices are identical within a lineup comparison, so receipt differences primarily reflect the model's demand response. Neither explanation is causal attribution.
 
 ## API, persistence and replay

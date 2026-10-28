@@ -78,7 +78,7 @@
     node.innerHTML=`<div class="dx-info-head"><h2>Info</h2><button class="dx-collapse" type="button" aria-expanded="true" aria-label="Collapse the info panel" data-dx-collapse>${svg('close',18)}</button></div>
       <div class="dx-info-body">
         ${bar('Artist budget',money(now),now/was,was===now?'unchanged':`cut from ${money(was)}`,'is-violet')}
-        ${latest?bar('Booked bill',money(latest.totalFee),latest.totalFee/now,`${Math.round(latest.totalFee/now*100)}% of the budget`,'is-rose'):''}
+        ${latest?bar('Selected bill',money(latest.totalFee),latest.totalFee/now,`${Math.round(latest.totalFee/now*100)}% of the budget`,'is-rose'):''}
         <h3>Properties</h3>
         <dl class="dx-props">
           <div><dt>City</dt><dd>${e(brief.city)}</dd></div>

@@ -4,6 +4,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { createHash } from 'node:crypto';
 
 const dataDir = mkdtempSync(join(tmpdir(), 'houselights-financial-'));
 process.env.DATA_DIR = dataDir;
@@ -52,6 +53,19 @@ test('private financial API runs, persists and exactly replays one seeded decisi
   const second = await finish(replay.data.id);
   assert.equal(second.status, 'completed'); assert.equal(second.resultDigest, first.resultDigest);
   assert.equal(second.inputDigest, first.inputDigest);
+});
+
+test('old financial reports remain readable but cannot silently replay under changed policy semantics', async () => {
+  const saved=JSON.parse(db.prepare("SELECT body FROM financial_jobs WHERE json_extract(body,'$.status')='completed' LIMIT 1").get().body);
+  const legacy={...saved,id:'abcdef012345abcdef012345',modelVersion:'financial-scenario-v1',snapshot:structuredClone(saved.snapshot)};
+  legacy.snapshot.config.modelVersion=legacy.modelVersion;
+  legacy.inputDigest=createHash('sha256').update(JSON.stringify(legacy.snapshot)).digest('hex');
+  const body=JSON.stringify(legacy);
+  db.prepare('INSERT INTO financial_jobs(id,body,created_at) VALUES(?,?,?)').run(legacy.id,body,legacy.createdAt);
+  assert.equal((await request(`/api/financial/jobs/${legacy.id}`)).status,200);
+  const replay=await request(`/api/financial/jobs/${legacy.id}/replay`,{method:'POST',body:'{}'});
+  assert.equal(replay.status,409); assert.match(replay.data.error,/Model version differs/);
+  assert.equal(db.prepare('SELECT body FROM financial_jobs WHERE id=?').get(legacy.id).body,body);
 });
 
 test('invalid assumptions and interrupted jobs cannot become completed decisions', async () => {

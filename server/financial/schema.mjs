@@ -1,7 +1,7 @@
 import { currencies, minor } from './money.mjs';
 import { cholesky, defaultCorrelation } from './correlations.mjs';
 
-export const modelVersion = 'financial-scenario-v1';
+export const modelVersion = 'financial-scenario-v1.1';
 const fraction = (value, name) => {
   if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1) throw new Error(`${name} must be a number from 0 to 1.`);
   return value;

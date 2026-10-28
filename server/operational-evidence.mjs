@@ -100,6 +100,9 @@ export function registerOperationalRoutes(app) {
         return next;
       });
       res.status(201).json(evidenceResponse(snapshot, evidence));
-    } catch (error) { res.status(error.status ?? 400).json({ error: error.message }); }
+    } catch (error) {
+      const status = Number.isInteger(error?.status) && error.status >= 400 && error.status < 500 ? error.status : 500;
+      res.status(status).json({ error: status === 500 ? 'Operational evidence could not be saved. No changes were applied.' : error.message });
+    }
   });
 }

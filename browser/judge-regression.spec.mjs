@@ -793,12 +793,69 @@ test('the evidence page lists every claim with its status, limit and a copyable 
 });
 
 test.describe('Booking Desk: plan your show', () => {
+  test('a saved non-USD brief shows its own currency and its bound ranking receipt @cross-browser', async ({ page }) => {
+    const catalog=await (await page.request.get(`${origin}/api/judge/cases`)).json();
+    const brief=catalog.cases.find(row=>row.title==='Manchester: compare all three methods');
+    const record=await (await page.request.get(`${origin}/api/judge/cases/${brief.id}`)).json();
+    const selected=record.snapshot.memo.items.find(item=>record.snapshot.memo.slate.selectedIds.includes(item.id));
+    const bound=selected.evidenceReceipts.rank[0];
+    expect(bound).not.toBe(record.snapshot.receipts.find(row=>row.tool==='rank').id);
+    await page.goto(`${origin}/judge.html#${brief.id}`);
+    await expect(page.locator('#result-title')).toContainText('£4,600');
+    await expect(page.locator('.result-badges')).toContainText('Illustrative fees');
+    await expect(page.locator('.result-badges')).toContainText('Assumed availability');
+    const opener=page.locator('.act-grid [data-receipt]').first();
+    await expect(opener).toHaveAttribute('data-receipt',bound);
+    await opener.click();
+    await expect(page.locator('#receipt-body')).toContainText(`Receipt${bound}`);
+  });
+
+  test('a slow earlier saved plan cannot replace the latest choice', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#result-title')).toContainText('Michael Kiwanuka');
+    const catalog=await (await page.request.get(`${origin}/api/judge/cases`)).json();
+    const earlier=catalog.cases.find(row=>row.title==='Manchester: compare all three methods');
+    const latest=catalog.cases.find(row=>row.title==='Berlin: compare all three methods');
+    let release,started;const gate=new Promise(resolve=>{release=resolve;}),requested=new Promise(resolve=>{started=resolve;});
+    await page.route(`**/api/judge/cases/${earlier.id}`,async route=>{started();await gate;await route.continue();});
+    try {
+      await page.locator(`[data-case="${earlier.id}"]`).click();await requested;
+      await page.locator(`[data-case="${latest.id}"]`).click();
+      await expect(page.locator('.result-meta')).toContainText('Berlin');
+      const lateResponse=page.waitForResponse(response=>response.url().endsWith(`/api/judge/cases/${earlier.id}`));
+      release();await lateResponse;await page.waitForTimeout(200);
+      await expect(page.locator('.result-meta')).toContainText('Berlin');
+      await expect(page).toHaveURL(new RegExp(`${latest.id}$`));
+    } finally {release();}
+  });
+
+  test('an expired visitor link gives a safe, recoverable error on mobile @cross-browser', async ({ page }) => {
+    const id='aabbccddeeffaabbccddeeff',database=new DatabaseSync(join(dataDir,'houselights.sqlite'));
+    try {
+      database.exec('PRAGMA busy_timeout=5000');
+      database.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify({id,live:true,createdAt:new Date(Date.now()-8*864e5).toISOString(),snapshot:{marker:'retired payload'}}));
+    } finally {database.close();}
+    await page.setViewportSize({width:390,height:844});
+    await page.goto(`${origin}/judge.html?plan=${id}`);
+    await expect(page.locator('#plan-result')).toContainText('Plan expired');
+    await expect(page.locator('#plan-result')).toContainText('Open a saved example or start a new plan');
+    await expect(page.locator('#plan-result')).not.toContainText('retired payload');
+    const response=await page.request.get(`${origin}/api/judge/cases/${id}`);
+    expect(response.status()).toBe(410);
+    await page.locator('.plan-chip').first().click();
+    await expect(page.locator('#result-title')).toContainText('Michael Kiwanuka');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  });
+
   test('first view shows the featured decision and what Qloo changes @cross-browser', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
     await expect(page.locator('#hero-title')).toContainText('Book the bill');
     await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
-    await expect(page.locator('#plan-switch-note')).toContainText('Without Qloo evidence, the same rules book Jordan Rakei + Hiatus Kaiyote for $9,000');
-    await expect(page.locator('.act-grid[aria-label="Booked acts"] .act-card')).toHaveCount(2);
+    await expect(page.locator('#plan-switch-note')).toContainText('Without Qloo evidence, the same rules select Jordan Rakei + Hiatus Kaiyote for $9,000');
+    await expect(page.locator('.act-grid[aria-label="Selected acts"] .act-card')).toHaveCount(2);
+    await expect(page.locator('.act-grid .act-status').first()).toHaveText('Selected');
+    await expect(page.locator('#plan-form .plan-note')).toContainText('availability is assumed');
+    await expect(page.locator('#plan-form .plan-note')).toContainText('at least two candidates');
     await expect(page.locator('.plan-chip')).not.toHaveCount(0);
     await expect(page.locator('.plan-chip').first()).toContainText('fans of Leon Bridges');
   });
@@ -832,7 +889,7 @@ test.describe('Booking Desk: plan your show', () => {
 
   test('a receipt shows what Qloo returned with the act highlighted, and returns focus @cross-browser', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
-    const opener = page.locator('.act-grid[aria-label="Booked acts"] [data-receipt]').nth(1);
+    const opener = page.locator('.act-grid[aria-label="Selected acts"] [data-receipt]').nth(1);
     await opener.click();
     await expect(page.locator('#receipt-drawer')).toHaveAttribute('open', '');
     await expect(page.locator('#receipt-title')).toContainText('ranking of every candidate for Leon Bridges fans in New York');

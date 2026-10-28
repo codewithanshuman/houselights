@@ -44,7 +44,9 @@ export function publicReadCache(req, res, next) {
   if (hit && hit.expires > Date.now()) { res.set('X-Cache', 'hit'); return res.status(200).json(hit.body); }
   const json = res.json.bind(res);
   res.json = body => {
-    if (res.statusCode === 200) {
+    // Temporary visitor plans must be checked against retention on every read;
+    // a cached 200 must not outlive expiry or a newly removed audit reference.
+    if (res.statusCode === 200 && body?.live !== true) {
       if (cache.size >= MAX_ENTRIES) cache.delete(cache.keys().next().value);
       cache.set(req.path, { body, expires: Date.now() + TTL_MS });
       res.set('X-Cache', 'miss');

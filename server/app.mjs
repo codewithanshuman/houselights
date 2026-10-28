@@ -52,7 +52,7 @@ export function classifyRequestError(error) {
 }
 function sendProcessingError(res, error) {
   const { status, message } = classifyRequestError(error);
-  if (status === 500) console.error(JSON.stringify({ t: new Date().toISOString(), level: 'error', requestId: res.req?.id ?? null, path: res.req?.path ?? null, message: 'Unexpected Houselights request failure', error: String(error?.stack ?? error).slice(0, 2000) }));
+  if (status === 500) console.error(JSON.stringify({ t: new Date().toISOString(), level: 'error', requestId: res.req?.id ?? null, path: res.req?.path ?? null, message: 'Unexpected Houselights request failure', errorType: error instanceof SyntaxError ? 'SyntaxError' : error instanceof TypeError ? 'TypeError' : 'InternalError' }));
   return res.status(status).json({ error: message });
 }
 

@@ -1,5 +1,5 @@
 import {createHash,randomBytes} from 'node:crypto';
-import {db,consumeQuota} from './database.mjs';
+import {db,consumeQuota,transaction} from './database.mjs';
 import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
@@ -9,6 +9,31 @@ import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const fault=(message,status=400)=>Object.assign(new Error(message),{status});
+export const LIVE_PLAN_TTL_MS=7*864e5;
+const TOMBSTONE_TTL_MS=30*864e5;
+export function expireLivePlans({now=Date.now(),withinTransaction=false}={}) {
+  const pending=db.prepare("SELECT 1 FROM judge_cases WHERE json_extract(body,'$.live')=1 AND julianday(json_extract(body,'$.createdAt'))<=julianday(?) AND (json_extract(body,'$.expired') IS NOT 1 OR julianday(json_extract(body,'$.expiresAt'))<julianday(?)) LIMIT 1").get(new Date(now-LIVE_PLAN_TTL_MS).toISOString(),new Date(now-TOMBSTONE_TTL_MS).toISOString());
+  if(!pending)return {expired:0,deleted:0};
+  const clean=()=>{
+    const cutoff=new Date(now-LIVE_PLAN_TTL_MS).toISOString();
+    const rows=db.prepare("SELECT id,json_extract(body,'$.createdAt') AS createdAt FROM judge_cases WHERE json_extract(body,'$.live')=1 AND json_extract(body,'$.expired') IS NOT 1 AND julianday(json_extract(body,'$.createdAt'))<=julianday(?)").all(cutoff);
+    const ids=new Set(rows.map(row=>row.id));
+    const referenced=ids.size?store.referencedRecordIds(ids,{excludeTables:['judge_cases']}):new Set();
+    // Curated records can retain an anonymous plan; an anonymous plan's own
+    // embedded ID must not keep itself alive forever.
+    if(ids.size) for(const row of db.prepare("SELECT body FROM judge_cases WHERE json_extract(body,'$.live') IS NOT 1").iterate()) store.referencesIn(JSON.parse(row.body),ids,referenced);
+    let expired=0;
+    for(const row of rows) if(!referenced.has(row.id)) {
+      const expiresAt=new Date(Date.parse(row.createdAt)+LIVE_PLAN_TTL_MS).toISOString();
+      db.prepare('UPDATE judge_cases SET body=? WHERE id=?').run(JSON.stringify({id:row.id,live:true,expired:true,createdAt:row.createdAt,expiresAt}),row.id);
+      expired++;
+    }
+    const deleted=db.prepare("DELETE FROM judge_cases WHERE json_extract(body,'$.expired')=1 AND julianday(json_extract(body,'$.expiresAt'))<julianday(?)").run(new Date(now-TOMBSTONE_TTL_MS).toISOString()).changes;
+    if(expired||deleted) experimentCache.clear();
+    return {expired,deleted};
+  };
+  return withinTransaction||db.isTransaction?clean():transaction(clean);
+}
 const text=(value,max=180)=>typeof value==='string'?value.slice(0,max):'';
 const number=value=>typeof value==='number'&&Number.isFinite(value)?value:null;
 const strings=value=>Array.isArray(value)?value.filter(v=>typeof v==='string').slice(0,100).map(v=>text(v)):[];
@@ -101,6 +126,8 @@ export function publicJudgeSnapshot(source) {
 export function publishJudgeCase(source,title) {
   if(typeof title!=='string'||!title.trim()||title.length>120)throw fault('Provide a case title of 1–120 characters.');
   const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title:title.trim(),snapshot};
+  // Retain the private original too, without exposing its ID in the projection.
+  if(source.id&&db.prepare('SELECT 1 FROM snapshots WHERE id=?').get(source.id))store.retain(source.id);
   const id=digest(payload).slice(0,24),existing=loadJudgeCase(id);if(existing)return existing;
   const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),
     terms:'Illustrative fees, availability and genres. This is a planning experiment, not a booking or sales prediction.',providerCalls:0};
@@ -109,17 +136,27 @@ export function publishJudgeCase(source,title) {
 }
 export function loadJudgeCase(id) {
   if(typeof id!=='string'||! /^[a-f0-9]{24}$/.test(id))return null;
-  const row=db.prepare('SELECT body FROM judge_cases WHERE id=?').get(id);return row?JSON.parse(row.body):null;
+  let row=db.prepare('SELECT body FROM judge_cases WHERE id=?').get(id);
+  if(!row)return null;
+  let record=JSON.parse(row.body);
+  if(record.live===true&&!record.expired&&Date.parse(record.createdAt)+LIVE_PLAN_TTL_MS<=Date.now()) {
+    expireLivePlans();row=db.prepare('SELECT body FROM judge_cases WHERE id=?').get(id);
+    if(!row)return null;
+    record=JSON.parse(row.body);
+  }
+  if(record.expired===true)throw fault('This temporary plan has expired. Open a saved example or start a new plan.',410);
+  return record;
 }
 // Visitors' live plans share this table (so every judge experiment works on them) but are
 // never listed as published cases.
-export function listJudgeCases(){return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body)).filter(record=>record.live!==true);}
+export function listJudgeCases(){expireLivePlans();return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body)).filter(record=>record.live!==true);}
 export function saveLivePlan(source,{title,terms,feeBasis}) {
   const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title,snapshot,live:true};
   const id=randomBytes(12).toString('hex');
-  const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
+  const createdAt=new Date().toISOString();
+  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
   record.methods=judgeMethods(snapshot,record.proof);
-  db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));return loadJudgeCase(id);
+  transaction(()=>{db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));expireLivePlans({withinTransaction:true});});return loadJudgeCase(id);
 }
 export function judgeExperiment(record,raw={},options={}) {
   const allowed=['budget','lockedIds','excludedIds','cancelId','withdrawReceiptId','feeIncreaseId','unavailableId','qlooOff'];
@@ -193,7 +230,7 @@ const sortedJson=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Arr
 export function registerJudgeRoutes(app) {
   const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
     if(Number.isInteger(error?.status)&&error.status>=400&&error.status<500)return res.status(error.status).json({error:error.message});
-    console.error('Unexpected judge request failure:',error);
+    console.error(JSON.stringify({level:'error',requestId:req.id,message:'Unexpected judge request failure'}));
     return res.status(500).json({error:'The request could not be completed.'});
   }};
   app.get('/api/judge/cases',(_req,res)=>res.json({cases:listJudgeCases().map(r=>({id:r.id,title:r.title,city:r.snapshot.memo.input.city,synthetic:r.snapshot.mock,

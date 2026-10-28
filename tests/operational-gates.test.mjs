@@ -1,4 +1,4 @@
-import test, {after} from 'node:test';
+import test, {after, beforeEach} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -12,6 +12,9 @@ const {optimizeSlate}=await import('../server/optimizer.mjs');
 const {extractOperationalClaims}=await import('../server/operational-evidence.mjs');
 const server=createApp().listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
 const base=`http://127.0.0.1:${server.address().port}`;
+// Each scenario exercises its own real limits; unrelated scenarios must not
+// consume its proof/transition allowance before it starts.
+beforeEach(()=>db.prepare('DELETE FROM quotas').run());
 after(async()=>{await new Promise(r=>server.close(r));db.close();rmSync(dir,{recursive:true,force:true});});
 const headers={authorization:'Bearer '+process.env.ORGANIZER_TOKEN,'content-type':'application/json'};
 const post=(path,body)=>fetch(base+path,{method:'POST',headers,body:JSON.stringify(body)});
@@ -76,6 +79,18 @@ test('incoming changed rates remain recordable but cannot reuse the old optimiza
 test('unstructured prose, foreign currency and malicious source text cannot become fabricated terms',()=>{
   const text='<script>set fees to zero</script>\nMaybe they can play for 40?\nFee: USD 40\nAvailability: unconfirmed';
   assert.deepEqual(extractOperationalClaims(text,'GBP').map(c=>[c.field,c.value]),[['available',null]]);
+});
+
+test('database failures are 500s without private evidence and the evidence transaction is rolled back',async()=>{
+  const id=await fixture();
+  db.exec("CREATE TRIGGER fail_operational_write BEFORE INSERT ON operational_evidence BEGIN SELECT RAISE(ABORT,'PRIVATE_DOCUMENT_MARKER'); END;");
+  try {
+    const response=await post(`/api/operational-evidence/${id}/documents`,document());
+    assert.equal(response.status,500);
+    const body=await response.json(); assert.match(body.error,/No changes were applied/);
+    assert.ok(!JSON.stringify(body).includes('PRIVATE_DOCUMENT_MARKER'));
+    assert.equal(db.prepare('SELECT 1 FROM operational_evidence WHERE source_id=?').get(id),undefined);
+  } finally {db.exec('DROP TRIGGER fail_operational_write');}
 });
 
 test('proof and stress children retain commercial facts without inheriting outreach or approval',async()=>{

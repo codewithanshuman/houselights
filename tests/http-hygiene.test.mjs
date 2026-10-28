@@ -65,7 +65,10 @@ test('public judge reads and identical experiments are served from the server ca
   assert.deepEqual((await a.json()).snapshot.memo.slate.selectedIds, (await b.json()).snapshot.memo.slate.selectedIds);
 });
 
-test('a flood of forged ballots is rejected without storing anything, then rate-limited', async () => {
+test('a flood of forged ballots is rejected without storing anything, then rate-limited', async t => {
+  // Keep this flood inside one quota window even if wall time crosses a minute.
+  // The full number of real HTTP requests and all rate-limit assertions remain.
+  const instant=Date.now();t.mock.method(Date,'now',()=>instant);
   db.prepare('DELETE FROM quotas').run();
   const before = db.prepare('SELECT COUNT(*) n FROM ballots').get().n;
   const statuses = [];
@@ -115,6 +118,20 @@ test('healthz reports disk headroom as a boolean only', async () => {
   const health = await (await fetch(`${url}/healthz`)).json();
   assert.equal(typeof health.diskOk, 'boolean');
   assert.ok(!JSON.stringify(health).match(/bytes|bavail|free/i), 'no disk figures are published');
+});
+
+test('unexpected parse errors never put private persisted content in HTTP responses or logs', async () => {
+  const id='broken0001';
+  db.prepare('INSERT INTO snapshots(id,body,created_at) VALUES(?,?,?)').run(id,'PRIVATE_EVIDENCE_MARKER not JSON',new Date().toISOString());
+  const errors=[],original=console.error;
+  console.error=(...args)=>errors.push(args.join(' '));
+  try {
+    const response=await fetch(`${url}/api/memo/${id}`);
+    assert.equal(response.status,500);
+    assert.ok(!(await response.text()).includes('PRIVATE_EVIDENCE_MARKER'));
+    assert.ok(errors.length>0);
+    assert.ok(!errors.join('\n').includes('PRIVATE_EVIDENCE_MARKER'));
+  } finally {console.error=original;db.prepare('DELETE FROM snapshots WHERE id=?').run(id);}
 });
 
 test('only the landing page gets the server-rendered footer on the bridge drawing', async () => {
