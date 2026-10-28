@@ -11,11 +11,19 @@
   const data=JSON.parse(dataNode.textContent),cur=data.brief.currency||'USD';
   const $=id=>document.getElementById(id);
   const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // A control can still be disabled while the case loads; focus it as soon as it is ready
-  // (for up to ten seconds) so the jump never leaves focus behind.
+  // A control can still be hidden or disabled while its case loads. Wait for
+  // actual focusability before scrolling, rather than abandoning a hidden target.
+  let revealRequest=0;
   const reveal=target=>{
-    target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
-    const until=Date.now()+10000,focus=()=>{if(!target.disabled){target.focus({preventScroll:true});return;}if(Date.now()<until)setTimeout(focus,120);};
+    const request=++revealRequest,until=Date.now()+10000;
+    const focus=()=>{
+      if(request!==revealRequest)return;
+      if(!target.disabled&&target.isConnected&&target.getClientRects().length){
+        target.focus({preventScroll:true});
+        if(document.activeElement===target){target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});return;}
+      }
+      if(Date.now()<until)setTimeout(focus,120);
+    };
     focus();
   };
   const badge=basis=>`<span class="fit-badge ${basis==='Qloo affinity'?'fit-badge-affinity':'fit-badge-ordinal'}">Fit: ${e(basis)}</span>`;

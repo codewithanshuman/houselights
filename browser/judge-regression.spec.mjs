@@ -116,6 +116,9 @@ test('keyboard only: the Qloo switch changes the decision, announces it once and
 
 test('the bill step explains the choice, draws the near-tie and badges the fit basis', { tag: '@cross-browser' }, async ({ page }) => {
   const recorded=JSON.parse(readFileSync(join(root,'public','autopilot-recorded.json'),'utf8')).run.packet;
+  let release,held=false;const pending=new Promise(resolve=>{release=resolve;});
+  await page.route(/\/api\/judge\/cases\/[a-f0-9]{24}$/,async route=>{held=true;await pending;await route.continue();});
+  try {
   await page.goto(`${origin}/desk.html`);
   const glance=page.locator('#decision-glance');
   await expect(glance.locator('.glance-book strong')).toHaveText(recorded.recommendation.names.join(' + '));
@@ -127,12 +130,16 @@ test('the bill step explains the choice, draws the near-tie and badges the fit b
   await expect(figure.locator('svg[role=img]')).toHaveAttribute('aria-label',/Sault 0\.9580 and Jordan Rakei 0\.9579/);
   await expect(figure).toContainText('Coin flip, your call.');
   await expect(glance).toContainText('Qloo affinity 0.9770');
+  await expect.poll(()=>held).toBe(true);
+  await expect(page.locator('#judge-workspace')).toBeHidden();
   await glance.getByRole('link',{name:'Try a budget cut ↓'}).click();
+  release();
   await expect(page.locator('#judge-tight-budget')).toBeFocused();await expect(page.locator('#judge-tight-budget')).toBeInViewport();
   // Not just in the viewport: visible, not under the sticky step bar.
   await expect.poll(()=>page.evaluate(()=>{const r=document.getElementById('judge-tight-budget').getBoundingClientRect();return !!document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('#judge-tight-budget');})).toBe(true);
   await page.locator('.glance-glossary summary').click();
   await expect(page.locator('.glance-glossary')).toContainText('Qloo publishes no margin of error');
+  } finally {release();}
 });
 
 test('receipt drawer shows the saved Qloo row with the act highlighted, digests and integrity', { tag: '@cross-browser' }, async ({ page }) => {
