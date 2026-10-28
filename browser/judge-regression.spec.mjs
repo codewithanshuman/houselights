@@ -829,6 +829,26 @@ test.describe('Booking Desk: plan your show', () => {
     } finally {release();}
   });
 
+  test('a delayed budget calculation cannot replace a newer infeasible result', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+    let release,started;const gate=new Promise(resolve=>{release=resolve;}),requested=new Promise(resolve=>{started=resolve;});
+    await page.route('**/experiment',async route=>{
+      if(route.request().postDataJSON()?.budget===13050){started();await gate;}
+      await route.continue();
+    });
+    try {
+      await page.locator('[data-budget="13050"]').click();await requested;
+      await page.locator('#plan-budget-range').evaluate(node=>{node.value='5800';node.dispatchEvent(new Event('input',{bubbles:true}));});
+      await expect(page.locator('#result-title')).toHaveText('No bill fits these rules.');
+      const completed=page.waitForResponse(response=>response.url().endsWith('/experiment')&&response.request().postDataJSON()?.budget===13050);
+      release();await completed;await page.waitForTimeout(200);
+      await expect(page.locator('#result-title')).toHaveText('No bill fits these rules.');
+      await expect(page.locator('#plan-budget-range')).toHaveValue('5800');
+      await expect(page.locator('#plan-result')).toHaveAttribute('aria-busy','false');
+    } finally {release();}
+  });
+
   test('an expired visitor link gives a safe, recoverable error on mobile @cross-browser', async ({ page }) => {
     const id='aabbccddeeffaabbccddeeff',database=new DatabaseSync(join(dataDir,'houselights.sqlite'));
     try {

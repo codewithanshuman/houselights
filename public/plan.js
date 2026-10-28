@@ -10,7 +10,7 @@
   const usd=value=>money(value,view?.base?.memo?.currency??'USD');
   const result=$('plan-result'),form=$('plan-form'),progress=$('plan-progress');
   let view=null; // {record, base, off, current, budget, cancelId, qlooOff}
-  let caseRequest=0;
+  let caseRequest=0,calculationRequest=0;
 
   // ── Data helpers ───────────────────────────────────────────────────────────────
   const itemsOf=snapshot=>snapshot.memo.items;
@@ -42,6 +42,7 @@
 
   async function openCase(id,{scroll=false}={}){
     const request=++caseRequest;
+    calculationRequest++;
     result.setAttribute('aria-busy','true');
     state(result,{kind:'loading'});
     try{
@@ -62,17 +63,19 @@
   const experiment=body=>fetchJSON(`/api/judge/cases/${view.record.id}/experiment`,{method:'POST',body,timeout:20000,retries:0});
 
   async function rerun(){
+    const owner=view,generation=caseRequest,request=++calculationRequest;
+    const current=()=>view===owner&&generation===caseRequest&&request===calculationRequest;
     const body={};
     if(view.budget!==view.base.memo.constraints.budget)body.budget=view.budget;
     if(view.cancelId)body.cancelId=view.cancelId;
     if(view.qlooOff)body.qlooOff=true;
     const status=$('result-status');
-    if(!Object.keys(body).length){view.current=view.base;render();return true;}
-    if(Object.keys(body).length===1&&body.qlooOff&&view.off){view.current=view.off;render();return true;}
+    if(!Object.keys(body).length){view.current=view.base;render();result.setAttribute('aria-busy','false');return true;}
+    if(Object.keys(body).length===1&&body.qlooOff&&view.off){view.current=view.off;render();result.setAttribute('aria-busy','false');return true;}
     result.setAttribute('aria-busy','true');
-    try{const data=await experiment(body);if(Object.keys(body).length===1&&body.qlooOff){view.off=data.snapshot;view.offError=null;}view.current=data.snapshot;render();return true;}
-    catch(problem){if(status)status.textContent=problem.status===429?'Too many changes at once. Wait a minute and try again; the last result is still shown.':`${problem.message} The last result is still shown.`;return false;}
-    finally{result.setAttribute('aria-busy','false');}
+    try{const data=await experiment(body);if(!current())return null;if(Object.keys(body).length===1&&body.qlooOff){view.off=data.snapshot;view.offError=null;}view.current=data.snapshot;render();return true;}
+    catch(problem){if(!current())return null;if(status)status.textContent=problem.status===429?'Too many changes at once. Wait a minute and try again; the last result is still shown.':`${problem.message} The last result is still shown.`;return false;}
+    finally{if(current())result.setAttribute('aria-busy','false');}
   }
 
   // ── Rendering ──────────────────────────────────────────────────────────────────
@@ -225,19 +228,21 @@
   }
 
   function wire(){
+    const owner=view,generation=caseRequest,current=()=>view===owner&&generation===caseRequest;
     const say=text=>{const status=$('result-status');if(status)status.textContent=text;};
     $('plan-switch').addEventListener('click',async()=>{
       view.qlooOff=!view.qlooOff;if(view.qlooOff)view.cancelId=null;view.flip=view.qlooOff?'off':'on';
       // A refused request leaves the shown bill unchanged, so the switch must not stay flipped.
-      if(!await rerun()){view.qlooOff=!view.qlooOff;const message=$('result-status').textContent;render();$('result-status').textContent=message;$('plan-switch').focus();return;}
+      const applied=await rerun();if(applied===null||!current())return;
+      if(!applied){view.qlooOff=!view.qlooOff;const message=$('result-status').textContent;render();$('result-status').textContent=message;$('plan-switch').focus();return;}
       $('plan-switch').focus();
       say(view.qlooOff?`Qloo evidence off. The bill is ${billNames(view.current).join(' and ')}.`:`Qloo evidence on. The bill is ${billNames(view.current).join(' and ')}.`);
     });
     const range=$('plan-budget-range');let timer;
-    range.addEventListener('input',()=>{view.budget=Number(range.value);$('plan-budget-value').textContent=usd(view.budget);clearTimeout(timer);timer=setTimeout(async()=>{await rerun();$('plan-budget-range').focus();},350);});
-    result.querySelectorAll('[data-budget]').forEach(button=>button.addEventListener('click',async()=>{view.budget=Number(button.dataset.budget);await rerun();say(`Budget set to ${usd(view.budget)}. ${view.current.memo.slate.feasible?`The bill is ${billNames(view.current).join(' and ')}.`:'No bill fits.'}`);}));
-    result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);await rerun();say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
-    $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;await rerun();say('Changes reset to the original plan.');$('plan-switch').focus();});
+    range.addEventListener('input',()=>{calculationRequest++;view.budget=Number(range.value);$('plan-budget-value').textContent=usd(view.budget);clearTimeout(timer);timer=setTimeout(async()=>{if(!current())return;const applied=await rerun();if(applied===null||!current())return;$('plan-budget-range').focus();},350);});
+    result.querySelectorAll('[data-budget]').forEach(button=>button.addEventListener('click',async()=>{view.budget=Number(button.dataset.budget);const applied=await rerun();if(applied===null||!current())return;say(`Budget set to ${usd(view.budget)}. ${view.current.memo.slate.feasible?`The bill is ${billNames(view.current).join(' and ')}.`:'No bill fits.'}`);}));
+    result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
+    $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     result.querySelectorAll('[data-receipt]').forEach(button=>button.addEventListener('click',()=>openReceipt(button.dataset.receipt,button.dataset.entity,button)));
     $('plan-share')?.addEventListener('click',async()=>{const link=location.href;try{await navigator.clipboard.writeText(link);say('Link copied.');}catch{say(`Copy this link: ${link}`);}});
   }

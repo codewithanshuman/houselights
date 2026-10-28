@@ -18,6 +18,7 @@ Scope: stability fixes on `development`, starting from `7a8d2d1`. No redesign, n
 | Saved non-USD briefs were rendered in USD. | `public/plan.js` uses the saved brief's currency. | Real Manchester brief displays £4,600 in Chromium, Firefox and WebKit. |
 | Booking Desk opened the first rank receipt rather than the candidate-bound receipt. | Prefer the explicitly bound rank receipt; missing declared evidence stays unavailable. | Real saved Manchester receipt opens `v1`, rather than earlier `r9`. Eleven saved briefs exercise differing bindings. |
 | Delayed earlier case fetch could replace the latest chosen brief. | Case request generation guards result, error and background-comparison updates. | Deliberately delayed Manchester response after Berlin; reproduction failed before fix. |
+| Overlapping budget calculations could replace a newer infeasible result with an unaffordable old lineup. | Calculation generations reject obsolete success/error responses and prevent stale callbacks from rolling back controls or moving focus. | Delayed $13,050-budget response after a $5,800 infeasible result; reproduction showed a $10,000 lineup before the fix. |
 
 ## Retention and compatibility
 
