@@ -38,7 +38,7 @@
 .site-links>a,.site-tools>summary{display:inline-flex;align-items:center;min-height:var(--hl-tap);padding:0 12px;border-radius:var(--hl-radius-sm);color:var(--hl-ink-soft);font:500 var(--hl-text-sm)/1 var(--hl-sans);text-decoration:none;cursor:pointer}
 .site-links>a:hover,.site-tools>summary:hover{background:var(--hl-surface)}
 .site-links>a[aria-current="page"]{color:var(--hl-ink);background:var(--hl-accent-soft);font-weight:600}
-.site-tools{position:relative}.site-tools>summary{list-style:none}.site-tools>summary::-webkit-details-marker{display:none}.site-tools>summary::after{content:"▾";margin-left:6px;font-size:11px}
+.site-tools{position:relative}.site-tools>summary{list-style:none}.site-tools>summary::-webkit-details-marker{display:none}.site-tools>summary::after{content:"▾";margin-left:6px;font-size:12px}
 .site-tools-menu{position:absolute;right:0;top:calc(100% + 6px);width:min(320px,90vw);background:var(--hl-panel);border:1px solid var(--hl-line);border-radius:var(--hl-radius);box-shadow:var(--hl-shadow);padding:var(--hl-space-2);display:grid;gap:2px;z-index:40}
 .site-tools-menu a{display:flex;align-items:center;gap:8px;min-height:var(--hl-tap);padding:0 10px;border-radius:var(--hl-radius-sm);color:var(--hl-ink);text-decoration:none;font-size:var(--hl-text-sm)}
 .site-tools-menu a:hover{background:var(--hl-surface)}
@@ -167,7 +167,7 @@ img{max-width:100%;height:auto}
 .page-note{max-width:1240px;margin:var(--hl-space-5) auto 0;padding:0 20px;font-size:var(--hl-text-sm);color:var(--hl-muted)}
 /* Table headers inherited #89917f from styles.css (3.3:1 on white); use the AA token. */
 th{color:var(--hl-muted)}
-.footer-dot{font-size:5px;vertical-align:middle;margin:0 8px;color:#8a6a2f}
+.footer-dot{font-size:12px;vertical-align:middle;margin:0 8px;color:#8a6a2f}
 /* Touch targets: at least 44px on touch screens and narrow viewports (inline links in
    sentences are exempt, per WCAG 2.5.8). Desktop layouts are unchanged. */
 @media (pointer:coarse),(max-width:768px){
@@ -195,7 +195,9 @@ input[type=checkbox],input[type=radio]{flex-shrink:0}
   .claim-table :is(th,td){overflow-wrap:normal;word-break:normal;padding:4px 0;border:0}
   .claim-table tbody tr{padding:16px;border-bottom:1px solid var(--pp-line,#e5e2ee)}
   .claim-table th[scope=row]{font-size:15px;line-height:22px}
-  .claim-table td:nth-of-type(2)::before,.claim-table td:nth-of-type(3)::before{content:attr(data-label);display:block;margin-top:8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#635F78}
+  .claim-table td:nth-of-type(2)::before,.claim-table td:nth-of-type(3)::before{content:attr(data-label);display:block;margin-top:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#635F78}
   .claim-table td:nth-of-type(2)::before{content:"Limit"}
   .claim-table td:nth-of-type(3)::before{content:"Reproduce"}
 }
+/* Browser-default small text must also respect the readable text floor. */
+small{font-size:max(12px,.833333em)}

@@ -21,15 +21,15 @@
 .gauntlet-score { display: grid; grid-template-columns: 150px minmax(280px, 1fr) minmax(330px, 1fr); gap: 30px; align-items: center; padding: 30px; }
 .xp-ring { --progress: 0deg; width: 128px; height: 128px; border-radius: 50%; display: grid; place-content: center; text-align: center; background: radial-gradient(circle at center, #fffdf8 0 55%, transparent 56%), conic-gradient(#edbb65 var(--progress), #dce4e8 0); }
 .xp-ring strong { font: 36px/1 var(--serif); color: #173654; }
-.xp-ring span { margin-top: 7px; font: 10px var(--mono); letter-spacing: 1.5px; color: #64798b; }
+.xp-ring span { margin-top: 7px; font: 12px var(--mono); letter-spacing: 1.5px; color: #64798b; }
 .gauntlet-rank h2 { margin: 3px 0 8px; font-size: 38px; }
 .gauntlet-rank > p:not(.small-label) { color: #5b7185; font-size: 12px; max-width: 520px; min-height: 38px; }
-.gauntlet-rank small { color: #617587; font-size: 10px; }
+.gauntlet-rank small { color: #617587; font-size: 12px; }
 .xp-track { height: 8px; background: #dfe6e9; border-radius: 8px; overflow: hidden; margin: 14px 0 8px; }
 .xp-track span { display: block; height: 100%; background: linear-gradient(90deg, #d29b42, #f0c979); border-radius: inherit; transition: width .45s ease; }
 .gauntlet-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #d8e0e4; border: 1px solid #d8e0e4; }
 .gauntlet-metrics div { background: #f6f8f8; padding: 12px; }
-.gauntlet-metrics span { display: block; color: #687c8d; font-size: 9px; text-transform: uppercase; letter-spacing: .8px; }
+.gauntlet-metrics span { display: block; color: #687c8d; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; }
 .gauntlet-metrics strong { display: block; margin-top: 3px; color: #173a58; font-size: 16px; }
 .mission-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 22px 0; }
 .mission-card { position: relative; min-height: 315px; border: 1px solid #ccd7de; border-radius: 9px; background: #fffdf8; padding: 23px; display: flex; flex-direction: column; overflow: hidden; }
@@ -37,13 +37,13 @@
 .mission-card.complete { background: linear-gradient(145deg, #eff5f1, #fffdf8); border-color: #a8c0b2; }
 .mission-card.complete:before { background: linear-gradient(90deg, #3f7458, #e5b867); }
 .mission-top { display: flex; align-items: center; margin-bottom: 20px; }
-.mission-number { font: 10px var(--mono); color: #718393; }
+.mission-number { font: 12px var(--mono); color: #718393; }
 .mission-icon { margin-left: auto; font-size: 24px; color: #b38235; }
-.mission-points { margin-left: 10px; border-radius: 20px; padding: 4px 8px; background: #eef2f4; color: #536b7f; font: 9px var(--mono); }
+.mission-points { margin-left: 10px; border-radius: 20px; padding: 4px 8px; background: #eef2f4; color: #536b7f; font: 12px var(--mono); }
 .mission-card.complete .mission-points { background: #dcebe1; color: #2d6547; }
 .mission-card h2 { margin: 8px 0 10px; font-size: 27px; }
 .mission-card > p:not(.small-label) { color: #5d7182; font-size: 12px; line-height: 1.7; }
-.mission-progress { display: flex; gap: 8px; align-items: center; margin: auto 0 15px; padding-top: 20px; color: #5f7282; font-size: 11px; }
+.mission-progress { display: flex; gap: 8px; align-items: center; margin: auto 0 15px; padding-top: 20px; color: #5f7282; font-size: 12px; }
 .mission-card.complete .mission-progress { color: #2f684a; }
 .mission-card .button { align-self: flex-start; }
 .gauntlet-rules { padding: 28px; margin: 0 0 30px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px; }
@@ -105,7 +105,7 @@
   min-height: 61px;
   padding: 14px 32px;
   border-bottom: 1px solid #e2dbea;
-  font: 10px/1.5 var(--mono);
+  font: 12px/1.5 var(--mono);
   letter-spacing: 1px;
   color: #67557e;
 }
@@ -120,19 +120,19 @@
   padding: 34px 32px 32px;
 }
 .arena-intro, .arena-stage { min-width: 0; }
-.arena-kicker { font: 10px/1.6 var(--mono); letter-spacing: 1.4px; color: #68527e; }
+.arena-kicker { font: 12px/1.6 var(--mono); letter-spacing: 1.4px; color: #68527e; }
 .gauntlet-arena h1 { font: 500 clamp(44px,4.8vw,68px)/1.04 var(--serif); letter-spacing: -2.8px; margin: 18px 0 22px; }
 .gauntlet-arena h1 em { font-style: italic; color: var(--purple); }
 .arena-description { font-size: 14px; line-height: 1.85; color: #62616b; max-width: 340px; }
 .arena-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 25px 0 30px; }
 .arena-actions .button { padding: 12px 18px; min-height: 46px; font-size: 13px; }
-.arena-score-note { font-size: 11px; line-height: 1.6; color: #6b6176; }
+.arena-score-note { font-size: 12px; line-height: 1.6; color: #6b6176; }
 .arena-route { display: flex; gap: 0; list-style: none; margin: 0; padding: 0; font-size: 12px; color: #655975; }
 .arena-route li { display: flex; align-items: center; gap: 7px; }
 .arena-route li + li::before { content: ''; width: 18px; border-top: 1px solid #c8badc; margin: 0 10px; }
-.arena-route li > span { font: 9px var(--mono); color: var(--purple); }
+.arena-route li > span { font: 12px var(--mono); color: var(--purple); }
 .arena-stage { padding: 0 2px; }
-.arena-stage-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 17px; font: 9px/1.5 var(--mono); letter-spacing: .65px; color: #6b567f; }
+.arena-stage-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 17px; font: 12px/1.5 var(--mono); letter-spacing: .65px; color: #6b567f; }
 .arena-stage-label > span:last-child { text-align: right; }
 .arena-ticket-stack { position: relative; isolation: isolate; margin: 0 7px 21px; }
 .arena-ticket-stack::before, .arena-ticket-stack::after {
@@ -148,11 +148,11 @@
 .arena-ticket-stack::after { inset: 4px -3px -3px; background: #f3effa; transform: rotate(2deg); }
 .arena-ticket-stack .arena-disc { position: absolute; z-index: -2; width: 91px; height: 137px; object-fit: contain; right: -34px; top: 20px; transform: rotate(22deg); pointer-events: none; }
 .arena-ticket { position: relative; background: #fff; border: 1px solid #d7cbe6; border-radius: 10px; box-shadow: 0 11px 24px #3d24550c; padding: 19px 22px 0; }
-.arena-ticket-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 9px/1.5 var(--mono); color: #6e5e7f; letter-spacing: .6px; }
-.arena-preview-label { padding: 3px 6px; border: 1px solid #ded5eb; border-radius: 3px; background: #f6f3fb; font-size: 8px; }
+.arena-ticket-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 12px/1.5 var(--mono); color: #6e5e7f; letter-spacing: .6px; }
+.arena-preview-label { padding: 3px 6px; border: 1px solid #ded5eb; border-radius: 3px; background: #f6f3fb; font-size: 12px; }
 .arena-target { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; margin: 21px 0 16px; }
 .arena-target strong { font: 500 clamp(50px,5.2vw,74px)/1 var(--serif); letter-spacing: -3px; color: var(--purple); }
-.arena-target > span:not(.arena-target-mark) { grid-row: 2; font: 10px/1.5 var(--mono); color: #766388; margin-top: 6px; }
+.arena-target > span:not(.arena-target-mark) { grid-row: 2; font: 12px/1.5 var(--mono); color: #766388; margin-top: 6px; }
 .arena-target .arena-target-mark { grid-column: 2; grid-row: 1 / 3; font: 48px/1 var(--sans); color: #c6b6e8; transform: rotate(-8deg); }
 .gauntlet-arena .arena-ticket h2 { font: 500 25px/1.2 var(--serif); margin: 0 0 9px; letter-spacing: -.7px; }
 .arena-challenge-copy { min-height: 69px; font-size: 12px; line-height: 1.8; color: #665c70; margin: 0 0 17px; }
@@ -160,20 +160,20 @@
 .arena-ticket-stub::before,.arena-ticket-stub::after { content: ''; position: absolute; width: 13px; height: 13px; border: 1px solid #d7cbe6; border-radius: 50%; background: #f3effa; top: -7px; left: -7px; clip-path: inset(0 0 0 50%); }
 .arena-ticket-stub::after { left: auto; right: -7px; clip-path: inset(0 50% 0 0); }
 .arena-barcode { flex: 0 0 35px; height: 29px; background: url('/assets/icons/supplied/barcode.png') center/contain no-repeat; opacity: .8; }
-.arena-ticket-stub p { font: 9px/1.65 var(--mono); color: #72617f; }
+.arena-ticket-stub p { font: 12px/1.65 var(--mono); color: #72617f; }
 .arena-stub-mark { margin-left: auto; color: var(--purple); font-size: 26px; }
 .arena-choices { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
-.arena-choices button { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; min-width: 0; min-height: 59px; padding: 9px 11px; border: 1px solid #ded4eb; border-radius: 6px; background: #ffffffa6; color: #62516f; font: 500 11px/1.5 var(--sans); text-align: left; cursor: pointer; transition: background .16s,border-color .16s,transform .16s,box-shadow .16s; }
-.arena-choices button > span { grid-column: 1 / -1; font: 9px/1 var(--mono); color: #887199; }
+.arena-choices button { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; min-width: 0; min-height: 59px; padding: 9px 11px; border: 1px solid #ded4eb; border-radius: 6px; background: #ffffffa6; color: #62516f; font: 500 12px/1.5 var(--sans); text-align: left; cursor: pointer; transition: background .16s,border-color .16s,transform .16s,box-shadow .16s; }
+.arena-choices button > span { grid-column: 1 / -1; font: 12px/1 var(--mono); color: #887199; }
 .arena-choices button > i { font-style: normal; font-size: 15px; }
 .arena-choices button:hover { background: #f0eafb; border-color: #bda8da; transform: translateY(-2px); }
 .arena-choices button[aria-pressed=true] { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 3px 8px #7357c81a; }
 .arena-choices button[aria-pressed=true] > span { color: #eee8fb; }
 .arena-choices button:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
 .arena-footnote { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 20px; border-top: 1px solid #e2dbea; padding: 14px 32px; background: #f0ebf8a6; }
-.arena-footnote > span { display: flex; align-items: center; gap: 8px; font: 9px/1.5 var(--mono); letter-spacing: .7px; color: #69527e; }
+.arena-footnote > span { display: flex; align-items: center; gap: 8px; font: 12px/1.5 var(--mono); letter-spacing: .7px; color: #69527e; }
 .arena-footnote i { font-style: normal; font-size: 17px; }
-.arena-footnote p { font-size: 10px; color: #74657e; }
+.arena-footnote p { font-size: 12px; color: #74657e; }
 @media (prefers-reduced-motion:no-preference) {
   .view:not([hidden]) .arena-ticket { animation: arena-ticket-in .45s ease-out both; }
   @keyframes arena-ticket-in { from { opacity: 0; transform: translateY(7px) rotate(1deg); } to { opacity: 1; transform: none; } }
@@ -183,8 +183,8 @@
   .gauntlet-arena h1 { font-size: 49px; letter-spacing: -2px; }
   .arena-ticket { padding-inline: 18px; }
   .arena-ticket-stub { margin-inline: -18px; padding-inline: 18px; }
-  .arena-stage-label { font-size: 8px; }
-  .arena-choices button { padding-inline: 8px; font-size: 10px; }
+  .arena-stage-label { font-size: 12px; }
+  .arena-choices button { padding-inline: 8px; font-size: 12px; }
   .arena-marquee,.arena-footnote { padding-inline: 24px; }
 }
 @media (max-width:960px) {
@@ -201,36 +201,36 @@
 }
 @media (max-width:550px) {
   .gauntlet-arena { border-radius: 12px; margin-top: 22px; }
-  .arena-marquee { padding: 13px 19px; gap: 10px; font-size: 8px; letter-spacing: .6px; }
+  .arena-marquee { padding: 13px 19px; gap: 10px; font-size: 12px; letter-spacing: .6px; }
   .arena-marquee > span:first-child { gap: 7px; max-width: 175px; }
-  .arena-marquee > span:last-child { max-width: 85px; font-size: 7px; }
+  .arena-marquee > span:last-child { max-width: 85px; font-size: 12px; }
   .arena-marquee i { font-size: 24px; }
   .arena-layout { padding: 27px 20px 25px; gap: 30px; }
-  .arena-kicker { font-size: 8px; letter-spacing: 1px; }
+  .arena-kicker { font-size: 12px; letter-spacing: 1px; }
   .gauntlet-arena h1 { font-size: clamp(39px,11.8vw,58px); letter-spacing: -2px; margin: 15px 0 18px; }
   .arena-description { font-size: 13px; }
   .arena-actions { gap: 10px; margin-top: 20px; }
   .arena-actions .button { font-size: 12px; }
-  .arena-score-note { font-size: 10px; }
-  .arena-route { font-size: 11px; }
+  .arena-score-note { font-size: 12px; }
+  .arena-route { font-size: 12px; }
   .arena-route li + li::before { width: 12px; margin-inline: 7px; }
-  .arena-stage-label { font-size: 8px; letter-spacing: .3px; gap: 8px; }
+  .arena-stage-label { font-size: 12px; letter-spacing: .3px; gap: 8px; }
   .arena-ticket { padding: 17px 16px 0; }
-  .arena-ticket-top { font-size: 8px; }
+  .arena-ticket-top { font-size: 12px; }
   .arena-target strong { font-size: clamp(46px,15vw,62px); }
   .arena-target .arena-target-mark { font-size: 38px; }
   .gauntlet-arena .arena-ticket h2 { font-size: 24px; }
   .arena-challenge-copy { min-height: 87px; }
   .arena-ticket-stub { margin-inline: -16px; padding: 14px 16px; gap: 9px; }
-  .arena-ticket-stub p { font-size: 8px; }
+  .arena-ticket-stub p { font-size: 12px; }
   .arena-barcode { flex-basis: 24px; }
   .arena-stub-mark { font-size: 21px; }
   .arena-choices { gap: 6px; }
-  .arena-choices button { font-size: 10px; padding: 9px 8px; }
+  .arena-choices button { font-size: 12px; padding: 9px 8px; }
   .arena-choices button > i { font-size: 12px; }
   .arena-footnote { padding: 13px 20px; gap: 5px; }
-  .arena-footnote > span { font-size: 8px; }
-  .arena-footnote p { font-size: 10px; line-height: 1.7; }
+  .arena-footnote > span { font-size: 12px; }
+  .arena-footnote p { font-size: 12px; line-height: 1.7; }
 }
 @media (prefers-reduced-motion:reduce) { .arena-choices button { transition: none; } .arena-choices button:hover { transform: none; } }
 @media (max-width:400px) { .arena-choices button { grid-template-columns:minmax(0,1fr); } .arena-choices button > i { display:none; } }

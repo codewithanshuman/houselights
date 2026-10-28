@@ -175,9 +175,9 @@
 .ring{display:block}
 .ring-track{fill:none;stroke-width:4}
 .ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dasharray .9s var(--pp-ease)}
-.ring-text{font:600 11px var(--font-ui);text-anchor:middle;dominant-baseline:middle}
+.ring-text{font:600 12px var(--font-ui);text-anchor:middle;dominant-baseline:middle}
 .ring-budget{width:112px;height:112px}
-.ring-budget .ring-track{stroke:#2E2E2E}.ring-budget .ring-fill{stroke:#CDBEFF}.ring-budget .ring-text{fill:#FFFFFF;font-size:10px}
+.ring-budget .ring-track{stroke:#2E2E2E}.ring-budget .ring-fill{stroke:#CDBEFF}.ring-budget .ring-text{fill:#FFFFFF;font-size:12px}
 .stub-small{margin:0;font:400 13px/16px var(--font-ui);color:#BDB9B1}
 .stub-stats{width:100%;margin:16px 0 0;display:grid;gap:8px}
 .stub-stats div{display:flex;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #2A2A2A}
@@ -407,7 +407,7 @@
 .plan-page .receipt-drawer::backdrop{background:#16131F52;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .receipt-sheet{display:flex;flex-direction:column;width:min(640px,100%);height:100%;overflow:auto;padding:28px;border-radius:28px;background:#fff;box-shadow:0 0 0 1px #5E44B81a,0 30px 80px #16131F40;overscroll-behavior:contain}
 .plan-page .receipt-drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 0 18px;padding-bottom:18px;border-bottom:1px solid var(--pp-line)}
-.receipt-kicker{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--pp-accent-soft);font:600 11px/16px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--pp-accent)}
+.receipt-kicker{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--pp-accent-soft);font:600 12px/16px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--pp-accent)}
 .receipt-kicker img{display:block;width:auto;height:14px}
 .plan-page .receipt-drawer-head h2{margin:0;font:600 22px/1.25 var(--font-display);letter-spacing:-.02em;color:var(--pp-ink)}
 .plan-page .receipt-x{flex-shrink:0;display:grid;place-items:center;width:40px;height:40px;min-height:40px;padding:0;border:1px solid var(--pp-line-strong);border-radius:12px;background:#fff;color:var(--pp-ink);cursor:pointer;transition:background .2s,transform .35s var(--pp-ease)}
@@ -507,13 +507,13 @@
 @media (min-width:1001px){.plan-page .decision{grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:48px}}
 .ticket-art{width:min(264px,100%)}
 .ticket-poster{width:min(210px,48%);left:0}
-.plan-page .ticket-art .result-meta{font-size:max(11.5px,3.6cqw)}
-.plan-page .ticket-art .badge{font-size:max(9.5px,2.7cqw);padding:max(2px,.8cqw) max(7px,2.4cqw)}
-.tk-admit{font-size:max(9.5px,3.2cqw)}
-.tk-band{font-size:max(10px,3.4cqw)}
-.tk-band-2{font-size:max(10.5px,3.5cqw)}
-.plan-page .ticket-art .result-sub{font-size:max(11.5px,3.7cqw)}
-.tk-stats dt{font-size:max(8px,2.4cqw)}
+.plan-page .ticket-art .result-meta{font-size:max(12px,3.6cqw)}
+.plan-page .ticket-art .badge{font-size:max(12px,2.7cqw);padding:max(2px,.8cqw) max(7px,2.4cqw)}
+.tk-admit{font-size:max(12px,3.2cqw)}
+.tk-band{font-size:max(12px,3.4cqw)}
+.tk-band-2{font-size:max(12px,3.5cqw)}
+.plan-page .ticket-art .result-sub{font-size:max(12px,3.7cqw)}
+.tk-stats dt{font-size:max(12px,2.4cqw)}
 .tk-stats dd{font-size:max(13px,4.4cqw)}
 @media (max-width:1000px){.ticket-poster{left:calc(50% - 230px);width:180px}}
 @media (max-width:640px){.ticket-art{width:min(264px,100%)}}
@@ -536,7 +536,7 @@
 .runway-switch[aria-checked="true"] .rw-knob{transform:translateX(40px)}
 .rw-label{display:grid;gap:5px}
 .rw-title{font:600 16px/1.2 var(--font-ui);letter-spacing:-.01em}
-.rw-state{justify-self:start;padding:2px 10px;border-radius:999px;background:#E4D9FF;color:#3B2A78;font:600 11px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase}
+.rw-state{justify-self:start;padding:2px 10px;border-radius:999px;background:#E4D9FF;color:#3B2A78;font:600 12px/16px var(--font-mono);letter-spacing:.14em;text-transform:uppercase}
 .runway-switch[aria-checked="false"] .rw-state{background:#EEEAF4;color:#4A4560}
 .runway-switch:focus-visible{outline:3px solid var(--pp-accent);outline-offset:4px}
 @media (prefers-reduced-motion:no-preference){
@@ -615,7 +615,7 @@
 .sel.is-on{opacity:1}
 .sel-h{position:absolute;width:9px;height:9px;border:1.5px solid #16131F;background:#fff;transform:translate(-50%,-50%)}
 .sel-tl{left:0;top:0}.sel-tm{left:50%;top:0}.sel-tr{left:100%;top:0}.sel-ml{left:0;top:50%}.sel-mr{left:100%;top:50%}.sel-bl{left:0;top:100%}.sel-bm{left:50%;top:100%}.sel-br{left:100%;top:100%}
-.sel-tag{position:absolute;left:-1.5px;bottom:calc(100% + 8px);padding:3px 8px;border-radius:5px;background:#16131F;color:#fff;font:500 11px/15px var(--font-mono);letter-spacing:.04em;white-space:nowrap}
+.sel-tag{position:absolute;left:-1.5px;bottom:calc(100% + 8px);padding:3px 8px;border-radius:5px;background:#16131F;color:#fff;font:500 12px/15px var(--font-mono);letter-spacing:.04em;white-space:nowrap}
 .sel-cursor{position:absolute;right:-20px;bottom:-22px;filter:drop-shadow(0 3px 4px #16131F40);transition:transform .7s var(--pp-glide)}
 .sel.is-moving .sel-cursor{transform:translate(-6px,-4px)}
 @media (max-width:760px){.facts-stage{padding:28px 16px 40px;margin-top:44px}.sel-cursor{right:-12px}.sel-tag{display:none}}
@@ -821,3 +821,9 @@
 .tl-deco-3{left:auto!important;right:-60px;top:-62px!important;width:118px!important}
 .tl-node .tl-deco-0{width:324px!important;height:324px!important;object-fit:cover}
 @media (max-width:700px){.tl-deco-1{left:-34px!important}.tl-deco-3{right:-30px}.tl-node .tl-deco-0{width:184px!important;height:184px!important}}
+/* Keep legible statistics inside the owner's narrow ticket artwork. */
+.tk-stats{left:12%;right:12%;top:64%}
+.tk-stats dt{letter-spacing:0;min-height:2em;line-height:1;overflow-wrap:anywhere}
+.plan-page .tk-band{line-height:1;text-wrap:nowrap}
+.plan-page .tk-band-1{letter-spacing:.04em}
+.plan-page .tk-band-2{top:61%}

@@ -745,6 +745,52 @@ test('with the API down, the four-step path still works from recorded JSON', { t
 
 // Visual regression at the key states. Baselines live next to this spec, per browser and
 // platform (Windows and Linux); the footer release hash differs between builds and is masked.
+test('readable text and contained layout across organizer pages on desktop and phone', async ({page},testInfo)=>{
+  test.setTimeout(90000);
+  for(const width of [1366,390]){
+    await page.setViewportSize({width,height:900});
+    for(const path of ['index.html','judge.html','desk.html','proof-lab.html','evidence.html','demand.html','financial.html','workspace.html']){
+      const response=await page.goto(`${origin}/${path}`);
+      expect(response.status(),`${path} must be served`).toBe(200);
+      if(path==='workspace.html'){
+        await page.getByLabel('Organizer token').fill('local-browser-regression-token-only-00000000');
+        await page.getByRole('button',{name:'Unlock workspace'}).click();
+        await expect(page.locator('#workspace-app')).toBeVisible();
+      }
+      await page.evaluate(async()=>{await document.fonts.ready;});
+      const small=await page.evaluate(()=>{
+        const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),rows=[];
+        while(walker.nextNode()){
+          const node=walker.currentNode,parent=node.parentElement;
+          if(!node.textContent.trim()||!parent||parent.closest('script,style,[aria-hidden="true"],.sr-only,[hidden]'))continue;
+          const style=getComputedStyle(parent),range=document.createRange();range.selectNodeContents(node);
+          if(![...range.getClientRects()].some(rect=>rect.width&&rect.height)||style.visibility==='hidden'||parent.checkVisibility&&!parent.checkVisibility({opacityProperty:true,visibilityProperty:true}))continue;
+          if(parseFloat(style.fontSize)<11.99)rows.push({text:node.textContent.trim().slice(0,65),size:style.fontSize,tag:parent.tagName,className:parent.getAttribute('class')});
+        }
+        return rows;
+      });
+      if(path==='index.html'){
+        await page.screenshot({path:testInfo.outputPath(`organizer-font-${width}.png`),fullPage:true});
+        if(width===390){
+          expect((await page.locator('#budget').boundingBox()).width).toBeGreaterThanOrEqual(90);
+          const endpoints=await page.locator('.risk-label .range-ends > span').evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return {left:r.left,right:r.right};}));
+          expect(endpoints[0].right).toBeLessThanOrEqual(endpoints[1].left);
+        }
+      }
+      if(path==='judge.html'){
+        const head=await page.locator('.tk-head').boundingBox(),band=await page.locator('.tk-band-1').boundingBox();
+        expect(head.y+head.height,'ticket header must not cover the bill band').toBeLessThanOrEqual(band.y);
+        expect(await page.locator('.tk-stats dt').evaluateAll(nodes=>nodes.every(node=>node.scrollWidth<=node.clientWidth+1)),'ticket statistic labels must fit their columns').toBe(true);
+        expect(await page.locator('.tk-band').evaluateAll(nodes=>nodes.every(node=>node.scrollHeight<=node.clientHeight+1)),'ticket bands must fit without hidden lines').toBe(true);
+        await page.locator('#plan-result').screenshot({path:testInfo.outputPath(`booking-font-${width}.png`)});
+        await page.locator('.ticket-art').screenshot({path:testInfo.outputPath(`ticket-font-${width}.png`)});
+      }
+      expect(small,`${path} at ${width}px`).toEqual([]);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${path} overflow at ${width}px`).toBe(true);
+    }
+  }
+});
+
 test.describe('visual states', { tag: '@visual' }, () => {
   test.beforeEach(async ({ page }) => { await page.emulateMedia({ reducedMotion: 'reduce' }); });
   const mask = page => [page.locator('.site-release'), page.locator('.judge-status-strip')];
@@ -976,7 +1022,8 @@ test.describe('Booking Desk: plan your show', () => {
     await page.goto(`${origin}/judge.html`);
     await page.fill('#plan-city','Leeds');await page.fill('#plan-anchor','Arlo Parks');await page.fill('#plan-budget','12000');
     await page.locator('#plan-budget').press('Enter');
-    await expect(page.locator('#plan-error')).toContainText('ended before a result was saved');
+    await expect(page.locator('#plan-error')).toContainText('connection ended before a result was received');
+    await expect(page.locator('#plan-error')).toContainText('may still finish on the server');
     await expect(page.locator('#plan-submit')).toBeEnabled();
     await expect(page.locator('#agent-trace')).toContainText('The live plan stopped');
     await expect(page).not.toHaveURL(/\?plan=/);

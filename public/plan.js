@@ -123,14 +123,13 @@
             <div class="tk-head">
               <p class="tk-admit">Admit one</p>
               <p class="result-meta">${e(input.city)} · fans of ${e(anchors)} · ${e(usd(budget))} artist budget · ${e(slots)} act${slots===1?'':'s'}</p>
-              <div class="result-badges">${badges}</div>
             </div>
             <p class="tk-band tk-band-1" aria-hidden="true">The bill</p>
             <div class="tk-body">
               <h2 id="result-title" class="result-decision">${decision}</h2>
               <p class="result-sub">${slate.feasible?`Every booking rule passes. Best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked.`:sub}</p>
             </div>
-            <p class="tk-band tk-band-2">${slate.feasible?`${e(usd(slate.remainingBudget))} under budget`:'No bookable bill'}</p>
+            <p class="tk-band tk-band-2" aria-label="${slate.feasible?`${e(usd(slate.remainingBudget))} under budget`:'No bookable bill'}">${slate.feasible?`${e(usd(slate.remainingBudget))} left`:'No bookable bill'}</p>
             <dl class="tk-stats">
               <div><dt>Budget used</dt><dd>${slate.feasible?`${Math.round(used*100)}%`:'—'}</dd></div>
               <div><dt>Checked</dt><dd>${e(slate.checkedCount)}</dd></div>
@@ -139,6 +138,7 @@
           </article>
         </div>
         <section class="result-qloo" aria-label="What Qloo changes">
+          <div class="result-badges" aria-label="Plan assumptions and scoring">${badges}</div>
           <div class="qloo-head">
             <button type="button" class="runway-switch${view.flip?` is-flip-${view.flip}`:''}" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
               <span class="rw-track" aria-hidden="true"><span class="rw-ink rw-ink-a"></span><span class="rw-ink rw-ink-b"></span><svg class="rw-water" viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 22Q10 17 20 22T40 22T60 22T80 22T100 22T120 22T140 22T160 22V40H0z"/></svg><svg class="rw-wake" viewBox="0 0 200 40" preserveAspectRatio="none"><path pathLength="100" d="M0 20Q12.5 8 25 20T50 20T75 20T100 20T125 20T150 20T175 20T200 20"/></svg><span class="rw-knob"></span></span>
@@ -343,7 +343,7 @@
           }
         }
       }
-      if(!done)showError('The live plan ended before a result was saved. Try again, or open a saved plan.');
+      if(!done)showError('The connection ended before a result was received. Research may still finish on the server. Try again, or open a saved plan.');
     }catch(problem){showError(problem?.name==='TimeoutError'?'The live plan took too long. Try again, or open a saved plan.':'The live plan was interrupted. Try again, or open a saved plan.');}
     finally{submit.disabled=false;submit.innerHTML='Plan my bill <span aria-hidden="true">→</span>';}
   }
