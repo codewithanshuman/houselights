@@ -27,7 +27,7 @@ X-Request-Id: <per request>
 
 - **Persistent per-IP quotas** are stored in SQLite: 180 API requests a minute. Paid research is limited to 6 a minute per IP and 100 a day.
 - **Judge experiments:** 20 per IP a minute. Identical experiments are served from a server cache; only new calculations count toward the global cap of 60 a minute.
-- **Live plans:** 3 per IP every 10 minutes, 10 per IP a day and a shared daily cap (`PUBLIC_PLAN_DAILY_CAP`, default 40). They also count toward the paid-research limits above and the shared daily Qloo workflow cap.
+- **Live plans:** 3 per visitor every 10 minutes, 10 per visitor a day and a shared daily cap (`PUBLIC_PLAN_DAILY_CAP`, default 40). IPv6 visitors share their /64 prefix; IPv4-mapped addresses use the same bucket as IPv4. These post-validation plan limits are separate from the organizer paid-research bucket. Runs still consume the shared Qloo workflow allowance. Unsuccessful runs refund only their original plan reservations; spent workflow attempts are not refunded. Shared-VM Compose forwards the public cap explicitly. The account's actual provider allowance is not yet confirmed.
 - **Festival policy:** briefs above 2,500 combinations are rejected, because the policy runs synchronously.
 - **429 responses** include `Retry-After`. Every error response is `{error, requestId}` and never includes stack traces or internals.
 - **Tested:** a flood of forged ballots gets only 4xx responses, nothing is stored, and the per-IP limit engages (`tests/http-hygiene.test.mjs`).
@@ -35,7 +35,7 @@ X-Request-Id: <per request>
 ## Secrets
 
 - Provider keys and the organizer token live only in the server environment file (`/home/ubuntu/.config/houselights/release.env`, mode 600). They are never in the repository or the browser.
-- **CI secret scan:** `scripts/secret-scan.mjs` runs in CI and checks every tracked file for private keys and known token formats. It passes on 377 files and catches a planted key.
+- **CI secret scan:** `scripts/secret-scan.mjs` checks tracked files for private keys and known token formats. Git-free exports use a labeled filesystem-source inventory that skips runtime/private directories and symlinks. Regression tests catch a planted key without printing its value. Original-source verification separately reports when Git exclusion cannot be established.
 - **Deploy check:** before every deployment, the checked-out source is scanned for the exact values in the environment file.
 
 ## Dependencies

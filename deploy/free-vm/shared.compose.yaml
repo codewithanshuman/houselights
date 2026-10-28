@@ -19,6 +19,7 @@ services:
       PUBLIC_LANDING_PAGE: judge
       TRUST_PROXY: "1"
       GM_CALL_BUDGET: "60"
+      PUBLIC_PLAN_DAILY_CAP: ${PUBLIC_PLAN_DAILY_CAP:-40}
     ports:
       - "127.0.0.1:18080:8080"
     volumes:

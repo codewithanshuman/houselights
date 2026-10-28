@@ -86,6 +86,8 @@ jobs:
             assert.equal(c.LogConfig.Config["max-file"],"3");
             console.log("Actual runtime limits and private port binding verified.");
           '
+          docker compose -f deploy/free-vm/shared.compose.yaml -f deploy/free-vm/ci.override.yaml exec -T houselights \
+            node -e 'if (process.env.PUBLIC_PLAN_DAILY_CAP !== "40") process.exit(1); console.log("Public plan cap forwarded: 40 daily reservations.");'
       - name: Verify public routes, protection and experiments
         run: node scripts/verify-release.mjs http://127.0.0.1:18080 --allow-local --allow-synthetic --commit="$GITHUB_SHA"
       - name: Complete a durable proof job and recreate the container
