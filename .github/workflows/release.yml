@@ -40,7 +40,24 @@ jobs:
         run: npm run check:links
       - name: Dependency audit
         run: npm audit --omit=dev --audit-level=high
-      - run: npm test
+      - name: Run unit tests with public failure diagnostics
+        run: |
+          set +e
+          npm test > "$RUNNER_TEMP/houselights-unit.log" 2>&1
+          status=$?
+          cat "$RUNNER_TEMP/houselights-unit.log"
+          if [ "$status" -ne 0 ]; then
+            node --input-type=module -e '
+              import {readFileSync} from "node:fs";
+              const lines=readFileSync(process.env.RUNNER_TEMP+"/houselights-unit.log","utf8").split("\n");
+              const selected=new Set();
+              for(let i=0;i<lines.length;i++)if(/^not ok|^\s*✖|^Error:/.test(lines[i]))for(let j=Math.max(0,i-2);j<Math.min(lines.length,i+35);j++)selected.add(j);
+              const details=(selected.size?[...selected].sort((a,b)=>a-b).slice(0,100).map(i=>lines[i]):lines.slice(-60)).join("\n");
+              const escaped=details.slice(0,18000).replaceAll("%","%25").replaceAll("\r","%0D").replaceAll("\n","%0A");
+              console.log("::error title=Node unit-test failure::"+escaped);
+            '
+          fi
+          exit "$status"
       - name: Reproduce the published judge stress audit
         run: |
           npm run audit:judge-evaluation
