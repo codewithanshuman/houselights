@@ -3,9 +3,27 @@
 // literal assigned to a key/secret/token name. Test placeholders are recognised by their
 // wording (placeholder, test, fixture, example, local, ci-only) or repeated filler.
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { join } from 'node:path';
 
-const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean)
+let inventory, inventoryKind = 'tracked';
+try {
+  const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  if (realpathSync(root) !== realpathSync(process.cwd())) throw new Error('Not the project Git root');
+  inventory = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).split('\0').filter(Boolean);
+} catch {
+  inventoryKind = 'filesystem source'; inventory = [];
+  const skip = new Set(['node_modules', '.git', 'data', 'artifacts', 'build', 'dist', '.claude', '.codex', 'test-results', 'playwright-report', 'coverage']);
+  const walk = directory => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (skip.has(entry.name) || /^\.env(?:$|\.)/.test(entry.name) && entry.name !== '.env.example') continue;
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) walk(path); else if (entry.isFile()) inventory.push(path);
+    }
+  };
+  walk('.');
+}
+const files = inventory
   .filter(file => !/\.(png|webp|jpe?g|gif|woff2?|ttf|ico|pdf|zip|xlsx|sqlite)$/i.test(file) && file !== 'package-lock.json');
 const patterns = [
   ['private key', /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/],
@@ -30,4 +48,4 @@ for (const file of files) {
   });
 }
 if (findings.length) { console.error(`Secret scan failed (${findings.length}):\n${findings.join('\n')}`); process.exit(1); }
-console.log(`Secret scan passed: ${files.length} tracked files, no credential patterns.`);
+console.log(`Secret scan passed: ${files.length} ${inventoryKind} files, no credential patterns.`);

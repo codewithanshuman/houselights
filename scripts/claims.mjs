@@ -47,7 +47,7 @@ export function claimTable(c) {
     { claim: `${c.shockViolations} re-prompted LLM responses (${c.shockRate}) broke a hard rule on comparable solvable shocks; Houselights broke none.`, status: 'verified (by construction)', limit: 'An exact optimizer cannot break a hard rule; this is not evidence of better judgement.', source: SOURCE('results/shocks.md'), reproduce: 'npm run reproduce:shocks' },
     { claim: 'Every pinned Autopilot recording replays exactly under the scoring version that produced it.', status: 'verified', limit: 'Qloo responses are unsigned: digests show records are unchanged, not that Qloo sent them.', source: SOURCE('server/autopilot-pins.mjs'), reproduce: 'npm run reproduce:autopilot' },
     { claim: 'Blind reviews by promoters, venue programmers or bookers.', status: 'pending', limit: 'None collected yet; the live count is shown below.', source: SOURCE('docs/usability-test-kit.md'), reproduce: null, live: 'reviews' },
-    { claim: 'First-time usability sessions.', status: 'pending', limit: '0 sessions run. The protocol is ready.', source: SOURCE('docs/usability-test-kit.md'), reproduce: null },
+    { claim: 'First-time usability sessions.', status: 'pending', limit: '0 genuine sessions recorded. Developer dry runs and automated browser tests are excluded.', source: SOURCE('docs/usability-test-kit.md'), reproduce: null },
     { claim: 'Ticket sales, attendance or profit improvement from following Houselights.', status: 'not measured', limit: 'No real outcome data exists for these decisions.', source: SOURCE('docs/claims-audit.md'), reproduce: null },
   ] };
 }

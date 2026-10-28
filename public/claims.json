@@ -55,7 +55,7 @@
     {
       "claim": "First-time usability sessions.",
       "status": "pending",
-      "limit": "0 sessions run. The protocol is ready.",
+      "limit": "0 genuine sessions recorded. Developer dry runs and automated browser tests are excluded.",
       "source": "https://github.com/codewithanshuman/houselights/blob/main/docs/usability-test-kit.md",
       "reproduce": null
     },

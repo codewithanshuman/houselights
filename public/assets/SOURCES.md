@@ -35,8 +35,8 @@ They are decorative artwork, not Qloo evidence or photographs of recommended act
 | Application asset | Supplied filename |
 | --- | --- |
 | `brand/portal-logo-v2.png` (source, kept unserved in `design/source-assets/brand/`) | `codex-clipboard-44f9c7c0-42cc-4bc5-83c9-4fda445a4b95.png` |
-| `brand/portal-logo-v2.webp` | Resized (216 px) from the `portal-logo-v2.png` source for display |
-| `brand/favicon-64.png` | Resized (64 px) from the `portal-logo-v2.png` source for the favicon |
+| `brand/portal-logo-v2.webp` (retired; served file removed 28 October 2026) | Former 216 px derivative; the unserved original is retained for provenance |
+| Earlier `brand/favicon-64.png` | Former portal-derived favicon; the current file comes from the owner's newer mark described above |
 | `brand/record.png` (unused; kept unserved in `design/source-assets/brand/`) | `codex-clipboard-972cc05e-2775-4e43-b0bd-c21efd8123cf.png` |
 | `brand/microphone.png` (unused; kept unserved in `design/source-assets/brand/`) | `codex-clipboard-62a2907a-cdb3-448c-924d-095423af4542.png` |
 | `brand/disc.webp` | `codex-clipboard-8e049936-7b39-4241-8a90-108722c924c3.png` |
@@ -57,6 +57,8 @@ remaining supplied artwork on 22 October 2026. Fraunces, IBM Plex Sans and IBM P
 from Google Fonts; their OFL license files are included in `fonts/`. The served `.woff2` files are lossless format conversions of those `.ttf` files (fontTools), with unchanged font names; the `.ttf` originals are kept, unserved, in `design/source-assets/fonts/`.
 
 The sharper portal logo replaces the earlier `Minimal Geometric Light Portal Logo.png`; its supplied pixels and transparency are preserved. Interface icons are separately attributed in [icons/README.md](icons/README.md).
+
+On 28 October 2026, the owner confirmed that the supplied artwork was made by them and was not AI-generated. This records the owner's authorship statement; the confirmation date is not a claimed creation date. No AI-generation tool or date applies to that supplied artwork. Separately licensed fonts and interface icons retain their existing attributions.
 
 ## Earlier artwork (replaced; retained in Git history)
 

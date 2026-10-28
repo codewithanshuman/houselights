@@ -4,6 +4,8 @@ This protocol covers the open item for genuine external usability and booking-va
 
 **No participant session has been run.** The facilitator dry run below was carried out by the developer. It checks that the interface makes each answer reachable. It is not user research. Do not report any result that was not collected with this kit.
 
+**Status, 28 October 2026:** the owner confirmed first-time participants and a physical-phone tester are unavailable for now. Genuine usability sessions: **0**. No participant files have been created in `results/usability/`; automated browser runs and developer screenshot reviews are excluded. Five first-time sessions and the independent booking-value reviews remain pending.
+
 ## Participants
 
 - **Five first-time users** with no prior exposure to Houselights. Hackathon judges or technically literate people are suitable.

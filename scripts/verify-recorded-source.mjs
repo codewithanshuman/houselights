@@ -1,11 +1,26 @@
-import {readFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {readFileSync,mkdtempSync,rmSync,realpathSync} from 'node:fs';
 import {tmpdir} from 'node:os';
-import {join,resolve} from 'node:path';
+import {join,resolve,relative,isAbsolute,sep} from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
 
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+export function sourceProtection(path,root=process.cwd()){
+  const original=realpathSync(path);
+  for(const candidate of [resolve(path),original])for(const folder of ['public','deploy','results']){
+    const part=relative(resolve(root,folder),candidate);
+    if(part===''||part!=='..'&&!part.startsWith('..'+sep)&&!isAbsolute(part))throw new Error('The private original must be outside published source directories.');
+  }
+  let gitRoot;
+  try { gitRoot=execFileSync('git',['rev-parse','--show-toplevel'],{cwd:root,encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim(); }
+  catch { return {gitProtectionVerified:false,ignored:null,tracked:null}; }
+  if(realpathSync(gitRoot)!==realpathSync(root))return {gitProtectionVerified:false,ignored:null,tracked:null};
+  execFileSync('git',['check-ignore','--quiet','--',original],{cwd:root,stdio:'ignore'});
+  const tracked=execFileSync('git',['ls-files','--',original],{cwd:root,encoding:'utf8'}).trim();
+  if(tracked)throw new Error('Private source must remain untracked.');
+  return {gitProtectionVerified:true,ignored:true,tracked:false};
+}
 export function verifyProjection(bytes,expectedDigest,project,expected,title){
   if(!/^[a-f0-9]{64}$/.test(expectedDigest)||hash(bytes)!==expectedDigest)throw new Error('Private source digest mismatch.');
   let source;try{source=JSON.parse(bytes.toString('utf8'));}catch{throw new Error('Private source is not valid JSON.');}
@@ -17,10 +32,8 @@ export function verifyProjection(bytes,expectedDigest,project,expected,title){
 }
 async function main(){
   const path=resolve(process.argv[2]??'artifacts/captured-source.json');
-  // Confirm the retained original is ignored AND untracked, without printing it.
-  execFileSync('git',['check-ignore','--quiet','--',path],{stdio:'ignore'});
-  const tracked=execFileSync('git',['ls-files','--',path],{encoding:'utf8'}).trim();
-  if(tracked)throw new Error('Private source must remain untracked.');
+  // A ZIP can verify bytes/projection, but cannot attest absent Git metadata.
+  const protection=sourceProtection(path);
   const doc=readFileSync('docs/recorded-agent-run.md','utf8');
   const expectedDigest=doc.match(/file digest is `([a-f0-9]{64})`/)?.[1];
   const seed=JSON.parse(readFileSync('deploy/judge-cases.json','utf8'));
@@ -33,7 +46,7 @@ async function main(){
     db=(await import('../server/database.mjs')).db;
     const report=verifyProjection(readFileSync(path),expectedDigest,judge.publicJudgeSnapshot,row.snapshot,row.title);
     if(report.caseId!=='8be4d03ef4792ca9f1466983')throw new Error('Public case identity mismatch.');
-    console.log(JSON.stringify({...report,ignored:true,tracked:false,node:process.version}));
+    console.log(JSON.stringify({...report,...protection,node:process.version}));
   }finally{db?.close();rmSync(dir,{recursive:true,force:true});}
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
