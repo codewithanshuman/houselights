@@ -3,6 +3,7 @@
 // the exact optimizer picks the bill, and the result is saved as a shareable live plan that
 // every judge experiment (Qloo off, budget cut, cancellation, receipts) works on.
 import { createHash } from 'node:crypto';
+import ipaddr from 'ipaddr.js';
 import { Run, isMock } from './qloo.mjs';
 import { buildMemo } from './agent.mjs';
 import { consumeQuota, refundQuota } from './database.mjs';
@@ -31,7 +32,21 @@ export function planInput(body) {
   return { city, anchor, anchorId, budget: Math.round(budget), slots };
 }
 
-const dailyCap = () => Math.max(1, Math.floor(Number(process.env.PUBLIC_PLAN_DAILY_CAP) || 40));
+export function planVisitorKey(address) {
+  let identity = 'unknown';
+  try {
+    const parsed = ipaddr.process(address ?? '');
+    identity = parsed.kind() === 'ipv6'
+      ? `ipv6:${parsed.toByteArray().slice(0, 8).map(byte => byte.toString(16).padStart(2, '0')).join('')}/64`
+      : parsed.toString();
+  } catch { /* Invalid addresses share one conservative bucket. */ }
+  return createHash('sha256').update(identity).digest('hex');
+}
+export function publicPlanDailyCap() {
+  if (process.env.PUBLIC_PLAN_DAILY_CAP === undefined) return 40;
+  const cap = Number(process.env.PUBLIC_PLAN_DAILY_CAP);
+  return Number.isSafeInteger(cap) && cap >= 0 ? cap : 0;
+}
 const PLAN_BUDGET = 12, PLAN_DEADLINE_MS = 120000;
 
 export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
@@ -40,11 +55,11 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
     try { input = planInput(req.body); } catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
     if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Live Qloo research is not configured on this server. Open an example plan instead.' });
     const now = Date.now(), tenMinutes = Math.floor(now / 6e5), day = Math.floor(now / 864e5);
-    const who = createHash('sha256').update(req.ip ?? 'unknown').digest('hex');
+    const who = planVisitorKey(req.ip);
     const quotaRules = [
       { key: `plan:${tenMinutes}:${who}`, limit: 3, expires: (tenMinutes + 1) * 6e5 },
       { key: `plan-day:${day}:${who}`, limit: 10, expires: (day + 1) * 864e5 },
-      { key: `plan-global:${day}`, limit: dailyCap(), expires: (day + 1) * 864e5 },
+      { key: `plan-global:${day}`, limit: publicPlanDailyCap(), expires: (day + 1) * 864e5 },
     ];
     if (!consumeQuota(quotaRules, now)) {
       res.set('Retry-After', String(Math.max(60, Math.ceil(((tenMinutes + 1) * 6e5 - now) / 1000))));
