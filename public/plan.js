@@ -337,6 +337,7 @@
           }
         }
       }
+      if(!done)showError('The live plan ended before a result was saved. Try again, or open a saved plan.');
     }catch(problem){showError(problem?.name==='TimeoutError'?'The live plan took too long. Try again, or open a saved plan.':'The live plan was interrupted. Try again, or open a saved plan.');}
     finally{submit.disabled=false;submit.innerHTML='Plan my bill <span aria-hidden="true">→</span>';}
   }

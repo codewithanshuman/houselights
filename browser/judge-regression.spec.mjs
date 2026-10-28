@@ -930,7 +930,7 @@ test.describe('Booking Desk: plan your show', () => {
     await page.fill('#plan-budget', '12000');
     await page.locator('#plan-submit').click();
     await expect(page.locator('#plan-progress')).toBeVisible();
-    await expect.poll(async()=>({ready:/\?plan=[a-f0-9]{24}$/.test(page.url()),requests:requests.length,errors,error:await page.locator('#plan-error').textContent(),button:await page.locator('#plan-submit').textContent()}),{timeout:50000}).toMatchObject({ready:true});
+    await expect.poll(async()=>JSON.stringify({ready:/\?plan=[a-f0-9]{24}$/.test(page.url()),requests:requests.length,errors,error:await page.locator('#plan-error').textContent(),button:await page.locator('#plan-submit').textContent()}),{timeout:50000}).toContain('"ready":true');
     await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/);
     await expect(page.locator('#result-title')).toContainText('Book ');
     await expect(page.locator('.result-badges')).toContainText('Live plan');
@@ -954,6 +954,17 @@ test.describe('Booking Desk: plan your show', () => {
     await page.locator('#plan-switch').click();
     await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+  });
+
+  test('an incomplete live stream reports the interruption and keeps the form usable', async ({ page }) => {
+    await page.route('**/api/plan',route=>route.fulfill({status:200,contentType:'text/event-stream',body:'data: {"type":"stage","text":"Resolve"}\n\n'}));
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city','Leeds');await page.fill('#plan-anchor','Arlo Parks');await page.fill('#plan-budget','12000');
+    await page.locator('#plan-budget').press('Enter');
+    await expect(page.locator('#plan-error')).toContainText('ended before a result was saved');
+    await expect(page.locator('#plan-submit')).toBeEnabled();
+    await expect(page.locator('#agent-trace')).toContainText('The live plan stopped');
+    await expect(page).not.toHaveURL(/\?plan=/);
   });
 
   test('the agent card replays the saved Qloo run, folds each stage and stays expandable @cross-browser', async ({ page }) => {
