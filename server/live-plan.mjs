@@ -5,7 +5,7 @@
 import { createHash } from 'node:crypto';
 import { Run, isMock } from './qloo.mjs';
 import { buildMemo } from './agent.mjs';
-import { consumeQuota } from './database.mjs';
+import { consumeQuota, refundQuota } from './database.mjs';
 import { saveLivePlan } from './judge.mjs';
 
 // Qloo returns no booking fees. A discovered act's fee is an illustrative tier from its Qloo
@@ -34,27 +34,27 @@ export function planInput(body) {
 const dailyCap = () => Math.max(1, Math.floor(Number(process.env.PUBLIC_PLAN_DAILY_CAP) || 40));
 const PLAN_BUDGET = 12, PLAN_DEADLINE_MS = 120000;
 
-export function registerLivePlanRoutes(app) {
+export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
   app.post('/api/plan', async (req, res) => {
     let input;
     try { input = planInput(req.body); } catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
     if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Live Qloo research is not configured on this server. Open an example plan instead.' });
     const now = Date.now(), tenMinutes = Math.floor(now / 6e5), day = Math.floor(now / 864e5);
     const who = createHash('sha256').update(req.ip ?? 'unknown').digest('hex');
-    if (!consumeQuota([
+    const quotaRules = [
       { key: `plan:${tenMinutes}:${who}`, limit: 3, expires: (tenMinutes + 1) * 6e5 },
       { key: `plan-day:${day}:${who}`, limit: 10, expires: (day + 1) * 864e5 },
       { key: `plan-global:${day}`, limit: dailyCap(), expires: (day + 1) * 864e5 },
-    ], now)) {
+    ];
+    if (!consumeQuota(quotaRules, now)) {
       res.set('Retry-After', String(Math.max(60, Math.ceil(((tenMinutes + 1) * 6e5 - now) / 1000))));
       return res.status(429).json({ error: 'Live plans are limited to 3 every 10 minutes per visitor, and a shared daily cap protects the Qloo quota. Open an example plan meanwhile.' });
     }
     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
     const trace = [], startedAt = Date.now();
-    let choose = null;
-    const send = event => { if (!res.destroyed) res.write(`data: ${JSON.stringify(event)}\n\n`); };
+    let choose = null, saved = false;
+    const send = event => { if (!res.destroyed && !res.writableEnded) res.write(`data: ${JSON.stringify(event)}\n\n`); };
     const emit = event => {
-      if (res.destroyed) throw new Error('Client disconnected');
       if (['start', 'stage', 'receipt', 'plan', 'needs_input', 'memo'].includes(event.type) && trace.length < 100) {
         trace.push({ elapsedMs: Date.now() - startedAt, type: event.type, text: String(event.text || event.reason || '').slice(0, 240),
           receiptId: event.receipt?.id || null, tool: event.receipt?.tool || null, status: event.receipt?.status || null,
@@ -72,7 +72,7 @@ export function registerLivePlanRoutes(app) {
       emit({ type: 'start', mock: isMock() });
       send({ type: 'start', synthetic: isMock(), budget: PLAN_BUDGET });
       const run = new Run({ budget: PLAN_BUDGET, emit, deadlineMs: PLAN_DEADLINE_MS, receiptPrefix: 'q' });
-      const memo = await buildMemo({
+      const memo = await memoBuilder({
         city: input.city, anchors: [input.anchor], offers: [], terms: {},
         picks: input.anchorId ? { [input.anchor]: { id: input.anchorId } } : {},
         constraints: { budget: input.budget, slots: input.slots, discoveryMin: 0, maxPerGenre: input.slots, riskTolerance: 50, lockedIds: [], excludedIds: [] },
@@ -90,10 +90,20 @@ export function registerLivePlanRoutes(app) {
       if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. A comparison needs at least two candidates, even for a one-act show. Try a better-known artist or a larger city.` }); return; }
       const source = { input: memo.input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace };
       const record = saveLivePlan(source, { title: `${input.city}: fans of ${input.anchor}`, terms: LIVE_TERMS, feeBasis: 'estimated-from-qloo-popularity' });
+      saved = true;
       send({ type: 'ready', id: record.id, synthetic: record.snapshot.mock === true, calls: run.used });
     } catch (error) {
       if (!res.destroyed) send({ type: 'error', text: error?.status ? error.message : 'The live plan could not complete. No booking was made. Try again, or open an example plan.' });
       if (!error?.status) console.error(JSON.stringify({ level: 'error', msg: 'live plan failed', requestId: req.id }));
-    } finally { clearInterval(heartbeat); res.end(); }
+    } finally {
+      clearInterval(heartbeat);
+      // A client disconnect does not cancel bounded work or erase its result.
+      // Unsuccessful runs return their plan reservation, not spent Qloo attempts.
+      if (!saved) {
+        try { refundQuota(quotaRules); }
+        catch { console.error(JSON.stringify({ level: 'error', msg: 'live plan quota refund failed', requestId: req.id })); }
+      }
+      if (!res.destroyed && !res.writableEnded) res.end();
+    }
   });
 }

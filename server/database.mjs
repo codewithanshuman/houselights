@@ -36,3 +36,10 @@ export function consumeQuota(rules, now = Date.now()) {
     return true;
   });
 }
+// Refund only the original reservation window, never a replacement bucket.
+export function refundQuota(rules) {
+  return transaction(() => {
+    const update = db.prepare('UPDATE quotas SET count=count-1 WHERE key=? AND expires=? AND count>0');
+    for (const rule of rules) update.run(rule.key, rule.expires);
+  });
+}

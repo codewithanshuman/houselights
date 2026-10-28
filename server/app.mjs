@@ -87,7 +87,7 @@ function trustedScenarioInput(source, body, label) {
   return { items, constraints: object(body.constraints) ? body.constraints : source.memo.constraints };
 }
 
-export function createApp() {
+export function createApp({ memoBuilder = buildMemo } = {}) {
   const app = express();
   const dailyCap = positiveInteger(process.env.DAILY_MEMO_CAP, 150);
   const budget = Math.min(60, positiveInteger(process.env.CALL_BUDGET, 30));
@@ -108,7 +108,7 @@ export function createApp() {
   registerFinancialRoutes(app);
   registerExperimentRoutes(app);
   registerJudgeRoutes(app);
-  registerLivePlanRoutes(app);
+  registerLivePlanRoutes(app, { memoBuilder });
   registerAutopilotRoutes(app);
   registerEventRoutes(app);
   registerOperationalRoutes(app);
@@ -338,7 +338,6 @@ export function createApp() {
     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
     const trace = [], startedAt = Date.now();
     const emit = event => {
-      if (res.destroyed) throw new Error('Client disconnected');
       if (['start', 'stage', 'receipt', 'plan', 'needs_input', 'memo'].includes(event.type) && trace.length < 100) {
         trace.push({ elapsedMs: Date.now() - startedAt, type: event.type, text: String(event.text || event.reason || '').slice(0, 240),
           receiptId: event.receipt?.id || null, tool: event.receipt?.tool || null, status: event.receipt?.status || null,
@@ -347,17 +346,17 @@ export function createApp() {
           deep: event.type === 'plan' && Array.isArray(event.deep) ? event.deep.slice(0, 4) : undefined,
           feasible: event.type === 'memo' ? event.slate?.feasible === true : undefined });
       }
-      res.write(`data: ${JSON.stringify(event)}\n\n`);
+      if (!res.destroyed && !res.writableEnded) res.write(`data: ${JSON.stringify(event)}\n\n`);
     };
     const heartbeat = setInterval(() => { if (!res.destroyed) res.write(': heartbeat\n\n'); }, 15000);
     try {
       emit({ type: 'start', mock: isMock() });
       const run = new Run({ budget, emit });
-      const memo = await buildMemo(input, run);
-      if (memo && !res.destroyed) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace }, { retain: true }) });
+      const memo = await memoBuilder(input, run);
+      if (memo) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace }, { retain: true }) });
     } catch {
       if (!res.destroyed) emit({ type: 'error', text: 'The run could not complete. Review the last receipt and try again. No booking was made.' });
-    } finally { clearInterval(heartbeat); res.end(); }
+    } finally { clearInterval(heartbeat); if (!res.destroyed && !res.writableEnded) res.end(); }
   });
   app.use('/api', unknownApiRoute);
   // Anything else that matched no file or route gets the styled 404 page.
