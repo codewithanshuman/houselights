@@ -7,6 +7,9 @@ import { fileURLToPath } from 'node:url';
 import { test, expect } from '@playwright/test';
 import { DatabaseSync } from 'node:sqlite';
 import AxeBuilder from '@axe-core/playwright';
+import { optimizeSlate } from '../server/optimizer.mjs';
+import { buildDecisionProof } from '../server/decision-proof.mjs';
+import { judgeMethods } from '../server/judge-comparison.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const seedManifest=JSON.parse(readFileSync(join(root,'deploy','judge-cases.json'),'utf8'));
@@ -846,6 +849,35 @@ test('the evidence page lists every claim with its status, limit and a copyable 
 });
 
 test.describe('Booking Desk: plan your show', () => {
+  test('a provisional plan discloses missing affinity instead of confident booking or comparison claims @cross-browser', async ({page})=>{
+    const id='ccccccccddddddddeeeeeeee';
+    const items=['A','B','C'].map((name,index)=>({id:'synthetic-affinity-'+name,name:'Synthetic artist '+name,found:false,fit:null,rank:null,of:null,
+      rankCoverage:{complete:false,returned:0,requested:3},terms:{fee:1000+index*100,available:true,genre:'Indie'},
+      evidence:{rank:false,local:false,trends:false,comparison:false},evidenceReceipts:{},receipts:[],culturalLinks:[]}));
+    const constraints={budget:5000,slots:2,discoveryMin:0,maxPerGenre:2,riskTolerance:50,lockedIds:[],excludedIds:[]};
+    const snapshot={mock:true,receipts:[],memo:{currency:'USD',exampleBookingTerms:true,input:{city:'Synthetic city',anchors:['Synthetic anchor'],anchorIds:[]},items,constraints,slate:optimizeSlate(items,constraints)}};
+    const proof=buildDecisionProof(snapshot),record={id,version:'1.0',title:'Synthetic incomplete-affinity browser fixture',live:true,createdAt:new Date().toISOString(),snapshot,proof,methods:judgeMethods(snapshot,proof),scoringVersion:'unavailable',feeBasis:'estimated-from-qloo-popularity',terms:'Synthetic verification fixture; fees are illustrative and availability is assumed.'};
+    expect(snapshot.memo.slate.status).toBe('provisional');
+    const database=new DatabaseSync(join(dataDir,'houselights.sqlite'));
+    try{database.exec('PRAGMA busy_timeout=5000');database.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));}finally{database.close();}
+    for(const width of[1366,390]){
+      await page.setViewportSize({width,height:900});await page.goto(`${origin}/judge.html?plan=${id}`);
+      await expect(page.locator('#result-title')).toHaveText(/^Provisional:/);
+      await expect(page.locator('.result-sub')).toContainText('affinity evidence is incomplete');
+      await expect(page.locator('.result-badges')).toContainText('insufficient affinity evidence');
+      await expect(page.locator('#plan-switch-note')).toContainText('Affinity comparison unavailable');
+      await expect(page.locator('.act-others summary')).not.toContainText('Qloo ranked');
+      await expect(page.locator('.result-why')).not.toContainText('weighs each act’s Qloo fit');
+      await page.locator('#plan-switch').click();
+      await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked','false');
+      await expect(page.locator('#result-title')).toHaveText(/^Provisional:/);
+      await expect(page.locator('#plan-switch-note')).not.toContainText('Qloo changes this decision');
+      await expect(page.locator('#plan-switch-note')).not.toContainText('Here Qloo explains the choice');
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+      expect(await page.locator('.tk-body').evaluate(node=>node.scrollHeight<=node.clientHeight+1)).toBe(true);
+    }
+  });
+
   test('a saved non-USD brief shows its own currency and its bound ranking receipt @cross-browser', async ({ page }) => {
     const catalog=await (await page.request.get(`${origin}/api/judge/cases`)).json();
     const brief=catalog.cases.find(row=>row.title==='Manchester: compare all three methods');

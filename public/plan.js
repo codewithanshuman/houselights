@@ -91,19 +91,22 @@
     const {record,base,current}=view,slate=current.memo.slate,baseSlate=base.memo.slate,input=base.memo.input;
     const anchors=anchorText(base),budget=current.memo.constraints.budget,slots=current.memo.constraints.slots;
     const changed=!sameIds(slate.selectedIds,baseSlate.selectedIds);
+    const incompleteAffinity=itemsOf(base).some(item=>item.evidence?.rank!==true||!Number.isFinite(item.fit)||item.rankCoverage?.complete===false);
+    const provisional=slate.feasible&&(incompleteAffinity||(!view.qlooOff&&slate.status==='provisional'));
     const offBill=view.off?billNames(view.off):null,offFee=view.off?.memo.slate.totalFee;
     const labels={'ordinal-rank':'ordinal rank','min-max-affinity':'min-max affinity','fixed-span-affinity':'fixed-span affinity',unavailable:'unavailable (incomplete rank)',unrecorded:'version not recorded'};
     const ranked=(base.memo.items??[]).filter(item=>item.evidence?.rank===true&&Number.isFinite(item.fit));
     const legacyOrdinal=ranked.length>0&&ranked.every(item=>Number.isFinite(item.rank)&&Number.isFinite(item.of)&&Math.abs(item.fit-(item.of>1?1-(item.rank-1)/(item.of-1):.5))<1e-9);
     const version=record.scoringVersion??(legacyOrdinal?'ordinal-rank':ranked.length?'unrecorded':'unavailable');
     const badges=[record.live?'<span class="badge badge-live">Live plan</span>':'<span class="badge badge-saved">Saved live Qloo run</span>',
+      provisional?'<span class="badge badge-warn">Provisional · insufficient affinity evidence</span>':'',
       base.mock?'<span class="badge badge-warn">Synthetic test data</span>':'',
       estimated(record)?'<span class="badge badge-warn">Estimated fees</span>':'<span class="badge badge-muted">Illustrative fees</span>',
       '<span class="badge badge-muted">Assumed availability</span>',
       `<span class="badge badge-muted" data-scoring-version="${e(version)}">Original scoring: ${e(labels[version]??labels.unrecorded)}</span>`,
       record.live?'<span class="badge badge-warn">Genre limits not applied</span>':''].join('');
     const decision=slate.feasible
-      ?`Book <span class="decision-bill">${e(billNames(current).join(' + '))}</span> for <span class="decision-fee">${e(usd(slate.totalFee))}</span>.`
+      ?`${provisional?'Provisional:':'Book'} <span class="decision-bill">${e(billNames(current).join(' + '))}</span> for <span class="decision-fee">${e(usd(slate.totalFee))}</span>.`
       :'No bill fits these rules.';
     const sub=slate.feasible
       ?`${e(usd(slate.remainingBudget))} under budget · every booking rule passes · best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked`
@@ -127,7 +130,7 @@
             <p class="tk-band tk-band-1" aria-hidden="true">The bill</p>
             <div class="tk-body">
               <h2 id="result-title" class="result-decision">${decision}</h2>
-              <p class="result-sub">${slate.feasible?`Every booking rule passes. Best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked.`:sub}</p>
+              <p class="result-sub">${slate.feasible?(provisional?'Booking rules pass; affinity evidence is incomplete.':`Every booking rule passes. Best of ${e(slate.feasibleCount)} bookable bills out of ${e(slate.checkedCount)} checked.`):sub}</p>
             </div>
             <p class="tk-band tk-band-2" aria-label="${slate.feasible?`${e(usd(slate.remainingBudget))} under budget`:'No bookable bill'}">${slate.feasible?`${e(usd(slate.remainingBudget))} left`:'No bookable bill'}</p>
             <dl class="tk-stats">
@@ -144,7 +147,7 @@
               <span class="rw-track" aria-hidden="true"><span class="rw-ink rw-ink-a"></span><span class="rw-ink rw-ink-b"></span><svg class="rw-water" viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 22Q10 17 20 22T40 22T60 22T80 22T100 22T120 22T140 22T160 22V40H0z"/></svg><svg class="rw-wake" viewBox="0 0 200 40" preserveAspectRatio="none"><path pathLength="100" d="M0 20Q12.5 8 25 20T50 20T75 20T100 20T125 20T150 20T175 20T200 20"/></svg><span class="rw-knob"></span></span>
               <span class="rw-label"><span class="rw-title">Qloo evidence</span> <span class="rw-state">${view.qlooOff?'off':'on'}</span></span>
             </button>
-            <p id="plan-switch-note" class="result-qloo-note${view.flip?' is-arriving':''}">${offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
+            <p id="plan-switch-note" class="result-qloo-note${view.flip?' is-arriving':''}">${incompleteAffinity?'Affinity comparison unavailable: complete Qloo ranking evidence is missing. The on/off view is a supporting-evidence diagnostic, not proof that Qloo improves the bill.':offBill?(sameIds(view.off.memo.slate.selectedIds,baseSlate.selectedIds)
               ?`Without Qloo evidence, the same rules select the same bill. Here Qloo explains the choice but does not change it.`
               :`Without Qloo evidence, the same rules select <strong>${e(offBill.join(' + '))}</strong> for ${e(usd(offFee))}. Qloo changes this decision.`)
               :view.offError?'The comparison without Qloo could not load just now. Use the switch to try again.':'Checking what the same rules select without Qloo…'}</p>
@@ -155,7 +158,7 @@
             <span class="compare-arrow" aria-hidden="true">→</span>
             ${side('off','Without Qloo evidence',offBill,offFee,view.qlooOff)}
           </div>
-          ${slate.feasible&&slots>1?`<p class="result-why">Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and selects the highest scoring set that fits the budget.</p>`:''}
+          ${slate.feasible&&slots>1?`<p class="result-why">${provisional?'This provisional bill meets booking constraints, but missing affinity cannot support a confident taste recommendation.':`Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and selects the highest scoring set that fits the budget.`}</p>`:''}
           ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
         </section>
       </div>
@@ -225,7 +228,7 @@
     return `<div class="lineup">
         <h3 class="act-heading">The bill</h3>
         <ul class="act-grid" aria-label="Selected acts">${booked.map(card).join('')||'<li class="act-empty">No act can be selected under these rules.</li>'}</ul>
-        ${others.length?`<details class="act-others"${matchMedia('(min-width: 700px)').matches?' open':''}><summary>The other ${others.length} candidates Qloo ranked</summary>
+        ${others.length?`<details class="act-others"${matchMedia('(min-width: 700px)').matches?' open':''}><summary>The other ${others.length} candidates${itemsOf(view.base).every(item=>item.evidence?.rank===true&&Number.isFinite(item.fit)&&item.rankCoverage?.complete!==false)?' Qloo ranked':''}</summary>
           <div class="rank-table">
             <div class="rank-head" aria-hidden="true"><span>Rank</span><span>Artist</span><span>Qloo affinity</span><span>Fee</span><span>Why not selected</span><span></span></div>
             <ol aria-label="Other candidates">${others.map(row).join('')}</ol>
