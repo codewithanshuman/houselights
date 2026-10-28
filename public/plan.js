@@ -92,10 +92,16 @@
     const anchors=anchorText(base),budget=current.memo.constraints.budget,slots=current.memo.constraints.slots;
     const changed=!sameIds(slate.selectedIds,baseSlate.selectedIds);
     const offBill=view.off?billNames(view.off):null,offFee=view.off?.memo.slate.totalFee;
+    const labels={'ordinal-rank':'ordinal rank','min-max-affinity':'min-max affinity','fixed-span-affinity':'fixed-span affinity',unavailable:'unavailable (incomplete rank)',unrecorded:'version not recorded'};
+    const ranked=(base.memo.items??[]).filter(item=>item.evidence?.rank===true&&Number.isFinite(item.fit));
+    const legacyOrdinal=ranked.length>0&&ranked.every(item=>Number.isFinite(item.rank)&&Number.isFinite(item.of)&&Math.abs(item.fit-(item.of>1?1-(item.rank-1)/(item.of-1):.5))<1e-9);
+    const version=record.scoringVersion??(legacyOrdinal?'ordinal-rank':ranked.length?'unrecorded':'unavailable');
     const badges=[record.live?'<span class="badge badge-live">Live plan</span>':'<span class="badge badge-saved">Saved live Qloo run</span>',
       base.mock?'<span class="badge badge-warn">Synthetic test data</span>':'',
       estimated(record)?'<span class="badge badge-warn">Estimated fees</span>':'<span class="badge badge-muted">Illustrative fees</span>',
-      '<span class="badge badge-muted">Assumed availability</span>'].join('');
+      '<span class="badge badge-muted">Assumed availability</span>',
+      `<span class="badge badge-muted" data-scoring-version="${e(version)}">Original scoring: ${e(labels[version]??labels.unrecorded)}</span>`,
+      record.live?'<span class="badge badge-warn">Genre limits not applied</span>':''].join('');
     const decision=slate.feasible
       ?`Book <span class="decision-bill">${e(billNames(current).join(' + '))}</span> for <span class="decision-fee">${e(usd(slate.totalFee))}</span>.`
       :'No bill fits these rules.';

@@ -5,6 +5,7 @@ import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
 import {preserveRankProvenance} from './gm.mjs';
 import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
+import {scoringVersion} from './affinity.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -129,7 +130,7 @@ export function publishJudgeCase(source,title) {
   // Retain the private original too, without exposing its ID in the projection.
   if(source.id&&db.prepare('SELECT 1 FROM snapshots WHERE id=?').get(source.id))store.retain(source.id);
   const id=digest(payload).slice(0,24),existing=loadJudgeCase(id);if(existing)return existing;
-  const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),
+  const record={id,...payload,createdAt:new Date().toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),
     terms:'Illustrative fees, availability and genres. This is a planning experiment, not a booking or sales prediction.',providerCalls:0};
   record.methods=judgeMethods(snapshot,record.proof);
   db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));return loadJudgeCase(id);
@@ -154,7 +155,7 @@ export function saveLivePlan(source,{title,terms,feeBasis}) {
   const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title,snapshot,live:true};
   const id=randomBytes(12).toString('hex');
   const createdAt=new Date().toISOString();
-  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
+  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
   record.methods=judgeMethods(snapshot,record.proof);
   transaction(()=>{db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));expireLivePlans({withinTransaction:true});});return loadJudgeCase(id);
 }

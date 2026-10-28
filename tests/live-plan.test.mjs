@@ -56,6 +56,8 @@ test('a live plan streams progress, saves a shareable plan and supports the Qloo
   assert.equal(record.live, true);
   assert.equal(record.feeBasis, 'estimated-from-qloo-popularity');
   assert.match(record.terms, /Estimated fees/);
+  assert.match(record.terms, /Genre limits are not applied/);
+  assert.equal(record.scoringVersion, 'ordinal-rank', 'mock rankings do not supply affinity scores; the actual fallback must be disclosed');
   assert.ok(record.snapshot.memo.items.length >= 2);
   assert.ok(record.snapshot.memo.items.every(item => item.found && typeof item.terms.fee === 'number'));
   assert.ok(record.snapshot.memo.slate.selectedIds.length <= 2);

@@ -24,6 +24,19 @@ const finite = value => typeof value === 'number' && Number.isFinite(value);
 const bookable = item => item.terms?.available === true && finite(item.terms?.fee) && item.terms.fee >= 0;
 const key = ids => [...ids].sort().join('\0');
 
+/** Presentation metadata only; legacy numeric fits are never rewritten. */
+export function scoringVersion(source) {
+  const memo = source?.memo ?? {}, basis = memo.fitBasis ?? source?.fitBasis;
+  const scale = memo.fitScale ?? source?.fitScale;
+  if (basis === 'qloo-affinity') return scale === 'fixed-span-0.05' ? 'fixed-span-affinity' : scale == null ? 'min-max-affinity' : 'unrecorded';
+  if (basis === 'ordinal-rank') return 'ordinal-rank';
+  const ranked = (memo.items ?? []).filter(item => item.evidence?.rank === true && finite(item.fit));
+  if (!ranked.length) return 'unavailable';
+  return ranked.every(item => finite(item.rank) && finite(item.of) && item.rank >= 1 && item.rank <= item.of &&
+    Math.abs(item.fit - (item.of > 1 ? 1 - (item.rank - 1) / (item.of - 1) : .5)) < 1e-9)
+    ? 'ordinal-rank' : 'unrecorded';
+}
+
 /** The rank receipt the pool's rank evidence cites, and its affinity per candidate. */
 export function affinityScores(items, receipts = []) {
   const counts = new Map();

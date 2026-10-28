@@ -16,7 +16,7 @@ export function estimateFee(popularity) {
   if (typeof popularity !== 'number' || !Number.isFinite(popularity) || popularity < 0 || popularity > 1) return null;
   return FEE_TIERS.find(([floor]) => popularity >= floor)[1];
 }
-export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
+export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. Genre limits are not applied in live plans because per-act genres are unverified. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
 
 const fault = (message, status = 400) => Object.assign(new Error(message), { status });
 const clean = (value, max) => typeof value === 'string' ? value.replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max) : '';

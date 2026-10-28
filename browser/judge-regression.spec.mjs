@@ -936,7 +936,9 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('.result-badges')).toContainText('Live plan');
     await expect(page.locator('.result-badges')).toContainText('Synthetic test data');
     await expect(page.locator('.result-badges')).toContainText('Estimated fees');
+    await expect(page.locator('.result-badges')).toContainText('Genre limits not applied');
     await expect(page.locator('.result-terms')).toContainText('not a quote');
+    await expect(page.locator('.result-terms')).toContainText('Genre limits are not applied');
     const shared = page.url();
     await page.goto(shared);
     await expect(page.locator('.result-meta')).toContainText('Leeds');
@@ -954,6 +956,19 @@ test.describe('Booking Desk: plan your show', () => {
     await page.locator('#plan-switch').click();
     await expect(page.locator('#plan-switch')).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('#plan-switch-note')).toContainText('Qloo changes this decision');
+  });
+
+  test('scoring metadata displays each generation and keeps unknown versions explicit', async ({ page }) => {
+    const list=await (await page.request.get(`${origin}/api/judge/cases`)).json();
+    const summary=list.cases.find(row=>row.title.startsWith('Manchester'));
+    const record=await (await page.request.get(`${origin}/api/judge/cases/${summary.id}`)).json();
+    // Only response presentation metadata is varied; no stored case or evidence is changed.
+    for(const [version,label] of [['ordinal-rank','ordinal rank'],['min-max-affinity','min-max affinity'],['fixed-span-affinity','fixed-span affinity'],['unrecorded','version not recorded']]){
+      await page.route(`**/api/judge/cases/${record.id}`,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({...record,scoringVersion:version})}));
+      await page.goto(`${origin}/judge.html?scoring-fixture=${encodeURIComponent(version)}#${record.id}`);
+      await expect(page.locator('[data-scoring-version]')).toContainText(`Original scoring: ${label}`);
+      await page.unroute(`**/api/judge/cases/${record.id}`);
+    }
   });
 
   test('an incomplete live stream reports the interruption and keeps the form usable', async ({ page }) => {

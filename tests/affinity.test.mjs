@@ -1,12 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-const {withAffinityFit,fitsFromRankRows,nearTieGroups,tieSensitivity,rankComparability,TIE_BAND,AFFINITY_SPAN}=await import('../server/affinity.mjs');
+const {withAffinityFit,fitsFromRankRows,nearTieGroups,tieSensitivity,rankComparability,scoringVersion,TIE_BAND,AFFINITY_SPAN}=await import('../server/affinity.mjs');
 const {optimizeSlate}=await import('../server/optimizer.mjs');
 const {runAutopilot}=await import('../server/autopilot.mjs');
 const cases=JSON.parse(readFileSync(new URL('../deploy/judge-cases.json',import.meta.url),'utf8')).cases;
 const byTitle=title=>cases.find(row=>row.title.startsWith(title)).snapshot;
 const names=(snapshot,ids)=>ids.map(id=>snapshot.memo.items.find(item=>item.id===id).name).sort();
+
+test('scoring labels distinguish declared generations, legacy ordinal values and missing metadata without rewriting evidence',()=>{
+  assert.equal(scoringVersion({memo:{fitBasis:'qloo-affinity',fitScale:'fixed-span-0.05'}}),'fixed-span-affinity');
+  assert.equal(scoringVersion({memo:{fitBasis:'qloo-affinity'}}),'min-max-affinity');
+  assert.equal(scoringVersion({memo:{fitBasis:'qloo-affinity',fitScale:'unknown-version'}}),'unrecorded');
+  const source=byTitle('Manchester'),before=JSON.stringify(source);
+  assert.equal(scoringVersion(source),'ordinal-rank'); assert.equal(JSON.stringify(source),before);
+  assert.equal(scoringVersion({memo:{items:[]}}),'unavailable');
+  assert.equal(scoringVersion({memo:{items:[{fit:.8,rank:1,of:2,evidence:{rank:true}}]}}),'unrecorded');
+});
 
 test('fit comes from Qloo affinity scores, scaled across the ranked pool, with an ordinal fallback',()=>{
   const ny=byTitle('New York: compare'),{items,basis,receiptId}=withAffinityFit(ny.memo.items,ny.receipts);
@@ -85,5 +95,6 @@ test('the research agent derives fit from the affinity Qloo returns',async()=>{
   const memo=await buildMemo({city:'X',anchors:['Z'],offers:['A','B','C'],terms:{A:{fee:10,available:true},B:{fee:10,available:true},C:{fee:10,available:true}},constraints:{budget:100,slots:2}},run);
   const fit=id=>memo.items.find(item=>item.id===id);
   assert.equal(fit('id-a').fitBasis,'qloo-affinity');assert.equal(fit('id-a').fit,1);assert.equal(fit('id-c').fit,0,'0.06 below the top is beyond the 0.05 span');
+  assert.equal(memo.fitBasis,'qloo-affinity');assert.equal(memo.fitScale,'fixed-span-0.05');
   assert.ok(fit('id-b').fit>.99,'B is 0.0005 behind A in Qloo affinity, so its fit is nearly 1 rather than the ordinal 0.5');
 });
