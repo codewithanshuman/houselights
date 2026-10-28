@@ -30,7 +30,7 @@ The optimize and analyze calculation routes accept client-supplied candidates. T
 
 The workflow uses describe, entity tags, recommend, rank, geographic popularity, audience comparison and trends. Disambiguation can pause an identity until a buyer chooses a provider candidate. An unavailable rank remains absent: input order is not substituted for Qloo rank.
 
-The run budget counts uncached workflow attempts, including retries. A harness workflow may issue multiple provider requests, so the counter is not a Qloo HTTP quota meter. Retryable errors receive at most three attempts subject to the remaining budget. Cache entries are scoped by mode and server Qloo configuration; successful, empty and partial responses may be reused until expiry. The cache is bounded and exists only in process memory.
+The run budget counts uncached workflow attempts, including retries. A harness workflow may issue multiple provider requests, so the counter is not a Qloo HTTP quota meter. A separate [HTTP transport guard](qloo-quota.md) meters the canonical adapter's authenticated requests, including SDK retries, against persistent shared-key rate and rolling-window limits and observes the provider's monthly headers. Retryable workflow errors receive at most three attempts subject to the remaining budget. Cache entries are scoped by mode and server Qloo configuration; successful, empty and partial responses may be reused until expiry. The bounded live cache persists in SQLite and is reused before provider quota checks.
 
 ## Exact optimization
 

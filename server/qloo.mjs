@@ -128,6 +128,11 @@ export class Run {
       env = failure('BUDGET', 'Per-memo workflow attempt budget exhausted.');
       while (attempts < 3 && this.used < this.budget && this.now() < this.deadlineAt) {
         if (this.sharedLive) {
+          const {qlooQuotaStatus}=await import('./qloo-http.mjs');
+          if(qlooQuotaStatus(undefined,{now:this.now()}).blocked){
+            env=failure('PROVIDER_QUOTA','The Qloo HTTP allowance is exhausted. Recent cached evidence remains available.');
+            break;
+          }
           const { consumeQuota } = await import('./database.mjs');
           const day = Math.floor(this.now() / 864e5);
           if (!consumeQuota([{ key: `qloo-workflow:${day}:${credentialScope()}`, limit: sharedDailyCap(), expires: (day + 1) * 864e5 }], this.now())) {
@@ -140,6 +145,10 @@ export class Run {
         catch (error) { env = error?.name === 'TimeoutError' || error?.code === -32001
           ? failure('TIMEOUT', 'The Qloo workflow exceeded its time limit. Retry the memo when the service is available.')
           : failure('TRANSPORT', 'The Qloo harness connection failed. Check installation and server credentials.'); }
+        if(this.sharedLive&&env.status==='error'){
+          const {qlooQuotaStatus}=await import('./qloo-http.mjs');
+          if(qlooQuotaStatus(undefined,{now:this.now()}).blocked)env=failure('PROVIDER_QUOTA','The Qloo HTTP allowance is exhausted. Recent cached evidence remains available.');
+        }
         if (env.status !== 'error' || !env.error?.retryable || attempts >= 3 || this.used >= this.budget) break;
         await this.delay(Math.max(0, Math.min(700 * attempts, this.deadlineAt - this.now())));
       }

@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS snapshots(id TEXT PRIMARY KEY, body TEXT NOT NULL, cr
 CREATE TABLE IF NOT EXISTS pipelines(id TEXT PRIMARY KEY, body TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS quotas(key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS qloo_cache(key TEXT PRIMARY KEY, body TEXT NOT NULL, fetched_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS qloo_http_state(scope TEXT PRIMARY KEY, body TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS qloo_http_requests(id TEXT PRIMARY KEY, scope TEXT NOT NULL, started_at INTEGER NOT NULL, settled INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS qloo_http_scope_time ON qloo_http_requests(scope,started_at);
+CREATE INDEX IF NOT EXISTS qloo_http_time ON qloo_http_requests(started_at);
 CREATE TABLE IF NOT EXISTS demand_forecasts(id TEXT PRIMARY KEY, body TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS demand_outcomes(id TEXT PRIMARY KEY, body TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS reported_outcomes(source_key TEXT PRIMARY KEY, body TEXT NOT NULL, imported_at TEXT NOT NULL);

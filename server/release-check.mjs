@@ -39,6 +39,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       record('protected-write:'+path,response.status===401);
     }
     record('protected-private-read',(await request('/api/studies/missing-release-check')).status===401);
+    record('protected-qloo-quota',(await request('/api/qloo/quota')).status===401);
     record('protected-demand-model',(await request('/api/demand/model')).status===401);
     record('protected-reported-outcomes',(await request('/api/demand/reported-outcomes')).status===401);
     record('protected-audience-twin',(await request('/api/demand/twins/000000000000000000000000')).status===401);

@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json",
     "test:browser": "npm run build:worker && playwright test",
     "probe": "node --env-file-if-exists=.env scripts/probe.mjs",
+    "quota:qloo": "node --env-file-if-exists=.env scripts/qloo-quota.mjs",
     "eval": "node --env-file-if-exists=.env scripts/eval.mjs",
     "contingency": "node --env-file-if-exists=.env scripts/contingency.mjs",
     "dossier": "node --env-file-if-exists=.env scripts/dossier.mjs",

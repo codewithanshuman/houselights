@@ -41,3 +41,24 @@ test('official MCP worker initializes and exposes canonical tools without loadin
     assert.equal(run.receipts.filter(receipt => receipt.tool === 'trends').length, 2);
   } finally { await client.close(); }
 });
+
+test('canonical SDK retries are metered as actual HTTP attempts, not one workflow', {timeout:30000}, async()=>{
+  const {createServer}=await import('node:http');const {mkdtempSync,mkdirSync,writeFileSync,rmSync,realpathSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join,sep}=await import('node:path');
+  const {DatabaseSync}=await import('node:sqlite');const directory=mkdtempSync(join(tmpdir(),'houselights-sdk-http-'));let requests=0;
+  const server=createServer((_req,res)=>{requests++;res.writeHead(503,{'content-type':'application/json','x-month-ratelimit-limit':'50000','x-month-ratelimit-remaining':String(50000-requests)});res.end(JSON.stringify({error:'Synthetic transport failure; not real provider evidence'}));});
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${server.address().port}`;
+  try{
+   for(const mode of ['environment','config']){
+    const home=join(directory,'harness-'+mode);mkdirSync(home);if(mode==='config')writeFileSync(join(home,'config'),'api_key=test-only-sdk-http-fixture\n');
+    const env={...process.env,DATA_DIR:directory,QLOO_HOME:home,QLOO_BASE_URL:base,QLOO_TRUSTED_BASE_URL:base};if(mode==='environment')env.QLOO_API_KEY='test-only-sdk-http-fixture';else delete env.QLOO_API_KEY;
+    const transport=new StdioClientTransport({command:process.execPath,args:[fileURLToPath(new URL('../server/qloo-worker.mjs',import.meta.url))],env,stderr:'pipe'});transport.stderr?.on('data',()=>{});
+    const client=new Client({name:'houselights-http-meter-test',version:'1'}),before=requests;
+    try{
+    await client.connect(transport,{timeout:10000});await client.callTool({name:'qloo_describe',arguments:{entity:'Synthetic HTTP fixture',type:'artist'}},undefined,{timeout:20000});
+    assert.equal(requests-before,3,'The installed SDK performed its three HTTP attempts for '+mode+' credentials');
+    const stored=new DatabaseSync(join(directory,'houselights.sqlite'),{readOnly:true});
+    try{assert.equal(stored.prepare('SELECT count(*) AS n FROM qloo_http_requests').get().n,requests);const state=JSON.parse(stored.prepare('SELECT body FROM qloo_http_state').get().body);assert.equal(state.observedRemaining,50000-requests);}finally{stored.close();}
+    }finally{await client.close().catch(()=>{});}
+   }
+  }finally{await new Promise(resolve=>server.close(resolve));const resolved=realpathSync(directory);assert.ok(resolved.startsWith(realpathSync(tmpdir())+sep));rmSync(resolved,{recursive:true,force:true,maxRetries:3});}
+});

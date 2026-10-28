@@ -19,6 +19,7 @@ import { registerGMRoutes } from './gm-api.mjs';
 import { withoutDerived, preserveRankProvenance } from './gm.mjs';
 import { accessMiddleware, canEdit, protectedMode, routeQuota } from './access.mjs';
 import { requestContext, publicReadCache, unknownApiRoute, staticAssets, diskOk } from './http-hygiene.mjs';
+import {qlooQuotaStatus} from './qloo-http.mjs';
 import { registerReviewRoutes } from './reviews.mjs';
 import { registerDecisionRoutes, requirePlanningApproval, authorizePipelineEvent } from './decision-room.mjs';
 import { registerOperationalRoutes } from './operational-evidence.mjs';
@@ -155,6 +156,10 @@ export function createApp({ memoBuilder = buildMemo } = {}) {
   app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),
     protected:protectedMode(),diskOk:diskOk(dataRoot),release:/^[a-f0-9]{7,40}$/i.test(process.env.RELEASE_COMMIT??'')?process.env.RELEASE_COMMIT:null }));
   app.get('/m/:id', (_req, res) => res.sendFile(pub + '/index.html'));
+  app.get('/api/qloo/quota',(req,res)=>{
+    if(!canEdit(req))return res.status(401).json({error:'Organizer access is required.'});
+    try{res.set('Cache-Control','no-store').json(qlooQuotaStatus());}catch(error){sendProcessingError(res,error);}
+  });
   app.get('/api/memo/:id', (req, res) => {
     const snapshot = store.load(req.params.id);
     res.set('Cache-Control', 'no-store');

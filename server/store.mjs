@@ -16,7 +16,7 @@ export function referencesIn(value, ids, found = new Set()) {
   return found;
 }
 export function referencedRecordIds(ids, { excludeTables = [] } = {}) {
-  const found = new Set(), excluded = new Set(['qloo_cache', 'quotas', ...excludeTables]);
+  const found = new Set(), excluded = new Set(['qloo_cache', 'quotas', 'qloo_http_state', 'qloo_http_requests', ...excludeTables]);
   const quote = name => '"' + name.replaceAll('"', '""') + '"';
   for (const { name } of db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all()) {
     if (excluded.has(name)) continue;
