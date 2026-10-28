@@ -39,7 +39,8 @@ test('unknown pages get the styled 404 page, not a bare error', async () => {
   assert.match(html, /Back to home<\/a>/);
 });
 
-test('rate limits say when to retry', async () => {
+test('rate limits say when to retry', async t => {
+  let instant=Date.now();t.mock.method(Date,'now',()=>instant);
   db.prepare('DELETE FROM quotas').run();
   const id = seed.caseIds[0];
   let last;
@@ -49,6 +50,9 @@ test('rate limits say when to retry', async () => {
   assert.ok(retryAfter >= 1 && retryAfter <= 60, `Retry-After ${retryAfter}`);
   const body = await last.json();
   assert.match(body.error, /Experiment limit reached/);assert.ok(body.requestId);
+  instant=(Math.floor(instant/60000)+1)*60000+1;
+  const reset=await fetch(`${url}/api/judge/cases/${id}/experiment`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({budget:9999})});
+  assert.equal(reset.status,200,'the next quota window accepts requests again');
   db.prepare('DELETE FROM quotas').run();
 });
 
