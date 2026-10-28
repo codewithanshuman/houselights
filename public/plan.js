@@ -49,7 +49,7 @@
       const record=await fetchJSON(`/api/judge/cases/${encodeURIComponent(id)}`,{timeout:15000});
       if(request!==caseRequest)return;
       view={record,base:record.snapshot,current:record.snapshot,off:null,budget:record.snapshot.memo.constraints.budget,cancelId:null,qlooOff:false};
-      render();if(record.id===FEATURED){fillFan(record.snapshot,null);fillPipeline(record.snapshot);if(watchReady)startReplay();}
+      render();if(record.id===FEATURED){fillFan(record.snapshot,null);fillPipeline(record.snapshot);if(watchReady||form.contains(document.activeElement))startReplay();}
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
@@ -290,15 +290,15 @@
   const agent=$('agent-trace');
   let replaying=null,replayStarted=false,watchReady=false,replayStatic=false;
   function startReplay({animate=!form.contains(document.activeElement)}={}){
-    if(replayStarted||!view||view.record.id!==FEATURED||!window.HLTrace)return;
+    if(replayStarted||!view||view.record.id!==FEATURED||!window.HLTrace||$('plan-submit').disabled)return;
     replayStarted=true;replayStatic=!animate||reduced();
     replaying=window.HLTrace.replay(agent,view.base,{speed:2,animate,onReplay:()=>{replaying?.cancel();replayStarted=false;startReplay({animate:true});}});
   }
   // Once someone starts their own brief, keep the complete genuine saved record
   // inspectable without timed updates moving the adjacent controls.
   form.addEventListener('focusin',()=>{
-    if(!replaying||replayStatic||view?.record.id!==FEATURED)return;
-    replaying.cancel();replayStarted=false;startReplay({animate:false});
+    if(replayStatic||view?.record.id!==FEATURED||$('plan-submit').disabled)return;
+    replaying?.cancel();replayStarted=false;startReplay({animate:false});
   });
   if('IntersectionObserver' in window){
     const watch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){watch.disconnect();watchReady=true;startReplay();}},{rootMargin:'0px 0px -20% 0px'});
