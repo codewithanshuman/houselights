@@ -922,13 +922,16 @@ test.describe('Booking Desk: plan your show', () => {
     // The app allows a live plan up to three minutes; on a shared CI runner WebKit can need
     // more than the default 30 seconds for the whole flow, so this test gets 60.
     test.setTimeout(60000);
+    const errors=[],requests=[];page.on('pageerror',error=>errors.push(error.message));
+    page.on('request',request=>{if(request.method()==='POST'&&request.url().endsWith('/api/plan'))requests.push(request.postData());});
     await page.goto(`${origin}/judge.html`);
     await page.fill('#plan-city', 'Leeds');
     await page.fill('#plan-anchor', 'Arlo Parks');
     await page.fill('#plan-budget', '12000');
     await page.locator('#plan-submit').click();
     await expect(page.locator('#plan-progress')).toBeVisible();
-    await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/, { timeout: 50000 });
+    await expect.poll(async()=>({ready:/\?plan=[a-f0-9]{24}$/.test(page.url()),requests:requests.length,errors,error:await page.locator('#plan-error').textContent(),button:await page.locator('#plan-submit').textContent()}),{timeout:50000}).toMatchObject({ready:true});
+    await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}$/);
     await expect(page.locator('#result-title')).toContainText('Book ');
     await expect(page.locator('.result-badges')).toContainText('Live plan');
     await expect(page.locator('.result-badges')).toContainText('Synthetic test data');
