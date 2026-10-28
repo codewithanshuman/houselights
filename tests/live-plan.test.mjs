@@ -127,3 +127,41 @@ test('bad input is refused before any Qloo call', async () => {
   const response = await plan({ city: 'Leeds', anchor: 'Arlo Parks', budget: 10, slots: 2 });
   assert.equal(response.status, 400);
 });
+
+test('invalid live-plan requests cannot drain the shared research allowance', async () => {
+  db.exec('DELETE FROM quotas');
+  const realNow = Date.now, previousToken = process.env.ORGANIZER_TOKEN;
+  let now = (Math.floor(realNow() / 864e5) + 1) * 864e5 + 1000;
+  Date.now = () => now;
+  process.env.ORGANIZER_TOKEN = 'plan-quota-test-token-'.repeat(3);
+  try {
+    for (let minute = 0; minute < 40; minute++) {
+      for (let i = 0; i < 6; i++) assert.equal((await plan({ city: 'x' })).status, 400);
+      now += 61000;
+    }
+    assert.equal(db.prepare("SELECT count(*) AS n FROM quotas WHERE key LIKE 'research:%' OR key LIKE 'plan%'").get().n, 0);
+    const response = await fetch(`${url}/api/memo`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.ORGANIZER_TOKEN}` }, body: JSON.stringify({
+      city: 'London', anchors: ['Radiohead'], offers: ['The xx', 'Wolf Alice'], constraints: { budget: 9000, slots: 1 },
+      terms: { 'The xx': { fee: 1500, available: true }, 'Wolf Alice': { fee: 1600, available: true } }
+    }) });
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /"type":"saved"/);
+  } finally {
+    Date.now = realNow;
+    if (previousToken === undefined) delete process.env.ORGANIZER_TOKEN; else process.env.ORGANIZER_TOKEN = previousToken;
+  }
+});
+
+test('visitor rejections do not charge shared research and global rejections do not charge visitor admission', async () => {
+  db.exec('DELETE FROM quotas');
+  const body = { city: 'Bristol', anchor: 'Arlo Parks', budget: 9000, slots: 1 };
+  for (let i = 0; i < 3; i++) assert.equal((await plan(body)).status, 200);
+  const before = db.prepare("SELECT key,count,expires FROM quotas WHERE key NOT LIKE 'http:%' ORDER BY key").all();
+  assert.equal((await plan(body)).status, 429);
+  assert.deepEqual(db.prepare("SELECT key,count,expires FROM quotas WHERE key NOT LIKE 'http:%' ORDER BY key").all(), before);
+  db.exec('DELETE FROM quotas');
+  const day = Math.floor(Date.now() / 864e5);
+  db.prepare('INSERT INTO quotas VALUES(?,40,?)').run(`plan-global:${day}`, (day + 1) * 864e5);
+  assert.equal((await plan(body)).status, 429);
+  assert.equal(db.prepare("SELECT count(*) AS n FROM quotas WHERE key LIKE 'plan:%' OR key LIKE 'plan-day:%' OR key LIKE 'research:%'").get().n, 0);
+});

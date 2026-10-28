@@ -27,8 +27,10 @@ export function accessMiddleware(req, res, next) {
   if ((req.method !== 'GET' && req.method !== 'HEAD' && !ballot && !judgeExperiment && !livePlan || privateRead) && !canEdit(req)) return res.status(401).json({ error: 'Organizer access is required. Shared reports are read-only.' });
   const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 864e5);
   const address = hash(req.ip ?? 'unknown').toString('hex');
-  const paid = req.method === 'POST' && (/^\/api\/(memo$|intelligence\/|activation\/)/.test(req.path) || /^\/api\/gm\/[^/]+\/(run|benchmark|season-research)$/.test(req.path) || /^\/api\/judge\/cases\/[a-f0-9]{24}\/autopilot\/live$/.test(req.path) || /^\/api\/events\/[^/]+\/research$/.test(req.path) || livePlan);
+  const paid = req.method === 'POST' && (/^\/api\/(memo$|intelligence\/|activation\/)/.test(req.path) || /^\/api\/gm\/[^/]+\/(run|benchmark|season-research)$/.test(req.path) || /^\/api\/judge\/cases\/[a-f0-9]{24}\/autopilot\/live$/.test(req.path) || /^\/api\/events\/[^/]+\/research$/.test(req.path));
   const rules = [{ key: `http:${minute}:${address}`, limit: 180, expires: (minute + 1) * 60000 }];
+  // Anonymous plans have separate post-validation caps; they must not drain
+  // the organizer's shared research allowance, even when rejected or invalid.
   if (paid) rules.push({ key: `research:${day}`, limit: 100, expires: (day + 1) * 864e5 }, { key: `research:${minute}:${address}`, limit: 6, expires: (minute + 1) * 60000 });
   if (!consumeQuota(rules, now)) return res.status(429).json({ error: 'Persistent request quota reached. Please try again later.' });
   next();
