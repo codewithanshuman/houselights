@@ -34,6 +34,31 @@ test('provider rate reservations are shared across separate Node workers',async(
   for(const t of starts)assert.ok(starts.filter(x=>x>=t&&x<t+1000).length<=10);
 });
 
+test('a slow durable reservation commit cannot bunch actual HTTP starts',async()=>{
+  let time=Date.now(),delayed=false;const started=[],original=db.exec;
+  db.exec=function(sql){const result=original.call(this,sql);if(sql==='COMMIT'&&!delayed){delayed=true;time+=110;}return result;};
+  try{
+    const f=factory({now:()=>time,sleep:async ms=>{time+=ms;},fetchImpl:async()=>{started.push(time);return new Response('{}');}});
+    await Promise.all(Array.from({length:23},()=>f(origin+'/')));
+    assert.equal(started.length,23);
+    for(let i=1;i<started.length;i++)assert.ok(started[i]-started[i-1]>=105,'Transport starts retain the full pacing interval after a slow commit');
+    for(const t of started)assert.ok(started.filter(x=>x>=t&&x<t+1000).length<=10);
+  }finally{db.exec=original;}
+});
+
+test('abandoned dispatch owners are fenced and recovery waits a full rate window',async()=>{
+  let time=Date.now();const started=[];const f=factory({now:()=>time,sleep:async ms=>{time+=ms;},fetchImpl:async()=>{started.push(time);return new Response('{}');}});
+  await f(origin+'/');const row=db.prepare('SELECT scope,body FROM qloo_http_state').get(),state=JSON.parse(row.body);
+  state.dispatchLeaseId='00000000-0000-4000-8000-000000000001';state.dispatchLeaseUntil=time+100;
+  db.prepare('UPDATE qloo_http_state SET body=? WHERE scope=?').run(JSON.stringify(state),row.scope);
+  const abandonedUntil=state.dispatchLeaseUntil;await f(origin+'/');assert.ok(started[1]>=abandonedUntil+1000);
+  let replaced=false,called=false;const original=db.exec;
+  db.exec=function(sql){const result=original.call(this,sql);if(sql==='COMMIT'&&!replaced){replaced=true;const saved=JSON.parse(db.prepare('SELECT body FROM qloo_http_state').get().body);saved.dispatchLeaseId='00000000-0000-4000-8000-000000000002';db.prepare('UPDATE qloo_http_state SET body=?').run(JSON.stringify(saved));}return result;};
+  time+=1000;
+  try{await assert.rejects(factory({now:()=>time,fetchImpl:()=>{called=true;return new Response('{}');}})(origin+'/'),{code:'QLOO_HTTP_QUOTA'});assert.equal(called,false);assert.equal(count(),3);}
+  finally{db.exec=original;}
+});
+
 test('provider headers are captured case-insensitively and no credential enters quota status or storage',async()=>{
   await factory({fetchImpl:async()=>new Response('{}',{headers:{'X-Month-Ratelimit-Limit':'50000','X-Month-Ratelimit-Remaining':'48776'}})})(origin+'/');
   const state=qlooQuotaStatus(key);assert.equal(state.observed.limit,50000);assert.equal(state.observed.remaining,48776);assert.equal(state.local.rolling30DayHttpAttempts,1);assert.equal(state.local.conservativeRemaining,48776);
