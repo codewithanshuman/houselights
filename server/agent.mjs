@@ -2,7 +2,7 @@ import { nameOf, idOf, tagsOf, trendOf, comparisonOf } from './shape.mjs';
 import { optimizeSlate } from './optimizer.mjs';
 import { evaluate } from './eval.mjs';
 import * as llm from './llm.mjs';
-import { fitsFromRankRows } from './affinity.mjs';
+import { fitsFromRankRows, relativeVerdicts } from './affinity.mjs';
 
 const low = value => String(value ?? '').toLowerCase().trim();
 const ago = days => new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
@@ -109,22 +109,23 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     // Fit is Qloo affinity scaled across the ranked pool (ordinal position only when
     // scores are missing). It is relative cultural fit, not market share or a forecast.
     const fit = hasRank ? scored.fits.get(ref) : null;
-    let verdict = !hasRank ? 'hold' : fit >= .6 ? 'lean yes' : candidate.found && fit >= .3 ? 'growth bet' : fit < .3 ? 'lean pass' : 'hold';
-    if (momentum === 'cooling' && verdict === 'lean yes') verdict = 'hold';
     const claimList = [{ id: `${ref}:rank`, text: hasRank ? `Ranks ${position + 1} of ${order.length} returned artists for these anchors [${ranking.receipt.id}].` : `No supported audience rank is available [${ranking.receipt.id}].` }];
     if (deep.includes(ref)) {
       claimList.push({ id: `${ref}:local`, text: `${localEvidence ? 'Geographic popularity results are available' : 'Geographic popularity is unverified'} for ${city} [${receipts[2]}].` });
       claimList.push({ id: `${ref}:trend`, text: `Observed trend direction: ${momentum}${trendCall ? ` [${trendCall.receipt.id}]` : ''}.` });
     }
-    items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: candidates.size, fit, local, momentum, verdict,
+    items.push({ ...candidate, rank: hasRank ? position + 1 : null, of: candidates.size, fit, local, momentum, verdict: 'hold',
       ...(hasRank && scored.basis === 'qloo-affinity' ? { affinity: scored.scores.get(ref), fitBasis: 'qloo-affinity' } : hasRank ? { fitBasis: 'ordinal-rank' } : {}),
       rankCoverage: { complete: rankComplete, returned: order.length, requested: candidates.size },
       receipts: [...new Set(receipts)], tags: candidate.terms.genre ? [candidate.terms.genre] : [],
       evidence: { rank: hasRank, local: localEvidence, comparison, trends: trendEvidence }, evidenceReceipts, claims: claimList, note: claimList.map(claim => claim.text).join(' ') });
   }
+  const verdicts = relativeVerdicts(items);
+  for (const item of items) item.verdict = verdicts.get(item.id);
   say('Optimize · checking every possible slate against your constraints');
   const slate = optimizeSlate(items, constraints);
   const caveats = [
+    'Verdicts are relative cultural-fit bands within this candidate pool, not calibrated booking or ticket-sales predictions. Near-tied acts share a conservative verdict.',
     'Qloo supplies aggregate cultural affinities, not ticket sales, attendance, or revenue forecasts.',
     'Fit is a relative rank utility within this pool, not an affinity percentage. Fees, availability and genres are buyer-entered assumptions.',
     'Discovered artists need a fee and availability check before they can enter a bookable slate.',
@@ -153,7 +154,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   } : null;
   const memo = { items, slate, constraints, input: { city, anchors, anchorIds: anchorRefs, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
     mode: run.mode === 'mock' || run.receipts.some(receipt => receipt.source === 'synthetic') ? 'mock' : 'live', caveats, crowd,
-    writer: written ? 'claim-selector' : 'template', summary: '', removed, base,
+    writer: written ? 'claim-selector' : 'template', verdictPolicy: 'relative-affinity-bands-v1', summary: '', removed, base,
     quality: { resolved: candidates.size, ranked: rankComplete ? order.length : 0, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },
     eval: evaluate({ items, ranked: rankComplete ? order.map(ref => candidates.get(ref).name) : [], base, receipts: run.receipts }) };
   run.emit({ type: 'memo', ...memo });

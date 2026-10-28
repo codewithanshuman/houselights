@@ -69,6 +69,40 @@ export function fitsFromRankRows(order, rows, { scale = 'fixed-span' } = {}) {
   return { basis: 'ordinal-rank', fits: new Map(order.map((id, index) => [id, order.length > 1 ? 1 - index / (order.length - 1) : .5])), scores };
 }
 
+/** Pool-relative verdicts for new memos; never alters fit or optimizer inputs.
+ * Adjacent near-ties form conservative label components: a chain may span more
+ * than TIE_BAND, but no pair inside the band gets contradictory verdicts.
+ * This does not change the optimizer's pairwise, non-chained sensitivity tests.
+ */
+export function relativeVerdicts(items) {
+  const verdicts = new Map(items.map(item => [item.id, 'hold']));
+  const ranked = items.filter(item => item.evidence?.rank === true && finite(item.fit))
+    .sort((a, b) => b.fit - a.fit || String(a.id).localeCompare(String(b.id)));
+  if (ranked.length < 2) return verdicts;
+  const affinity = ranked.every(item => finite(item.affinity));
+  const value = item => affinity ? item.affinity : item.fit;
+  const groups = [];
+  for (const item of ranked) {
+    const group = groups.at(-1), previous = group?.at(-1);
+    if (previous && (affinity ? Math.abs(value(previous) - value(item)) < TIE_BAND : value(previous) === value(item))) group.push(item);
+    else groups.push([item]);
+  }
+  // An indistinguishable pool supports no relative endorsement.
+  if (groups.length === 1) return verdicts;
+  const high = value(ranked[0]), low = value(ranked.at(-1));
+  if (!(high > low)) return verdicts;
+  const labels = ['lean pass', 'hold', 'growth bet', 'lean yes'];
+  let ceiling = 3;
+  for (const group of groups) {
+    const relative = (group.reduce((sum, item) => sum + value(item), 0) / group.length - low) / (high - low);
+    let level = relative >= .6 ? 3 : relative >= .3 ? (group.every(item => item.found === true) ? 2 : 1) : 0;
+    if (level === 3 && group.some(item => item.momentum === 'cooling')) level = 1;
+    ceiling = Math.min(ceiling, level);
+    for (const item of group) verdicts.set(item.id, labels[ceiling]);
+  }
+  return verdicts;
+}
+
 /**
  * Near-ties are pairs whose scores differ by less than the band. Pairs are not
  * chained, so no reported tie ever spans more than the band.
