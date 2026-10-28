@@ -14,7 +14,12 @@ const {judgeAutopilotSource,publicAutopilotReceipt}=await import('../server/auto
 const {replayRecordedAutopilot}=await import('../server/autopilot-replay.mjs');
 const {evaluateSelection}=await import('../server/optimizer.mjs');
 seedPublicCases(join(import.meta.dirname,'..','deploy','judge-cases.json'));
-const server=createApp().listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+const server=createApp().listen(0,'127.0.0.1');
+// Client and server share this event loop. CPU-heavy offline replays can defer
+// both ends' idle timers, letting fetch reuse a socket just as it expires.
+// These functional tests do not test idle expiry; keep their local sockets open.
+server.keepAliveTimeout=0;
+await new Promise(resolve=>server.once('listening',resolve));
 const base=`http://127.0.0.1:${server.address().port}`,realFetch=globalThis.fetch;
 globalThis.fetch=()=>assert.fail('Autopilot tests must not call any provider.');
 after(async()=>{globalThis.fetch=realFetch;await new Promise(resolve=>server.close(resolve));db.close();rmSync(dir,{recursive:true,force:true});});
