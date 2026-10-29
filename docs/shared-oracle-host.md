@@ -1,5 +1,25 @@
 # Sharing an existing Oracle server
 
+## Deployment of 4f82269 — 29 October 2026
+
+The public host runs `4f82269f3e15511cc9921409e7a7496d16aa6522`, and `/healthz` over public HTTPS reports it. It includes `2ac8104` (the research trail says "in the bill before checks" instead of "booked") and makes the analysis readable at a glance:
+- a one-line verdict above "How solid is this bill?", each item linking to and opening its card;
+- findings on each booked act (clear pick or coin flip with its rival, fee headroom, whether it was checked in depth), and the entry fee for every other candidate;
+- the value-of-information choice shown in the agent card during a live run and on replay;
+- flip points as a compact table, budget breakpoints drawn on the slider track, cards folded to their headline on phones, and the result dimmed while rebooking;
+- hero and planner copy that say "up to three artists".
+
+- **Before the switch:** the backup `pre-4f82269` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-4f82269`. The rollback drill reported `4c3a7cd`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, capped build completed before any change to the running service, only `RELEASE_COMMIT` changed. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks.
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow. As before, the fast multi-page script logged transient Firefox font and WebKit stylesheet messages while moving between pages; the settled per-page probe logged no console errors on any page in WebKit or Firefox.
+  - **One live "Plan a show" run on production:** Seattle, fans of Fleet Foxes and The Head and the Heart, $35,000, 3 acts. It took 14.4 seconds and 12 Qloo calls. It booked Bon Iver + Noah Gundersen + Hey Marseilles for $35,000 (estimated fees). With Qloo off, the same rules book Noah Gundersen + Hey Marseilles + Langhorne Slim for $19,000. During the run the agent card showed that 3 acts could change the bill and were checked first, 2 were skipped and 3 were not checked for lack of calls. The verdict strip read: holds in 51% of fee scenarios, one coin-flip pick (Bon Iver, against Blind Pilot), audience ranking decides it, bill changes at $35,000 · $44,000 · $65,000, agent checked 3 of 8 acts. No console errors.
+- **Watch:** disk use is 97% after the build (1.6 GB free), and `/healthz` reports `"diskOk":false`. The next build is unlikely to fit without pruning older rollback images, keeping at least the last two.
+
+**Rollback:** tag `houselights-shared:pre-4f82269` as `houselights-shared:local`, set `RELEASE_COMMIT=4c3a7cd6175c61bc2d00624604f774455c51f77e`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 4c3a7cd — 29 October 2026
 
 The public host runs `4c3a7cd6175c61bc2d00624604f774455c51f77e`, and `/healthz` over public HTTPS reports it. When no bill fits, a plan now names the first budget that books one, with a button that goes there, and shows the research trail, including that no deep Qloo checks were made when none could make a bill fit.
