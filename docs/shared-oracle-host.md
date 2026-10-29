@@ -1,5 +1,25 @@
 # Sharing an existing Oracle server
 
+## Deployment of 20b6df8 — 29 October 2026
+
+The public host runs `20b6df83c89f85f97eef256175841145602bc9bd`, and `/healthz` over public HTTPS reports it. The release deepens the plan analysis:
+- **Research by value of information:** before its deep Qloo checks, a live plan tries all 16 results each check could return for every act against the exact optimizer. Acts whose result could change the bill are checked first, booked acts are verified next, and acts no result could change are skipped. The reasons are saved with the plan. Other agent runs keep their allocation, so pinned recordings replay exactly.
+- **Budget ladder:** every budget at which the bill changes, marked on the slider and listed as steps that rebook there.
+- **Fee robustness:** estimated fees move across their Qloo popularity tier, and a safer bookable bill is shown when it wins more scenarios.
+- **Does Qloo separate the picks?** Affinities move within the near-tie band, through the scaling that produced the saved fits, and each booked act is shown as a clear pick, a likely pick or a coin flip.
+
+- **Before the switch:** the backup `pre-20b6df8` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-20b6df8`. The rollback drill reported `4860c7a`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including five unretried WebKit runs of the live-plan pointer journey.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks. The featured plan's analysis over HTTPS matches the local result: 80% fee robustness, a three-step ladder, and Sault a coin flip with Jordan Rakei (affinity 0.9580 vs 0.9579).
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow. As on the last release, the fast multi-page script logged a Firefox font download and a WebKit stylesheet message while moving between pages; the settled per-page probe logged no console errors on any page in WebKit or Firefox.
+  - On the public page, the affinity card and ladder render, and choosing the $10,000 step rebooks Michael Kiwanuka + Jordan Rakei for $10,000. No console errors.
+  - **One live "Plan a show" run on production:** Minneapolis, fans of Bon Iver and Hippo Campus, $25,000, 3 acts. It took 9.9 seconds and 5 Qloo calls, and correctly found no bookable bill: the three cheapest estimated fees total $27,000. No check result could make a bill fit, so the agent skipped every deep check. The ladder on that plan offers $27,000 and $37,000. An experiment at $27,000 (no Qloo calls) books Lord Huron + Lucius + Rainbow Kitten Surprise, with popularity-tier fee robustness, a four-step ladder and fixed-span affinity checks all returned.
+- **Watch:** disk use is 94% after the build, and `/healthz` reports `"diskOk":false`. Older rollback images can be pruned, keeping at least the last two.
+
+**Rollback:** tag `houselights-shared:pre-20b6df8` as `houselights-shared:local`, set `RELEASE_COMMIT=4860c7af527f7c25243435d50c1eff19d7b5f07f`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 4860c7a — 29 October 2026
 
 The public host runs `4860c7af527f7c25243435d50c1eff19d7b5f07f`, and `/healthz` over public HTTPS reports it. It is the feature upgrade `dffe507` plus one layout fix:
