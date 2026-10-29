@@ -3,6 +3,7 @@ import {db,consumeQuota,transaction} from './database.mjs';
 import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
+import {analyzeDecision} from './robustness.mjs';
 import {preserveRankProvenance} from './gm.mjs';
 import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
 import {scoringVersion} from './affinity.mjs';
@@ -216,6 +217,7 @@ export function judgeExperiment(record,raw={},options={}) {
     snapshot.memo.items.every((item,index)=>JSON.stringify(item.terms)===JSON.stringify(record.snapshot.memo.items[index].terms))&&
     !raw.cancelId&&!raw.unavailableId&&!raw.feeIncreaseId&&!raw.withdrawReceiptId;
   return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,qlooOff:raw.qlooOff===true,snapshot,proof,
+    analysis:options.lightweight===true?null:analyzeDecision(snapshot),
     methods:proof?judgeMethods(snapshot,proof,record.snapshot):null,
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
       matchedEvidenceWithdrawal,
@@ -226,7 +228,7 @@ export function judgeExperiment(record,raw={},options={}) {
 // Experiments are deterministic (saved evidence, zero provider calls), so identical
 // requests reuse a stored result. Quotas still apply first; any publish or unpublish
 // clears the cache.
-const experimentCache=new Map(),EXPERIMENT_CACHE_MAX=300;
+const experimentCache=new Map(),analysisCache=new Map(),EXPERIMENT_CACHE_MAX=300;
 const sortedJson=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 export function registerJudgeRoutes(app) {
   const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
@@ -241,7 +243,14 @@ export function registerJudgeRoutes(app) {
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
     experimentCache.clear();res.status(201).json(publishJudgeCase(source,req.body?.title));
   }));
-  app.get('/api/judge/cases/:id',handle((req,res)=>{const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);res.json(record);}));
+  // Fee robustness and flip points are derived from the saved snapshot, so they are computed
+  // on read (a few milliseconds) and kept beside the experiment cache.
+  app.get('/api/judge/cases/:id',handle((req,res)=>{
+    const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
+    const key=`${record.id}|${record.createdAt??''}`;let analysis=analysisCache.get(key);
+    if(!analysis){analysis=analyzeDecision(record.snapshot);if(analysisCache.size>=EXPERIMENT_CACHE_MAX)analysisCache.delete(analysisCache.keys().next().value);analysisCache.set(key,analysis);}
+    res.json({...record,analysis});
+  }));
   app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);experimentCache.clear();res.json({unpublished:true});}));
   app.post('/api/judge/cases/:id/experiment',handle((req,res)=>{
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);

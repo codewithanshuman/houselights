@@ -87,9 +87,12 @@
           <label for="plan-city">City</label>
           <input id="plan-city" name="city" autocomplete="off" maxlength="60" required placeholder="Chicago">
         </div>
-        <div class="plan-field">
-          <label for="plan-anchor">Your audience loves</label>
+        <div class="plan-field plan-anchors" role="group" aria-labelledby="plan-anchor-label">
+          <label id="plan-anchor-label" for="plan-anchor">Your audience loves</label>
           <input id="plan-anchor" name="anchor" autocomplete="off" maxlength="80" required placeholder="Phoebe Bridgers">
+          <div id="plan-anchor-more" class="plan-anchor-more"></div>
+          <button type="button" class="plan-add" id="plan-anchor-add" aria-describedby="plan-anchor-hint"><span aria-hidden="true">+</span> Add another artist</button>
+          <p id="plan-anchor-hint" class="plan-hint">Up to 3. Qloo ranks for fans of all of them together.</p>
         </div>
         <div class="plan-row">
           <div class="plan-field">

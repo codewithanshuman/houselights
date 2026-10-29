@@ -1119,6 +1119,46 @@ test.describe('Booking Desk: plan your show', () => {
     }
   });
 
+  test('the plan says how solid the bill is and recomputes it with every change @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    const solid = page.locator('.solid');
+    await expect(solid.getByRole('heading', { name: 'How solid is this bill?' })).toBeVisible();
+    await expect(solid.locator('.solid-meter .solid-figure strong')).toHaveText('80%');
+    await expect(solid.locator('.solid-meter')).toContainText('In 398 of 500 scenarios where every fee moves by up to ±20%');
+    await expect(solid.locator('.solid-bar')).toHaveAttribute('aria-label', 'This bill 80%, Michael Kiwanuka + Jordan Rakei 20%');
+    await expect(solid.locator('.flip').first()).toContainText('Stays booked up to $7,500 (+$1,000). Above that, the bill becomes Michael Kiwanuka + Jordan Rakei.');
+    await expect(solid.locator('[data-signal="rank"]')).toHaveClass(/is-decisive/);
+    await expect(solid.locator('[data-signal="rank"] .signal-effect')).toHaveText('Without it: Sault + Jordan Rakei');
+    await expect(solid.locator('[data-signal="trends"] .signal-effect')).toHaveText('Not gathered for this pool');
+    await page.locator('[data-budget]').filter({ hasText: '90%' }).click();
+    await expect(page.locator('#result-title')).not.toContainText('Sault');
+    await expect(solid.locator('.solid-meter .solid-figure strong')).not.toHaveText('80%');
+    await page.locator('#plan-switch').click();
+    await expect(solid.locator('.solid-signals')).toContainText('Qloo evidence is off, so no signal shapes this bill.');
+  });
+
+  test('the planner takes up to three artists and sends them together', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    const add = page.locator('#plan-anchor-add');
+    await add.click();
+    await expect(page.locator('#plan-anchor-2')).toBeFocused();
+    await add.click();
+    await expect(page.locator('#plan-anchor-3')).toBeFocused();
+    await expect(add).toBeHidden();
+    await page.getByRole('button', { name: 'Remove artist 2' }).click();
+    await expect(add).toBeFocused();
+    await expect(page.getByLabel('Artist 2 your audience loves')).toHaveCount(1);
+    await page.fill('#plan-city', 'Leeds');
+    await page.fill('#plan-anchor', 'Arlo Parks');
+    await page.fill('#plan-anchor-2', 'Nilüfer Yanya');
+    const sent = page.waitForRequest(request => request.url().endsWith('/api/plan'));
+    await page.locator('#plan-submit').click();
+    expect((await sent).postDataJSON().anchors).toEqual(['Arlo Parks', 'Nilüfer Yanya']);
+    await expect(page.locator('#agent-caption')).toHaveText('Live run: Leeds, fans of Arlo Parks and Nilüfer Yanya');
+    await expect(page.locator('.result-meta')).toContainText('fans of Arlo Parks, Nilüfer Yanya', { timeout: 30000 });
+    await expect(page.locator('.solid-meter')).toBeVisible();
+  });
+
   test('a live plan streams its Qloo calls into the agent card', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
     await page.fill('#plan-city', 'Leeds');

@@ -39,7 +39,18 @@ test('plan input is validated and cleaned', () => {
   assert.throws(() => planInput({ city: 'Leeds', anchor: '', budget: 5000, slots: 2 }), /artist/);
   assert.throws(() => planInput({ city: 'Leeds', anchor: 'A', budget: 50, slots: 2 }), /budget/i);
   assert.throws(() => planInput({ city: 'Leeds', anchor: 'A', budget: 5000, slots: 9 }), /1 to 4/);
-  assert.deepEqual(planInput({ city: '  Leeds <b> ', anchor: 'Arlo   Parks', budget: 12000.4, slots: 2 }), { city: 'Leeds b', anchor: 'Arlo Parks', anchorId: null, budget: 12000, slots: 2 });
+  assert.deepEqual(planInput({ city: '  Leeds <b> ', anchor: 'Arlo   Parks', budget: 12000.4, slots: 2 }), { city: 'Leeds b', anchor: 'Arlo Parks', anchors: ['Arlo Parks'], picks: {}, anchorId: null, budget: 12000, slots: 2 });
+});
+
+test('up to three audience artists are accepted, deduplicated, and picks bind only named artists', () => {
+  const input = planInput({ city: 'Leeds', anchors: ['Arlo Parks', ' arlo parks ', 'Nilüfer Yanya'], picks: { 'nilüfer yanya': 'ny-1', Stranger: 'x-1', 'Arlo Parks': 'bad id!' }, budget: 9000, slots: 2 });
+  assert.deepEqual(input.anchors, ['Arlo Parks', 'Nilüfer Yanya']);
+  assert.deepEqual(input.picks, { 'Nilüfer Yanya': { id: 'ny-1' } });
+  assert.equal(input.anchor, 'Arlo Parks');
+  assert.equal(planInput({ city: 'Leeds', anchor: 'Arlo Parks', anchorId: 'ap-1', budget: 9000, slots: 2 }).picks['Arlo Parks'].id, 'ap-1');
+  assert.throws(() => planInput({ city: 'Leeds', anchors: ['A', 'B', 'C', 'D'], budget: 9000, slots: 2 }), /up to 3/);
+  assert.throws(() => planInput({ city: 'Leeds', anchors: 'A', budget: 9000, slots: 2 }), /up to 3/);
+  assert.throws(() => planInput({ city: 'Leeds', anchors: ['', ' '], budget: 9000, slots: 2 }), /artist/);
 });
 
 test('a live plan streams progress, saves a shareable plan and supports the Qloo-off experiment', async () => {
@@ -63,9 +74,29 @@ test('a live plan streams progress, saves a shareable plan and supports the Qloo
   assert.ok(record.snapshot.memo.slate.selectedIds.length <= 2);
   const off = await fetch(`${url}/api/judge/cases/${ready.id}/experiment`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ qlooOff: true }) });
   assert.equal(off.status, 200);
-  assert.equal((await off.json()).qlooOff, true);
+  const offBody = await off.json();
+  assert.equal(offBody.qlooOff, true);
+  assert.equal(offBody.analysis.robustness.method, 'exact-reprice', 'experiments carry the analysis of the bill they produce');
   const list = await (await fetch(`${url}/api/judge/cases`)).json();
   assert.ok(!list.cases.some(item => item.id === ready.id), 'live plans are never listed as published cases');
+});
+
+test('a plan for several audience artists signals Qloo with all of them and carries its analysis', async () => {
+  db.prepare('DELETE FROM quotas').run();
+  const { events } = await plan({ city: 'Leeds', anchors: ['Arlo Parks', 'Nilüfer Yanya', 'Pip Millett'], budget: 15000, slots: 2 });
+  const ready = events.at(-1);
+  assert.equal(ready.type, 'ready', JSON.stringify(ready));
+  const record = await (await fetch(`${url}/api/judge/cases/${ready.id}`)).json();
+  assert.equal(record.title, 'Leeds: fans of Arlo Parks, Nilüfer Yanya and Pip Millett');
+  assert.deepEqual(record.snapshot.memo.input.anchors, ['Arlo Parks', 'Nilüfer Yanya', 'Pip Millett']);
+  assert.equal(record.snapshot.memo.input.anchorIds.length, 3);
+  const rank = record.snapshot.receipts.find(receipt => receipt.tool === 'rank');
+  assert.ok(rank, 'the ranking call is saved');
+  assert.ok(ready.calls <= 12, 'the 12-call cap still holds');
+  assert.equal(record.analysis.robustness.method, 'exact-reprice');
+  assert.equal(record.analysis.robustness.draws, 500);
+  assert.equal(record.analysis.flips.status, 'ready');
+  db.prepare('DELETE FROM quotas').run();
 });
 
 test('live plans are limited per visitor', async () => {

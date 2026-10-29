@@ -43,7 +43,9 @@ test('organizer publishes an immutable projection; private fields stay out and e
   assert.deepEqual(record.snapshot.trace.map(event=>event.type),['start','stage','receipt','plan','memo']);
   assert.equal(record.snapshot.trace[2].receiptId,'r1');
   assert.equal(judge.publishJudgeCase(record.snapshot,record.title).id,record.id);
-  const publicResult=await (await realFetch(base+'/api/judge/cases/'+record.id)).json();assert.deepEqual(publicResult,record);
+  const {analysis,...publicResult}=await (await realFetch(base+'/api/judge/cases/'+record.id)).json();assert.deepEqual(publicResult,record);
+  // The analysis is derived on read from the immutable snapshot; it is never stored.
+  assert.equal(analysis.robustness.method,'exact-reprice');assert.equal(analysis.flips.method,'exact-single-fee');assert.equal(record.analysis,undefined);
   assert.deepEqual(record.snapshot.memo.slate.selectedIds,['a','b']);assert.equal(record.snapshot.memo.slate.score,source().memo.slate.score);
   assert.equal((await post('/api/judge/cases/'+id+'/experiment',{})).status,401);
   const original=store.load(id);original.memo.items[0].terms.fee=10000;

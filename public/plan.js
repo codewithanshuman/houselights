@@ -48,6 +48,7 @@
     try{
       const record=await fetchJSON(`/api/judge/cases/${encodeURIComponent(id)}`,{timeout:15000});
       if(request!==caseRequest)return;
+      record.snapshot.__analysis=record.analysis;record.snapshot.__proof=record.proof;
       view={record,base:record.snapshot,current:record.snapshot,off:null,budget:record.snapshot.memo.constraints.budget,cancelId:null,qlooOff:false};
       render();if(record.id===FEATURED){fillFan(record.snapshot,null);fillPipeline(record.snapshot);if(watchReady||form.contains(document.activeElement))startReplay();}
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
@@ -60,7 +61,9 @@
     }finally{if(request===caseRequest)result.setAttribute('aria-busy','false');}
   }
 
-  const experiment=body=>fetchJSON(`/api/judge/cases/${view.record.id}/experiment`,{method:'POST',body,timeout:20000,retries:0});
+  // Each result snapshot keeps the analysis and decision proof computed for it.
+  const experiment=body=>fetchJSON(`/api/judge/cases/${view.record.id}/experiment`,{method:'POST',body,timeout:20000,retries:0})
+    .then(data=>{data.snapshot.__analysis=data.analysis;data.snapshot.__proof=data.proof;return data;});
 
   async function rerun(){
     const owner=view,generation=caseRequest,request=++calculationRequest;
@@ -162,6 +165,7 @@
           ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
         </section>
       </div>
+      ${solidSection()}
       ${actSections()}
       <div class="result-controls" aria-labelledby="controls-title">
         <div class="controls-copy">
@@ -179,6 +183,77 @@
       ${record.live?`<p class="result-terms">${e(record.terms)} <button type="button" class="link-button" id="plan-share">Copy link to this plan</button></p>`:''}`;
     view.flip=null;
     wire();
+  }
+
+  // How solid is the bill shown: the share of ±20% fee scenarios that keep it, the fee at
+  // which each booked act would flip it and the cut that would bring another act in, and
+  // which class of Qloo evidence the decision rests on. Each figure is exact and comes from
+  // the server; this only lays them out.
+  const SIGNALS=[['rank','Audience ranking','Qloo’s affinity of each candidate for these fans'],['local','Where the fans are','Qloo’s popularity of each act within the city'],
+    ['trends','Six-month trend','Rising or cooling interest'],['comparison','Audience overlap','How each act’s audience overlaps the anchors’']];
+  const whole=value=>usd(Math.floor(value+1e-9));
+  const pct=share=>`${Math.round(share*100)}%`;
+  function solidSection(){
+    const {current,record}=view,slate=current.memo.slate,analysis=current.__analysis,proof=current.__proof;
+    if(!slate.feasible||!analysis)return '';
+    const names=ids=>ids.map(id=>nameOf(current,id)).join(' + '),robust=analysis.robustness,flips=analysis.flips;
+    const est=estimated(record)?' est.':'';
+    let meter='';
+    if(robust?.status==='ready'){
+      const alts=robust.alternatives,others=Math.max(0,robust.draws-robust.holds-robust.noBill-alts.reduce((sum,row)=>sum+row.draws,0));
+      const segments=[['hold',robust.holds,'This bill'],...alts.map((row,index)=>[`alt-${index+1}`,row.draws,names(row.selectedIds)]),['other',others,'Other bills'],['none',robust.noBill,'No bill fits']].filter(([,count])=>count>0);
+      const verdict=robust.share>=.9?'Solid':robust.share>=.6?'Holds in most scenarios':robust.share>=.35?'Close call':'Fragile';
+      meter=`<article class="solid-card solid-meter" data-share="${e(robust.share.toFixed(3))}">
+          <p class="solid-kicker">Fee robustness</p>
+          <p class="solid-figure"><strong>${e(pct(robust.share))}</strong><span>${e(verdict)}</span></p>
+          <p class="solid-text">In ${e(robust.holds)} of ${e(robust.draws)} scenarios where every fee moves by up to ±${e(Math.round(robust.spread*100))}%, the optimizer books this same bill.</p>
+          <div class="solid-bar" role="img" aria-label="${e(segments.map(([,count,label])=>`${label} ${pct(count/robust.draws)}`).join(', '))}">${segments.map(([key,count])=>`<span class="seg seg-${key}" style="flex-grow:${count}"></span>`).join('')}</div>
+          ${alts.length||robust.noBill?`<ul class="solid-legend">${alts.map((row,index)=>`<li><span class="dot seg-alt-${index+1}" aria-hidden="true"></span>${e(names(row.selectedIds))}<b>${e(pct(row.share))}</b></li>`).join('')}${robust.noBill?`<li><span class="dot seg-none" aria-hidden="true"></span>No bill fits the budget<b>${e(pct(robust.noBill/robust.draws))}</b></li>`:''}</ul>`:'<p class="solid-note">No other bill wins in any scenario.</p>'}
+        </article>`;
+    }
+    let points='';
+    if(flips?.status==='ready'){
+      const booked=flips.booked.map(flip=>{
+        const fill=flip.maxFee>0?Math.min(1,flip.fee/flip.maxFee):1;
+        return `<li class="flip">
+            <p class="flip-name"><strong>${e(nameOf(current,flip.id))}</strong><span>${e(usd(flip.fee))}${est}</span></p>
+            <span class="flip-track" aria-hidden="true"><span style="width:${(fill*100).toFixed(1)}%"></span></span>
+            <p class="flip-text">${flip.headroom>=1?`Stays booked up to <strong>${e(whole(flip.maxFee))}</strong> (+${e(whole(flip.headroom))}).`:'<strong>At its limit:</strong> any fee rise changes the bill.'} ${flip.replacement?`Above that, the bill becomes ${e(names(flip.replacement.selectedIds))}.`:'Above that, no bill fits.'}</p>
+          </li>`;}).join('');
+      const close=flips.entries.filter(entry=>entry.entryFee!=null).sort((a,b)=>a.cut/a.fee-b.cut/b.fee).slice(0,3);
+      const shut=flips.entries.length-flips.entries.filter(entry=>entry.entryFee!=null).length;
+      points=`<article class="solid-card solid-flips">
+          <p class="solid-kicker">Flip points</p>
+          <p class="solid-text">One fee moves, every other fee stays. The exact point where the decision changes.</p>
+          <ul class="flip-list">${booked}</ul>
+          ${close.length?`<p class="solid-sub">Closest to getting in</p><ul class="entry-list">${close.map(entry=>`<li><strong>${e(nameOf(current,entry.id))}</strong> at ${e(whole(entry.entryFee))} or less <span class="entry-cut">−${e(usd(Math.ceil(entry.cut-1e-9)))}</span><small>Bill: ${e(names(entry.bill.selectedIds))}</small></li>`).join('')}</ul>`:''}
+          ${shut?`<p class="solid-note">${e(shut)} other act${shut===1?'':'s'} would not enter at any fee: the bill outscores every set that includes ${shut===1?'it':'them'}.</p>`:''}
+        </article>`;
+    }
+    let signals='';
+    if(view.qlooOff)signals=`<article class="solid-card solid-signals"><p class="solid-kicker">Qloo signals</p><p class="solid-text">Qloo evidence is off, so no signal shapes this bill. Switch it on to see which one decides it.</p></article>`;
+    else if(proof?.ablations){
+      const rows=SIGNALS.map(([kind,label,hint])=>{
+        const row=proof.ablations.find(item=>item.id===`class:${kind}`);if(!row)return '';
+        const used=row.affectedIds?.length>0,moved=used&&row.changed;
+        return `<li class="signal${moved?' is-decisive':''}${used?'':' is-absent'}" data-signal="${kind}">
+            <span class="signal-mark" aria-hidden="true"></span>
+            <p><strong>${e(label)}</strong><small>${e(hint)}</small></p>
+            <p class="signal-effect">${!used?'Not gathered for this pool':moved?(row.feasible?`Without it: ${e(names(row.selectedIds))}`:'Without it: no bill fits'):'Same bill without it'}</p>
+          </li>`;}).join('');
+      const decisive=SIGNALS.filter(([kind])=>{const row=proof.ablations.find(item=>item.id===`class:${kind}`);return row?.affectedIds?.length&&row.changed;}).map(([,label])=>label.toLowerCase());
+      const all=proof.ablations.find(item=>item.id==='class:all');
+      signals=`<article class="solid-card solid-signals">
+          <p class="solid-kicker">Which Qloo signal decides it</p>
+          <p class="solid-text">${decisive.length?`Removing ${e(listNames(decisive))} on ${decisive.length===1?'its':'their'} own changes the bill.`:all?.changed?'No single signal changes the bill alone; together they do.':'The bill stands without any one signal.'}</p>
+          <ul class="signal-list">${rows}</ul>
+        </article>`;
+    }
+    if(!meter&&!points&&!signals)return '';
+    return `<section class="solid" aria-labelledby="solid-title">
+        <div class="solid-head"><h3 id="solid-title">How solid is this bill?</h3><p>Exact checks on the same saved evidence. No new Qloo calls; fees remain${estimated(record)?' estimates':' illustrative'}.</p></div>
+        <div class="solid-grid">${meter}${points}${signals}</div>
+      </section>`;
   }
 
   // What the table and cards say about one act.
@@ -307,13 +382,34 @@
     const watch=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){watch.disconnect();watchReady=true;startReplay();}},{rootMargin:'0px 0px -20% 0px'});
     watch.observe(agent);
   }
+  // Up to three artists the audience loves. Extra rows are added and removed in place;
+  // focus moves to the new field, or back to the add button after a removal.
+  const MAX_ANCHORS=3,anchorMore=$('plan-anchor-more'),anchorAdd=$('plan-anchor-add');
+  const anchorRows=()=>[...anchorMore.querySelectorAll('.plan-anchor-row')];
+  function syncAnchors(){
+    anchorRows().forEach((row,index)=>{const n=index+2,input=row.querySelector('input'),label=row.querySelector('label');
+      input.id=`plan-anchor-${n}`;label.htmlFor=input.id;label.textContent=`Artist ${n} your audience loves`;row.querySelector('button').setAttribute('aria-label',`Remove artist ${n}`);});
+    anchorAdd.hidden=anchorRows().length>=MAX_ANCHORS-1;
+  }
+  function addAnchor(value=''){
+    if(anchorRows().length>=MAX_ANCHORS-1)return null;
+    const row=document.createElement('div');row.className='plan-anchor-row';
+    row.innerHTML='<label class="sr-only"></label><input name="anchor" autocomplete="off" maxlength="80" placeholder="Another artist"><button type="button" class="plan-anchor-remove"><span aria-hidden="true">×</span></button>';
+    row.querySelector('input').value=value;
+    row.querySelector('button').addEventListener('click',()=>{row.remove();syncAnchors();(anchorAdd.hidden?$('plan-anchor'):anchorAdd).focus();});
+    anchorMore.append(row);syncAnchors();return row.querySelector('input');
+  }
+  anchorAdd.addEventListener('click',()=>addAnchor()?.focus());
+  const anchorInputs=()=>[...form.querySelectorAll('input[name="anchor"]')];
+  const listNames=names=>names.length<3?names.join(' and '):`${names.slice(0,-1).join(', ')} and ${names.at(-1)}`;
   function readInput(){
-    const data=new FormData(form);
-    const input={city:String(data.get('city')??'').trim(),anchor:String(data.get('anchor')??'').trim(),budget:Number(String(data.get('budget')??'').replace(/[$,\s]/g,'')),slots:Number(data.get('slots'))};
+    const data=new FormData(form),anchors=[];
+    for(const name of data.getAll('anchor').map(value=>String(value).trim()).filter(Boolean))if(!anchors.some(seen=>seen.toLowerCase()===name.toLowerCase()))anchors.push(name);
+    const input={city:String(data.get('city')??'').trim(),anchors,budget:Number(String(data.get('budget')??'').replace(/[$,\s]/g,'')),slots:Number(data.get('slots'))};
     const fail=(field,message)=>{const error=$('plan-error');error.textContent=message;error.hidden=false;$(field).setAttribute('aria-invalid','true');$(field).focus();return null;};
     form.querySelectorAll('[aria-invalid]').forEach(node=>node.removeAttribute('aria-invalid'));$('plan-error').hidden=true;
     if(input.city.length<2)return fail('plan-city','Enter a city.');
-    if(!input.anchor)return fail('plan-anchor','Enter an artist your audience loves.');
+    if(!input.anchors.length)return fail('plan-anchor','Enter an artist your audience loves.');
     if(!Number.isFinite(input.budget)||input.budget<1000||input.budget>500000)return fail('plan-budget','Artist budget must be between $1,000 and $500,000.');
     return input;
   }
@@ -321,11 +417,12 @@
     const submit=$('plan-submit'),status=$('progress-status');
     replaying?.cancel();replaying=null;replayStarted=true;
     submit.disabled=true;submit.textContent='Planning…';$('progress-choose').hidden=true;
-    $('agent-caption').textContent=`Live run: ${input.city}, fans of ${input.anchor}`;
-    const trace=window.HLTrace.create(agent,{city:input.city,anchor:input.anchor,label:`Researching ${input.city} with Qloo`});
+    const fans=listNames(input.anchors);
+    $('agent-caption').textContent=`Live run: ${input.city}, fans of ${fans}`;
+    const trace=window.HLTrace.create(agent,{city:input.city,anchor:fans,label:`Researching ${input.city} with Qloo`});
     trace.stage('Resolve');
     if(matchMedia('(max-width: 900px)').matches)agent.scrollIntoView({block:'center',behavior:reduced()?'instant':'smooth'});
-    status.textContent=`Researching a show in ${input.city} for fans of ${input.anchor}.`;
+    status.textContent=`Researching a show in ${input.city} for fans of ${fans}.`;
     const showError=text=>{const error=$('plan-error');error.textContent=text;error.hidden=false;trace.fail('The live plan stopped');};
     try{
       const response=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input),signal:AbortSignal.timeout(180000)});
@@ -343,7 +440,12 @@
             trace.fail(`Which “${event.name}” did you mean?`);
             const box=$('progress-choose');box.hidden=false;
             box.innerHTML=`<p>Qloo found more than one “${e(event.name)}”. Which one did you mean?</p><div class="plan-chips">${event.options.map(option=>`<button type="button" class="plan-chip" data-anchor-id="${e(option.id)}" data-anchor-name="${e(option.name)}">${e(option.name)}</button>`).join('')}</div>`;
-            box.querySelectorAll('[data-anchor-id]').forEach(button=>button.addEventListener('click',()=>{$('plan-anchor').value=button.dataset.anchorName;void planLive({...input,anchor:button.dataset.anchorName,anchorId:button.dataset.anchorId});},{once:true}));
+            // The chosen entity replaces the ambiguous name, in the form and in the request.
+            box.querySelectorAll('[data-anchor-id]').forEach(button=>button.addEventListener('click',()=>{
+              const chosen=button.dataset.anchorName,asked=event.name.toLowerCase();
+              const field=anchorInputs().find(node=>node.value.trim().toLowerCase()===asked);if(field)field.value=chosen;
+              void planLive({...input,anchors:input.anchors.map(name=>name.toLowerCase()===asked?chosen:name),picks:{...input.picks,[chosen]:button.dataset.anchorId}});
+            },{once:true}));
             status.textContent='Choose which artist you meant.';done=true;
           }
           else if(event.type==='error'){showError(event.text);done=true;}
