@@ -1,5 +1,22 @@
 # Sharing an existing Oracle server
 
+## Deployment of 4860c7a — 29 October 2026
+
+The public host runs `4860c7af527f7c25243435d50c1eff19d7b5f07f`, and `/healthz` over public HTTPS reports it. It is the feature upgrade `dffe507` plus one layout fix:
+- **`dffe507`:** every plan, saved or live, shows "How solid is this bill?": the share of 500 seeded ±20% fee scenarios that keep the bill, the exact fee at which each booked act would change it and what replaces it, the cut that would bring another act in, and which class of Qloo evidence changes the decision on its own. "Plan a show" accepts up to three artists, and every artist must be confirmed before a plan is saved.
+- **The fix:** WebKit could anchor scrolling to the agent card beside the planner form and move the page when the card re-rendered, so a press on "Plan my bill" could release on the form. The column is no longer a scroll anchor.
+
+- **Before the switch:** the backup `pre-4860c7a` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-4860c7a`. The rollback drill reported `be5d7ac`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including five unretried WebKit runs of the live-plan pointer journey. The run on `dffe507` failed that journey, which the fix addresses.
+- **Switch:** exact checkout, secret scan clean, only `RELEASE_COMMIT` changed, capped build. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks. A run started straight after an earlier one failed 17 experiment checks against the per-IP limit of 20 a minute; it passed in full once the minute reset.
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow. That fast multi-page script logged a Firefox font download and a WebKit stylesheet message while it moved between pages; the settled per-page probe logged no console errors on any page in WebKit or Firefox.
+  - **One live "Plan a show" run on production:** Portland, fans of Big Thief and Phoebe Bridgers, $25,000, 3 acts. The request took 12.8 seconds and returned 200. It booked Lucy Dacus + Adrianne Lenker + Julia Jacklin for $24,000 (estimated fees). With Qloo off, the same rules book Julia Jacklin + Haley Heynderickx + Better Oblivion Community Center for $18,000. The bill holds in 59% of fee scenarios, and removing the audience ranking alone changes it. No console errors and no error-level server logs.
+- **Watch:** disk use is 93% after the build, so `/healthz` reports `"diskOk":false` (under 10% free). Older rollback images can be pruned, keeping at least the last two.
+
+**Rollback:** tag `houselights-shared:pre-4860c7a` as `houselights-shared:local`, set `RELEASE_COMMIT=be5d7ac386efca25e512ef754cf63c88850c800d`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 1116763 — 26 October 2026
 
 The public host runs `111676339cda5a1d54acc682f38cd5e5c7743eef`, and `/healthz` over public HTTPS reports it with `"diskOk":true`. It is the dashboard upgrade `57a6ac9` plus the regenerated Linux visual baselines and a test-only timeout change. The upgrade:
