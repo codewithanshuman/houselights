@@ -24,3 +24,11 @@ This observation supports correcting the query semantics; it does not prove that
 The new agent regression fails on the previous request and covers both complete and deliberately sparse rankings. It requires discovery and ranking to use the same audience city and anchor signals, one fixed-pool ranking, and conservative provisional output when any rank is missing. Existing partial-rank and failed-rank regressions remain intact.
 
 This backend correction affects newly generated research pools. It changes no HTML, CSS, browser JavaScript, icons, images or saved public evidence. Production remains the commit in the [verified production record](current-release.md) until a separately authorized deployment. Human evaluation and actual financial calibration remain pending real participants and qualifying outcomes.
+
+## Verification timing failures retained
+
+The first development CI for `e8daed6` passed 396 unit tests and 91 browser checks. The separate main-branch run then failed one WebKit live-plan pointer check (90/91); a local full run failed the receipt comparison while it still displayed “Checking…” (90/91). These failures are retained rather than represented as passes.
+
+The receipt regression now awaits the real experiment response within the application's existing 20-second request allowance before its unchanged receipt assertions. The live-plan regression awaits `document.fonts.ready` before the real 120 ms pointer press/release, retaining submission and scroll assertions. No click is forced, no synthetic submit is dispatched, and application code, styles and images remain untouched. These checks synchronize test prerequisites; successful repetitions do not independently prove the cause of every prior intermittent browser failure. Final full-run results belong to the exact follow-up commit's CI record.
+
+A first local release rehearsal also timed out before server output. A fresh isolated rehearsal subsequently passed all 88 checks, restart, retained journal and backup restoration, without increasing its startup timeout. The first failure remains in ignored operator logs; its root cause is not established.

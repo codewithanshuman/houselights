@@ -191,7 +191,11 @@ test('the budget field explains bad input and clamps out-of-range values', async
 test('matched Qloo withdrawal opens the exact saved receipts', async ({ page }) => {
   await page.goto(`${origin}/desk.html#${caseId}`);await openDeeper(page);
   await expect(page.locator('#judge-title')).toContainText('New York');
+  // Synchronize with the real replay response before asserting its rendered receipts.
+  // The application allows this request 20 seconds; the text assertion alone waited five.
+  const replay = page.waitForResponse(response => response.url().includes(`/api/judge/cases/${caseId}/experiment`) && response.request().method() === 'POST', { timeout: 20000 });
   await page.getByRole('button', { name: 'Compare with Qloo evidence removed' }).click();
+  expect((await replay).ok()).toBe(true);
   const comparison = page.locator('.judge-evidence-comparison');
   await expect(comparison).toContainText('MATCHED EVIDENCE TEST');
   await expect(comparison).toContainText('Same candidate pool, fees, availability, scoring policy and booking constraints.');
@@ -1029,6 +1033,9 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('#agent-trace .agent-label-text')).toHaveText('Researched in 20.5s · 18 Qloo calls');
     await expect(page.locator('#agent-trace .agent-stage')).toHaveCount(7);
     await expect(page.locator('#agent-trace .agent-foot')).toContainText('shown without animation');
+    // WebKit can finish a late font swap after the trace becomes visible. Keep the
+    // real pointer press/release test, but start it after font geometry is available.
+    await page.evaluate(async () => { await document.fonts.ready; });
     await page.locator('#plan-submit').click({delay:120});
     expect(JSON.stringify(await page.evaluate(()=>window.__planInputEvents))).toContain('"type":"submit"');
     const pressScroll=await page.evaluate(()=>window.__planInputEvents.filter(event=>['pointerdown','mouseup'].includes(event.type)).map(event=>event.scrollY));
