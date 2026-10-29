@@ -200,12 +200,12 @@
     const research=view.base.memo.research;
     if(research?.method!=='value-of-information'||!research.candidates?.length)return '';
     const billed=view.base.memo.slate.feasible;
-    const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','Verifies a booked act'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','Booked; no calls left'],
+    const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','In the bill before checks; verified'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','In the bill before checks; no calls left'],
       'no-effect':['Skipped',billed?'No possible result changes the bill':'No possible result makes a bill fit']};
     const checked=research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length;
     return `<article class="solid-card solid-research">
         <p class="solid-kicker">How the agent spent its Qloo calls</p>
-        <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. ${checked?`It checked ${e(checked)} of ${e(research.candidates.length)} acts.`:billed?'No check could change the bill, so it made none.':'No check could make any bill fit this budget, so it made none and saved those Qloo calls.'}</p>
+        <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. “Before checks” means the bill from Qloo’s ranking alone; the checks can still change it. ${checked?`It checked ${e(checked)} of ${e(research.candidates.length)} acts.`:billed?'No check could change the bill, so it made none.':'No check could make any bill fit this budget, so it made none and saved those Qloo calls.'}</p>
         <ul class="trail-list">${research.candidates.map(row=>{const [tag,why]=reasons[row.reason]??['',''];return `<li class="trail is-${e(row.reason)}"><strong>${e(nameOf(view.base,row.id))}</strong><span class="trail-tag">${e(tag)}</span><small>${e(why)}${row.bills>1?` · ${e(row.bills)} possible bills`:''}</small></li>`;}).join('')}</ul>
       </article>`;
   }

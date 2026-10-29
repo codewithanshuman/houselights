@@ -1204,6 +1204,9 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(trail).toContainText('tried all 16 results a check could return');
     await expect(trail.locator('.trail')).not.toHaveCount(0);
     await expect(trail.locator('.trail-tag').first()).toHaveText(/Checked|Skipped|Not checked/);
+    // Acts verified because they were in the provisional bill are not described as booked.
+    await expect(trail).toContainText('In the bill before checks');
+    await expect(trail).not.toContainText('Booked');
   });
 
   test('a live plan streams its Qloo calls into the agent card', async ({ page }) => {
