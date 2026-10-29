@@ -62,7 +62,9 @@
 /* The agent card: replay of a saved run, or a live run */
 .agent-card-wrap{margin-top:32px;max-width:520px}
 .agent-card.is-static,.agent-card.is-static *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-.planner-copy{padding-top:16px;min-width:0}
+/* The agent card in this column grows when a replay or live run renders. WebKit could anchor
+   scrolling to it and move the page, shifting the form beside it mid-press; anchor elsewhere. */
+.planner-copy{padding-top:16px;min-width:0;overflow-anchor:none}
 .agent-caption{margin:0 0 12px;font:500 14px/20px var(--font-ui);color:var(--pp-muted)}
 .agent-card{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:20px;box-shadow:var(--pp-shadow);padding:16px 16px 12px;min-height:248px;transition:min-height .5s var(--pp-ease)}
 .agent-card.is-done{min-height:0}
