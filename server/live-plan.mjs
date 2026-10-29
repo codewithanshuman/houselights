@@ -93,6 +93,8 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
       if (event.type === 'stage') send({ type: 'stage', text: event.text });
       else if (event.type === 'receipt') send({ type: 'call', id: event.receipt.id, tool: event.receipt.tool, status: event.receipt.status, cached: event.receipt.cached, count: event.receipt.count ?? null, used: event.budget?.used, max: event.budget?.max });
       else if (event.type === 'needs_input' && !choose) choose = { name: event.name, options: (event.candidates ?? []).slice(0, 5) };
+      // Which acts the agent will check in depth, and why: names only, no evidence.
+      else if (event.type === 'plan' && event.checks) send({ type: 'research', checks: event.checks });
     };
     const heartbeat = setInterval(() => { if (!res.destroyed) res.write(': heartbeat\n\n'); }, 15000);
     try {

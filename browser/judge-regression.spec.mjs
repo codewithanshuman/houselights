@@ -1126,7 +1126,23 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(solid.locator('.solid-meter .solid-figure strong')).toHaveText('80%');
     await expect(solid.locator('.solid-meter')).toContainText('In 398 of 500 scenarios where every fee moves by up to ±20%');
     await expect(solid.locator('.solid-bar')).toHaveAttribute('aria-label', 'This bill 80%, Michael Kiwanuka + Jordan Rakei 20%');
-    await expect(solid.locator('.flip').first()).toContainText('Stays booked up to $7,500 (+$1,000). Above that, the bill becomes Michael Kiwanuka + Jordan Rakei.');
+    const kiwanuka = solid.locator('.flip-row').first();
+    await expect(kiwanuka.locator('th')).toHaveText('Michael Kiwanuka');
+    await expect(kiwanuka.locator('td').nth(1)).toHaveText('$7,500 +$1,000');
+    await expect(kiwanuka.locator('td').nth(2)).toHaveText('Michael Kiwanuka + Jordan Rakei');
+    // The one-line verdict names each finding and links to its card.
+    const strip = solid.locator('.verdict-strip');
+    await expect(strip).toContainText('Holds in 80% of fee scenarios');
+    await expect(strip).toContainText('One coin-flip pick: Sault');
+    await expect(strip).toContainText('Audience ranking decides it');
+    await expect(strip).toContainText('Bill changes at $9,000 · $10,000 · $13,500');
+    await strip.getByRole('link', { name: 'One coin-flip pick: Sault' }).click();
+    await expect(page.locator('#solid-affinity')).toBeFocused();
+    // Each booked act carries its own findings, and other candidates say what would bring them in.
+    const sault = page.locator('.act-grid .act-card').filter({ hasText: 'Sault' });
+    await expect(sault.locator('.act-insights')).toContainText('Coin flip with Jordan Rakei');
+    await expect(sault.locator('.act-insights')).toContainText('Fee can rise $1,000');
+    await expect(page.locator('.rank-entry').first()).toHaveText(/^(Enters at \$[\d,]+ or less\.|A lower fee would not bring it in\.)$/);
     await expect(solid.locator('[data-signal="rank"]')).toHaveClass(/is-decisive/);
     await expect(solid.locator('[data-signal="rank"] .signal-effect')).toHaveText('Without it: Sault + Jordan Rakei');
     await expect(solid.locator('[data-signal="trends"] .signal-effect')).toHaveText('Not gathered for this pool');
@@ -1178,6 +1194,21 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('.solid-first')).toContainText('The first bill that fits');
   });
 
+  test('on a phone the analysis folds to headlines, and a summary link opens its card', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${origin}/judge.html`);
+    const affinity = page.locator('#solid-affinity');
+    await expect(affinity.locator('.sep').first()).toBeHidden();
+    await expect(affinity.locator('.solid-text')).toBeVisible();
+    await page.locator('.verdict-strip').getByRole('link', { name: 'One coin-flip pick: Sault' }).click();
+    await expect(affinity.locator('.sep').first()).toBeVisible();
+    await expect(affinity.locator('.solid-more')).toHaveAttribute('aria-expanded', 'true');
+    const fees = page.locator('#solid-fees');
+    await fees.locator('.solid-more').click();
+    await expect(fees.locator('.solid-bar')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+
   test('the planner takes up to three artists and sends them together', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
     const add = page.locator('#plan-anchor-add');
@@ -1204,6 +1235,8 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(trail).toContainText('tried all 16 results a check could return');
     await expect(trail.locator('.trail')).not.toHaveCount(0);
     await expect(trail.locator('.trail-tag').first()).toHaveText(/Checked|Skipped|Not checked/);
+    // The agent card explained the same choice while the run was in progress.
+    await expect(page.locator('#agent-trace .agent-note')).toContainText('Value of information');
     // Acts verified because they were in the provisional bill are not described as booked.
     await expect(trail).toContainText('In the bill before checks');
     await expect(trail).not.toContainText('Booked');

@@ -85,6 +85,13 @@
         current.querySelector('.agent-calls').appendChild(row);follow();
         $('.agent-count').textContent=`${calls} Qloo call${calls===1?'':'s'}`;
       },
+      // A short explanation under the current stage, e.g. why the agent checks some acts and skips others.
+      note(html){
+        if(!current)return;
+        // Kept outside the stage's call list, so it stays visible after the stage folds.
+        const row=document.createElement('p');row.className='agent-note';row.innerHTML=html;
+        current.querySelector('.agent-calls-wrap').before(row);follow();
+      },
       setBudget(used,max){if(max)$('.agent-count').textContent=`${used} of ${max} Qloo calls`;},
       done(summary,footHtml=''){
         if(finished)return;finished=true;clearInterval(timer);tick();
@@ -102,7 +109,7 @@
   // Replays a saved run's recorded application events with their real relative timing.
   function replay(root,snapshot,{speed=2,label,onDone,animate=true,onReplay}={}){
     const city=snapshot.memo.input.city,anchor=(snapshot.memo.input.anchors??[]).join(', ');
-    const events=(snapshot.trace??[]).filter(event=>['stage','receipt','memo'].includes(event.type));
+    const events=(snapshot.trace??[]).filter(event=>['stage','receipt','memo'].includes(event.type)||(event.type==='plan'&&snapshot.memo.research));
     const total=events.at(-1)?.elapsedMs??0;
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const animated=animate&&!reduce;
@@ -112,6 +119,7 @@
     const timers=[];
     const apply=event=>{
       if(event.type==='stage'&&event.text)trace.stage(event.text);
+      else if(event.type==='plan'){const html=researchNote(checksFrom(snapshot));if(html)trace.note(html);}
       else if(event.type==='receipt'){const r=snapshot.receipts.find(x=>x.id===event.receiptId);if(r)trace.call({tool:r.tool,why:r.why,count:r.evidence?.rows?.length,status:r.status});}
       else if(event.type==='memo'){trace.done(`Researched in ${(total/1000).toFixed(1)}s · ${trace.calls} Qloo calls`,`Recorded live run, ${animated?`replayed at ${speed}× speed`:'shown without animation'}. Every call is saved as a receipt. <button type="button" class="link-button agent-replay">Replay</button>`);
         root.querySelector('.agent-replay')?.addEventListener('click',()=>onReplay?onReplay():replay(root,snapshot,{speed,label,onDone}));onDone?.();}
@@ -121,5 +129,25 @@
     return{cancel(){timers.forEach(clearTimeout);trace.stop();}};
   }
 
-  window.HLTrace={create,replay,chipFor};
+  // The value-of-information choice in one or two lines: what is checked first and why,
+  // what is skipped. Saved plans rebuild the same grouping from their research record.
+  const checksFrom=snapshot=>{
+    const research=snapshot.memo.research;if(!research?.candidates)return null;
+    const name=id=>snapshot.memo.items.find(item=>item.id===id)?.name??id,out={};
+    for(const row of research.candidates)(out[row.reason]??=[]).push(name(row.id));
+    return out;
+  };
+  const list=names=>names.length<3?names.join(' and '):`${names.slice(0,-1).join(', ')} and ${names.at(-1)}`;
+  function researchNote(checks){
+    if(!checks)return '';
+    const changing=checks['could-change']??[],verifying=checks['verifies-bill']??[],skipped=checks['no-effect']??[],later=[...(checks['could-change-no-budget']??[]),...(checks['verifies-bill-no-budget']??[])];
+    const parts=[];
+    if(changing.length)parts.push(`<strong>${e(changing.length)} could change the bill:</strong> checking ${e(list(changing))} first.`);
+    if(verifying.length)parts.push(`Verifying ${e(list(verifying))}, in the bill before checks.`);
+    if(skipped.length)parts.push(`Skipping ${e(skipped.length)} that no result could change.`);
+    if(later.length)parts.push(`${e(later.length)} not checked: no calls left.`);
+    if(!changing.length&&!verifying.length)parts.push('No check could change the decision, so no deep checks are needed.');
+    return `<span class="agent-note-tag">Value of information</span> ${parts.join(' ')}`;
+  }
+  window.HLTrace={create,replay,chipFor,researchNote};
 })();

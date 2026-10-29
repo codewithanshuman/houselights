@@ -97,8 +97,11 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       research = { method: value.method, outcomes: value.outcomes, deepLimit, candidates: allocation.reasons };
     }
   }
+  // The research choice, by reason, so a live run can show it as it happens.
+  const checks = research ? Object.fromEntries(['could-change', 'verifies-bill', 'could-change-no-budget', 'verifies-bill-no-budget', 'no-effect']
+    .map(reason => [reason, research.candidates.filter(row => row.reason === reason).map(row => candidates.get(row.id).name)])) : null;
   run.emit({ type: 'plan', by: research ? 'value-of-information' : proposed.length ? 'llm' : 'rules', deep: deep.map(ref => candidates.get(ref).name),
-    reason: research ? RESEARCH_REASON : 'Check leading fit, discovered choices and affordable alternatives within the tool budget.' });
+    reason: research ? RESEARCH_REASON : 'Check leading fit, discovered choices and affordable alternatives within the tool budget.', ...(checks ? { checks } : {}) });
   const trendCall = deep.length ? await run.call('trends', { entities: deep, entity_type: 'artist', start_date: ago(180), end_date: ago(0) }, 'Observed trend direction over the last six months') : null;
   const items = [];
   for (const ref of ordered) {

@@ -174,8 +174,7 @@
         </div>
         <div class="control-budget">
           <label for="plan-budget-range">Artist budget <strong id="plan-budget-value">${e(usd(view.budget))}</strong></label>
-          <input type="range" id="plan-budget-range" min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
-          ${ladderTicks()}
+          <input type="range" id="plan-budget-range"${ladderTicks()} min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
           <div class="control-presets">${[1,.9,.8,.7].map(f=>{const value=Math.round(base.memo.constraints.budget*f);return `<button type="button" class="preset${value===view.budget?' is-on':''}" data-budget="${value}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`;}).join('')}
             <button type="button" class="preset preset-reset" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button></div>
           ${ladderHtml()}
@@ -203,7 +202,7 @@
     const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','In the bill before checks; verified'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','In the bill before checks; no calls left'],
       'no-effect':['Skipped',billed?'No possible result changes the bill':'No possible result makes a bill fit']};
     const checked=research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length;
-    return `<article class="solid-card solid-research">
+    return `<article class="solid-card solid-research" id="solid-research">
         <p class="solid-kicker">How the agent spent its Qloo calls</p>
         <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. “Before checks” means the bill from Qloo’s ranking alone; the checks can still change it. ${checked?`It checked ${e(checked)} of ${e(research.candidates.length)} acts.`:billed?'No check could change the bill, so it made none.':'No check could make any bill fit this budget, so it made none and saved those Qloo calls.'}</p>
         <ul class="trail-list">${research.candidates.map(row=>{const [tag,why]=reasons[row.reason]??['',''];return `<li class="trail is-${e(row.reason)}"><strong>${e(nameOf(view.base,row.id))}</strong><span class="trail-tag">${e(tag)}</span><small>${e(why)}${row.bills>1?` · ${e(row.bills)} possible bills`:''}</small></li>`;}).join('')}</ul>
@@ -237,7 +236,7 @@
       const alts=robust.alternatives,others=Math.max(0,robust.draws-robust.holds-robust.noBill-alts.reduce((sum,row)=>sum+row.draws,0));
       const segments=[['hold',robust.holds,'This bill'],...alts.map((row,index)=>[`alt-${index+1}`,row.draws,names(row.selectedIds)]),['other',others,'Other bills'],['none',robust.noBill,'No bill fits']].filter(([,count])=>count>0);
       const verdict=robust.share>=.9?'Solid':robust.share>=.6?'Holds in most scenarios':robust.share>=.35?'Close call':'Fragile';
-      meter=`<article class="solid-card solid-meter" data-share="${e(robust.share.toFixed(3))}">
+      meter=`<article class="solid-card solid-meter" id="solid-fees" data-share="${e(robust.share.toFixed(3))}">
           <p class="solid-kicker">Fee robustness</p>
           <p class="solid-figure"><strong>${e(pct(robust.share))}</strong><span>${e(verdict)}</span></p>
           <p class="solid-text">In ${e(robust.holds)} of ${e(robust.draws)} scenarios where ${robust.feeModel==='popularity-tiers'?'each estimated fee moves across its Qloo popularity tier':`every fee moves by up to ±${e(Math.round(robust.spread*100))}%`}, the optimizer books this same bill.</p>
@@ -249,25 +248,26 @@
     }
     let points='';
     if(flips?.status==='ready'){
-      const booked=flips.booked.map(flip=>{
-        const fill=flip.maxFee>0?Math.min(1,flip.fee/flip.maxFee):1;
-        return `<li class="flip">
-            <p class="flip-name"><strong>${e(nameOf(current,flip.id))}</strong><span>${e(usd(flip.fee))}${est}</span></p>
-            <span class="flip-track" aria-hidden="true"><span style="width:${(fill*100).toFixed(1)}%"></span></span>
-            <p class="flip-text">${flip.headroom>=1?`Stays booked up to <strong>${e(whole(flip.maxFee))}</strong> (+${e(whole(flip.headroom))}).`:'<strong>At its limit:</strong> any fee rise changes the bill.'} ${flip.replacement?`Above that, the bill becomes ${e(names(flip.replacement.selectedIds))}.`:'Above that, no bill fits.'}</p>
-          </li>`;}).join('');
+      // One row per booked act: today's fee, the highest fee at which the bill still stands,
+      // and the bill above that. Phones show each row as a small card.
+      const booked=flips.booked.map(flip=>`<tr class="flip-row" data-act="${e(flip.id)}">
+            <th scope="row" data-label="Act">${e(nameOf(current,flip.id))}</th>
+            <td data-label="Fee today">${e(usd(flip.fee))}${est}</td>
+            <td data-label="Holds up to">${flip.headroom>=1?`<strong>${e(whole(flip.maxFee))}</strong> <span class="flip-room">+${e(whole(flip.headroom))}</span>`:'<strong>At its limit</strong>'}</td>
+            <td data-label="Above that">${flip.replacement?e(names(flip.replacement.selectedIds)):'No bill fits'}</td>
+          </tr>`).join('');
       const close=flips.entries.filter(entry=>entry.entryFee!=null).sort((a,b)=>a.cut/a.fee-b.cut/b.fee).slice(0,3);
       const shut=flips.entries.length-flips.entries.filter(entry=>entry.entryFee!=null).length;
-      points=`<article class="solid-card solid-flips">
+      points=`<article class="solid-card solid-flips" id="solid-flips">
           <p class="solid-kicker">Flip points</p>
-          <p class="solid-text">One fee moves, every other fee stays. The exact point where the decision changes.</p>
-          <ul class="flip-list">${booked}</ul>
+          <p class="solid-text">One fee moves, every other fee stays. The exact fee at which each booked act changes the bill.</p>
+          <table class="flip-table"><thead><tr><th scope="col">Act</th><th scope="col">Fee today</th><th scope="col">Holds up to</th><th scope="col">Above that, the bill becomes</th></tr></thead><tbody>${booked}</tbody></table>
           ${close.length?`<p class="solid-sub">Closest to getting in</p><ul class="entry-list">${close.map(entry=>`<li><strong>${e(nameOf(current,entry.id))}</strong> at ${e(whole(entry.entryFee))} or less <span class="entry-cut">−${e(usd(Math.ceil(entry.cut-1e-9)))}</span><small>Bill: ${e(names(entry.bill.selectedIds))}</small></li>`).join('')}</ul>`:''}
           ${shut?`<p class="solid-note">${e(shut)} other act${shut===1?'':'s'} would not enter at any fee: the bill outscores every set that includes ${shut===1?'it':'them'}.</p>`:''}
         </article>`;
     }
     let signals='';
-    if(view.qlooOff)signals=`<article class="solid-card solid-signals"><p class="solid-kicker">Qloo signals</p><p class="solid-text">Qloo evidence is off, so no signal shapes this bill. Switch it on to see which one decides it.</p></article>`;
+    if(view.qlooOff)signals=`<article class="solid-card solid-signals" id="solid-signals"><p class="solid-kicker">Qloo signals</p><p class="solid-text">Qloo evidence is off, so no signal shapes this bill. Switch it on to see which one decides it.</p></article>`;
     else if(proof?.ablations){
       const rows=SIGNALS.map(([kind,label,hint])=>{
         const row=proof.ablations.find(item=>item.id===`class:${kind}`);if(!row)return '';
@@ -279,7 +279,7 @@
           </li>`;}).join('');
       const decisive=SIGNALS.filter(([kind])=>{const row=proof.ablations.find(item=>item.id===`class:${kind}`);return row?.affectedIds?.length&&row.changed;}).map(([,label])=>label.toLowerCase());
       const all=proof.ablations.find(item=>item.id==='class:all');
-      signals=`<article class="solid-card solid-signals">
+      signals=`<article class="solid-card solid-signals" id="solid-signals">
           <p class="solid-kicker">Which Qloo signal decides it</p>
           <p class="solid-text">${decisive.length?`Removing ${e(listNames(decisive))} on ${decisive.length===1?'its':'their'} own changes the bill.`:all?.changed?'No single signal changes the bill alone; together they do.':'The bill stands without any one signal.'}</p>
           <ul class="signal-list">${rows}</ul>
@@ -291,7 +291,7 @@
     const aff=analysis.affinity;
     if(!view.qlooOff&&aff?.status==='ready'){
       const labels={clear:'Clear pick','likely':'Likely pick','coin-flip':'Coin flip'};
-      separation=`<article class="solid-card solid-affinity">
+      separation=`<article class="solid-card solid-affinity" id="solid-affinity">
           <p class="solid-kicker">Does Qloo separate the picks?</p>
           <p class="solid-text">Each Qloo affinity moves by up to ±${e((aff.band/2).toFixed(3))}, the near-tie band, in ${e(aff.draws)} draws. The bill stays in <strong>${e(pct(aff.share))}</strong>.</p>
           <ul class="sep-list">${aff.acts.map(act=>`<li class="sep is-${e(act.verdict)}" data-act="${e(act.id)}">
@@ -304,9 +304,29 @@
     }
     const trail=researchTrail();
     if(!meter&&!points&&!signals&&!separation&&!trail)return '';
+    // The verdict in one line: each item names the finding and links to the card behind it.
+    const verdicts=[];
+    if(robust?.status==='ready')verdicts.push(['solid-fees',robust.share>=.9?'good':robust.share>=.6?'':'warn',`Holds in ${pct(robust.share)} of fee scenarios`]);
+    if(!view.qlooOff&&aff?.status==='ready'){
+      const coin=aff.acts.filter(act=>act.verdict==='coin-flip');
+      verdicts.push(['solid-affinity',coin.length?'warn':'good',coin.length?`${coin.length===1?'One coin-flip pick':`${coin.length} coin-flip picks`}: ${listNames(coin.map(act=>nameOf(current,act.id)))}`:'Qloo separates every pick']);
+    }
+    if(!view.qlooOff&&proof?.ablations){
+      const decisive=SIGNALS.filter(([kind])=>{const row=proof.ablations.find(item=>item.id===`class:${kind}`);return row?.affectedIds?.length&&row.changed;}).map(([,label])=>label);
+      verdicts.push(['solid-signals','',decisive.length?`${listNames(decisive)} decide${decisive.length===1?'s':''} it`:'No single Qloo signal decides it']);
+    }
+    const ladder=analysis.ladder;
+    if(ladder?.status==='ready'&&ladder.steps.length>1)verdicts.push(['ladder-title','',`Bill changes at ${ladder.steps.slice(-3).map(step=>whole(step.budget)).join(' · ')}`]);
+    const research=view.base.memo.research;
+    if(trail&&research)verdicts.push(['solid-research','',`Agent checked ${research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length} of ${research.candidates.length} acts`]);
+    const strip=verdicts.length?`<ul class="verdict-strip" aria-label="Summary">${verdicts.map(([target,tone,text])=>`<li><a href="#${target}" class="verdict${tone?` is-${tone}`:''}" data-jump="${target}">${e(text)}</a></li>`).join('')}</ul>`:'';
+    // On phones each card starts folded to its headline; the button opens the rest.
+    const more='<button type="button" class="solid-more" aria-expanded="false">Show details</button>';
+    const fold=html=>{const card=html.trimEnd().replace('<article class="solid-card ','<article class="solid-card is-collapsed ');return `${card.slice(0,-'</article>'.length)}${more}</article>`;};
     return `<section class="solid" aria-labelledby="solid-title">
         <div class="solid-head"><h3 id="solid-title">How solid is this bill?</h3><p>Exact checks on the same saved evidence. No new Qloo calls; fees remain${estimated(record)?' estimates':' illustrative'}.</p></div>
-        <div class="solid-grid">${meter}${points}${separation}${signals}</div>${trail}
+        ${strip}
+        <div class="solid-grid">${[meter,points,separation,signals].filter(Boolean).map(fold).join('')}</div>${trail?fold(trail):''}
       </section>`;
   }
 
@@ -314,11 +334,14 @@
   // step is a button that sets the budget there; the step holding the current budget is marked.
   const ladderRange=()=>{const budget=view.base.memo.constraints.budget;return [Math.max(0,Math.round(budget*.4/100)*100),Math.round(budget*1.5/100)*100];};
   // Marks on the slider track where the bill changes.
+  // Marks drawn into the slider track (as background layers) where the bill changes.
   function ladderTicks(){
     const ladder=view.current.__analysis?.ladder,[min,max]=ladderRange();
-    if(ladder?.status!=='ready')return '';
+    if(ladder?.status!=='ready'||!(max>min))return '';
     const marks=ladder.steps.filter(step=>step.budget>=min&&step.budget<=max);
-    return marks.length?`<div class="ladder-ticks" aria-hidden="true">${marks.map(step=>`<span style="left:${((step.budget-min)/(max-min)*100).toFixed(2)}%"></span>`).join('')}</div>`:'';
+    if(!marks.length)return '';
+    const layers=marks.map(()=>'linear-gradient(var(--pp-accent),var(--pp-accent))').join(','),at=marks.map(step=>`${((step.budget-min)/(max-min)*100).toFixed(2)}% 0`).join(',');
+    return ` style="--tick-layers:${layers};--tick-at:${at};--tick-size:${marks.map(()=>'2px 100%').join(',')}"`;
   }
   function ladderHtml(){
     const ladder=view.current.__analysis?.ladder,[min,max]=ladderRange();
@@ -351,8 +374,20 @@
     const feeText=fee==null?'No fee':`${usd(fee)}${estimated(record)?' est.':''}`;
     return {score,position,booked,dropped,status,why,chips,feeText,rank:rankReceipt(base)};
   }
+  // What the analysis says about one booked act, next to the act itself: whether Qloo
+  // separates it, how far its fee can rise, and whether the agent checked it in depth.
+  function actInsights(item){
+    const analysis=view.current.__analysis,out=[];if(!analysis)return out;
+    const act=!view.qlooOff&&analysis.affinity?.status==='ready'?analysis.affinity.acts.find(row=>row.id===item.id):null;
+    if(act)out.push(['solid-affinity',act.verdict==='coin-flip'?'warn':act.verdict==='clear'?'good':'',act.verdict==='coin-flip'?`Coin flip with ${act.rival?nameOf(view.current,act.rival.id):'another act'}`:act.verdict==='clear'?'Clear Qloo pick':`Likely pick · ${pct(act.share)}`]);
+    const flip=analysis.flips?.status==='ready'?analysis.flips.booked.find(row=>row.id===item.id):null;
+    if(flip)out.push(['solid-flips','',flip.headroom>=1?`Fee can rise ${whole(flip.headroom)}`:'At its fee limit']);
+    const research=view.base.memo.research?.candidates?.find(row=>row.id===item.id);
+    if(research)out.push(['solid-research','',{'could-change':'Checked in depth: could change the bill','verifies-bill':'Checked in depth','could-change-no-budget':'Not checked: no calls left','verifies-bill-no-budget':'Not checked: no calls left','no-effect':'Not checked: no result changes it'}[research.reason]??'']);
+    return out.filter(([, ,text])=>text);
+  }
   function card(item){
-    const f=actFacts(item),anchors=anchorText(view.base),city=view.base.memo.input.city;
+    const f=actFacts(item),anchors=anchorText(view.base),city=view.base.memo.input.city,insights=actInsights(item);
     return `<li class="act-card is-booked">
       <div class="act-ring">${ring(f.position,item.rank?`#${item.rank}`:'—')}</div>
       <div class="act-main">
@@ -361,9 +396,16 @@
         <p class="act-fee">${e(f.feeText)}${f.score!=null?` · affinity ${e(f.score.toFixed(3))}`:''}</p>
         <p class="act-for">For ${e(anchors)} fans in ${e(city)}</p>
         ${f.chips.length?`<p class="act-chips">${f.chips.map(chip=>`<span>${e(chip)}</span>`).join('')}</p>`:''}
+        ${insights.length?`<ul class="act-insights" aria-label="Analysis for ${e(item.name)}">${insights.map(([target,tone,text])=>`<li><a href="#${target}" class="insight${tone?` is-${tone}`:''}" data-jump="${target}">${e(text)}</a></li>`).join('')}</ul>`:''}
       </div>
       <div class="act-actions">${f.rank?`<button type="button" class="button subtle small" data-receipt="${e(f.rank.id)}" data-entity="${e(item.name)}">Qloo receipt</button>`:''}${!view.qlooOff?`<button type="button" class="button subtle small" data-drop="${e(item.id)}" aria-label="Drop ${e(item.name)} and rebook">Drop</button>`:''}</div>
     </li>`;
+  }
+  // The fee at which an unbooked act would enter the bill (exact, other fees fixed).
+  function entryText(item){
+    const flips=view.current.__analysis?.flips;if(flips?.status!=='ready'||view.cancelId===item.id)return '';
+    const entry=flips.entries.find(row=>row.id===item.id);if(!entry)return '';
+    return entry.entryFee==null?'A lower fee would not bring it in.':`Enters at ${whole(entry.entryFee)} or less.`;
   }
   function row(item){
     const f=actFacts(item);
@@ -372,7 +414,7 @@
       <span class="rank-name"><strong>${e(item.name)}</strong>${f.chips.length?`<small>${e(f.chips.join(' · '))}</small>`:''}</span>
       <span class="rank-aff">${f.score!=null?`<span class="rank-bar"><span style="width:${(f.position*100).toFixed(1)}%"></span></span><span class="rank-num">${e(f.score.toFixed(3))}</span>`:'<span class="rank-num">—</span>'}</span>
       <span class="rank-fee">${e(f.feeText)}</span>
-      <span class="rank-why"><span class="act-status ${f.status[0]}">${f.status[1]}</span>${f.why?`<small>${e(f.why)}</small>`:''}</span>
+      <span class="rank-why"><span class="act-status ${f.status[0]}">${f.status[1]}</span>${f.why?`<small>${e(f.why)}</small>`:''}${entryText(item)?`<small class="rank-entry">${e(entryText(item))}</small>`:''}</span>
       ${f.rank?`<button type="button" class="rank-receipt" data-receipt="${e(f.rank.id)}" data-entity="${e(item.name)}" aria-label="Qloo receipt for ${e(item.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button>`:'<span></span>'}
     </li>`;
   }
@@ -407,6 +449,13 @@
     result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
     $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     result.querySelectorAll('[data-receipt]').forEach(button=>button.addEventListener('click',()=>openReceipt(button.dataset.receipt,button.dataset.entity,button)));
+    // Summary and insight links open the card they point to (folded on phones) and move focus there.
+    result.querySelectorAll('[data-jump]').forEach(link=>link.addEventListener('click',event=>{
+      const target=document.getElementById(link.dataset.jump);if(!target)return;event.preventDefault();
+      const card=target.closest('.solid-card');if(card?.classList.contains('is-collapsed')){card.classList.remove('is-collapsed');card.querySelector('.solid-more')?.setAttribute('aria-expanded','true');const more=card.querySelector('.solid-more');if(more)more.textContent='Hide details';}
+      target.setAttribute('tabindex','-1');target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});target.focus({preventScroll:true});
+    }));
+    result.querySelectorAll('.solid-more').forEach(button=>button.addEventListener('click',()=>{const card=button.closest('.solid-card'),open=card.classList.toggle('is-collapsed')===false;button.setAttribute('aria-expanded',String(open));button.textContent=open?'Hide details':'Show details';}));
     $('plan-share')?.addEventListener('click',async()=>{const link=location.href;try{await navigator.clipboard.writeText(link);say('Link copied.');}catch{say(`Copy this link: ${link}`);}});
   }
 
@@ -515,6 +564,7 @@
           const event=JSON.parse(block.slice(6));
           if(event.type==='stage')trace.stage(event.text);
           else if(event.type==='call'){trace.call({tool:event.tool,count:event.count,status:event.status});trace.setBudget(event.used,event.max);}
+          else if(event.type==='research'){const html=window.HLTrace.researchNote(event.checks);if(html)trace.note(html);}
           else if(event.type==='choose'){
             trace.fail(`Which “${event.name}” did you mean?`);
             const box=$('progress-choose');box.hidden=false;
