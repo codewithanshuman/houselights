@@ -1,5 +1,7 @@
 # Final production hardening — 28 October 2026
 
+Historical hardening checkpoint. See the [verified production release](current-release.md) for later exact-commit CI, hosted verification and remaining limits.
+
 Scope: stability fixes on `development`, starting from `7a8d2d1`. No redesign, new product workflow, scoring-weight changes, evaluation-fixture changes or deployment. Untracked `.claude/` work is preserved.
 
 ## Confirmed defects and permanent regressions

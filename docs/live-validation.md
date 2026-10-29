@@ -1,5 +1,7 @@
 # Live validation — updated 20 October 2026
 
+Historical log. See the [verified production release](current-release.md) for the current deployed commit and checks; the older deployment references below describe their dated checkpoints.
+
 Houselights 1.2.0, Node 24, Qloo harness 0.1.26. The [public demo](https://houselights.80-225-218-239.sslip.io) is deployed at commit `30f86d59b7fa640fc73d016258f7ebd5d0cea4ed`; see the [current Oracle deployment record](#oracle-public-deployment--20-october-2026). Credentials are supplied privately and are not present in this report or source control.
 
 This is a dated validation log. Earlier entries describe the configuration and features at the time of each check; the latest dated entry records subsequent verification. Dates use the project's Asia/Calcutta timezone; retained machine timestamps are UTC.

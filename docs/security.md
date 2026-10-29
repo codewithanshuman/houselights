@@ -5,8 +5,8 @@ Last reviewed 28 October 2026. This page covers the public demo and the private 
 ## Access model
 
 - **Public, read-only:** the Booking Desk and its zero-call experiments, the evidence page, the Qloo Proof Lab, published cases and recorded runs.
-- **Public, live research:** `POST /api/plan` ("Plan a show") runs one capped Qloo workflow (at most 12 calls, 120-second deadline) for a visitor's city, artist, budget and act count. Input is validated and cleaned before any call. The result is saved as a live plan that is never listed with the published cases.
-- **Private:** organizer events, research, studies and every write. These require a single organizer token of at least 32 characters, sent as a Bearer header. This is single-organizer access, not a multi-user account system.
+- **Public, live research:** `POST /api/plan` ("Plan a show") runs capped Qloo research (at most 12 uncached workflow attempts, 120-second deadline) for a visitor's city, artist, budget and act count. One workflow can issue multiple HTTP requests; the separate HTTP guard meters each actual attempt. Input is validated and cleaned before research. The result is saved as a live plan that is never listed with the published cases.
+- **Private:** organizer events, research, studies and writes outside the explicit public plan, saved judge-experiment/replay and invitation-ballot routes. These require a single organizer token of at least 32 characters, sent as a Bearer header. This is single-organizer access, not a multi-user account system.
 - **Shared decision reports** are readable by anyone who has the link (bearer links). Do not put confidential offers into a public demo.
 - **Blind-review ballots** are authenticated by a per-reviewer invitation token. A token can submit only once ("already submitted"), and the review page does not link to the evidence pages, so blinding is preserved.
 

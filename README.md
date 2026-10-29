@@ -1,5 +1,7 @@
 # Houselights
 
+Current deployed commit and executed checks: [verified production release](docs/current-release.md). Historical validation logs retain their original checkpoint counts.
+
 **Book the bill your city's fans will show up for.** A promoter names a city, an artist their audience loves, a budget and how many acts they need. Houselights:
 
 - asks Qloo's taste graph which artists those fans love *in that city*, ranks them for that audience and checks where the fans are;
@@ -46,7 +48,7 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->392<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
+| `npm test` | <!--claim:unitTests-->393<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
 | `npm run test:browser` | <!--claim:browserTests-->63<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |

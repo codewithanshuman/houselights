@@ -58,7 +58,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   say('Discover · mapping the room’s taste and adjacent artists');
   const tags = await run.call('entity_tags', { entities: anchorRefs, entity_type: 'artist' }, 'Taste vocabulary associated with the anchor artists');
   const crowd = usable(tags.env) ? [...new Set(tagsOf(tags.env))].slice(0, 12) : [];
-  const discovery = await run.call('recommend', { target_type: 'artist', signals: anchorRefs, filter_location: city, limit: 8 }, 'Discover adjacent artists for this city');
+  const discovery = await run.call('recommend', { target_type: 'artist', signals: anchorRefs, signal_location: city, limit: 8 }, 'Discover adjacent artists for this city');
   if (usable(discovery.env)) for (const row of rows(discovery.env)) {
     const name = nameOf(row), ref = idOf(row) || name;
     if (!name || lookup.has(low(ref)) || lookup.has(low(name)) || candidates.size >= Math.min(discover.limit ?? offers.length + 3, 9)) continue;

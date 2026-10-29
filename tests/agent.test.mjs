@@ -82,3 +82,28 @@ test('partial successful rankings cannot inflate fit by dropping unreturned cand
   assert.equal(memo.quality.ranked,0);
   assert.match(memo.caveats.join(' '),/full-pool fit is unknown/);
 });
+
+test('discovery and fixed-pool ranking target the same city audience without dropping missing ranks', async () => {
+  const { mockCall } = await import('../server/mock.mjs');
+  for (const partial of [false, true]) {
+    const run = new Run({ budget: 30, cacheStore: new Map(), execute: (tool, args) => {
+      const result = mockCall(tool, args);
+      return tool === 'rank' && partial ? { ...result, results: result.results.slice(0, 1) } : result;
+    } });
+    const memo = await buildMemo({ city: 'London', anchors: ['Alpha'], offers: ['Beta', 'Gamma'],
+      terms: { Beta: { fee: 100, available: true }, Gamma: { fee: 100, available: true } },
+      constraints: { budget: 200, slots: 1 } }, run);
+    const discovery = run.receipts.find(row => row.tool === 'recommend');
+    assert.equal(discovery.args.signal_location, 'London');
+    assert.equal(Object.hasOwn(discovery.args, 'filter_location'), false, 'artist geography is not audience geography');
+    const ranks = run.receipts.filter(row => row.tool === 'rank');
+    assert.equal(ranks.length, 1, 'no city-free fallback or per-candidate score stitching');
+    assert.equal(ranks[0].args.signal_location, discovery.args.signal_location);
+    assert.deepEqual(ranks[0].args.signals, discovery.args.signals);
+    assert.deepEqual([...ranks[0].args.options].sort(), memo.items.map(item => item.id).sort());
+    if (partial) {
+      assert.ok(memo.items.every(item => item.fit === null && !item.evidence.rank));
+      assert.equal(memo.slate.status, 'provisional');
+    } else assert.ok(memo.items.every(item => item.evidence.rank));
+  }
+});
