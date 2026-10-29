@@ -1,5 +1,21 @@
 # Sharing an existing Oracle server
 
+## Deployment of 4c3a7cd — 29 October 2026
+
+The public host runs `4c3a7cd6175c61bc2d00624604f774455c51f77e`, and `/healthz` over public HTTPS reports it. When no bill fits, a plan now names the first budget that books one, with a button that goes there, and shows the research trail, including that no deep Qloo checks were made when none could make a bill fit.
+
+- **Before the switch:** the backup `pre-4c3a7cd` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-4c3a7cd`. The rollback drill reported `20b6df8`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, capped build completed before any change to the running service, only `RELEASE_COMMIT` changed. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks.
+  - Chromium, Firefox and WebKit at phone and desktop sizes passed the ticket, Qloo switch, receipt, workspace, Slate studio and 404 checks, with no overflow. The fast multi-page script again logged transient Firefox (an aborted image load or font download) and WebKit stylesheet messages while moving between pages; the settled per-page probe logged no console errors on any page in WebKit or Firefox.
+  - On the earlier Minneapolis live plan, the new section names $27,000 as the first budget that books a bill and explains that no deep checks were made; its button books Lord Huron + Lucius + Rainbow Kitten Surprise for $27,000. No console errors.
+  - **One live "Plan a show" run on production:** Atlanta, fans of Leon Bridges and Durand Jones & The Indications, $40,000, 3 acts. It took 14.0 seconds and 12 Qloo calls. It booked Lady Wray + Brittany Howard + St. Paul & The Broken Bones for $12,500 (estimated fees). With Qloo off, the same rules book Lady Wray + YEBBA + Charlotte Day Wilson for $9,000. The bill holds in all 500 fee scenarios; St. Paul & The Broken Bones is a likely pick against YEBBA under affinity noise (78%). The agent checked 3 of 8 acts by value of information. No console errors.
+- **Watch:** disk use is 96% after the build (2.2 GB free), and `/healthz` reports `"diskOk":false`. The next build may not fit; older rollback images can be pruned, keeping at least the last two.
+
+**Rollback:** tag `houselights-shared:pre-4c3a7cd` as `houselights-shared:local`, set `RELEASE_COMMIT=20b6df83c89f85f97eef256175841145602bc9bd`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 20b6df8 — 29 October 2026
 
 The public host runs `20b6df83c89f85f97eef256175841145602bc9bd`, and `/healthz` over public HTTPS reports it. The release deepens the plan analysis:
