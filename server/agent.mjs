@@ -3,6 +3,7 @@ import { optimizeSlate } from './optimizer.mjs';
 import { evaluate } from './eval.mjs';
 import * as llm from './llm.mjs';
 import { fitsFromRankRows, relativeVerdicts } from './affinity.mjs';
+import { researchValue, allocateResearch, RESEARCH_REASON } from './research-value.mjs';
 
 const low = value => String(value ?? '').toLowerCase().trim();
 const ago = days => new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
@@ -80,8 +81,24 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const proposed = [...new Set((Array.isArray(proposal?.deep) ? proposal.deep : []).map(name => ordered.find(ref => low(candidates.get(ref).name) === low(name))).filter(Boolean))];
   const discoveryRef = ordered.find(ref => candidates.get(ref).found);
   const affordable = ordered.filter(ref => candidates.get(ref).terms.fee != null).sort((a, b) => candidates.get(a).terms.fee - candidates.get(b).terms.fee)[0];
-  const deep = [...new Set([...proposed, ordered[0], discoveryRef, affordable, ...ordered].filter(Boolean))].slice(0, deepLimit);
-  run.emit({ type: 'plan', by: proposed.length ? 'llm' : 'rules', deep: deep.map(ref => candidates.get(ref).name), reason: 'Check leading fit, discovered choices and affordable alternatives within the tool budget.' });
+  const preference = [...new Set([...proposed, ordered[0], discoveryRef, affordable, ...ordered].filter(Boolean))];
+  let deep = preference.slice(0, deepLimit), research = null;
+  // Live plans spend deep checks by value of information: acts whose possible results could
+  // change the bill first, then the booked acts. Other runs keep the original allocation, so
+  // pinned recordings replay exactly.
+  if (discover.research === 'value-of-information') {
+    const drafts = ordered.map(ref => { const candidate = candidates.get(ref), hasRank = rankComplete && order.includes(ref);
+      return { id: ref, name: candidate.name, found: candidate.found, terms: candidate.terms, fit: hasRank ? scored.fits.get(ref) : null,
+        local: 'no data', momentum: 'unknown', evidence: { rank: hasRank, local: false, comparison: false, trends: false } }; });
+    const value = researchValue(drafts, constraints);
+    if (value.status === 'ready') {
+      const allocation = allocateResearch(value, preference, deepLimit);
+      deep = allocation.deep;
+      research = { method: value.method, outcomes: value.outcomes, deepLimit, candidates: allocation.reasons };
+    }
+  }
+  run.emit({ type: 'plan', by: research ? 'value-of-information' : proposed.length ? 'llm' : 'rules', deep: deep.map(ref => candidates.get(ref).name),
+    reason: research ? RESEARCH_REASON : 'Check leading fit, discovered choices and affordable alternatives within the tool budget.' });
   const trendCall = deep.length ? await run.call('trends', { entities: deep, entity_type: 'artist', start_date: ago(180), end_date: ago(0) }, 'Observed trend direction over the last six months') : null;
   const items = [];
   for (const ref of ordered) {
@@ -155,7 +172,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const memo = { items, slate, constraints, input: { city, anchors, anchorIds: anchorRefs, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
     fitBasis: rankComplete ? scored.basis : 'unavailable', ...(rankComplete && scored.basis === 'qloo-affinity' ? { fitScale: 'fixed-span-0.05' } : {}),
     mode: run.mode === 'mock' || run.receipts.some(receipt => receipt.source === 'synthetic') ? 'mock' : 'live', caveats, crowd,
-    writer: written ? 'claim-selector' : 'template', verdictPolicy: 'relative-affinity-bands-v1', summary: '', removed, base,
+    writer: written ? 'claim-selector' : 'template', ...(research ? { research } : {}), verdictPolicy: 'relative-affinity-bands-v1', summary: '', removed, base,
     quality: { resolved: candidates.size, ranked: rankComplete ? order.length : 0, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },
     eval: evaluate({ items, ranked: rankComplete ? order.map(ref => candidates.get(ref).name) : [], base, receipts: run.receipts }) };
   run.emit({ type: 'memo', ...memo });

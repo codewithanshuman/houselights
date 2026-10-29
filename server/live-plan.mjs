@@ -9,13 +9,8 @@ import { buildMemo } from './agent.mjs';
 import { consumeQuota, refundQuota } from './database.mjs';
 import { saveLivePlan } from './judge.mjs';
 
-// Qloo returns no booking fees. A discovered act's fee is an illustrative tier from its Qloo
-// popularity percentile, labelled "estimated" wherever it is shown. Not a quote.
-export const FEE_TIERS = [[0.995, 25000], [0.99, 15000], [0.98, 9000], [0.96, 6000], [0.93, 4000], [0.9, 2500], [0, 1500]];
-export function estimateFee(popularity) {
-  if (typeof popularity !== 'number' || !Number.isFinite(popularity) || popularity < 0 || popularity > 1) return null;
-  return FEE_TIERS.find(([floor]) => popularity >= floor)[1];
-}
+import { estimateFee } from './fee-tiers.mjs';
+export { FEE_TIERS, estimateFee } from './fee-tiers.mjs';
 export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. Genre limits are not applied in live plans because per-act genres are unverified. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
 
 const fault = (message, status = 400) => Object.assign(new Error(message), { status });
@@ -108,7 +103,7 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
         city: input.city, anchors: input.anchors, offers: [], terms: {}, picks: input.picks,
         constraints: { budget: input.budget, slots: input.slots, discoveryMin: 0, maxPerGenre: input.slots, riskTolerance: 50, lockedIds: [], excludedIds: [] },
         currency: 'USD', exampleBookingTerms: true,
-        discover: { limit: 8, terms: row => {
+        discover: { limit: 8, research: 'value-of-information', terms: row => {
           const fee = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
           return fee == null ? null : { fee, available: true, genre: '' };
         } },

@@ -4,6 +4,7 @@ import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
 import {analyzeDecision} from './robustness.mjs';
+import {RESEARCH_REASON,RESEARCH_REASONS} from './research-value.mjs';
 import {preserveRankProvenance} from './gm.mjs';
 import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
 import {scoringVersion} from './affinity.mjs';
@@ -99,8 +100,8 @@ export function publicJudgeSnapshot(source) {
       receiptId:receiptIds.has(event.receiptId)?event.receiptId:null,
       ...(event.type==='stage'&&researchText.stages.has(event.text)?{text:event.text}:{}),
       ...(event.type==='plan'?{
-        ...(event.text===planReason?{text:planReason}:{}),
-        ...(['llm','rules'].includes(event.by)?{by:event.by}:{}),
+        ...([planReason,RESEARCH_REASON].includes(event.text)?{text:event.text}:{}),
+        ...(['llm','rules','value-of-information'].includes(event.by)?{by:event.by}:{}),
         ...(Array.isArray(event.deep)?{deep:strings(event.deep).filter(name=>researchText.names.has(name)).slice(0,4)}:{}),
       }:{}),
       feasible:event.type==='memo'?event.feasible===true:undefined}));
@@ -119,6 +120,13 @@ export function publicJudgeSnapshot(source) {
   const constraints=fields(original.constraints,['budget','slots','discoveryMin','maxPerGenre','riskTolerance','lockedIds','excludedIds','minimumAverageFit','festivalPolicy']);
   const snapshot={mock:source.mock===true,receipts,...(trace.length?{trace,traceMeta:{complete,linkedReceipts:linked.length,totalReceipts:receipts.length}}:{}),memo:{currency:['GBP','USD','EUR','INR'].includes(source.memo.currency)?source.memo.currency:'GBP',
     exampleBookingTerms:true,input:{city:text(source.memo.input?.city,100),anchors:strings(source.memo.input?.anchors),anchorIds:strings(source.memo.input?.anchorIds)},items,constraints}};
+  // How a live plan chose its deep checks: only known item IDs and declared reasons survive.
+  const research=source.memo.research;
+  if(research?.method==='value-of-information'&&Array.isArray(research.candidates)){
+    const ids=new Set(items.map(item=>item.id));
+    snapshot.memo.research={method:'value-of-information',outcomes:number(research.outcomes),deepLimit:number(research.deepLimit),
+      candidates:research.candidates.filter(row=>ids.has(row?.id)&&RESEARCH_REASONS.includes(row.reason)).slice(0,20).map(row=>({id:row.id,reason:row.reason,bills:number(row.bills),booked:row.booked===true}))};
+  }
   snapshot.memo.slate=optimizeSlate(items,constraints);
   if(!sameSelection(original.selectedIds,snapshot.memo.slate.selectedIds)||original.score!==snapshot.memo.slate.score)throw fault('This source uses unsupported decision fields. Its public projection would change the result.');
   const benchmark=publicBenchmark(source,snapshot);
@@ -217,7 +225,7 @@ export function judgeExperiment(record,raw={},options={}) {
     snapshot.memo.items.every((item,index)=>JSON.stringify(item.terms)===JSON.stringify(record.snapshot.memo.items[index].terms))&&
     !raw.cancelId&&!raw.unavailableId&&!raw.feeIncreaseId&&!raw.withdrawReceiptId;
   return {caseId:record.id,providerCalls:0,persisted:false,terms:record.terms,qlooOff:raw.qlooOff===true,snapshot,proof,
-    analysis:options.lightweight===true?null:analyzeDecision(snapshot),
+    analysis:options.lightweight===true?null:analyzeDecision(snapshot,{feeBasis:record.feeBasis}),
     methods:proof?judgeMethods(snapshot,proof,record.snapshot):null,
     comparison:{changed:!sameSelection(baseline.selectedIds,result.selectedIds),addedIds:result.selectedIds.filter(id=>!baseline.selectedIds.includes(id)),removedIds:baseline.selectedIds.filter(id=>!result.selectedIds.includes(id)),
       matchedEvidenceWithdrawal,
@@ -248,7 +256,7 @@ export function registerJudgeRoutes(app) {
   app.get('/api/judge/cases/:id',handle((req,res)=>{
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
     const key=`${record.id}|${record.createdAt??''}`;let analysis=analysisCache.get(key);
-    if(!analysis){analysis=analyzeDecision(record.snapshot);if(analysisCache.size>=EXPERIMENT_CACHE_MAX)analysisCache.delete(analysisCache.keys().next().value);analysisCache.set(key,analysis);}
+    if(!analysis){analysis=analyzeDecision(record.snapshot,{feeBasis:record.feeBasis});if(analysisCache.size>=EXPERIMENT_CACHE_MAX)analysisCache.delete(analysisCache.keys().next().value);analysisCache.set(key,analysis);}
     res.json({...record,analysis});
   }));
   app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);experimentCache.clear();res.json({unpublished:true});}));

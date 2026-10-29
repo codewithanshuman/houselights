@@ -15,7 +15,7 @@ Current deployed commit and executed checks: [verified production release](docs/
 1. **Open the Booking Desk.** It shows a saved live Qloo run: New York, fans of Leon Bridges, $14,500, 2 acts. Houselights books Michael Kiwanuka + Sault for $13,500.
 2. **Turn Qloo off.** The same optimizer, candidates, fees and budget book Jordan Rakei + Hiatus Kaiyote for $9,000 instead. Qloo changes this decision in <!--claim:featuredNoise-->200 of 200<!--/claim--> random ±20% fee variations ([sensitivity](results/sensitivity.md)).
 3. **Change the plan.** Cut the budget or drop a booked act; the optimizer rebooks instantly on the same saved evidence.
-4. **See how solid it is.** Every plan reports how many of 500 random ±20% fee scenarios keep the same bill, the exact fee at which each booked act would flip it (and what replaces it), the cut that would bring another act in, and which Qloo signal changes the decision on its own. All exact, from the same saved evidence.
+4. **See how solid it is.** Every plan reports how many of 500 random fee scenarios keep the same bill (estimated fees move across their Qloo popularity tier), a safer bill when one wins more often, the exact fee at which each booked act would flip it, and the budgets at which the bill changes. It also shows whether Qloo's affinities clearly separate each pick or leave it a coin flip, and which Qloo signal changes the decision on its own. A live plan also shows how the agent spent its Qloo calls: it checks the acts whose evidence could change the bill and skips those no result could change. All exact, from the same saved evidence.
 5. **Open a receipt.** Each act links to the saved Qloo ranking with its row highlighted.
 6. **Plan your own show.** Enter any city and up to three artists your audience loves. A live run makes up to 12 Qloo calls (usually under a minute) and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled as such.
 
@@ -49,7 +49,7 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->398<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
+| `npm test` | <!--claim:unitTests-->405<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
 | `npm run test:browser` | <!--claim:browserTests-->65<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |

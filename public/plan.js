@@ -175,8 +175,10 @@
         <div class="control-budget">
           <label for="plan-budget-range">Artist budget <strong id="plan-budget-value">${e(usd(view.budget))}</strong></label>
           <input type="range" id="plan-budget-range" min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
+          ${ladderTicks()}
           <div class="control-presets">${[1,.9,.8,.7].map(f=>{const value=Math.round(base.memo.constraints.budget*f);return `<button type="button" class="preset${value===view.budget?' is-on':''}" data-budget="${value}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`;}).join('')}
             <button type="button" class="preset preset-reset" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button></div>
+          ${ladderHtml()}
         </div>
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
       </div>
@@ -206,9 +208,11 @@
       meter=`<article class="solid-card solid-meter" data-share="${e(robust.share.toFixed(3))}">
           <p class="solid-kicker">Fee robustness</p>
           <p class="solid-figure"><strong>${e(pct(robust.share))}</strong><span>${e(verdict)}</span></p>
-          <p class="solid-text">In ${e(robust.holds)} of ${e(robust.draws)} scenarios where every fee moves by up to ±${e(Math.round(robust.spread*100))}%, the optimizer books this same bill.</p>
+          <p class="solid-text">In ${e(robust.holds)} of ${e(robust.draws)} scenarios where ${robust.feeModel==='popularity-tiers'?'each estimated fee moves across its Qloo popularity tier':`every fee moves by up to ±${e(Math.round(robust.spread*100))}%`}, the optimizer books this same bill.</p>
           <div class="solid-bar" role="img" aria-label="${e(segments.map(([,count,label])=>`${label} ${pct(count/robust.draws)}`).join(', '))}">${segments.map(([key,count])=>`<span class="seg seg-${key}" style="flex-grow:${count}"></span>`).join('')}</div>
           ${alts.length||robust.noBill?`<ul class="solid-legend">${alts.map((row,index)=>`<li><span class="dot seg-alt-${index+1}" aria-hidden="true"></span>${e(names(row.selectedIds))}<b>${e(pct(row.share))}</b></li>`).join('')}${robust.noBill?`<li><span class="dot seg-none" aria-hidden="true"></span>No bill fits the budget<b>${e(pct(robust.noBill/robust.draws))}</b></li>`:''}</ul>`:'<p class="solid-note">No other bill wins in any scenario.</p>'}
+          ${robust.safer?`<div class="safer"><p class="safer-title">Safer pick</p><p class="safer-bill">${e(names(robust.safer.selectedIds))} <span>${e(usd(robust.safer.total))}${est}</span></p>
+            <p class="solid-note">Wins ${e(pct(robust.safer.share))} of scenarios against this bill’s ${e(pct(robust.share))}, and fits today’s budget. It scores ${e(robust.safer.scoreGap.toFixed(1))} points lower at today’s fees, which is why the optimizer did not choose it.</p></div>`:''}
         </article>`;
     }
     let points='';
@@ -249,11 +253,65 @@
           <ul class="signal-list">${rows}</ul>
         </article>`;
     }
-    if(!meter&&!points&&!signals)return '';
+    // Does Qloo separate the picks? Each booked act's survival when affinities move within the
+    // near-tie band, and the act that takes its place when it does not survive.
+    let separation='';
+    const aff=analysis.affinity;
+    if(!view.qlooOff&&aff?.status==='ready'){
+      const labels={clear:'Clear pick','likely':'Likely pick','coin-flip':'Coin flip'};
+      separation=`<article class="solid-card solid-affinity">
+          <p class="solid-kicker">Does Qloo separate the picks?</p>
+          <p class="solid-text">Each Qloo affinity moves by up to ±${e((aff.band/2).toFixed(3))}, the near-tie band, in ${e(aff.draws)} draws. The bill stays in <strong>${e(pct(aff.share))}</strong>.</p>
+          <ul class="sep-list">${aff.acts.map(act=>`<li class="sep is-${e(act.verdict)}" data-act="${e(act.id)}">
+              <p class="sep-name"><strong>${e(nameOf(current,act.id))}</strong><span class="sep-chip">${e(labels[act.verdict])}</span></p>
+              <span class="flip-track" aria-hidden="true"><span style="width:${(act.share*100).toFixed(1)}%"></span></span>
+              <p class="flip-text">Stays in ${e(pct(act.share))} of draws${act.rival&&act.share<1?`; otherwise ${e(nameOf(current,act.rival.id))}${act.affinity!=null&&act.rival.affinity!=null?` (affinity ${e(act.affinity.toFixed(4))} vs ${e(act.rival.affinity.toFixed(4))})`:''}`:''}.</p>
+            </li>`).join('')}</ul>
+          <p class="solid-note">${aff.scale==='ordinal'?'This plan scored fit by Qloo rank order, so a near-tie that swaps two ranks moves fit by a whole rank step.':'Fit comes from Qloo affinity on a fixed 0.05 span.'}</p>
+        </article>`;
+    }
+    // How a live plan spent its deep Qloo checks (value of information), from the saved run.
+    let trail='';
+    const research=view.base.memo.research;
+    if(research?.method==='value-of-information'&&research.candidates?.length){
+      const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','Verifies a booked act'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','Booked; no calls left'],'no-effect':['Skipped','No possible result changes the bill']};
+      const checked=research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length;
+      trail=`<article class="solid-card solid-research">
+          <p class="solid-kicker">How the agent spent its Qloo calls</p>
+          <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. It checked ${e(checked)} of ${e(research.candidates.length)} acts.</p>
+          <ul class="trail-list">${research.candidates.map(row=>{const [tag,why]=reasons[row.reason]??['',''];return `<li class="trail is-${e(row.reason)}"><strong>${e(nameOf(view.base,row.id))}</strong><span class="trail-tag">${e(tag)}</span><small>${e(why)}${row.bills>1?` · ${e(row.bills)} possible bills`:''}</small></li>`;}).join('')}</ul>
+        </article>`;
+    }
+    if(!meter&&!points&&!signals&&!separation&&!trail)return '';
     return `<section class="solid" aria-labelledby="solid-title">
         <div class="solid-head"><h3 id="solid-title">How solid is this bill?</h3><p>Exact checks on the same saved evidence. No new Qloo calls; fees remain${estimated(record)?' estimates':' illustrative'}.</p></div>
-        <div class="solid-grid">${meter}${points}${signals}</div>
+        <div class="solid-grid">${meter}${points}${separation}${signals}</div>${trail}
       </section>`;
+  }
+
+  // Every budget within the slider's range at which the bill changes, at today's fees. Each
+  // step is a button that sets the budget there; the step holding the current budget is marked.
+  const ladderRange=()=>{const budget=view.base.memo.constraints.budget;return [Math.max(0,Math.round(budget*.4/100)*100),Math.round(budget*1.5/100)*100];};
+  // Marks on the slider track where the bill changes.
+  function ladderTicks(){
+    const ladder=view.current.__analysis?.ladder,[min,max]=ladderRange();
+    if(ladder?.status!=='ready')return '';
+    const marks=ladder.steps.filter(step=>step.budget>=min&&step.budget<=max);
+    return marks.length?`<div class="ladder-ticks" aria-hidden="true">${marks.map(step=>`<span style="left:${((step.budget-min)/(max-min)*100).toFixed(2)}%"></span>`).join('')}</div>`:'';
+  }
+  function ladderHtml(){
+    const ladder=view.current.__analysis?.ladder,[min,max]=ladderRange();
+    if(ladder?.status!=='ready'||!ladder.steps.length)return '';
+    const steps=ladder.steps.filter(step=>step.budget<=max),shown=steps.filter((step,index)=>step.budget>=min||steps[index+1]?.budget>min);
+    if(!shown.length)return '';
+    const currentIndex=steps.reduce((found,step,index)=>step.budget<=view.budget?index:found,-1);
+    const names=ids=>ids.map(id=>nameOf(view.current,id)).join(' + ');
+    return `<div class="ladder" aria-labelledby="ladder-title">
+        <p class="ladder-title" id="ladder-title">Where the bill changes <small>at today’s fees</small></p>
+        <ol class="ladder-steps">${shown.map(step=>{const at=steps.indexOf(step)===currentIndex;
+          return `<li${at?' class="is-current"':''}><button type="button" data-budget="${Math.max(step.budget,min)}" aria-label="Set budget to ${e(usd(Math.max(step.budget,min)))}: ${e(names(step.selectedIds))}${at?' (current bill)':''}"><span class="ladder-at">${step.budget<min?`below ${e(usd(min))}`:`from ${e(usd(step.budget))}`}</span><span class="ladder-bill">${e(names(step.selectedIds))}</span><span class="ladder-fee">${e(usd(step.total))}</span></button></li>`;}).join('')}</ol>
+        ${currentIndex<0?`<p class="ladder-note">No bill fits below ${e(usd(steps[0].budget))}.</p>`:''}
+      </div>`;
   }
 
   // What the table and cards say about one act.

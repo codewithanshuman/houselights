@@ -96,6 +96,28 @@ test('a plan for several audience artists signals Qloo with all of them and carr
   assert.equal(record.analysis.robustness.method, 'exact-reprice');
   assert.equal(record.analysis.robustness.draws, 500);
   assert.equal(record.analysis.flips.status, 'ready');
+  assert.equal(record.analysis.ladder.status, 'ready');
+  assert.ok(['ready', 'unsupported'].includes(record.analysis.affinity.status));
+  db.prepare('DELETE FROM quotas').run();
+});
+
+test('a live plan spends deep Qloo checks by value of information and keeps the reasons', async () => {
+  db.prepare('DELETE FROM quotas').run();
+  const { events } = await plan({ city: 'Glasgow', anchor: 'Arlo Parks', budget: 14000, slots: 2 });
+  const ready = events.at(-1);
+  assert.equal(ready.type, 'ready', JSON.stringify(ready));
+  const record = await (await fetch(`${url}/api/judge/cases/${ready.id}`)).json(), memo = record.snapshot.memo;
+  assert.equal(memo.research.method, 'value-of-information');
+  assert.equal(memo.research.outcomes, 16);
+  const ids = new Set(memo.items.map(item => item.id));
+  assert.ok(memo.research.candidates.length === memo.items.length && memo.research.candidates.every(row => ids.has(row.id)));
+  const checked = memo.research.candidates.filter(row => ['could-change', 'verifies-bill'].includes(row.reason)).map(row => row.id).sort();
+  const deepCalls = record.snapshot.receipts.filter(receipt => receipt.tool === 'where_popular').length;
+  assert.equal(deepCalls, checked.length, 'one location check per allocated act, none for skipped acts');
+  assert.deepEqual(memo.items.filter(item => item.evidenceReceipts?.local?.length).map(item => item.id).sort(), checked);
+  const planEvent = record.snapshot.trace.find(event => event.type === 'plan');
+  assert.equal(planEvent.by, 'value-of-information');
+  assert.match(planEvent.text, /could change the bill/);
   db.prepare('DELETE FROM quotas').run();
 });
 

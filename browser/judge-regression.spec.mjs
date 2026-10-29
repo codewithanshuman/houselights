@@ -1130,6 +1130,19 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(solid.locator('[data-signal="rank"]')).toHaveClass(/is-decisive/);
     await expect(solid.locator('[data-signal="rank"] .signal-effect')).toHaveText('Without it: Sault + Jordan Rakei');
     await expect(solid.locator('[data-signal="trends"] .signal-effect')).toHaveText('Not gathered for this pool');
+    // Qloo's affinities for Sault and Jordan Rakei differ by 0.0001, so that pick is a coin flip.
+    await expect(solid.locator('.solid-affinity .sep').nth(0)).toContainText('Clear pick');
+    await expect(solid.locator('.solid-affinity .sep').nth(1)).toContainText('Coin flip');
+    await expect(solid.locator('.solid-affinity .sep').nth(1)).toContainText('otherwise Jordan Rakei (affinity 0.9580 vs 0.9579)');
+    // The ladder lists every budget where the bill changes; choosing a step rebooks there.
+    const steps = page.locator('.ladder-steps button');
+    await expect(steps).toHaveCount(3);
+    await expect(page.locator('.ladder-steps .is-current')).toContainText('Michael Kiwanuka + Sault');
+    await steps.filter({ hasText: 'from $10,000' }).click();
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Jordan Rakei for $10,000.');
+    await expect(page.locator('.ladder-steps .is-current')).toContainText('Michael Kiwanuka + Jordan Rakei');
+    await page.locator('#plan-reset').click();
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
     await page.locator('[data-budget]').filter({ hasText: '90%' }).click();
     await expect(page.locator('#result-title')).not.toContainText('Sault');
     await expect(solid.locator('.solid-meter .solid-figure strong')).not.toHaveText('80%');
@@ -1157,6 +1170,12 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(page.locator('#agent-caption')).toHaveText('Live run: Leeds, fans of Arlo Parks and Nilüfer Yanya');
     await expect(page.locator('.result-meta')).toContainText('fans of Arlo Parks, Nilüfer Yanya', { timeout: 30000 });
     await expect(page.locator('.solid-meter')).toBeVisible();
+    await expect(page.locator('.solid-meter')).toContainText('each estimated fee moves across its Qloo popularity tier');
+    // The saved run records how the agent spent its deep checks, act by act.
+    const trail = page.locator('.solid-research');
+    await expect(trail).toContainText('tried all 16 results a check could return');
+    await expect(trail.locator('.trail')).not.toHaveCount(0);
+    await expect(trail.locator('.trail-tag').first()).toHaveText(/Checked|Skipped|Not checked/);
   });
 
   test('a live plan streams its Qloo calls into the agent card', async ({ page }) => {
