@@ -923,3 +923,6 @@
 .ladder-fee{font:500 13px/18px var(--font-mono);color:var(--pp-soft)}
 .ladder-note{margin:0;font:400 13px/18px var(--font-ui);color:var(--pp-soft)}
 @media (max-width:700px){.ladder-steps button{grid-template-columns:1fr auto}.ladder-bill{grid-column:1/-1;grid-row:2}}
+.solid-none .solid-card{margin-bottom:16px}
+.solid-first{max-width:640px}
+.solid-first-go{justify-self:start}

@@ -195,9 +195,41 @@
     ['trends','Six-month trend','Rising or cooling interest'],['comparison','Audience overlap','How each act’s audience overlaps the anchors’']];
   const whole=value=>usd(Math.floor(value+1e-9));
   const pct=share=>`${Math.round(share*100)}%`;
+  // How a live plan spent its deep Qloo checks (value of information), from the saved run.
+  function researchTrail(){
+    const research=view.base.memo.research;
+    if(research?.method!=='value-of-information'||!research.candidates?.length)return '';
+    const billed=view.base.memo.slate.feasible;
+    const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','Verifies a booked act'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','Booked; no calls left'],
+      'no-effect':['Skipped',billed?'No possible result changes the bill':'No possible result makes a bill fit']};
+    const checked=research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length;
+    return `<article class="solid-card solid-research">
+        <p class="solid-kicker">How the agent spent its Qloo calls</p>
+        <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. ${checked?`It checked ${e(checked)} of ${e(research.candidates.length)} acts.`:billed?'No check could change the bill, so it made none.':'No check could make any bill fit this budget, so it made none and saved those Qloo calls.'}</p>
+        <ul class="trail-list">${research.candidates.map(row=>{const [tag,why]=reasons[row.reason]??['',''];return `<li class="trail is-${e(row.reason)}"><strong>${e(nameOf(view.base,row.id))}</strong><span class="trail-tag">${e(tag)}</span><small>${e(why)}${row.bills>1?` · ${e(row.bills)} possible bills`:''}</small></li>`;}).join('')}</ul>
+      </article>`;
+  }
+  // When no bill fits: the smallest budget at which one does (from the ladder), and the
+  // research trail, which explains why the agent spent no calls on deep checks.
+  function noBillSection(){
+    const first=view.current.__analysis?.ladder?.status==='ready'?view.current.__analysis.ladder.steps.find(step=>step.budget>view.budget):null;
+    const trail=researchTrail();
+    if(!first&&!trail)return '';
+    const names=ids=>ids.map(id=>nameOf(view.current,id)).join(' + ');
+    return `<section class="solid solid-none" aria-labelledby="solid-title">
+        <div class="solid-head"><h3 id="solid-title">Why no bill fits</h3><p>Exact checks on the same saved evidence. No new Qloo calls.</p></div>
+        ${first?`<article class="solid-card solid-first">
+          <p class="solid-kicker">The first bill that fits</p>
+          <p class="solid-text">At today’s fees the cheapest bill that passes every other rule costs <strong>${e(usd(first.total))}</strong>, ${e(usd(first.total-view.budget))} over this budget. From ${e(usd(first.budget))} the optimizer books <strong>${e(names(first.selectedIds))}</strong>.</p>
+          <button type="button" class="preset solid-first-go" data-budget="${e(first.budget)}">Set budget to ${e(usd(first.budget))}</button>
+        </article>`:''}
+        ${trail}
+      </section>`;
+  }
   function solidSection(){
     const {current,record}=view,slate=current.memo.slate,analysis=current.__analysis,proof=current.__proof;
-    if(!slate.feasible||!analysis)return '';
+    if(!slate.feasible)return noBillSection();
+    if(!analysis)return '';
     const names=ids=>ids.map(id=>nameOf(current,id)).join(' + '),robust=analysis.robustness,flips=analysis.flips;
     const est=estimated(record)?' est.':'';
     let meter='';
@@ -270,18 +302,7 @@
           <p class="solid-note">${aff.scale==='ordinal'?'This plan scored fit by Qloo rank order, so a near-tie that swaps two ranks moves fit by a whole rank step.':'Fit comes from Qloo affinity on a fixed 0.05 span.'}</p>
         </article>`;
     }
-    // How a live plan spent its deep Qloo checks (value of information), from the saved run.
-    let trail='';
-    const research=view.base.memo.research;
-    if(research?.method==='value-of-information'&&research.candidates?.length){
-      const reasons={'could-change':['Checked','Its result could change the bill'],'verifies-bill':['Checked','Verifies a booked act'],'could-change-no-budget':['Not checked','Could change the bill; no calls left'],'verifies-bill-no-budget':['Not checked','Booked; no calls left'],'no-effect':['Skipped','No possible result changes the bill']};
-      const checked=research.candidates.filter(row=>row.reason==='could-change'||row.reason==='verifies-bill').length;
-      trail=`<article class="solid-card solid-research">
-          <p class="solid-kicker">How the agent spent its Qloo calls</p>
-          <p class="solid-text">Before any deep check, the agent tried all ${e(research.outcomes)} results a check could return for each act and asked the optimizer whether the bill would change. It checked ${e(checked)} of ${e(research.candidates.length)} acts.</p>
-          <ul class="trail-list">${research.candidates.map(row=>{const [tag,why]=reasons[row.reason]??['',''];return `<li class="trail is-${e(row.reason)}"><strong>${e(nameOf(view.base,row.id))}</strong><span class="trail-tag">${e(tag)}</span><small>${e(why)}${row.bills>1?` · ${e(row.bills)} possible bills`:''}</small></li>`;}).join('')}</ul>
-        </article>`;
-    }
+    const trail=researchTrail();
     if(!meter&&!points&&!signals&&!separation&&!trail)return '';
     return `<section class="solid" aria-labelledby="solid-title">
         <div class="solid-head"><h3 id="solid-title">How solid is this bill?</h3><p>Exact checks on the same saved evidence. No new Qloo calls; fees remain${estimated(record)?' estimates':' illustrative'}.</p></div>

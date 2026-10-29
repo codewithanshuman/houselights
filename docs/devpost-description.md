@@ -41,7 +41,7 @@ All figures below are reproduced offline by the commands named in the [claims au
 - **Constraint safety (by construction):** an exact optimizer cannot propose a bill that breaks a hard rule. For comparison, <!--claim:shockViolations-->3/231<!--/claim--> re-prompted LLM responses (<!--claim:shockRate-->1.3%<!--/claim-->) did so on comparable solvable shocks. That shows a design property, not better judgement.
 - **Research policy (synthetic):** Autopilot 2.0 does **not** show a statistically meaningful advantage over a simpler fixed-order policy. We report that as a negative finding.
 - **Software:**
-  - <!--claim:unitTests-->405<!--/claim--> unit-test definitions and <!--claim:browserTests-->65<!--/claim--> Chromium scenarios (execution totals are reported separately): an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge subset in Chromium, Firefox and WebKit;
+  - <!--claim:unitTests-->405<!--/claim--> unit-test definitions and <!--claim:browserTests-->67<!--/claim--> Chromium scenarios (execution totals are reported separately): an independent optimizer reference check over 5,000 seeded constraint combinations, axe WCAG 2.1 AA checks on every page, and the judge subset in Chromium, Firefox and WebKit;
   - a release rehearsal;
   - hosted verification of 83 public checks on the deployed commit.
 

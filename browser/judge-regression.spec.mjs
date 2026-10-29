@@ -1150,6 +1150,34 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(solid.locator('.solid-signals')).toContainText('Qloo evidence is off, so no signal shapes this bill.');
   });
 
+  test('when no bill fits, the plan names the first budget that books one and goes there @cross-browser', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+    await page.locator('#plan-budget-range').fill('5800');
+    await expect(page.locator('#result-title')).toHaveText('No bill fits these rules.');
+    const none = page.locator('.solid-none');
+    await expect(none.getByRole('heading', { name: 'Why no bill fits' })).toBeVisible();
+    await expect(none.locator('.solid-first')).toContainText('costs $9,000, $3,200 over this budget. From $9,000 the optimizer books Jordan Rakei + Hiatus Kaiyote.');
+    await none.getByRole('button', { name: 'Set budget to $9,000' }).click();
+    await expect(page.locator('#result-title')).toHaveText('Book Jordan Rakei + Hiatus Kaiyote for $9,000.');
+    await expect(page.locator('.solid-none')).toHaveCount(0);
+    await expect(page.locator('.solid-meter')).toBeVisible();
+  });
+
+  test('a live plan with no bookable bill shows why the agent made no deep checks', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city', 'Leeds');
+    await page.fill('#plan-anchor', 'Arlo Parks');
+    await page.fill('#plan-budget', '1000');
+    await page.locator('#plan-submit').click();
+    await expect(page.locator('#result-title')).toHaveText('No bill fits these rules.', { timeout: 30000 });
+    const trail = page.locator('.solid-none .solid-research');
+    await expect(trail).toContainText('No check could make any bill fit this budget, so it made none and saved those Qloo calls.');
+    await expect(trail.locator('.trail-tag').first()).toHaveText('Skipped');
+    await expect(trail.locator('.trail small').first()).toHaveText('No possible result makes a bill fit');
+    await expect(page.locator('.solid-first')).toContainText('The first bill that fits');
+  });
+
   test('the planner takes up to three artists and sends them together', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
     const add = page.locator('#plan-anchor-add');
