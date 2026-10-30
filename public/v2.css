@@ -457,3 +457,22 @@ body.app-shell .app-top .app-crumbs{margin-right:auto}
   .toc-menu>summary,body.app-shell .app-share{width:40px;padding:0;justify-content:center}
   body.app-shell .app-crumb[aria-current] span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
+
+/* The main call to action: a dark bar with a purple square holding a dot-matrix arrow. On hover
+   the square slides across the whole bar and a row of arrows ripples. CSS only, so a label that
+   changes ("Planning…") needs nothing else. The 404 page keeps its own hand-drawn button. */
+.v2:not(.nf-page) .sketch-btn{--hl-panel:40px;overflow:hidden;isolation:isolate;gap:0;padding:8px 20px 8px calc(var(--hl-panel) + 18px);border:0;border-radius:12px;background:#16131F;color:#fff;box-shadow:0 1px 2px #16131F40,0 12px 24px -10px #16131F80;filter:none;transition:box-shadow .3s,transform .2s}
+.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{display:none}
+.v2:not(.nf-page) .sketch-btn::before,.v2:not(.nf-page) .sketch-btn::after{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:var(--hl-panel);border-radius:9px;pointer-events:none;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.v2:not(.nf-page) .sketch-btn::before{z-index:1;background:linear-gradient(180deg,#D6C9FF 0%,#A78BFA 45%,#8B5CF6 100%);box-shadow:inset 0 1px 0 #FFFFFF99}
+.v2:not(.nf-page) .sketch-btn::after{z-index:2;background:url(/assets/brand/dot-arrow.svg) center/30px 20px space no-repeat}
+.v2:not(.nf-page) .sketch-btn:hover{background:#16131F;filter:none;transform:none;box-shadow:0 1px 2px #16131F40,0 16px 28px -10px #16131F99}
+.v2:not(.nf-page) .sketch-btn:active{transform:translateY(1px);filter:none}
+.v2:not(.nf-page) .sketch-btn:focus-visible{outline:3px solid #8B5CF6;outline-offset:3px}
+.v2:not(.nf-page) .site-cta.sketch-btn{--hl-panel:36px;padding-right:16px!important;padding-left:calc(var(--hl-panel) + 14px)!important;min-height:44px}
+@media (hover:hover){
+  .v2:not(.nf-page) .sketch-btn:not(:disabled):hover::before,.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{width:calc(100% - 8px)}
+  .v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{-webkit-mask:linear-gradient(90deg,#0006 0 35%,#000 50%,#0006 65% 100%) 100% 0/300% 100%;mask:linear-gradient(90deg,#0006 0 35%,#000 50%,#0006 65% 100%) 100% 0/300% 100%;animation:hl-ripple 1.3s linear infinite}
+}
+@keyframes hl-ripple{to{-webkit-mask-position:0 0;mask-position:0 0}}
+@media (prefers-reduced-motion:reduce){.v2:not(.nf-page) .sketch-btn::before,.v2:not(.nf-page) .sketch-btn::after{transition:none}.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{animation:none;-webkit-mask:none;mask:none}}

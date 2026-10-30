@@ -468,7 +468,7 @@
         <div class="solid-card reach-empty">
           <p class="solid-kicker">Beyond the bill</p>
           <p class="solid-text">Qloo’s taste graph spans brands, places and podcasts, not just artists. Using the booked acts as the signal, three Qloo calls find sponsor leads, places in ${e(city)} for posters and an aftershow, and podcasts to advertise on, with the act that drives each one.</p>
-          <p class="reach-go"><button type="button" class="hero-cta reach-run" id="reach-run"${view.reachBusy?' disabled aria-busy="true"':''}>${view.reachBusy?'Asking Qloo…':'Map this crowd with Qloo <span aria-hidden="true">→</span>'}</button><small>3 Qloo calls, saved with this plan</small></p>
+          <p class="reach-go"><button type="button" class="hero-cta sketch-btn reach-run" id="reach-run"${view.reachBusy?' disabled aria-busy="true"':''}>${view.reachBusy?'Asking Qloo…':'Map this crowd with Qloo <span aria-hidden="true">→</span>'}</button><small>3 Qloo calls, saved with this plan</small></p>
           ${view.reachError?`<p class="reach-error" role="alert">${e(view.reachError)}</p>`:''}
         </div>
       </section>`;
