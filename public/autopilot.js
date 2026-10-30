@@ -19,8 +19,8 @@
 
   function renderModes(){
     const hasRecorded=view?.recordedAvailable;
-    $('autopilot-modes').innerHTML=`${hasRecorded?`<button type="button" class="autopilot-mode" data-autopilot-mode="recorded" aria-pressed="${view?.kind==='recorded'}"><small>REPLAY</small>Recorded live run</button>`:''}<button type="button" class="autopilot-mode" data-autopilot-mode="planning" aria-pressed="${view?.kind==='planning'}"><small>NO PROVIDER CALLS</small>Plan from saved evidence</button>${editable?`<button type="button" class="autopilot-mode" data-autopilot-mode="fresh" aria-pressed="${view?.kind==='fresh'}"><small>ORGANIZER · USES QLOO QUOTA</small>Run fresh research</button>`:''}`;
-    $('autopilot-fresh-note').textContent=editable?'':'Fresh provider-backed runs are organizer-only. This public page shows the recorded run or plans from saved evidence.';
+    $('autopilot-modes').innerHTML=`${hasRecorded?`<button type="button" class="autopilot-mode" data-autopilot-mode="recorded" aria-pressed="${view?.kind==='recorded'}"><small>REPLAY</small>Recorded live run</button>`:''}<button type="button" class="autopilot-mode" data-autopilot-mode="planning" aria-pressed="${view?.kind==='planning'}"><small>NO PROVIDER CALLS</small>Plan from saved evidence</button><button type="button" class="autopilot-mode" data-autopilot-mode="fresh" aria-pressed="${view?.kind==='fresh'}"><small>LIVE QLOO · UP TO 10 CALLS</small>Run fresh research</button>`;
+    $('autopilot-fresh-note').textContent=editable?'':'Fresh research makes up to 10 live Qloo calls. Public runs share a small hourly and daily allowance that protects the Qloo quota.';
   }
   function banner(){
     const run=view.run;

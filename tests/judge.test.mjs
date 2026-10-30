@@ -108,7 +108,7 @@ test('public experiments recompute exact results, preserve survivors and never s
   const unavailable=judge.judgeExperiment(record,{unavailableId:'a'});assert.deepEqual(unavailable.snapshot.memo.slate.selectedIds,['b','c']);
   const impossible=await (await post(path,{cancelId:'a',excludedIds:['b']})).json();assert.equal(impossible.snapshot.memo.slate.feasible,false);assert.equal(impossible.comparison.survivorsPreserved,null);
   assert.equal(db.prepare('SELECT count(*) AS n FROM snapshots').get().n,before);assert.deepEqual(judge.loadJudgeCase(record.id),record);
-  assert.equal((await post('/api/benchmarks',{sourceId:'anything'})).status,401);assert.equal((await post('/api/scenario',{})).status,401);
+  assert.equal((await post('/api/benchmarks',{sourceId:'anything'})).status,401);assert.equal((await post('/api/scenario',{})).status,404,'the public Slate studio reaches the route, which still needs a saved source');
 });
 test('withdrawing rank evidence makes fit unknown for every dependent artist and blocks proof',async()=>{
   const record=judge.publishJudgeCase(source(),'Fixture');

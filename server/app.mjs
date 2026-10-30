@@ -332,7 +332,7 @@ export function createApp({ memoBuilder = buildMemo } = {}) {
       input: { ...source.input, currency, exampleBookingTerms, constraints: normalizedConstraints, terms },
       memo: { ...source.memo, currency, exampleBookingTerms, input: { ...source.memo.input, currency, exampleBookingTerms, constraints: normalizedConstraints }, items, constraints: normalizedConstraints, slate }
     };
-    const id = store.save(snapshot, { retain: true });
+    const id = store.save(snapshot, { retain: canEdit(req) });
     return res.status(201).json({ id, snapshot: store.load(id) });
   });
   app.post('/api/memo', async (req, res) => {
@@ -340,6 +340,8 @@ export function createApp({ memoBuilder = buildMemo } = {}) {
     try { input = bookingInput(req.body); } catch (error) { return res.status(400).json({ error: error.message }); }
     if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Set QLOO_API_KEY in the server environment, or use npm run dev for clearly labeled synthetic data.' });
     if (!routeQuota(req, 'memo', { minuteLimit: 4, dayLimit: dailyCap })) return res.status(429).json({ error: 'Run limit reached. Try again later. Re-optimizing existing evidence does not spend Qloo calls.' });
+    // Public visitors share a smaller daily allowance that protects the Qloo quota.
+    if (!canEdit(req) && !routeQuota(req, 'memo-public', { minuteLimit: 2, dayLimit: 40 })) return res.status(429).json({ error: 'Public slate runs are limited to 2 a minute and 40 a day across all visitors. Re-optimizing existing evidence does not spend Qloo calls.' });
     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
     const trace = [], startedAt = Date.now();
     const emit = event => {
@@ -358,7 +360,7 @@ export function createApp({ memoBuilder = buildMemo } = {}) {
       emit({ type: 'start', mock: isMock() });
       const run = new Run({ budget, emit });
       const memo = await memoBuilder(input, run);
-      if (memo) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace }, { retain: true }) });
+      if (memo) emit({ type: 'saved', id: store.save({ input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace }, { retain: canEdit(req) }) });
     } catch {
       if (!res.destroyed) emit({ type: 'error', text: 'The run could not complete. Review the last receipt and try again. No booking was made.' });
     } finally { clearInterval(heartbeat); if (!res.destroyed && !res.writableEnded) res.end(); }

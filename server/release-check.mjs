@@ -45,7 +45,8 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     record('protected-audience-twin',(await request('/api/demand/twins/000000000000000000000000')).status===401);
     record('protected-twin-validation',(await request('/api/demand/twin-validation')).status===401);
     record('protected-financial-validation',(await request('/api/financial/validation')).status===401);
-    record('protected-financial-job',(await request('/api/financial/jobs/000000000000000000000000')).status===401);
+    // Free-form financial scenarios (an organizer's own artists and quotes) stay private.
+    record('protected-financial-job',(await request('/api/financial/jobs',{body:{brief:{city:'X'},candidates:[]}})).status===401);
     record('protected-proof-experiment',(await request('/api/experiments/000000000000000000000000')).status===401);
     for(const path of ['/judge.html','/desk.html','/index.html','/review.html','/evidence.html','/demand.html','/financial.html','/proof-lab.html','/workspace.html']){
       const page=await request(path,{format:'text'});
@@ -81,15 +82,22 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
       example.data.runs.every(row=>row.run?.integrity?.manifestDigest?.startsWith('sha256:'))&&example.data.research?.receipts?.every(row=>row.source==='qloo'&&row.status!=='error'));
     for(const path of ['/api/events','/api/events/ev_00000000000000000000'])record('private-events:'+path,(await request(path)).status===401);
     record('private-event-write',(await request('/api/events',{body:{}})).status===401);
-    record('autopilot-fresh-run-protected',(await request('/api/judge/cases/8be4d03ef4792ca9f1466983/autopilot/live',{body:{}})).status===401);
+    // Fresh Autopilot research is public (capped and rate limited). An unknown case reaches the
+    // route and is refused there, so this check spends no Qloo calls.
+    record('autopilot-fresh-run-public',(await request('/api/judge/cases/000000000000000000000000/autopilot/live',{body:{}})).status===404);
     const replication=await request('/recorded-control-study.json');
     record('separate-recorded-control-study',replication.status===200&&replication.data.sourceCaseId==='8be4d03ef4792ca9f1466983'&&
       replication.data.reviewTrial===1&&replication.data.trials?.length===3&&replication.data.independentOutcomeEvidence===false&&
       replication.data.trials.every(row=>row.generation?.toolsAllowed===false&&row.generation?.httpStatus===200));
-    const financialDemo=await request('/financial-demo.json');
-    record('published-financial-scenario',financialDemo.status===200&&financialDemo.data.label?.includes('SYNTHETIC')&&
-      financialDemo.data.result?.status==='scenario_complete'&&financialDemo.data.result.assumptionResults?.[0]?.rows?.length>=5&&
-      financialDemo.data.result.explanationsBySet?.base?.comparison?.components?.length===8);
+    // Financial Risk runs on a real plan: the featured plan with default assumptions. A finished
+    // identical run is reused, so this check starts at most one simulation per release.
+    const listed=await request('/api/judge/cases'),plan=listed.data?.cases?.find(item=>item.feasible&&!item.synthetic)??listed.data?.cases?.[0];
+    const financialStart=plan?await request('/api/financial/jobs',{body:{caseId:plan.id}}):null;
+    const financialJob=financialStart?.data?.id?await request(`/api/financial/jobs/${financialStart.data.id}`):null;
+    // A synthetic development plan is refused; a real plan starts (or reuses) a job on its own candidates.
+    record('published-financial-scenario',plan?.synthetic?financialStart?.status===409:[200,202].includes(financialStart?.status)&&financialJob?.status===200&&
+      ['running','completed'].includes(financialJob.data.status)&&financialJob.data.provenance?.sourceClassification==='saved_qloo_plan'&&
+      financialJob.data.snapshot?.demandInput?.candidates?.every(item=>!/^(Pop|Jazz|Indie|Electronic|Local) [A-Z]$/.test(item.name)));
     const shocks=await request('/shocks-summary.json');
     record('published-shock-study',shocks.status===200&&shocks.data.summary?.houselights?.shocks===93&&shocks.data.breakdown?.solvable?.violationResponses===3&&
       shocks.data.breakdown.solvable.returnedResponses===231&&shocks.data.breakdown.notComparable?.shocks===9&&!/9.7%/.test(shocks.data.headline));

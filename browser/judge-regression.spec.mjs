@@ -523,8 +523,8 @@ test('Autopilot replays the recorded provider-backed run without new research an
   await expect(panel.locator('.autopilot-banner')).toContainText('RECORDED PROVIDER-BACKED RUN');
   await expect(panel.locator('.autopilot-banner')).toContainText('This page made no new provider calls');
   await expect(panel.getByRole('button',{name:/Recorded live run/})).toHaveAttribute('aria-pressed','true');
-  await expect(panel.getByRole('button',{name:/Run fresh research/})).toHaveCount(0);
-  await expect(panel.locator('#autopilot-fresh-note')).toContainText('organizer-only');
+  await expect(panel.getByRole('button',{name:/Run fresh research/})).toHaveAttribute('aria-pressed','false');
+  await expect(panel.locator('#autopilot-fresh-note')).toContainText('up to 10 live Qloo calls');
   await expect(panel.locator('.autopilot-timeline')).toContainText('Does the audience ranking hold without the New York location signal?');
   await expect(panel.locator('.autopilot-vulnerabilities')).toContainText('Without the New York location signal');
   await expect(panel.locator('.autopilot-packet-head h4')).toHaveText('Michael Kiwanuka + Sault');
@@ -836,6 +836,31 @@ test.describe('visual states', { tag: '@visual' }, () => {
     await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await expect(page).toHaveScreenshot('mobile-first-screen.png', { mask: mask(page) });
   });
+});
+
+test('Financial Risk runs on a real Booking Desk plan, never on placeholder artists', async ({ page }) => {
+  test.setTimeout(180000);
+  await page.goto(`${origin}/financial.html`);
+  await expect(page.locator('#plan-case option')).not.toHaveCount(0);
+  await expect(page.locator('#plan-case')).toHaveValue(tracedCaseId);
+  await expect(page.locator('#plan-run-status')).toHaveText(/^Done: New York: fans of Leon Bridges, 10,000 scenarios.$/, { timeout: 150000 });
+  await expect(page.locator('#source-ribbon')).toContainText('REAL QLOO PLAN · New York');
+  await expect(page.locator('#source-ribbon')).toContainText('not a sales forecast');
+  const lineups = await page.locator('#alternatives tbody tr').allInnerTexts();
+  expect(lineups.length).toBeGreaterThan(0);
+  for (const row of lineups) expect(row).not.toMatch(/(Pop|Jazz|Indie|Electronic|Local) [A-Z]/);
+  expect(lineups.join(' ')).toMatch(/Michael Kiwanuka|Sault|Jordan Rakei|Hiatus Kaiyote/);
+  await expect(page.locator('#a-capacity')).not.toHaveValue('');
+  expect((await page.request.get(`${origin}/financial-demo.json`)).status()).toBe(404);
+});
+
+test('a visitor can build a live slate in the Slate studio', async ({ page }) => {
+  await page.goto(`${origin}/index.html`);
+  await page.locator('#load-scenario').click();
+  await page.locator('#build-button').click();
+  await expect(page.locator('#results')).toBeVisible({ timeout: 60000 });
+  await expect(page.locator('#global-error')).toBeHidden();
+  await expect(page.locator('#selected-cards')).not.toBeEmpty();
 });
 
 test('the evidence page lists every claim with its status, limit and a copyable reproduce command', async ({ page, context }) => {

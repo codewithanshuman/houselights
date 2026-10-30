@@ -5,14 +5,14 @@ import { signedMinor, major } from './money.mjs';
 
 const newId = () => randomBytes(12).toString('hex');
 const digest = body => createHash('sha256').update(JSON.stringify(body)).digest('hex');
-export function createFinancialJob({ config, demandInput, prefiltered, sourceId, twinId, modelStatus, parentId = null }) {
+export function createFinancialJob({ config, demandInput, prefiltered, sourceId, twinId, modelStatus, parentId = null, caseId, caseKey, visibility, assumptions }) {
   const id = newId(), createdAt = new Date().toISOString();
-  const snapshot = { config, demandInput, prefiltered, sourceId, twinId, modelStatus };
+  const snapshot = { config, demandInput, prefiltered, sourceId, twinId, modelStatus, ...(caseId ? { caseId, caseKey, visibility, assumptions } : {}) };
   const job = { id, parentId, createdAt, status: 'running', modelVersion, inputDigest: digest(snapshot),
     snapshot, result: null, resultDigest: null, error: null,
     provenance: { sourceId, twinId, modelStatus, assumptionSet: config.simulation.assumptionSet,
       evidenceReferences: config.evidenceReferences, seed: config.simulation.seed, draws: config.simulation.draws,
-      syntheticSource: demandInput.synthetic === true, sourceClassification: demandInput.synthetic ? 'synthetic' : sourceId ? 'saved_qloo' : 'organizer_assumptions' } };
+      syntheticSource: demandInput.synthetic === true, sourceClassification: demandInput.synthetic ? 'synthetic' : caseId ? 'saved_qloo_plan' : sourceId ? 'saved_qloo' : 'organizer_assumptions', ...(caseId ? { caseId } : {}) } };
   db.prepare('INSERT INTO financial_jobs(id,body,created_at) VALUES(?,?,?)').run(id, JSON.stringify(job), createdAt);
   return job;
 }

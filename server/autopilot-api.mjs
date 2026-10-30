@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { db, consumeQuota } from './database.mjs';
 import { Run, isMock } from './qloo.mjs';
+import { canEdit, routeQuota } from './access.mjs';
 import { loadJudgeCase } from './judge.mjs';
 import { runAutopilot, moneyFormatter } from './autopilot.mjs';
 import { publicReceipt } from './autopilot-integrity.mjs';
@@ -77,8 +78,12 @@ export function registerAutopilotRoutes(app) {
   app.post('/api/judge/cases/:id/autopilot/live', handle(async (req, res) => {
     const record = caseFor(req.params.id);
     const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
+    // Anyone may run fresh research on a published case; a visitor's run is capped at 10 calls
+    // and shares a small allowance. Organizers keep the 16-call ceiling.
+    const editor = canEdit(req);
+    if (!editor && !routeQuota(req, 'autopilot-live-public', { minuteLimit: 1, dayLimit: 30 })) throw fault('Public fresh research is limited to 1 run a minute and 30 a day across all visitors. The recorded run and planning from saved evidence remain available.', 429);
     const maxCalls = body.maxCalls ?? 10;
-    const run = new Run({ budget: Number.isInteger(maxCalls) ? Math.max(0, Math.min(16, maxCalls)) : 0, receiptPrefix: 'a', deadlineMs: 150000 });
+    const run = new Run({ budget: Number.isInteger(maxCalls) ? Math.max(0, Math.min(editor ? 16 : 10, maxCalls)) : 0, receiptPrefix: 'a', deadlineMs: 150000 });
     const mode = run.mode === 'mock' || isMock() ? 'synthetic' : 'live';
     const result = await runAutopilot(judgeAutopilotSource(record), body, { research: researchClient(run), mode, shouldStop: interruptOnClose(res) });
     if (result.receipts.some(receipt => receipt.source === 'synthetic')) result.mode = result.packet.mode = 'synthetic';

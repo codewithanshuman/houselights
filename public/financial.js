@@ -141,11 +141,60 @@
       const option = document.createElement('option'); option.value = item.id; option.textContent = item.id; return option; }));
     render();
   }
-  async function loadDemo() {
-    const response = await fetch('/financial-demo.json'); if (!response.ok) throw new Error('Illustration is unavailable.');
-    const payload = await response.json(); adopt(payload);
-    $('scenario-json').value = JSON.stringify(payload.input, null, 2);
-    $('source-ribbon').textContent = 'SYNTHETIC ILLUSTRATION · 10,000 actual seeded calculations · zero observed-event calibration · no Qloo receipt';
+  // ── A real plan ───────────────────────────────────────────────────────────────
+  // Every public scenario starts from a saved Booking Desk plan: its candidates, Qloo fit and
+  // fees. The visitor states the venue, ticket, sell-through and cost assumptions.
+  const FIELDS = ['capacity', 'ticketPrice', 'sellThrough', 'venueCost', 'productionCost', 'marketingCost'];
+  const plans = new Map();
+  async function loadPlans() {
+    const select = $('plan-case');
+    const response = await fetch('/api/judge/cases'); const data = await response.json();
+    if (!response.ok) throw new Error(data.error ?? 'Saved plans are unavailable.');
+    const seen = new Set();
+    for (const row of data.cases.filter(row => !row.synthetic && row.feasible).sort((a, b) => (b.id === '8be4d03ef4792ca9f1466983') - (a.id === '8be4d03ef4792ca9f1466983'))) {
+      const key = `${row.city}|${(row.anchors ?? []).join()}`; if (seen.has(key)) continue; seen.add(key);
+      plans.set(row.id, `${row.city}: fans of ${(row.anchors ?? []).join(', ') || row.title}`);
+    }
+    // A live plan opened from the Booking Desk (?plan=) joins the list.
+    const live = new URLSearchParams(location.search).get('plan');
+    if (live && /^[a-f0-9]{24}$/.test(live) && !plans.has(live)) {
+      const record = await fetch(`/api/judge/cases/${live}`).then(row => row.ok ? row.json() : null).catch(() => null);
+      if (record?.snapshot?.memo?.slate?.feasible) plans.set(live, `${record.title} (your live plan)`);
+    }
+    select.replaceChildren(...[...plans].map(([id, label]) => { const option = document.createElement('option'); option.value = id; option.textContent = label; return option; }));
+    if (live && plans.has(live)) select.value = live;
+  }
+  function readAssumptions() {
+    const out = {};
+    for (const key of FIELDS) { const node = $(`a-${key}`); if (!node.reportValidity()) return null; out[key] = Number(node.value); }
+    out.sellThrough = out.sellThrough / 100;
+    return out;
+  }
+  function fillAssumptions(values) {
+    for (const key of FIELDS) if (values?.[key] != null) $(`a-${key}`).value = key === 'sellThrough' ? Math.round(values[key] * 100) : values[key];
+  }
+  async function runPlan(assumptions) {
+    const caseId = $('plan-case').value; if (!caseId) return;
+    const button = $('plan-run-button'), status = $('plan-run-status');
+    button.disabled = true; status.textContent = 'Building every bookable lineup from the plan…';
+    try {
+      const response = await fetch('/api/financial/jobs', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ caseId, ...(assumptions ? { assumptions } : {}) }) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.error ?? 'The scenario could not start.');
+      status.textContent = data.reused ? 'Same plan and assumptions as an earlier run: loading its result.' : `Simulating ${number(data.shortlistedCount)} lineups across 10,000 seeded scenarios. This takes about half a minute.`;
+      state.jobId = data.id;
+      // Wait for the worker, then load the finished job once. A newer run replaces this one.
+      for (;;) {
+        const check = await fetch(`/api/financial/jobs/${data.id}`), job = await check.json();
+        if (!check.ok) throw new Error(job.error ?? 'Could not read the scenario.');
+        if (state.jobId !== data.id) return;
+        if (job.status !== 'running') break;
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      await poll(data.id);
+      if (state.payload?.id === data.id) status.textContent = `Done: ${plans.get(caseId) ?? 'this plan'}, ${number(state.payload.config.simulation.draws)} scenarios.`;
+      else if (state.jobId === data.id) status.textContent = $('job-status').textContent;
+    } catch (error) { status.textContent = error.message; }
+    finally { button.disabled = false; }
   }
   async function poll(id) {
     clearTimeout(state.polling);
@@ -154,7 +203,11 @@
     $('job-status').textContent = `Job ${job.id}: ${job.status}${job.error ? ` — ${job.error}` : ''}`;
     if (job.status === 'running') { state.polling = setTimeout(() => poll(id).catch(showError), 1100); return; }
     $('cancel').disabled = true;
-    if (job.status === 'completed') {
+    if (job.status === 'completed' && job.snapshot?.visibility === 'public') {
+      adopt({ ...job, input: job.snapshot.demandInput, label: 'REAL PLAN · ASSUMPTION SCENARIO' });
+      fillAssumptions(job.snapshot.assumptions);
+      $('source-ribbon').textContent = `REAL QLOO PLAN · ${job.brief.city} · candidates, Qloo fit and fees from the saved plan · venue, ticket, sell-through and costs are stated assumptions · not a sales forecast`;
+    } else if (job.status === 'completed') {
       adopt({ ...job, input: job.snapshot?.demandInput, label: 'PRIVATE ORGANIZER SCENARIO',
         provenance: { ...job.provenance, historicalFinancialValidation: 'See validation panel' } });
       $('replay').disabled = false; $('source-ribbon').textContent = `PRIVATE SCENARIO · ${job.modelVersion} · seed ${job.config.simulation.seed} · ${job.config.simulation.draws} common draws`;
@@ -167,7 +220,7 @@
     if (!state.payload) return;
     const blob = new Blob([JSON.stringify(state.payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob), anchor = document.createElement('a'); anchor.href = url;
-    anchor.download = `houselights-financial-${state.payload.id ?? 'synthetic-illustration'}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    anchor.download = `houselights-financial-${state.payload.id ?? 'scenario'}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
   $('unlock').addEventListener('click', async () => {
     window.organizerAccess.setToken($('token').value.trim()); $('token').value = '';
@@ -222,5 +275,7 @@
       $('validation').textContent = `Historical validation: ${validation.count} prospective settled event(s); mean absolute profit error ${money(validation.meanAbsoluteProfitError)}. ${validation.caveat}`;
     } catch (error) { $('settlement-status').textContent = error.message; }
   });
-  loadDemo().catch(error => { $('source-ribbon').textContent = error.message; });
+  $('plan-form').addEventListener('submit', event => { event.preventDefault(); const assumptions = readAssumptions(); if (assumptions) void runPlan(assumptions); });
+  $('plan-case').addEventListener('change', () => void runPlan(null));
+  loadPlans().then(() => runPlan(null)).catch(error => { $('source-ribbon').textContent = error.message; });
 })();

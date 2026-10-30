@@ -60,6 +60,6 @@ export function generateDemo() {
 }
 if (process.argv[1] && new URL(`file:///${process.argv[1].replaceAll('\\', '/')}`).pathname.toLowerCase().endsWith('/generate-financial-demo.mjs')) {
   const output = generateDemo();
-  writeFileSync(new URL('../public/financial-demo.json', import.meta.url), JSON.stringify(output));
+  writeFileSync(new URL('../artifacts/financial-demo.json', import.meta.url), JSON.stringify(output));
   console.log(`Generated ${output.result.finalCount ?? 0} synthetic financial alternatives from ${output.config.simulation.draws} seeded draws.`);
 }

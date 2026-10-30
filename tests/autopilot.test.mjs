@@ -66,8 +66,7 @@ test('a changed public brief is re-planned exactly and flagged as changed',async
   assert.equal(body.packet.brief.briefChanged,true);
 });
 
-test('fresh research is organizer-only, labelled synthetic here, persisted and exportable',async()=>{
-  assert.equal((await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:4})).status,401);
+test('anyone can run fresh research, capped and rate limited; labelled synthetic here, persisted and exportable',async()=>{
   const response=await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:4},true);
   assert.equal(response.status,201);const saved=await response.json();
   assert.equal(saved.mode,'synthetic');assert.equal(saved.providerCalls,0);assert.ok(saved.researchCalls>0&&saved.researchCalls<=4);
@@ -77,6 +76,9 @@ test('fresh research is organizer-only, labelled synthetic here, persisted and e
   assert.match(html.headers.get('content-security-policy'),/default-src 'none'/);assert.match(await html.text(),/Next actions<\/h2>/);
   const md=await realFetch(`${base}/api/autopilot/runs/${saved.id}/packet?format=md`);assert.match(md.headers.get('content-disposition'),/attachment/);
   assert.equal((await realFetch(`${base}/api/autopilot/runs/not-a-run`)).status,404);
+  const visitor=await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:16});
+  assert.equal(visitor.status,201);const visited=await visitor.json();assert.ok(visited.researchCalls<=10,'a visitor run is capped at 10 calls');
+  assert.equal((await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:4})).status,429,'one public run a minute');
 });
 
 test('the agent researches the decision-material gap first and the observation changes the bill',async()=>{

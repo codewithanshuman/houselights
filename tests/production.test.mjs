@@ -31,7 +31,7 @@ test('shared reports are readable, every mutation and private pipeline read requ
   assert.equal((await post(`/api/gm/${id}/season-research`, {})).status, 401);
   assert.equal((await post(`/api/gm/${id}/season-research`, {}, true)).status, 400);
   assert.equal(db.prepare('SELECT count FROM quotas WHERE key=?').get(`research:${Math.floor(Date.now() / 864e5)}`).count, 1);
-  assert.equal((await post('/api/memo', {})).status, 401);
+  assert.equal((await post('/api/memo', {})).status, 400, 'the public Slate studio reaches validation; an empty brief is refused');
   assert.equal((await post(`/api/examples/${id}/pin`, {}, true)).status, 200);
   assert.ok((await (await fetch(base + '/api/examples')).json()).some(example => example.id === id));
   assert.equal((await (await fetch(base + '/api/access')).json()).editable, false);
