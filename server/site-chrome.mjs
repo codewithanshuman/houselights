@@ -2,16 +2,16 @@
 // paint (no layout shift when scripts run). public/site.js adds the behaviour.
 // The landing page (the Booking Desk) gets the floating pill nav. Every other page is part of
 // the app and gets the sidebar shell instead; the 404 page gets neither.
-// Organizer tools are uncalibrated and sit behind a menu so judges land on the Booking Desk.
+// Planning tools are uncalibrated and sit behind a menu so judges land on the Booking Desk.
 const pages = [['booking', '/judge.html', 'Booking Desk'], ['evidence', '/evidence.html', 'Evidence & limits'], ['proof', '/proof-lab.html', 'Qloo Proof Lab']];
-const tools = [['/workspace.html', 'Organizer workspace', false], ['/index.html', 'Slate studio', false], ['/demand.html', 'Demand Lab and Audience Twin', true], ['/financial.html', 'Financial Risk Lab', true], ['/index.html#gauntlet', 'Festival GM and Gauntlet', true]];
+const tools = [['/index.html', 'Slate studio', false], ['/demand.html', 'Demand Lab and Audience Twin', true], ['/financial.html', 'Financial Risk Lab', true], ['/index.html#gauntlet', 'Festival GM and Gauntlet', true], ['/workspace.html', 'Organizer workspace', false]];
 const e = value => String(value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
 export function navHtml(current) {
   return `<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/home.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>`
     + `<button class="site-burger" type="button" aria-expanded="false" aria-controls="site-links" aria-label="Open menu"><span aria-hidden="true"></span></button>`
     + `<div id="site-links" class="site-links">${pages.map(([key, href, label]) => `<a href="${href}"${key === current ? ' aria-current="page"' : ''}>${e(label)}</a>`).join('')}`
-    + `<details class="site-tools"><summary>Organizer tools</summary><div class="site-tools-menu">${tools.map(([href, label, uncalibrated]) => `<a href="${href}">${e(label)}${uncalibrated ? ' <span class="badge badge-warn">uncalibrated</span>' : ''}</a>`).join('')}<p>The Slate studio and Financial Risk run live for anyone; the Workspace and Demand Lab hold private fees and need the organizer token. Financial and demand numbers are not calibrated against real ticket sales.</p></div></details></div>`
+    + `<details class="site-tools"><summary>Planning tools</summary><div class="site-tools-menu">${tools.map(([href, label, uncalibrated]) => `<a href="${href}">${e(label)}${uncalibrated ? ' <span class="badge badge-warn">uncalibrated</span>' : ''}</a>`).join('')}<p>The Slate studio and Financial Risk run live for anyone; the Workspace and Demand Lab hold private fees and need the organizer token. Financial and demand numbers are not calibrated against real ticket sales.</p></div></details></div>`
     + `<a class="site-cta sketch-btn" href="/judge.html#planner">Plan a show</a></nav>`;
 }
 
@@ -36,8 +36,9 @@ const icon = name => `<svg class="app-icon" width="18" height="18" viewBox="0 0 
 const APP = [
   [null, [['booking', '/judge.html', 'Booking Desk', 'home'], ['plan', '/judge.html#planner', 'Plan a show', 'plan']]],
   ['Evidence', [['evidence', '/evidence.html', 'Evidence & limits', 'evidence'], ['proof', '/proof-lab.html', 'Qloo Proof Lab', 'proof']]],
-  ['Organizer', [['workspace', '/workspace.html', 'Workspace', 'workspace', [['/workspace.html#example', 'Recorded session']]], ['slate', '/index.html', 'Slate studio', 'slate'], ['desk', '/desk.html', 'Booking Desk lab', 'desk']]],
+  ['Planning', [['slate', '/index.html', 'Slate studio', 'slate'], ['desk', '/desk.html', 'Booking Desk lab', 'desk']]],
   ['Labs', [['demand', '/demand.html', 'Demand Lab', 'demand', null, 'beta'], ['financial', '/financial.html', 'Financial Risk', 'financial', null, 'beta']]],
+  ['Organizer', [['workspace', '/workspace.html', 'Workspace', 'workspace', [['/workspace.html#example', 'Recorded session']]]]],
 ];
 export const APP_KEYS = new Set(['evidence', 'proof', 'workspace', 'slate', 'desk', 'demand', 'financial']);
 

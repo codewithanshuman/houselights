@@ -968,11 +968,12 @@ test('changing currency moves an untouched budget, and keeps one the visitor typ
   await expect(page.locator('#plan-budget')).toHaveValue('31000');
 });
 
-test('a visitor can use the Demand Lab and the event portfolio from a saved plan, with no token or ID', async ({ page }) => {
+test('a visitor can use the Demand Lab and the event portfolio from a saved plan, with no token or ID', { tag: '@cross-browser' }, async ({ page }) => {
   await page.goto(`${origin}/demand.html`);
   await expect(page.locator('#plan-status')).toContainText('Loaded');
   await expect(page.locator('input[name=save]')).toBeHidden();
-  await page.getByRole('button', { name: 'Analyze the demand decision' }).click();
+  await expect(page.locator('#token')).toBeHidden();
+  await page.locator('#run-plan').click();
   await expect(page.locator('#result-summary')).toContainText('feasible');
   await page.goto(`${origin}/index.html`);
   await page.getByRole('button', { name: /Event portfolio/ }).first().click();
@@ -983,7 +984,20 @@ test('a visitor can use the Demand Lab and the event portfolio from a saved plan
   await expect(page.locator('#portfolio-status')).not.toHaveText('Working…');
 });
 
-test('a visitor can run the Festival GM on a saved plan', async ({ page }) => {
+test('the planning tools fit a phone, before and after a run', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  await page.goto(`${origin}/demand.html`);
+  await expect(page.locator('#run-plan')).toBeEnabled();
+  expect(await overflow()).toBeLessThanOrEqual(0);
+  await page.locator('#run-plan').click();
+  await expect(page.locator('#result-summary')).toContainText('feasible');
+  expect(await overflow()).toBeLessThanOrEqual(0);
+  await page.goto(`${origin}/index.html`);
+  expect(await overflow()).toBeLessThanOrEqual(0);
+});
+
+test('a visitor can run the Festival GM on a saved plan', { tag: '@cross-browser' }, async ({ page }) => {
   const refused = [];
   page.on('response', response => { if (response.status() === 401) refused.push(response.url()); });
   await page.goto(`${origin}/index.html`);

@@ -104,9 +104,9 @@
     state.twinId=null;$('twin-receipts').replaceChildren();$('twin-status').textContent='Taste seeds loaded. Research their Qloo rankings to activate a synthetic audience scenario.';
     $('plan-status').textContent=`Loaded ${Math.min(source.memo.items.length,20)} artists. Confirm fees, availability, capacity and date before calculating.`;
     return source;}
-  async function openPlan(caseId){$('plan-status').textContent='Opening the saved plan…';try{const {id}=await read(`/api/judge/cases/${encodeURIComponent(caseId)}/source`,{});form.elements.namedItem('sourceId').value=id;await loadSource(id);}catch(error){$('plan-status').textContent=error.message;}}
+  async function openPlan(caseId){const run=$('run-plan');run.disabled=true;$('plan-status').textContent='Opening the saved plan…';$('quick-status').textContent='';try{const {id}=await read(`/api/judge/cases/${encodeURIComponent(caseId)}/source`,{});form.elements.namedItem('sourceId').value=id;await loadSource(id);run.disabled=false;}catch(error){$('plan-status').textContent=error.message;$('quick-status').textContent=error.message;}}
   async function listPlans(){try{const {cases}=await read('/api/judge/cases'),plans=cases.filter(row=>!row.synthetic&&row.feasible),select=$('source-plan');if(!plans.length)return;
-    select.replaceChildren(...plans.map(row=>{const option=document.createElement('option');option.value=row.id;option.textContent=row.title.replace(/^Illustrative:\s*/,'');return option;}));select.onchange=()=>openPlan(select.value);await openPlan(select.value);}catch(error){$('plan-status').textContent=error.message;}}
+    select.replaceChildren(...plans.map(row=>{const option=document.createElement('option');option.value=row.id;option.textContent=row.title.replace(/^Illustrative:\s*/,'');return option;}));select.onchange=()=>openPlan(select.value);$('run-plan').onclick=()=>form.requestSubmit();await openPlan(select.value);}catch(error){$('plan-status').textContent=error.message;}}
   $('load-source').onclick=async()=>{try{await loadSource(value('sourceId'));}catch(error){$('plan-status').textContent=error.message;}};
   function showTwin(twin){state.twinId=twin.id;$('load-twin-id').value=twin.id;
     $('twin-status').textContent=`Saved audience twin ${twin.id}: ${twin.clusterCount} synthetic segments from ${twin.originalSeedCount} ${twin.synthetic?'synthetic fixture':'Qloo'} rank patterns. ${twin.excludedSeedArtistIds.length?`${twin.excludedSeedArtistIds.length} seed artist(s) excluded from ranked lineup choices. `:''}Use Analyze to optimize against its declared assumptions.`;
@@ -125,7 +125,7 @@
     const submit=form.querySelector('button[type=submit]');submit.disabled=true;
     try{const request={...requestFromForm(),twinId:state.twinId||undefined};
       const result=await read('/api/demand/plan',request);renderPlan(result,request);$('plan-status').textContent='Decision calculated. No new Qloo or LLM calls were made.';$('results').scrollIntoView({behavior:'smooth',block:'start'});
-    }catch(error){$('plan-status').textContent=error.message;}finally{submit.disabled=false;}};
+    }catch(error){$('plan-status').textContent=error.message;$('quick-status').textContent=error.message;}finally{submit.disabled=false;}};
   $('outcome-form').onsubmit=async event=>{event.preventDefault();const f=event.currentTarget;
     try{const result=await read('/api/demand/outcomes',{forecastId:f.elements.namedItem('forecastId').value.trim(),paidTicketsSold:Number(f.elements.namedItem('paidTicketsSold').value),sourceKind:f.elements.namedItem('sourceKind').value,sourceReference:f.elements.namedItem('sourceReference').value.trim()});
       $('outcome-status').textContent=`Outcome recorded as ${result.provenance.classification}. ${result.forecastError==null?'No pre-event paid-ticket forecast existed.':`Forecast error: ${result.forecastError} tickets.`}${result.twinComparison?` Audience Twin scenario error: ${result.twinComparison.signedError} tickets; ${result.twinComparison.withinSensitivityRange?'inside':'outside'} the assumption-sensitivity range.`:''}`;await refreshModel();

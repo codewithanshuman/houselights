@@ -413,6 +413,7 @@ body.app-shell .app-top .app-crumbs{margin-right:auto}
 .v2.app-shell main .access-bar .panel{margin:0;padding:16px 20px;border-radius:16px;box-shadow:none}
 .v2.app-shell main .access-bar h2{margin:0 0 4px;font-size:15px!important;line-height:20px;letter-spacing:-.01em}
 .v2.app-shell main .access-bar p{margin:2px 0 0;font-size:13px;line-height:19px;color:var(--pp-muted)}
+.access-fold{margin-top:10px;font-size:13px}.access-fold>summary{cursor:pointer;color:var(--pp-muted)}
 .v2.app-shell main .access-bar .row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;margin-top:10px}
 .v2.app-shell main .access-bar label{flex:1 1 220px;font-size:12px}
 .v2.app-shell main .access-bar input{min-height:38px;padding:6px 12px;font-size:14px}
