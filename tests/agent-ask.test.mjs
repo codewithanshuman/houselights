@@ -82,3 +82,12 @@ test('a booker can overrule the agent, but only with a shortlisted act', () => {
   assert.deepEqual(read('Book Sault'), [], 'an act already on the bill needs no lock');
   assert.deepEqual(validSteps([{ type: 'lock', id: 'nobody' }], plan), []);
 });
+
+test('a swap names both sides, in either order', () => {
+  assert.deepEqual(read('our crowd really wants Jordan Rakei instead of Sault'), [{ type: 'drop', id: 's' }, { type: 'lock', id: 'j' }]);
+  assert.deepEqual(read('swap Sault for Jordan Rakei'), [{ type: 'drop', id: 's' }, { type: 'lock', id: 'j' }]);
+});
+
+test('with no model configured, the default path is a plain no', async () => {
+  assert.deepEqual((await interpretAsk('do something unusual', plan)).steps, []);
+});
