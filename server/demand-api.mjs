@@ -60,6 +60,7 @@ export function registerDemandRoutes(app) {
   });
   app.post('/api/demand/plan',(req,res)=>{
     if(!routeQuota(req,'demand-plan',{minuteLimit:3,dayLimit:100}))return res.status(429).json({error:'Demand-planning limit reached.'});
+    if(req.body?.save===true&&!canEdit(req))return res.status(401).json({error:'Saving a forecast needs organizer access.'});
     const sourceId=req.body?.sourceId,source=sourceId?store.load(sourceId):null;
     if(sourceId&&!source)return res.status(404).json({error:'Saved Qloo source not found.'});
     try {

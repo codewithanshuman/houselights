@@ -25,7 +25,7 @@ test('shared reports are readable, every mutation and private pipeline read requ
   const id = store.save(fixture());
   assert.equal((await fetch(`${base}/api/memo/${id}`)).status, 200);
   assert.equal((await fetch(`${base}/api/pipeline/${id}`)).status, 401);
-  assert.equal((await post(`/api/gm/${id}/run`, {})).status, 401);
+  assert.equal((await post(`/api/gm/${id}/benchmark`, {})).status, 401);
   assert.equal((await post(`/api/venues/${id}/capacity-review`, {})).status, 401);
   assert.equal((await post(`/api/venues/${id}/qualify`, {})).status, 401);
   assert.equal((await post(`/api/gm/${id}/season-research`, {})).status, 401);

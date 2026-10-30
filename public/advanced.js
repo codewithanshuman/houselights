@@ -33,12 +33,13 @@
     for(const event of input.events)addEvent({...event,start:date(event.start),end:date(event.end),depositAt:date(event.depositAt)});
   }
   $('portfolio-add').onclick=()=>addEvent();addEvent();addEvent();
-  $('portfolio-rehearsal').onclick=()=>{
-    if(!state.savedId){$('portfolio-status').textContent='Load a saved decision first.';return;}
+  $('portfolio-rehearsal').onclick=()=>action('portfolio-status',async()=>{
+    if(!state.savedId){const {cases}=await fetch('/api/judge/cases').then(r=>r.json()),plan=cases.find(row=>!row.synthetic&&row.feasible);if(!plan)throw new Error('No saved plan is available yet.');await loadSaved(await openPublishedPlan(plan.id));}
+    const city=state.memo?.input?.city??'Your city',first=Date.now()+60*864e5;
     $('portfolio-events').innerHTML='';eventSequence=0;
-    for(const [index,date] of ['2027-04-01','2027-04-15'].entries())addEvent({name:`Illustrative night ${index+1}`,sourceId:state.savedId,resource:'Illustrative hall',start:date+'T18:00',end:date+'T23:00',depositAt:'2027-03-01T12:00'});
-    $('portfolio-budget').value=String(Math.round((state.memo?.constraints?.budget??14000)*1.6));$('portfolio-reuse').value='2';$('portfolio-status').textContent='Illustrative planning dates and shared evidence only. Edit the assumptions before treating this as an actual event plan.';
-  };
+    for(const index of [0,1]){const date=new Date(first+index*14*864e5).toISOString().slice(0,10);addEvent({name:`${city} night ${index+1}`,sourceId:state.savedId,resource:`${city} main room`,start:date+'T18:00',end:date+'T23:00',depositAt:new Date(first-30*864e5).toISOString().slice(0,10)+'T12:00'});}
+    $('portfolio-budget').value=String(Math.round((state.memo?.constraints?.budget??14000)*1.6));$('portfolio-reuse').value='2';$('portfolio-status').textContent='Two nights built from a real saved plan. The dates and room are planning inputs: change them to match your season.';
+  });
   $('portfolio-form').onsubmit=event=>{event.preventDefault();action('portfolio-status',async()=>{
     const events=[...$('portfolio-events').children].map(section=>{const values=Object.fromEntries([...section.querySelectorAll('[data-field]')].map(input=>[input.dataset.field,input.value]));return {...values,id:`event-${section.dataset.event}`,start:utc(values.start),end:utc(values.end),depositAt:utc(values.depositAt),fixedCost:Number(values.fixedCost),depositPercent:Number(values.depositPercent),weight:Number(values.weight)};});
     portfolio=await request('/api/portfolios',{budget:Number($('portfolio-budget').value),maxBookingsPerArtist:Number($('portfolio-reuse').value),restHours:Number($('portfolio-rest').value),cashLimits:JSON.parse($('portfolio-cash').value),events});renderPortfolio();history.replaceState(null,'',location.pathname+'#portfolio='+portfolio.id);

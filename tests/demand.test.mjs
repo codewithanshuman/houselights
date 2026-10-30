@@ -132,7 +132,8 @@ test('production access gate protects private demand evidence and all writes',as
   try {
     assert.equal((await fetch(origin+'/api/demand/model')).status,401);
     assert.equal((await fetch(origin+'/api/demand/reported-outcomes')).status,401);
-    assert.equal((await fetch(origin+'/api/demand/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(raw)})).status,401);
+    assert.equal((await fetch(origin+'/api/demand/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...raw,save:true})})).status,401);
+    assert.equal((await fetch(origin+'/api/demand/outcomes',{method:'POST',headers:{'content-type':'application/json'},body:'{}'})).status,401);
     assert.equal((await fetch(origin+'/api/demand/model',{headers:{authorization:`Bearer ${process.env.ORGANIZER_TOKEN}`}})).status,200);
   } finally {
     if(oldToken===undefined)delete process.env.ORGANIZER_TOKEN;else process.env.ORGANIZER_TOKEN=oldToken;

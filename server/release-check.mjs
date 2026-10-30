@@ -34,7 +34,7 @@ export async function verifyPublicRelease(value,{allowLocal=false,allowSynthetic
     const access=await request('/api/access');
     record('anonymous-is-read-only',access.status===200&&access.data.protected===true&&access.data.editable===false);
     if(!checks.find(c=>c.name==='anonymous-is-read-only').passed)throw new Error('Access protection failed; further checks stopped.');
-    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/plan','/api/demand/twins','/api/financial/jobs','/api/experiments','/api/experiments/discovery']){
+    for(const path of ['/api/judge/cases','/api/research-runs','/api/benchmarks','/api/demand/outcomes','/api/demand/historical-events','/api/financial/jobs','/api/experiments','/api/experiments/discovery']){
       const response=await request(path,{body:{}});
       record('protected-write:'+path,response.status===401);
     }

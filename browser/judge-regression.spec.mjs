@@ -968,6 +968,19 @@ test('changing currency moves an untouched budget, and keeps one the visitor typ
   await expect(page.locator('#plan-budget')).toHaveValue('31000');
 });
 
+test('a visitor can use the Demand Lab and the event portfolio from a saved plan, with no token or ID', async ({ page }) => {
+  await page.goto(`${origin}/demand.html`);
+  await expect(page.locator('#plan-status')).toContainText('Loaded');
+  await expect(page.locator('input[name=save]')).toBeHidden();
+  await page.getByRole('button', { name: 'Analyze the demand decision' }).click();
+  await expect(page.locator('#result-summary')).toContainText('feasible');
+  await page.goto(`${origin}/index.html`);
+  await page.getByRole('button', { name: /Event portfolio/ }).first().click();
+  await page.locator('#portfolio-rehearsal').click();
+  await expect(page.locator('#portfolio-status')).toContainText('real saved plan');
+  await expect(page.locator('[data-field=name]').first()).not.toHaveValue(/Illustrative/);
+});
+
 test('a dropped act can be replaced by a fresh Qloo search, leaving the plan unchanged', { tag: '@cross-browser' }, async ({ page }) => {
   await page.goto(`${origin}/judge.html`);
   await page.getByRole('button', { name: 'Drop Sault and rebook' }).click();

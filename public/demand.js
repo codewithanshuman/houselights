@@ -47,7 +47,7 @@
   }
   // Private model records are requested only after organizer access is confirmed, so an
   // anonymous visit makes no request that is bound to fail.
-  async function refreshModel(){try{const access=await read('/api/access');if(!access.editable){$('model-status').textContent='Private model records need organizer access.';$('model-details').textContent='Unlock organizer access to inspect private training records.';$('twin-validation').textContent='';return;}
+  async function refreshModel(){try{const access=await read('/api/access'),saving=form.elements.namedItem('save');saving.checked=access.editable===true;saving.closest('label').style.display=access.editable?'':'none';if(!access.editable){$('model-status').textContent='The paid-ticket model stays off until enough real outcomes are recorded.';$('model-details').textContent='Training records are private to the organizer.';$('twin-validation').textContent='';return;}
     renderModel(await read('/api/demand/model'));
       const validation=await read('/api/demand/twin-validation');
       $('twin-validation').textContent=validation.count
@@ -84,7 +84,7 @@
   }
   $('unlock').onclick=async()=>{window.organizerAccess.setToken($('token').value.trim());$('token').value='';
     try{const access=await read('/api/access');$('access-state').textContent=access.editable?'Organizer access enabled.':'This token does not unlock the server.';}catch(error){$('access-state').textContent=error.message;}await refreshModel();};
-  $('lock').onclick=()=>{window.organizerAccess.clear();$('access-state').textContent='Read-only until unlocked.';void refreshModel();};
+  $('lock').onclick=()=>{window.organizerAccess.clear();$('access-state').textContent='Planning is open. Saving forecasts and recording real outcomes need organizer access.';void refreshModel();};
   $('add-artist').onclick=()=>{try{artistRow();}catch(error){$('plan-status').textContent=error.message;}};
   function rebalanceSeeds(){const rows=[...$('twin-seeds').children],each=Math.floor(1000/rows.length)/1000;
     rows.forEach((row,index)=>{row.querySelector('[data-twin=weight]').value=index===rows.length-1?String(1-each*(rows.length-1)):String(each);});}
@@ -99,9 +99,14 @@
     $('artists').replaceChildren();for(const item of source.memo.items.slice(0,20))artistRow({id:item.id,name:item.name,fee:item.terms?.fee,genre:item.terms?.genre,available:item.terms?.available});
     const defaults=[...(source.memo.input.anchorIds||[]),...source.memo.items.map(item=>item.id)];
     [...$('twin-seeds').children].forEach((row,index)=>{row.querySelector('[data-twin=anchorIds]').value=defaults[index]||defaults[0]||'';});
+    const rules=source.memo.constraints??{};for(const [name,rule] of [['budget',rules.budget],['slots',rules.slots],['maxPerGenre',rules.maxPerGenre]])if(rule!=null)form.elements.namedItem(name).value=rule;
+    if(source.memo.currency)form.elements.namedItem('currency').value=source.memo.currency;
     state.twinId=null;$('twin-receipts').replaceChildren();$('twin-status').textContent='Taste seeds loaded. Research their Qloo rankings to activate a synthetic audience scenario.';
     $('plan-status').textContent=`Loaded ${Math.min(source.memo.items.length,20)} artists. Confirm fees, availability, capacity and date before calculating.`;
     return source;}
+  async function openPlan(caseId){$('plan-status').textContent='Opening the saved plan…';try{const {id}=await read(`/api/judge/cases/${encodeURIComponent(caseId)}/source`,{});form.elements.namedItem('sourceId').value=id;await loadSource(id);}catch(error){$('plan-status').textContent=error.message;}}
+  async function listPlans(){try{const {cases}=await read('/api/judge/cases'),plans=cases.filter(row=>!row.synthetic&&row.feasible),select=$('source-plan');if(!plans.length)return;
+    select.replaceChildren(...plans.map(row=>{const option=document.createElement('option');option.value=row.id;option.textContent=row.title;return option;}));select.onchange=()=>openPlan(select.value);await openPlan(select.value);}catch(error){$('plan-status').textContent=error.message;}}
   $('load-source').onclick=async()=>{try{await loadSource(value('sourceId'));}catch(error){$('plan-status').textContent=error.message;}};
   function showTwin(twin){state.twinId=twin.id;$('load-twin-id').value=twin.id;
     $('twin-status').textContent=`Saved audience twin ${twin.id}: ${twin.clusterCount} synthetic segments from ${twin.originalSeedCount} ${twin.synthetic?'synthetic fixture':'Qloo'} rank patterns. ${twin.excludedSeedArtistIds.length?`${twin.excludedSeedArtistIds.length} seed artist(s) excluded from ranked lineup choices. `:''}Use Analyze to optimize against its declared assumptions.`;
@@ -131,5 +136,6 @@
   for(let index=0;index<4;index++)artistRow();
   form.elements.namedItem('eventDate').value=new Date(Date.now()+45*864e5).toISOString().slice(0,10);
   void refreshModel();
+  void listPlans();
   labelSeedRows();
 })();

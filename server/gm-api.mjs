@@ -1,4 +1,5 @@
 import * as store from './store.mjs';
+import { canEdit, routeQuota } from './access.mjs';
 import { Run, isMock } from './qloo.mjs';
 import { normalizeFestivalResearch, festivalWorkflowCount } from './festival-research.mjs';
 import { runFestivalGM, reviseFestival, cancelFestival } from './gm.mjs';
@@ -24,6 +25,8 @@ export function registerGMRoutes(app) {
     const source = store.load(req.params.id), action = req.params.action;
     if (!['run', 'benchmark', 'revise', 'season', 'season-research', 'cancel'].includes(action)) return res.status(404).json({ error: 'Unknown GM action.' });
     if (!source) return res.status(404).json({ error: 'Saved run not found.' });
+    // A festival run can spend dozens of Qloo calls, so visitors share a small daily allowance.
+    if (action === 'run' && !canEdit(req) && !routeQuota(req, 'public-gm-run', { minuteLimit: 1, dayLimit: 8 })) return res.status(429).json({ error: 'Festival research limit reached for now. Saved decisions remain readable.' });
     try {
       let snapshot;
       if (action === 'run' || action === 'season-research') {

@@ -7,7 +7,7 @@
   document.querySelector('.page-footer').insertAdjacentHTML('beforebegin', `<section class="view" id="view-gm" aria-label="Festival GM" hidden>
     <div class="page-heading compact-heading"><div><p class="eyebrow">THE FESTIVAL DECISION, END TO END</p><h1>Your lineup.<br>Your next move.</h1><p class="lede">Research the market. Build a connected bill. Recover when plans change.</p><p class="gm-steps"><span>01 Brief & budget</span><span>02 Cultural research</span><span>03 Lineup decision</span><span>04 Cancellation & recovery</span></p></div></div>
     <div class="gm-layout">
-    <section class="panel"><h2>Saved examples & organizer access</h2><p id="gm-access-status">Checking access…</p><div class="gm-fields"><label>Saved judge example<select id="gm-examples"><option value="">Choose a saved example</option></select></label><label>Organizer access token<input id="gm-token" type="password" autocomplete="off" placeholder="For organizer edits only"></label></div><div class="gm-actions"><button id="gm-unlock" class="button dark">Unlock organizer actions</button><button id="gm-lock" class="button subtle">Clear access</button><button id="gm-pin" class="button subtle" data-gm-write>Pin current example</button></div><p class="field-hint">Credentials stay in this tab’s memory. Shared reports are read-only on protected deployments.</p></section>
+    <section class="panel"><h2>Start from a saved plan</h2><p id="gm-access-status">Checking access…</p><div class="gm-fields"><label>Saved plan<select id="gm-examples"><option value="">Choose a saved plan</option></select></label><label>Organizer access token<input id="gm-token" type="password" autocomplete="off" placeholder="For organizer edits only"></label></div><div class="gm-actions"><button id="gm-unlock" class="button dark">Unlock organizer actions</button><button id="gm-lock" class="button subtle">Clear access</button><button id="gm-pin" class="button subtle" data-gm-write>Pin current example</button></div><p class="field-hint">Credentials stay in this tab’s memory. Shared reports are read-only on protected deployments.</p></section>
     <section class="panel"><h2>Research the festival audience</h2><p id="gm-source">Build or load a slate in Slate studio to begin.</p><div class="gm-fields"><label>Cities to compare<input id="gm-markets" placeholder="London, Paris" maxlength="400"></label><label>Decision city<input id="gm-city" placeholder="London" maxlength="100"></label><label>Optional age signal<select id="gm-age"><option value="">Audience anchors only</option><option value="24_and_younger">24 and younger</option><option value="25_to_29">25–29</option><option value="30_to_34">30–34</option><option value="35_to_44">35–44</option><option value="45_to_54">45–54</option><option value="55_and_older">55 and older</option></select></label></div><button id="gm-run" class="button primary" data-gm-write>Research & optimize festival <span class="ui-icon" data-icon="arrow-right" aria-hidden="true"></span></button><p class="field-hint">Uses the saved pool, quotes and availability. Research may take up to two minutes; every missing result stays visible.</p><div id="gm-operation" class="gm-status" role="status" aria-live="polite" hidden></div></section>
     <div id="gm-report"></div>
     <section class="panel"><h2>Research themed nights</h2><p>Rank themes for each night’s audience, then research sponsors, music, local partners and media from its individual theme.</p><div id="gm-theme-dates"></div><button type="button" id="gm-theme-add" class="button subtle">Add a date</button><div class="gm-fields"><label>Reference market (optional)<input id="gm-theme-reference" maxlength="100" placeholder="United Kingdom"></label><label>Sponsor categories (optional, comma-separated)<input id="gm-theme-tags" maxlength="500" placeholder="Technology, apparel"></label></div><button id="gm-theme-run" class="button dark" data-gm-write>Research & save themed nights</button><p class="field-hint">Requires saved festival research. Up to eight dates; every date is retained. Family life-stage is unmeasured. Partner leads are uncontacted and do not establish availability.</p><div id="gm-theme-report"></div></section>
@@ -21,7 +21,7 @@
   const td = values => `<tr>${values.map(value => `<td>${value}</td>`).join('')}</tr>`;
   const status = (text, failed = false) => { $('gm-operation').hidden = false; $('gm-operation').classList.toggle('gm-error', failed); $('gm-operation').textContent = text; };
   function buttons() {
-    document.querySelectorAll('[data-gm-write]').forEach(button => { button.disabled = busy || state.busy || !editable || !state.savedId || unsaved(); });
+    document.querySelectorAll('[data-gm-write]').forEach(button => { button.disabled = busy || state.busy || !state.savedId || unsaved() || (!editable && organizerOnly(button)); });
     $('gm-examples').disabled = busy || state.busy;
     $('gm-theme-run').disabled ||= !current()?.festivalResearch;
   }
@@ -121,13 +121,15 @@
     $('gm-benchmark-report').innerHTML = benchmark ? `<p class="gm-status">${e(benchmark.status)} · objective diagnostic, not independent evidence</p><p>${e(benchmark.reason ?? benchmark.methodology)}</p>${benchmark.comparison ? `<p>Objective difference: ${number(benchmark.comparison.policyPointDelta)} points. Control: ${e(names(benchmark.control.selectedIds))}.</p>` : ''}` : '<p>No control has been run for this decision. A configured LLM is required.</p>';
     buttons();
   }
+  // The LLM control and themed-night research spend the most, so they stay with the organizer.
+  const organizerOnly = button => button.id === 'gm-benchmark' || button.id === 'gm-theme-run' || 'themeReplace' in button.dataset || 'themeSupport' in button.dataset;
   async function refresh() {
     try {
       if (state.savedId && !current()) { const response = await fetch(`/api/memo/${encodeURIComponent(state.savedId)}`); if (response.ok) state.snapshot = await response.json(); }
-      const [access, examples] = await Promise.all([fetch('/api/access').then(r => r.json()), fetch('/api/examples').then(r => r.json())]);
+      const [access, examples, plans] = await Promise.all([fetch('/api/access').then(r => r.json()), fetch('/api/examples').then(r => r.json()), fetch('/api/judge/cases').then(r => r.json())]);
       editable = access.editable === true;
-      $('gm-access-status').textContent = access.protected ? editable ? 'Organizer access unlocked for this tab.' : 'Read-only access. Open a saved example or unlock organizer actions.' : 'Local development access. Public deployment will require an organizer token.';
-      $('gm-examples').innerHTML = '<option value="">Choose a saved example</option>' + (Array.isArray(examples) ? examples : []).map(example => `<option value="${e(example.id)}">${e(example.city)} · ${example.mock ? 'Synthetic' : 'Qloo'} · ${e(example.title)}</option>`).join('');
+      $('gm-access-status').textContent = access.protected ? editable ? 'Organizer access unlocked for this tab.' : 'Open a saved plan to research its audience, change the lineup or recover from a cancellation. The LLM control and themed-night research need organizer access.' : 'Local development access. Public deployment will require an organizer token.';
+      $('gm-examples').innerHTML = '<option value="">Choose a saved plan</option>' + (Array.isArray(examples) ? examples : []).map(example => `<option value="${e(example.id)}">${e(example.city)} · ${example.mock ? 'Synthetic' : 'Qloo'} · ${e(example.title)}</option>`).join('') + (plans.cases ?? []).filter(plan => !plan.synthetic && plan.feasible).map(plan => `<option value="case:${e(plan.id)}">${e(plan.title)}</option>`).join('');
       render();
     } catch (failure) { status(failure.message, true); }
   }
@@ -163,7 +165,7 @@
   };
   $('gm-unlock').onclick = async () => { window.organizerAccess.setToken($('gm-token').value.trim()); $('gm-token').value = ''; await refresh(); };
   $('gm-lock').onclick = () => { window.organizerAccess.clear(); refresh(); };
-  $('gm-examples').onchange = async () => { if ($('gm-examples').value) { await loadSaved($('gm-examples').value); render(); } };
+  $('gm-examples').onchange = async () => { const choice = $('gm-examples').value; if (!choice) return; try { await loadSaved(choice.startsWith('case:') ? await openPublishedPlan(choice.slice(5)) : choice); render(); } catch (failure) { status(failure.message, true); } };
   $('gm-pin').onclick = async () => { const response = await fetch(`/api/examples/${state.savedId}/pin`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }); const result = await response.json(); if (!response.ok) status(result.error, true); else { status('Saved example pinned for judge access.'); refresh(); } };
   $('gm-study').onclick = async () => {
     try {

@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { db, consumeQuota, transaction } from './database.mjs';
+import { canEdit, routeQuota } from './access.mjs';
 import * as store from './store.mjs';
 import { optimizePortfolio } from './portfolio.mjs';
 
@@ -7,17 +8,17 @@ db.exec('CREATE TABLE IF NOT EXISTS portfolios(id TEXT PRIMARY KEY, body TEXT NO
 const read=id=>{const row=db.prepare('SELECT body FROM portfolios WHERE id=?').get(id);return row?JSON.parse(row.body):null;};
 const publicRecord=record=>({id:record.id,createdAt:record.createdAt,parentId:record.parentId??null,recovery:record.recovery??null,input:record.input,...record.result});
 const resolve=record=>(id,eventId)=>record.sourceOverrides?.[eventId]??store.load(id);
-function save(record){
+function save(record,{pin=false}={}){
   const id=randomBytes(9).toString('base64url');
   transaction(()=>{
     db.prepare('INSERT INTO portfolios(id,body) VALUES(?,?)').run(id,JSON.stringify({...record,id,createdAt:new Date().toISOString()}));
-    for(const event of record.input.events)db.prepare('UPDATE snapshots SET pinned=1 WHERE id=?').run(event.sourceId);
+    if(pin)for(const event of record.input.events)db.prepare('UPDATE snapshots SET pinned=1 WHERE id=?').run(event.sourceId);
   });return id;
 }
 export function registerPortfolioRoutes(app){
-  const quota=(req,res,next)=>{const minute=Math.floor(Date.now()/60000);if(!consumeQuota([{key:`portfolio:${minute}`,limit:12,expires:(minute+1)*60000}]))return res.status(429).json({error:'Portfolio computation limit reached.'});next();};
+  const quota=(req,res,next)=>{const minute=Math.floor(Date.now()/60000);if(!consumeQuota([{key:`portfolio:${minute}`,limit:12,expires:(minute+1)*60000}])||(!canEdit(req)&&!routeQuota(req,'public-portfolio',{minuteLimit:6,dayLimit:200})))return res.status(429).json({error:'Portfolio computation limit reached.'});next();};
   app.post('/api/portfolios',quota,(req,res)=>{
-    try{const input=req.body,result=optimizePortfolio(input,store.load);const id=save({input,result,sourceOverrides:{}});res.status(201).json(publicRecord(read(id)));}
+    try{const input=req.body,result=optimizePortfolio(input,store.load);const id=save({input,result,sourceOverrides:{}},{pin:canEdit(req)});res.status(201).json(publicRecord(read(id)));}
     catch(error){res.status(400).json({error:error.message});}
   });
   app.get('/api/portfolios/:id',(req,res)=>{
@@ -40,7 +41,7 @@ export function registerPortfolioRoutes(app){
       }
       const recovery={eventId,artistId,scope:'Hypothetical replacement with every surviving booking fixed. Original planning fees apply; cancellation fees and refunds are not inferred.'};
       const next={input:record.input,sourceOverrides,parentId:record.id,recovery};
-      next.result=optimizePortfolio(next.input,resolve(next));const id=save(next);
+      next.result=optimizePortfolio(next.input,resolve(next));const id=save(next,{pin:canEdit(req)});
       res.status(201).json(publicRecord(read(id)));
     }catch(error){res.status(400).json({error:error.message});}
   });

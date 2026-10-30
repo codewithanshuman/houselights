@@ -1,5 +1,6 @@
 import {createHash,randomBytes} from 'node:crypto';
 import {db,consumeQuota,refundQuota,transaction} from './database.mjs';
+import {routeQuota} from './access.mjs';
 import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
@@ -262,6 +263,15 @@ export function registerJudgeRoutes(app) {
   app.post('/api/judge/cases',handle((req,res)=>{
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
     experimentCache.clear();res.status(201).json(publishJudgeCase(source,req.body?.title));
+  }));
+  // The planning tools work from a saved source. A published plan is opened as one, so a
+  // visitor can use them without an ID. The copy is unpinned and carries only public fields.
+  const caseSources=new Map();
+  app.post('/api/judge/cases/:id/source',handle((req,res)=>{
+    const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
+    const known=caseSources.get(record.id);if(known&&store.load(known))return res.json({id:known});
+    if(!routeQuota(req,'case-source',{minuteLimit:10,dayLimit:200}))throw fault('Please try again in a minute.',429);
+    const id=store.save({...record.snapshot});caseSources.set(record.id,id);res.status(201).json({id});
   }));
   // Fee robustness and flip points are derived from the saved snapshot, so they are computed
   // on read (a few milliseconds) and kept beside the experiment cache.

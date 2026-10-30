@@ -439,6 +439,13 @@ function exportRun() {
   toast('Exported evidence, booking assumptions, and decision policy.');
 }
 
+// Opens a published plan as a saved source and returns its ID.
+async function openPublishedPlan(caseId) {
+  const response = await fetch(`/api/judge/cases/${encodeURIComponent(caseId)}/source`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'That plan could not be opened.');
+  return result.id;
+}
 async function loadSaved(id) {
   replayTimers.forEach(clearTimeout); replayTimers = [];
   state.trace = []; $('live-trace').hidden = true; $('replay-trace').hidden = true;

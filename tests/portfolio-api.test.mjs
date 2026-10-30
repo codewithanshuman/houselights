@@ -22,9 +22,10 @@ const source=()=>{
   const memo={items,currency:'GBP',mode:'mock',input:{city:'London',anchors:['anchor']},constraints:{budget:100,slots:1}};memo.slate=optimizeSlate(items,memo.constraints);
   return store.save({mock:true,memo,receipts:[{id:'r1',tool:'rank',status:'ok',source:'synthetic'}]});
 };
-test('portfolio APIs protect writes, retain sources, ignore client scores and preserve survivors during recovery',async()=>{
+test('portfolio APIs retain only organizer sources, ignore client scores and preserve survivors during recovery',async()=>{
   const sourceId=source(),raw={budget:100,maxBookingsPerArtist:1,events:['01','15'].map((day,i)=>({id:`e${i}`,sourceId,start:`2027-04-${day}T18:00:00Z`,end:`2027-04-${day}T23:00:00Z`,resource:'Hall',items:[{id:'evil',fit:10000}]}))};
-  assert.equal((await post('/api/portfolios',raw,false)).status,401);
+  assert.equal((await post('/api/portfolios',raw,false)).status,201);
+  assert.equal(db.prepare('SELECT pinned FROM snapshots WHERE id=?').get(sourceId).pinned,0,'a visitor pins nothing');
   const response=await post('/api/portfolios',raw);assert.equal(response.status,201);const result=await response.json();assert.equal(result.status,'optimal');assert.equal(result.readiness.status,'evidence_required');assert.ok(!JSON.stringify(result.events).includes('evil'));
   assert.equal(db.prepare('SELECT pinned FROM snapshots WHERE id=?').get(sourceId).pinned,1);
   const old=await (await realFetch(base+'/api/portfolios/'+result.id)).json();
