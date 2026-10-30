@@ -851,7 +851,7 @@ test('the landing page shows the real plan and leads into the Booking Desk', { t
   await expect(page.locator('[data-fan="off-fee"]')).toHaveText('$9,000 · a different bill');
   await expect(page.locator('[data-pipe="candidates"]')).toHaveAttribute('data-value', '8');
   await expect(page.locator('.pipeline-track .tl-step')).toHaveCount(4);
-  await expect(page.locator('.qa')).toHaveCount(6);
+  await expect(page.locator('.qa')).toHaveCount(9);
   await expect(page.locator('.site-footer')).toBeAttached();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.locator('.hero-cta').first().click();

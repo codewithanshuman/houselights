@@ -76,6 +76,7 @@ test('anyone can run fresh research, capped and rate limited; labelled synthetic
   assert.match(html.headers.get('content-security-policy'),/default-src 'none'/);assert.match(await html.text(),/Next actions<\/h2>/);
   const md=await realFetch(`${base}/api/autopilot/runs/${saved.id}/packet?format=md`);assert.match(md.headers.get('content-disposition'),/attachment/);
   assert.equal((await realFetch(`${base}/api/autopilot/runs/not-a-run`)).status,404);
+  await new Promise(resolve=>setTimeout(resolve,60000-Date.now()%60000<3000?3100:0)); // Stay inside one rate-limit minute.
   const visitor=await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:16});
   assert.equal(visitor.status,201);const visited=await visitor.json();assert.ok(visited.researchCalls<=10,'a visitor run is capped at 10 calls');
   assert.equal((await post(`/api/judge/cases/${recordedCase}/autopilot/live`,{maxCalls:4})).status,429,'one public run a minute');

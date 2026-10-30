@@ -69,6 +69,7 @@ test('a visitor can build a season without pinning anything, and can recover fro
 
 test('a visitor can run the Festival GM on a saved plan, but not the costliest research', async () => {
   const { sourceId } = await openPlan();
+  await new Promise(resolve=>setTimeout(resolve,60000-Date.now()%60000<3000?3100:0)); // Stay inside one rate-limit minute.
   const run = await post(`/api/gm/${sourceId}/run`, {});
   assert.equal(run.status, 201, await run.clone().text());
   const { id } = await run.json();
