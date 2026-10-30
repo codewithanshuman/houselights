@@ -42,7 +42,9 @@ export function mockCall(tool, args) {
     }
     // Saved mock decisions must keep their IDs after a server restart, when the
     // process-local describe registry is empty. Ranking does not re-resolve IDs.
-    case 'rank': return envelope([...args.options].sort((a, b) => h(a) - h(b)).map(id => known.get(id) ?? { entity_id: id, name: id, type: 'urn:entity:artist' }));
+    // Qloo refuses more than ten options, so the fixture does too.
+    case 'rank': if (args.options.length > 10) return { ...envelope([], 'error'), summary: 'Invalid rank input: /options: must not have more than 10 items', error: { code: 'TOOL_INPUT', retryable: false } };
+      return envelope([...args.options].sort((a, b) => h(a) - h(b)).map(id => known.get(id) ?? { entity_id: id, name: id, type: 'urn:entity:artist' }));
     case 'where_popular': {
       const centers = { London: [51.5074, -.1278], Paris: [48.8566, 2.3522], Berlin: [52.52, 13.405], Amsterdam: [52.3676, 4.9041] };
       const [lat, lon] = centers[args.within] || [40, -73];

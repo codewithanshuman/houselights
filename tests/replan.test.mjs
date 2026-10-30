@@ -12,6 +12,8 @@ const dir = mkdtempSync(join(tmpdir(), 'houselights-replan-'));
 process.env.DATA_DIR = dir;
 const { createApp } = await import('../server/app.mjs');
 const { loadJudgeCase } = await import('../server/judge.mjs');
+const { buildReplan, MAX_OPTIONS } = await import('../server/replan.mjs');
+const { Run } = await import('../server/qloo.mjs');
 const { db } = await import('../server/database.mjs');
 const server = createApp().listen(0, '127.0.0.1');
 await new Promise(resolve => server.once('listening', resolve));
@@ -44,6 +46,16 @@ test('a cancelled act is replaced by a fresh Qloo run, keeps the rest of the bil
   const again = await post(`/api/judge/cases/${id}/replan`, { cancelId });
   assert.equal(again.status, 200);
   assert.equal((await again.json()).cached, true);
+});
+
+test('a large pool still fits the ten options Qloo ranks at once, and the surviving act is always kept', async () => {
+  const items = Array.from({ length: 12 }, (_, i) => ({ id: `mock-pool-${i}`, name: `Pool act ${i}`, rank: i + 1, of: 12, fit: 1 - i / 12, local: 'no data', momentum: 'unknown', terms: { fee: 100, available: true, genre: '' }, evidence: { rank: true } }));
+  const record = { snapshot: { receipts: [], memo: { input: { city: 'Leeds', anchors: [] }, items, constraints: { budget: 1000, slots: 2, maxPerGenre: 2, discoveryMin: 0, riskTolerance: 50, lockedIds: [], excludedIds: [] }, slate: { feasible: true, selectedIds: ['mock-pool-11', 'mock-pool-0'] } } } };
+  const run = new Run({ budget: 2, cacheStore: new Map() });
+  const replan = await buildReplan(record, 'mock-pool-0', run);
+  assert.ok(run.receipts[1].args.options.length <= MAX_OPTIONS);
+  assert.ok(run.receipts[1].args.options.includes('mock-pool-11'), 'the surviving act stays in the ranking, even when ranked last');
+  assert.ok(replan.acts.some(act => act.id === 'mock-pool-11'));
 });
 
 test('only a booked act can be replaced, and searches are rate limited', async () => {

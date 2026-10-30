@@ -8,7 +8,9 @@ import { estimateFee } from './fee-tiers.mjs';
 import { nameOf, idOf } from './shape.mjs';
 
 export const REPLAN_CALLS = 2;
-const MAX_NEW = 4, low = value => String(value ?? '').toLowerCase().trim();
+// Qloo ranks at most ten options in one call.
+export const MAX_OPTIONS = 10;
+const MAX_NEW = 4, MIN_NEW = 2, low = value => String(value ?? '').toLowerCase().trim();
 const fault = (message, status = 400) => Object.assign(new Error(message), { status });
 const usable = env => ['ok', 'partial', 'degraded'].includes(env.status);
 export const REPLAN_NOTE = 'A fresh Qloo run for this cancellation. New acts have fees estimated from Qloo popularity tiers and assumed availability, and no location or trend checks yet. The saved plan is unchanged.';
@@ -30,16 +32,19 @@ export async function buildReplan(record, cancelId, run) {
     `Find a replacement for ${cancelled?.name ?? 'the cancelled act'} that fits the rest of the bill in ${city}`);
   if (!usable(found.env)) throw fault('Qloo could not search for a replacement just now. The plan is unchanged.', 502);
   const known = new Set([...memo.items.flatMap(item => [low(item.id), low(item.name)]), ...anchors, ...anchorIds.map(low)]);
-  const fresh = [];
+  // Room for new acts, keeping the surviving acts and the best-ranked of the rest of the pool.
+  const room = Math.max(MIN_NEW, Math.min(MAX_NEW, MAX_OPTIONS - pool.length)), fresh = [];
   for (const row of found.env.results) {
     const id = idOf(row), name = nameOf(row), tier = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
     const fee = tier == null ? null : Math.round(tier * (record.fx?.rate ?? 1));
-    if (!id || !name || fee == null || known.has(low(id)) || known.has(low(name)) || fresh.length >= MAX_NEW) continue;
+    if (!id || !name || fee == null || known.has(low(id)) || known.has(low(name)) || fresh.length >= room) continue;
     known.add(low(id)); known.add(low(name));
     fresh.push({ id, name, found: true, terms: { fee, available: true, genre: '' }, local: 'no data', momentum: 'unknown', isNew: true,
       evidence: { rank: false, local: false, comparison: false, trends: false }, receipts: [found.receipt.id] });
   }
-  const candidates = [...pool.map(item => ({ ...item })), ...fresh], ids = candidates.map(item => item.id);
+  const others = pool.filter(item => !survivors.includes(item.id)).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+  const kept = [...pool.filter(item => survivors.includes(item.id)), ...others].slice(0, MAX_OPTIONS - fresh.length);
+  const candidates = [...kept.map(item => ({ ...item })), ...fresh], ids = candidates.map(item => item.id);
   const ranked = await run.call('rank', { options: ids, option_type: 'artist', signals, signal_location: city },
     `Rank the remaining pool and ${fresh.length} newly found ${fresh.length === 1 ? 'act' : 'acts'} for the same audience`);
   const rows = ranked.receipt.evidence?.rows ?? [], byKey = new Map(candidates.flatMap(item => [[low(item.id), item.id], [low(item.name), item.id]]));
