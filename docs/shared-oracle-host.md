@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of 2a78395 — 31 October 2026
+
+The public host runs `2a78395`, and `/healthz` over public HTTPS reports it. Visitors can now use the Demand Lab, Audience Twin, event portfolio and Festival GM from a real saved plan, with no token or pasted ID. The outcomes ledger, LLM control, themed-night research, Proof Lab experiments and the organizer workspace stay locked. `dabe11f` went out first; on real Qloo its Festival GM still returned 401 because research went through the queued runs route, which the mock tests did not show.
+
+- **Before the switch:** the backup `pre-2a78395` passed an isolated restore, and a copy is held off-host. The rollback drill reported `dabe11f`, served 12 cases and logged no errors.
+- **Switch:** only `RELEASE_COMMIT` changed in the release file. The other containers and the stream process were unchanged.
+- **After the switch:** all 90 release checks passed from outside. As a visitor on real Qloo, the Demand Lab, Audience Twin, a two-night portfolio and a Festival GM run all completed, and the locked routes still returned 401.
+- **Disk:** `pre-a85ab39` was removed, keeping `pre-2a78395` and `pre-dabe11f`. Disk is at 82% (8.6 GB free).
+
+**Rollback:** tag `houselights-shared:pre-2a78395` as `houselights-shared:local`, set `RELEASE_COMMIT=dabe11fa7d5df6d0a6783b01476863288b73e6ac`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of a85ab39 — 30 October 2026
 
 The public host runs `a85ab39`, and `/healthz` over public HTTPS reports it. It fixes five bugs from a sweep of the live site: a re-plan now works to the budget in force, changing currency moves an untouched budget, each currency has its own default ticket price, place names show each part once, and the 404 page returns to the landing page.
