@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of d360eec — 30 October 2026
+
+The public host runs `d360eece7a9e78ee4ea0aece348c2d4756d6be1d`, and `/healthz` over public HTTPS reports it. The main call to action is now a dark bar with a purple square and a dot-matrix arrow; on hover the square slides across and a row of arrows ripples. The 404 page keeps its hand-drawn button.
+
+- **Before the switch:** the backup `pre-d360eec` passed an isolated restore, and a copy is held off-host. The running image was tagged `houselights-shared:pre-d360eec`. The rollback drill reported `2f693d0`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:** `release:verify` passed all 90 checks. Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow. The settled console probe logged no errors. The button was checked on the live site at rest and on hover.
+
+**Rollback:** tag `houselights-shared:pre-d360eec` as `houselights-shared:local`, set `RELEASE_COMMIT=2f693d0274e0b004c7e31b19269a496e7887a3b2`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 2f693d0 — 30 October 2026
 
 The public host runs `2f693d0274e0b004c7e31b19269a496e7887a3b2`, and `/healthz` over public HTTPS reports it. The landing page (`home.html`, served at `/`) is split from the product (`judge.html`, the Booking Desk), so shared `?plan=` and `#case` links keep working. Live plans confirm the place on OpenStreetMap before any Qloo call and measure Qloo's location data against it; a tile over 75 km away cannot count as local fans. Each real plan links to Financial Risk on that plan.
