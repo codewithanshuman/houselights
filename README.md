@@ -12,13 +12,13 @@ Current deployed commit and executed checks: [verified production release](docs/
 
 ## Try it in two minutes
 
-1. **Open the Booking Desk.** It shows a saved live Qloo run: New York, fans of Leon Bridges, $14,500, 2 acts. Houselights books Michael Kiwanuka + Sault for $13,500.
+1. **Open the Booking Desk** (`/judge.html`; the landing page at `/` leads there). It shows a saved live Qloo run: New York, fans of Leon Bridges, $14,500, 2 acts. Houselights books Michael Kiwanuka + Sault for $13,500.
 2. **Turn Qloo off.** The same optimizer, candidates, fees and budget book Jordan Rakei + Hiatus Kaiyote for $9,000 instead. Qloo changes this decision in <!--claim:featuredNoise-->200 of 200<!--/claim--> random ±20% fee variations ([sensitivity](results/sensitivity.md)).
 3. **Change the plan.** Cut the budget or drop a booked act; the optimizer rebooks instantly on the same saved evidence.
 4. **See how solid it is.** Every plan reports how many of 500 random fee scenarios keep the same bill (estimated fees move across their Qloo popularity tier), a safer bill when one wins more often, the exact fee at which each booked act would flip it, and the budgets at which the bill changes. It also shows whether Qloo's affinities clearly separate each pick or leave it a coin flip, and which Qloo signal changes the decision on its own. A live plan also shows how the agent spent its Qloo calls: it checks the acts whose evidence could change the bill and skips those no result could change. All exact, from the same saved evidence.
 5. **See who the bill reaches.** Qloo’s taste graph spans more than music. Using the booked acts as the signal, three more Qloo calls return sponsor leads (brands), places in the city (for posters and an aftershow) and podcasts to advertise on. Qloo’s explainability shows which booked act drives each lead. This runs after the decision and never changes the bill; leads are cultural affinities, not partnerships.
 6. **Open a receipt.** Each act links to the saved Qloo ranking with its row highlighted, and each audience lead links to its own Qloo call.
-7. **Plan your own show.** Enter any city and up to three artists your audience loves. A live run makes up to 12 Qloo calls for the decision (usually under a minute), then 3 more to map its crowd, and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled as such.
+7. **Plan your own show.** Enter any city, town or village and up to three artists your audience loves. The place is confirmed on OpenStreetMap first, and Qloo's location data is measured against it: a plan says whether that data sits around the place, partly matches or lies elsewhere, and an act only counts as having local fans when a result is within 75 km. Only the place name is sent to OpenStreetMap. A live run makes up to 12 Qloo calls for the decision (usually under a minute), then 3 more to map its crowd, and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled as such.
 
 The full lab with Autopilot, the original research timeline and the method comparisons is at [desk.html](https://houselights.80-225-218-239.sslip.io/desk.html).
 
@@ -50,8 +50,8 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->415<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
-| `npm run test:browser` | <!--claim:browserTests-->72<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
+| `npm test` | <!--claim:unitTests-->420<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
+| `npm run test:browser` | <!--claim:browserTests-->75<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |
 | `node scripts/evaluate-sensitivity.mjs` | Fee-noise and near-tie band sweeps |

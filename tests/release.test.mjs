@@ -47,7 +47,7 @@ test('public release check exercises protected access and deterministic experime
   assert.equal(JSON.stringify(listJudgeCases()),before);
   assert.equal(db.prepare('SELECT count(*) AS n FROM snapshots').get().n,0);
   assert.equal(db.prepare('SELECT count(*) AS n FROM research_runs').get().n,0);
-  const page=await realFetch(origin+'/',{redirect:'manual'});assert.equal(page.status,302);assert.equal(page.headers.get('location'),'/judge.html');
+  const page=await realFetch(origin+'/',{redirect:'manual'});assert.equal(page.status,302);assert.equal(page.headers.get('location'),'/home.html');
 });
 test('release checks fail for an incorrect commit, synthetic mode or missing access protection',async()=>{
   seedPublicCases(seedFile());

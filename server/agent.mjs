@@ -113,7 +113,9 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       say(`Verify · local and audience context for ${candidate.name}`);
       const where = await run.call('where_popular', { entity: ref, entity_type: 'artist', within: city, limit: 10 }, `Geographic popularity evidence for ${candidate.name} within ${city}`);
       const compare = await run.call('compare_audiences', { group_a: anchorRefs, group_b: [ref], target_type: 'artist', limit: 10 }, `Compare ${candidate.name} and the anchor audience; no net-new percentage inferred`);
-      localEvidence = usable(where.env) && rows(where.env).length > 0;
+      // Live plans pass `nearPlace`: Qloo answers for any location string, so a tile only counts
+      // as local evidence when it lies near the place confirmed on the map.
+      localEvidence = usable(where.env) && rows(where.env).length > 0 && (typeof discover.nearPlace !== 'function' || discover.nearPlace(where.receipt.evidence?.rows));
       local = localEvidence ? 'yes' : 'no data';
       comparison = comparisonOf(compare.env).available;
       if (trendCall && usable(trendCall.env)) {

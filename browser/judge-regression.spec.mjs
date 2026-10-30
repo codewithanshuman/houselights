@@ -719,7 +719,7 @@ test('shock study headlines report the like-for-like solvable rate, never the po
   await expect(page.locator('body')).not.toContainText('9.7%');
 });
 
-const PUBLIC_PAGES=['/judge.html','/desk.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
+const PUBLIC_PAGES=['/home.html','/judge.html','/desk.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
 
 test('every page passes axe WCAG 2.1 AA with no serious or critical issues, at desktop and phone width', async ({ page }) => {
   test.setTimeout(240000);
@@ -836,6 +836,66 @@ test.describe('visual states', { tag: '@visual' }, () => {
     await page.goto(`${origin}/desk.html`, { waitUntil: 'networkidle' });
     await expect(page).toHaveScreenshot('mobile-first-screen.png', { mask: mask(page) });
   });
+});
+
+test('the landing page shows the real plan and leads into the Booking Desk', { tag: '@cross-browser' }, async ({ page }) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${origin}/home.html`);
+  await expect(page.locator('#hero-title')).toContainText('Book the bill');
+  await expect(page.locator('.fan-card')).toHaveCount(7);
+  await expect(page.locator('#plan-form')).toHaveCount(0);
+  await expect(page.locator('[data-fan="bill"]')).toHaveText('Michael Kiwanuka + Sault');
+  await expect(page.locator('[data-fan="fee"]')).toHaveText('$13,500');
+  await expect(page.locator('[data-fan="off-bill"]')).toHaveText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(page.locator('[data-fan="off-fee"]')).toHaveText('$9,000 · a different bill');
+  await expect(page.locator('[data-pipe="candidates"]')).toHaveAttribute('data-value', '8');
+  await expect(page.locator('.pipeline-track .tl-step')).toHaveCount(4);
+  await expect(page.locator('.qa')).toHaveCount(6);
+  await expect(page.locator('.site-footer')).toBeAttached();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator('.hero-cta').first().click();
+  await expect(page).toHaveURL(/\/judge\.html/);
+  await expect(page.locator('#plan-form')).toBeVisible();
+  await expect(page.locator('h1')).toHaveText('Plan a show in under a minute.');
+  await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  await expect(page.locator('#hero-title')).toHaveCount(0);
+  await page.locator('.site-brand').click();
+  await expect(page.locator('#hero-title')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('links shared before the split still open the right plan', async ({ page }) => {
+  await page.goto(`${origin}/judge.html#${tracedCaseId}`);
+  await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  await page.goto(`${origin}/judge.html#planner`);
+  await expect(page.locator('#plan-city')).toBeVisible();
+  await page.goto(`${origin}/judge.html#plan-result`);
+  await expect(page.locator('#result-title')).toBeVisible();
+  await page.fill('#plan-city', 'Leeds');
+  await page.fill('#plan-anchor', 'Arlo Parks');
+  await page.locator('#plan-submit').click();
+  await expect(page.locator('.result-meta')).toContainText('Leeds', { timeout: 30000 });
+  await expect(page).toHaveURL(/\?plan=[a-f0-9]{24}/);
+  const shared = page.url();
+  await page.goto(shared);
+  await expect(page.locator('.result-meta')).toContainText('Leeds');
+});
+
+test('a real plan leads to Financial Risk on that same plan; a synthetic one does not', async ({ page }) => {
+  test.setTimeout(180000);
+  await page.goto(`${origin}/judge.html`);
+  const next = page.locator('.plan-next a');
+  await expect(next).toHaveText(/Run the finances/);
+  await expect(next).toHaveAttribute('href', `/financial.html?plan=${tracedCaseId}`);
+  await next.click();
+  await expect(page.locator('#plan-case')).toHaveValue(tracedCaseId);
+  await expect(page.locator('#plan-run-status')).toHaveText(/^Done: New York/, { timeout: 150000 });
+  await page.goto(`${origin}/judge.html`);
+  await page.fill('#plan-city', 'York');
+  await page.fill('#plan-anchor', 'Arlo Parks');
+  await page.locator('#plan-submit').click();
+  await expect(page.locator('.result-meta')).toContainText('York', { timeout: 30000 });
+  await expect(page.locator('.plan-next')).toHaveCount(0);
 });
 
 test('Financial Risk runs on a real Booking Desk plan, never on placeholder artists', async ({ page }) => {
@@ -983,7 +1043,6 @@ test.describe('Booking Desk: plan your show', () => {
 
   test('first view shows the featured decision and what Qloo changes @cross-browser', async ({ page }) => {
     await page.goto(`${origin}/judge.html`);
-    await expect(page.locator('#hero-title')).toContainText('Book the bill');
     await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
     await expect(page.locator('#plan-switch-note')).toContainText('Without Qloo evidence, the same rules select Jordan Rakei + Hiatus Kaiyote for $9,000');
     await expect(page.locator('.act-grid[aria-label="Selected acts"] .act-card')).toHaveCount(2);

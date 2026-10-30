@@ -166,11 +166,11 @@ export function loadJudgeCase(id) {
 // Visitors' live plans share this table (so every judge experiment works on them) but are
 // never listed as published cases.
 export function listJudgeCases(){expireLivePlans();return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body)).filter(record=>record.live!==true);}
-export function saveLivePlan(source,{title,terms,feeBasis}) {
+export function saveLivePlan(source,{title,terms,feeBasis,place}) {
   const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title,snapshot,live:true};
   const id=randomBytes(12).toString('hex');
   const createdAt=new Date().toISOString();
-  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),terms,feeBasis,providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
+  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),terms,feeBasis,...(place?{place}:{}),providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
   record.methods=judgeMethods(snapshot,record.proof);
   transaction(()=>{db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));expireLivePlans({withinTransaction:true});});return loadJudgeCase(id);
 }

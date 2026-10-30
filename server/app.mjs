@@ -150,7 +150,7 @@ export function createApp({ memoBuilder = buildMemo } = {}) {
   registerDecisionRoutes(app);
   registerPortfolioRoutes(app);
   registerBenchmarkRoutes(app);
-  if(process.env.PUBLIC_LANDING_PAGE==='judge')app.get('/',(_req,res)=>res.redirect(302,'/judge.html'));
+  if(process.env.PUBLIC_LANDING_PAGE==='judge')app.get('/',(_req,res)=>res.redirect(302,'/home.html'));
   const [pages, files] = staticAssets(pub, express);
   app.use(pages, files);
   app.get('/healthz', (_req, res) => res.set('Cache-Control','no-store').json({ ok: true, version: '1.2.0', mock: isMock(), keyed: !!process.env.QLOO_API_KEY, llm: hasLLM(),

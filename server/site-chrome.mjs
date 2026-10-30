@@ -8,7 +8,7 @@ const tools = [['/workspace.html', 'Organizer workspace', false], ['/index.html'
 const e = value => String(value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
 export function navHtml(current) {
-  return `<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>`
+  return `<nav class="site-nav" aria-label="Main navigation"><a class="site-brand" href="/home.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="36" height="36"><span>Houselights<span class="site-brand-dot">.</span></span></a>`
     + `<button class="site-burger" type="button" aria-expanded="false" aria-controls="site-links" aria-label="Open menu"><span aria-hidden="true"></span></button>`
     + `<div id="site-links" class="site-links">${pages.map(([key, href, label]) => `<a href="${href}"${key === current ? ' aria-current="page"' : ''}>${e(label)}</a>`).join('')}`
     + `<details class="site-tools"><summary>Organizer tools</summary><div class="site-tools-menu">${tools.map(([href, label, uncalibrated]) => `<a href="${href}">${e(label)}${uncalibrated ? ' <span class="badge badge-warn">uncalibrated</span>' : ''}</a>`).join('')}<p>The Slate studio and Financial Risk run live for anyone; the Workspace and Demand Lab hold private fees and need the organizer token. Financial and demand numbers are not calibrated against real ticket sales.</p></div></details></div>`
@@ -68,7 +68,7 @@ export function sideHtml(current) {
       + (children && here ? `<ul class="app-sub">${children.map(([subHref, subLabel]) => `<li><a class="app-row app-subrow" href="${subHref}" data-row><span class="app-copy">${e(subLabel)}</span></a></li>`).join('')}</ul>` : '')
       + '</li>';
   };
-  return `<div class="app-side-top"><a class="app-brand" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span class="app-copy">Houselights<span class="site-brand-dot">.</span></span></a>`
+  return `<div class="app-side-top"><a class="app-brand" href="/home.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span class="app-copy">Houselights<span class="site-brand-dot">.</span></span></a>`
     + `<button class="app-collapse" type="button" data-side-toggle aria-label="Collapse sidebar" aria-expanded="true">${icon('collapse')}</button>`
     + `<button class="app-menu" type="button" data-side-menu aria-label="Open menu" aria-expanded="false" aria-controls="app-nav">${icon('menu')}</button></div>`
     + `<nav id="app-nav" class="app-nav" aria-label="Main navigation"><span class="app-glide" aria-hidden="true"></span>`
@@ -89,7 +89,7 @@ const ICO = {
 const col = (title, links) => `<div class="ft-col"><h2>${e(title)}</h2>${links.map(([href, label]) => `<a href="${href}">${e(label)}</a>`).join('')}</div>`;
 export function footerHtml() {
   return `<picture class="footer-art"><source media="(max-width: 640px)" srcset="/assets/brand/footer-bridge-phone.webp"><img src="/assets/brand/footer-bridge.webp" alt="Pencil drawing of the Golden Gate Bridge in morning fog, with the city skyline behind it" width="2000" height="667" loading="lazy"></picture>`
-    + `<div class="plan-footer-inner ft"><div class="ft-brand"><a class="footer-logo" href="/judge.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span>Houselights</span></a>`
+    + `<div class="plan-footer-inner ft"><div class="ft-brand"><a class="footer-logo" href="/home.html"><img src="/assets/brand/houselights-logo.webp" alt="" width="32" height="32"><span>Houselights</span></a>`
     + `<p class="ft-tag">Booking decisions grounded in what your city’s fans already love, with a receipt for every claim.</p>`
     + `<ul class="ft-meta"><li>${ICO.github}<a href="${GH}">codewithanshuman/houselights</a></li><li>${ICO.doc}<a href="/evidence.html">Every claim, with its limits</a></li><li>${ICO.pin}<span>Any city Qloo knows</span></li></ul></div>`
     + `<nav class="ft-cols footer-links" aria-label="Footer">`
@@ -110,7 +110,7 @@ export function withSiteNav(html) {
     return open + navHtml(key) + close;
   });
   // Only the landing page has a footer; the app pages and the 404 page end with their content.
-  const landing = /data-site-nav="booking"/.test(html);
+  const landing = /data-site-nav="(?:booking|home)"/.test(html);
   out = out.replace(/<footer class="site-footer" data-site-footer><\/footer>/g, landing ? `<footer class="site-footer plan-footer" data-site-footer>${footerHtml()}</footer>` : '');
   if (/data-site-nav="slate"/.test(out)) out = out.replace(/(<header class="topbar">[\s\S]*?<\/header>)/, `$1${SLATE_VIEWS}`);
   return app ? out.replace(/<body class="/, '<body class="app-shell ').replace(/<body>/, '<body class="app-shell">') : out;

@@ -8,6 +8,7 @@ import { Run, isMock } from './qloo.mjs';
 import { buildMemo } from './agent.mjs';
 import { consumeQuota, refundQuota } from './database.mjs';
 import { saveLivePlan } from './judge.mjs';
+import { locatePlace, nearPlace, summarizePlace } from './place-check.mjs';
 
 import { estimateFee } from './fee-tiers.mjs';
 export { FEE_TIERS, estimateFee } from './fee-tiers.mjs';
@@ -100,12 +101,15 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
     try {
       emit({ type: 'start', mock: isMock() });
       send({ type: 'start', synthetic: isMock(), budget: PLAN_BUDGET });
+      // Confirm the place before any Qloo call. Synthetic runs have no real place to check.
+      const place = isMock() ? { status: 'unchecked' } : await locatePlace(input.city);
+      if (place.status === 'not-found') { send({ type: 'error', text: `We could not find “${input.city}” on the map. Check the spelling, or add the region or country, for example “Akole, Maharashtra”.` }); return; }
       const run = new Run({ budget: PLAN_BUDGET, emit, deadlineMs: PLAN_DEADLINE_MS, receiptPrefix: 'q' });
       const memo = await memoBuilder({
         city: input.city, anchors: input.anchors, offers: [], terms: {}, picks: input.picks,
         constraints: { budget: input.budget, slots: input.slots, discoveryMin: 0, maxPerGenre: input.slots, riskTolerance: 50, lockedIds: [], excludedIds: [] },
         currency: 'USD', exampleBookingTerms: true,
-        discover: { limit: 8, research: 'value-of-information', terms: row => {
+        discover: { limit: 8, research: 'value-of-information', ...(place.status === 'found' ? { nearPlace: rows => nearPlace(place, rows) } : {}), terms: row => {
           const fee = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
           return fee == null ? null : { fee, available: true, genre: '' };
         } },
@@ -122,7 +126,7 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
       if (unresolved) { send({ type: 'error', text: `Qloo could not confirm ${unresolved.slice(35, -1)}. Check the spelling or remove that artist.` }); return; }
       if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. A comparison needs at least two candidates, even for a one-act show. Try a better-known artist or a larger city.` }); return; }
       const source = { input: memo.input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace };
-      const record = saveLivePlan(source, { title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: LIVE_TERMS, feeBasis: 'estimated-from-qloo-popularity' });
+      const record = saveLivePlan(source, { title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: LIVE_TERMS, feeBasis: 'estimated-from-qloo-popularity', ...(place.status === 'unchecked' ? {} : { place: summarizePlace(place, run.receipts) }) });
       saved = true;
       send({ type: 'ready', id: record.id, synthetic: record.snapshot.mock === true, calls: run.used });
     } catch (error) {
