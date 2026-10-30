@@ -458,18 +458,13 @@ body.app-shell .app-top .app-crumbs{margin-right:auto}
   body.app-shell .app-crumb[aria-current] span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 
-/* The main call to action is a ticket: a body and a stub joined at a dotted tear line. On hover
-   the stub starts to tear away, and on press it tears further. CSS only, so a label that
-   changes ("Planning…") needs nothing else. The 404 page keeps its hand-drawn button. */
-.v2:not(.nf-page) .sketch-btn{--hl-stub:52px;--hl-notch:7px;overflow:visible;isolation:isolate;gap:0;padding:8px calc(var(--hl-stub) + 18px) 8px 22px;border:0;border-radius:12px;background:none;color:#fff;box-shadow:none;filter:drop-shadow(0 8px 12px #4F35A84D);transition:filter .3s,transform .2s}
-.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{display:none}
-.v2:not(.nf-page) .sketch-btn::before,.v2:not(.nf-page) .sketch-btn::after{content:"";position:absolute;top:0;bottom:0;pointer-events:none}
-.v2:not(.nf-page) .sketch-btn::before{z-index:-1;left:0;right:var(--hl-stub);border-radius:12px 0 0 12px;border-right:2px dotted #FFFFFF99;background:linear-gradient(135deg,#7446DC,#5E44B8);-webkit-mask:radial-gradient(circle var(--hl-notch) at 100% 0,#0000 97%,#000),radial-gradient(circle var(--hl-notch) at 100% 100%,#0000 97%,#000);-webkit-mask-composite:source-in;mask:radial-gradient(circle var(--hl-notch) at 100% 0,#0000 97%,#000),radial-gradient(circle var(--hl-notch) at 100% 100%,#0000 97%,#000);mask-composite:intersect}
-.v2:not(.nf-page) .sketch-btn::after{z-index:-1;right:0;width:var(--hl-stub);border-radius:0 12px 12px 0;background:url(/assets/brand/stub-arrow.svg) center/20px 20px no-repeat,linear-gradient(135deg,#6B47D0,#5E44B8);transform-origin:0 100%;transition:transform .35s cubic-bezier(.34,1.56,.64,1);-webkit-mask:radial-gradient(circle var(--hl-notch) at 0 0,#0000 97%,#000),radial-gradient(circle var(--hl-notch) at 0 100%,#0000 97%,#000);-webkit-mask-composite:source-in;mask:radial-gradient(circle var(--hl-notch) at 0 0,#0000 97%,#000),radial-gradient(circle var(--hl-notch) at 0 100%,#0000 97%,#000);mask-composite:intersect}
-.v2:not(.nf-page) .sketch-btn:hover{background:none;box-shadow:none;transform:none;filter:drop-shadow(0 10px 16px #4F35A866)}
-.v2:not(.nf-page) .sketch-btn:active{transform:translateY(1px);filter:drop-shadow(0 4px 8px #4F35A84D)}
-.v2:not(.nf-page) .sketch-btn:not(:disabled):active::after{transform:translate(7px,-3px) rotate(13deg)}
+/* The main call to action: solid purple, a label and a small arrow that nudges on hover. The 404
+   page keeps its hand-drawn button. */
+.v2:not(.nf-page) .sketch-btn{gap:8px;border:0;border-radius:10px;background:#5E44B8;color:#fff;box-shadow:none;filter:none;transition:background .2s,transform .15s}
+.v2:not(.nf-page) .sketch-btn::before,.v2:not(.nf-page) .sketch-btn::after{content:none}
+.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{transition:transform .2s}
+.v2:not(.nf-page) .sketch-btn:hover{background:#4C3599;box-shadow:none;filter:none;transform:none}
+.v2:not(.nf-page) .sketch-btn:hover>span[aria-hidden]{transform:translateX(3px)}
+.v2:not(.nf-page) .sketch-btn:active{background:#42308A;box-shadow:none;filter:none;transform:translateY(1px)}
 .v2:not(.nf-page) .sketch-btn:focus-visible{outline:3px solid #8B5CF6;outline-offset:3px}
-.v2:not(.nf-page) .site-cta.sketch-btn{--hl-stub:40px;--hl-notch:5px;padding-right:calc(var(--hl-stub) + 12px)!important;padding-left:16px!important;min-height:44px}
-@media (hover:hover){.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{transform:translate(4px,-2px) rotate(7deg)}}
-@media (prefers-reduced-motion:reduce){.v2:not(.nf-page) .sketch-btn::after{transition:none}.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after,.v2:not(.nf-page) .sketch-btn:not(:disabled):active::after{transform:none}}
+@media (prefers-reduced-motion:reduce){.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{transition:none}.v2:not(.nf-page) .sketch-btn:hover>span[aria-hidden]{transform:none}}
