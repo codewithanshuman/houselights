@@ -1,5 +1,30 @@
 # Sharing an existing Oracle server
 
+## Deployment of 997ebea — 30 October 2026
+
+The public host runs `997ebea4b4d1bf346111b7f3dfde44bff067035c`, and `/healthz` over public HTTPS reports it (`"diskOk":true`). On the crowd map, a lead whose split between the booked acts is within two points of even now reads "Even split across the bill" instead of "Leans X · 50%".
+
+- **Before the switch:** the backup `pre-997ebea` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-997ebea`. The rollback drill reported `58cc22e`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build completed before any change to the running service, only `RELEASE_COMMIT` changed. The Caddyfile is unchanged, so only the app container was recreated. Every other container and the livestream PID were unchanged.
+- **Checks:** `release:verify` passed all 88 checks. Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow. The settled per-page console probe logged no errors. The featured plan's saved crowd map shows the new labels.
+
+**Rollback:** tag `houselights-shared:pre-997ebea` as `houselights-shared:local`, set `RELEASE_COMMIT=58cc22ebd46b2517a6957e9eee373752b61ee0b9`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
+## Deployment of 58cc22e — 30 October 2026
+
+The public host ran `58cc22ebd46b2517a6957e9eee373752b61ee0b9`. It adds **Who this bill reaches**: after the optimizer books a bill, three Qloo calls use the booked acts as the signal and return sponsor leads (brands), places in the city and podcasts, with Qloo's explainability giving each booked act's share of every lead. The map is stored in a new `audience_reach` table beside the case, never inside its record. It is made once per plan, rate limited (3 per visitor every 10 minutes, 60 per day overall), and each lead links to its own Qloo receipt. A fresh live plan maps its crowd automatically; saved plans offer a button.
+
+- **Before the switch:** 25 unused Houselights image tags were removed first (disk 97% to 81%); `pre-4f82269` and `pre-4c3a7cd` were kept, and nothing belonging to the other project on the host was touched. The backup `pre-58cc22e` passed an isolated restore, and a copy is held off-host. The rollback drill reported `4f82269`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks; the three engines showed the featured bill with no overflow; the settled console probe was clean.
+  - **One live "Plan a show" run on production:** Austin, fans of Khruangbin and Leon Bridges, $30,000, 2 acts. It took 14.9 seconds and 12 Qloo calls and booked Black Pumas + Michael Kiwanuka for $21,000 (estimated fees); with Qloo off, Brittany Howard + The Teskey Brothers for $8,000. The crowd map appeared 1.9 seconds later: sponsor leads Patagonia, Discogs, Noon Pacific; places ACL Live, the Blanton Museum of Art and Cathedral of Junk (each mostly driven by Black Pumas); podcasts led by 2 Dope Queens. No console errors.
+  - The featured New York plan was mapped once (3 Qloo calls): Vice, Noon Pacific and Rains as sponsor leads; the Hotel Chelsea and Chelsea Flea among places; Song Exploder among podcasts.
+
+**Rollback:** tag `houselights-shared:pre-58cc22e` as `houselights-shared:local`, set `RELEASE_COMMIT=4f82269f3e15511cc9921409e7a7496d16aa6522`, check out that commit, then run `up --no-build -d houselights` with both Compose files. The `audience_reach` table is ignored by older releases.
+
 ## Deployment of 4f82269 — 29 October 2026
 
 The public host runs `4f82269f3e15511cc9921409e7a7496d16aa6522`, and `/healthz` over public HTTPS reports it. It includes `2ac8104` (the research trail says "in the bill before checks" instead of "booked") and makes the analysis readable at a glance:
