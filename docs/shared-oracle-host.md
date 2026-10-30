@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of a85ab39 — 30 October 2026
+
+The public host runs `a85ab39`, and `/healthz` over public HTTPS reports it. It fixes five bugs from a sweep of the live site: a re-plan now works to the budget in force, changing currency moves an untouched budget, each currency has its own default ticket price, place names show each part once, and the 404 page returns to the landing page.
+
+- **Before the switch:** the backup `pre-a85ab39` passed an isolated restore, and a copy is held off-host. The rollback drill reported `5fcd49a`, served 12 cases and logged no errors.
+- **Switch:** only `RELEASE_COMMIT` changed in the release file. The other containers and the stream process were unchanged.
+- **After the switch:** all 90 release checks passed from outside. Chromium, Firefox and WebKit passed at 1440 and 390 wide with no overflow, and the content-security probe was clean. A fresh Qloo plan for Nashik in rupees completed with its re-plan, brief and finance run, and a re-plan at 80% of the budget stayed within it.
+- **Disk:** `pre-5985709` was removed, keeping `pre-a85ab39` and `pre-5fcd49a`. Disk is at 82% (8.2 GB free).
+
+**Rollback:** tag `houselights-shared:pre-a85ab39` as `houselights-shared:local`, set `RELEASE_COMMIT=5fcd49a8e8fe854e0a132ae4d6ea66335cad6ef0`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 5fcd49a — 30 October 2026
 
 The public host runs `5fcd49a`, and `/healthz` over public HTTPS reports it. It adds the agent re-plan for a cancelled act, the one-page promoter brief, plans in USD, INR, EUR or GBP (rates from Frankfurter), and the clean gradient call to action. Releases `5d64157` and `5985709` went out earlier the same evening; the re-plan failed on real Qloo in both, refusing with "could not rank every candidate" and showing nothing wrong. Qloo ranks at most ten options and leaves a signal out of its own ranking. Both limits are now respected and the mock enforces them.
