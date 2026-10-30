@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of 5d86308 — 30 October 2026
+
+The public host runs `5d86308`, and `/healthz` over public HTTPS reports it. The main call to action is now a plain solid purple button with a small arrow that nudges on hover. The 404 page keeps its hand-drawn button.
+
+- **Before the switch:** the backup `pre-5d86308` passed an isolated restore, and a copy is held off-host. The running image was tagged `houselights-shared:pre-5d86308`. The rollback drill reported `a133b80`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:** `release:verify` passed all 90 checks. Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow, and the settled console probe logged no errors.
+
+**Rollback:** tag `houselights-shared:pre-5d86308` as `houselights-shared:local`, set `RELEASE_COMMIT=a133b80ff3db2958a35ced567926b7597e3d7f69`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of a133b80 — 30 October 2026
 
 The public host runs `a133b80`, and `/healthz` over public HTTPS reports it. The main call to action is now a ticket whose stub tears on hover and press (the 404 page keeps its button), the ticket's stats sit clear of the band, and the landing fallback is back to the real 18 Qloo calls.
