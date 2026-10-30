@@ -1,6 +1,12 @@
 // Qloo returns no booking fees. A discovered act's fee is an illustrative tier from its Qloo
 // popularity percentile, labelled "estimated" wherever it is shown. Not a quote.
-export const FEE_TIERS = [[0.995, 25000], [0.99, 15000], [0.98, 9000], [0.96, 6000], [0.93, 4000], [0.9, 2500], [0, 1500]];
+export const FEE_TIERS = [[0.9995, 100000], [0.999, 50000], [0.995, 25000], [0.99, 15000], [0.98, 9000], [0.96, 6000], [0.93, 4000], [0.9, 2500], [0, 1500]];
+// The popularity an act must stay below for its tier to fit a fee limit, or null when every
+// tier fits or none does.
+export function popularityFor(feeLimit) {
+  const index = FEE_TIERS.findIndex(([, fee]) => fee <= feeLimit);
+  return index > 0 ? FEE_TIERS[index - 1][0] : null;
+}
 export function estimateFee(popularity) {
   if (typeof popularity !== 'number' || !Number.isFinite(popularity) || popularity < 0 || popularity > 1) return null;
   return FEE_TIERS.find(([floor]) => popularity >= floor)[1];

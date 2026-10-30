@@ -83,7 +83,7 @@ export function comparisonThemes(env) {
 
 // Only public entity labels and documented scalar evidence enter the ledger.
 export function compactEvidence(tool, env) {
-  const rows = env.results.slice(0, tool === 'recommend' || tool === 'where_popular' ? 50 : 12).map(row => {
+  const rows = env.results.slice(0, tool === 'recommend' || tool === 'recommend_within' || tool === 'where_popular' ? 50 : 12).map(row => {
     const out = {};
     const name = nameOf(row), id = idOf(row);
     if (name) out.name = name.slice(0, 180);

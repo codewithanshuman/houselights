@@ -27,7 +27,8 @@ async function plan(body) {
 }
 
 test('fees are illustrative tiers from Qloo popularity, never invented without it', () => {
-  assert.equal(estimateFee(0.999), 25000);
+  assert.equal(estimateFee(0.999), 50000);
+  assert.equal(estimateFee(0.996), 25000);
   assert.equal(estimateFee(0.985), 9000);
   assert.equal(estimateFee(0.5), 1500);
   assert.equal(estimateFee(null), null);

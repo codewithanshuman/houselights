@@ -15,7 +15,7 @@ const fault = (message, status = 400) => Object.assign(new Error(message), { sta
 const usable = env => ['ok', 'partial', 'degraded'].includes(env.status);
 export const REPLAN_NOTE = 'A fresh Qloo run for this cancellation. New acts have fees estimated from Qloo popularity tiers and assumed availability, and no location or trend checks yet. The saved plan is unchanged.';
 
-export async function buildReplan(record, cancelId, run, { budget = record.snapshot.memo.constraints.budget } = {}) {
+export async function buildReplan(record, cancelId, run, { budget = record.snapshot.memo.constraints.budget, checkActs = null } = {}) {
   const snapshot = record.snapshot, memo = snapshot.memo, slate = memo.slate, city = memo.input.city;
   if (!slate?.feasible || !slate.selectedIds.includes(cancelId)) throw fault('Choose an act on the booked bill.');
   const survivors = slate.selectedIds.filter(id => id !== cancelId), pool = memo.items.filter(item => item.id !== cancelId);
@@ -34,11 +34,14 @@ export async function buildReplan(record, cancelId, run, { budget = record.snaps
   const known = new Set([...memo.items.flatMap(item => [low(item.id), low(item.name)]), ...anchors, ...anchorIds.map(low)]);
   // Room for new acts, keeping the surviving acts and the best-ranked of the rest of the pool.
   const room = Math.max(MIN_NEW, Math.min(MAX_NEW, MAX_OPTIONS - pool.length)), fresh = [];
+  const unseen = found.env.results.map(nameOf).filter(name => name && !known.has(low(name)));
+  const acts = checkActs ? await checkActs(unseen) : null, ended = [];
   for (const row of found.env.results) {
     const id = idOf(row), name = nameOf(row), tier = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
     const fee = tier == null ? null : Math.round(tier * (record.fx?.rate ?? 1));
     if (!id || !name || fee == null || known.has(low(id)) || known.has(low(name)) || fresh.length >= room) continue;
     known.add(low(id)); known.add(low(name));
+    if (acts?.get(name)?.status === 'ended') { ended.push(name); continue; }
     fresh.push({ id, name, found: true, terms: { fee, available: true, genre: '' }, local: 'no data', momentum: 'unknown', isNew: true,
       evidence: { rank: false, local: false, comparison: false, trends: false }, receipts: [found.receipt.id] });
   }
@@ -58,7 +61,7 @@ export async function buildReplan(record, cancelId, run, { budget = record.snaps
   const result = optimizeSlate(items, { ...memo.constraints, budget, lockedIds: survivors, excludedIds: [] });
   if (result.status === 'invalid') throw fault(result.reasons.join(' '));
   const describe = id => { const item = items.find(entry => entry.id === id); return { id, name: item.name, fee: item.terms.fee, isNew: item.isNew === true, rank: item.rank, of: item.of, ...(typeof item.affinity === 'number' ? { affinity: item.affinity } : {}) }; };
-  return { version: '1.0', cancelId, budget, cancelledName: cancelled?.name ?? cancelId, survivorIds: survivors, feasible: result.feasible, reasons: result.reasons ?? [],
+  return { version: '1.0', cancelId, budget, ...(ended.length ? { endedActs: ended } : {}), cancelledName: cancelled?.name ?? cancelId, survivorIds: survivors, feasible: result.feasible, reasons: result.reasons ?? [],
     acts: result.feasible ? result.selectedIds.map(describe) : [], totalFee: result.feasible ? result.totalFee : null, checkedCount: result.checkedCount, feasibleCount: result.feasibleCount,
     newCount: fresh.length, poolNames: names, note: REPLAN_NOTE, createdAt: new Date().toISOString(), mock: run.mode === 'mock', rankReceiptId: ranked.receipt.id, foundReceiptId: found.receipt.id,
     receipts: run.receipts.map(r => ({ id: r.id, tool: r.tool, args: r.args, status: r.status, count: r.count, cached: r.cached, source: r.source, fetchedAt: r.fetchedAt, digest: r.digest, evidence: r.evidence })) };

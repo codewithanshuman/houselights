@@ -147,6 +147,8 @@
         <section class="result-qloo" aria-label="What Qloo changes">
           <div class="result-badges" aria-label="Plan assumptions and scoring">${badges}</div>
           ${placeNote()}
+          ${widenNote()}
+          ${actNote()}
           <div class="qloo-head">
             <button type="button" class="runway-switch${view.flip?` is-flip-${view.flip}`:''}" id="plan-switch" role="switch" aria-checked="${!view.qlooOff}" aria-describedby="plan-switch-note">
               <span class="rw-track" aria-hidden="true"><span class="rw-ink rw-ink-a"></span><span class="rw-ink rw-ink-b"></span><svg class="rw-water" viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 22Q10 17 20 22T40 22T60 22T80 22T100 22T120 22T140 22T160 22V40H0z"/></svg><svg class="rw-wake" viewBox="0 0 200 40" preserveAspectRatio="none"><path pathLength="100" d="M0 20Q12.5 8 25 20T50 20T75 20T100 20T125 20T150 20T175 20T200 20"/></svg><span class="rw-knob"></span></span>
@@ -451,6 +453,18 @@
       unavailable:['warn','The map check was unavailable, so this place was not verified.']}[place.status];
     if(!text)return '';
     return `<p class="place-note${text[0]?` is-${text[0]}`:''}" data-place="${e(place.status)}">${text[1]} <small>Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></small></p>`;
+  }
+  // What MusicBrainz said about this plan's acts. Only checked acts are counted.
+  function widenNote(){
+    const widened=view.record.widened;if(!widened)return '';
+    return `<p class="place-note" data-widened="true">The closest matches cost more than this budget allows, so the agent searched again and added ${e(widened.added)} acts the same fans like at a level this budget can reach.</p>`;
+  }
+  function actNote(){
+    const check=view.record.actCheck;if(!check||!check.checked)return '';
+    const removed=(check.removed??[]).map(act=>`<strong>${e(act.name)}</strong>${act.endedYear?` (${e(act.endedYear)})`:''}`);
+    const tail=` <small>Artist data from <a href="https://musicbrainz.org">MusicBrainz</a></small>`;
+    if(removed.length)return `<p class="place-note is-warn" data-acts="removed">Removed from the shortlist: ${removed.join(', ')}. Qloo matched ${removed.length===1?'this act':'these acts'} to the audience, but MusicBrainz lists ${removed.length===1?'it':'them'} as ended. ${e(check.active)} of ${e(check.total)} acts checked are still listed as active.${tail}</p>`;
+    return `<p class="place-note is-good" data-acts="clear">Acts checked: ${e(check.active)} of ${e(check.total)} are listed as active on MusicBrainz, and none has ended.${tail}</p>`;
   }
   // Where a bookable, real plan can go next.
   function nextSteps(){

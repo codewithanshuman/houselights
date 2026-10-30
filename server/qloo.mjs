@@ -54,7 +54,22 @@ export function decodeToolResult(response, tool) {
   return normalizeEnvelope(raw, tool);
 }
 
+// The harness has no popularity filter, so a search capped by popularity goes to Qloo's Insights
+// API directly. It runs through the same receipts, budgets and quotas as every other call.
+async function recommendWithin(args, { signal, timeoutMs } = {}) {
+  const { createQlooHttpFetch } = await import('./qloo-http.mjs');
+  const params = new URLSearchParams({ 'filter.type': 'urn:entity:artist', 'signal.interests.entities': args.signals.join(','),
+    'signal.location.query': args.signal_location, 'filter.popularity.max': String(args.popularity_max), take: String(args.limit ?? 14) });
+  const base = process.env.QLOO_BASE_URL ?? 'https://api.qloo.com';
+  const response = await createQlooHttpFetch()(`${base}/v2/insights?${params}`, { headers: { 'x-api-key': process.env.QLOO_API_KEY }, signal: signal ?? AbortSignal.timeout(timeoutMs || 45000) });
+  if (!response.ok) return { status: 'error', summary: `Qloo Insights returned ${response.status}.`, error: { code: 'QLOO_ERROR', retryable: response.status >= 500 } };
+  const body = await response.json();
+  const results = Array.isArray(body?.results?.entities) ? body.results.entities : [];
+  return { status: results.length ? 'ok' : 'empty', summary: `${results.length} artists below popularity ${args.popularity_max}.`, results };
+}
+
 const liveCall = async (tool, args, { signal, timeoutMs } = {}) => {
+  if (tool === 'recommend_within') return recommendWithin(args, { signal, timeoutMs });
   const client = await conn();
   signal?.throwIfAborted();
   return decodeToolResult(await client.callTool(

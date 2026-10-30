@@ -12,6 +12,7 @@ import {scoringVersion} from './affinity.mjs';
 import {Run,isMock} from './qloo.mjs';
 import {buildReach,REACH_CALLS} from './audience-reach.mjs';
 import {buildReplan,REPLAN_CALLS} from './replan.mjs';
+import {checkActs} from './act-check.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 // Audience reach (brands, places, podcasts for the booked bill) is kept beside its case, not in
@@ -171,11 +172,11 @@ export function loadJudgeCase(id) {
 // Visitors' live plans share this table (so every judge experiment works on them) but are
 // never listed as published cases.
 export function listJudgeCases(){expireLivePlans();return db.prepare('SELECT body FROM judge_cases ORDER BY rowid').all().map(row=>JSON.parse(row.body)).filter(record=>record.live!==true);}
-export function saveLivePlan(source,{title,terms,feeBasis,place,fx}) {
+export function saveLivePlan(source,{title,terms,feeBasis,place,fx,actCheck,widened}) {
   const snapshot=publicJudgeSnapshot(source),payload={version:'1.0',title,snapshot,live:true};
   const id=randomBytes(12).toString('hex');
   const createdAt=new Date().toISOString();
-  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),terms,feeBasis,...(place?{place}:{}),...(fx?{fx}:{}),providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
+  const record={id,...payload,createdAt,expiresAt:new Date(Date.parse(createdAt)+LIVE_PLAN_TTL_MS).toISOString(),proof:buildDecisionProof(snapshot),scoringVersion:scoringVersion(source),terms,feeBasis,...(place?{place}:{}),...(actCheck?{actCheck}:{}),...(widened?{widened}:{}),...(fx?{fx}:{}),providerCalls:snapshot.receipts.filter(r=>r.source==='qloo'&&!r.cached).length};
   record.methods=judgeMethods(snapshot,record.proof);
   transaction(()=>{db.prepare('INSERT INTO judge_cases(id,body) VALUES(?,?)').run(id,JSON.stringify(record));expireLivePlans({withinTransaction:true});});return loadJudgeCase(id);
 }
@@ -316,7 +317,7 @@ export function registerJudgeRoutes(app) {
       if(!consumeQuota(rules,now)){res.set('Retry-After','600');return res.status(429).json({error:'Replacement searches are limited to 3 every 10 minutes per visitor, under a shared daily cap that protects the Qloo quota.'});}
       pending=(async()=>{
         try{
-          const replan=await buildReplan(record,cancelId,new Run({budget:REPLAN_CALLS,deadlineMs:60000,receiptPrefix:'c'}),{budget});
+          const replan=await buildReplan(record,cancelId,new Run({budget:REPLAN_CALLS,deadlineMs:60000,receiptPrefix:'c'}),{budget,checkActs:isMock()?null:names=>checkActs(names)});
           db.prepare('INSERT INTO judge_replans(case_id,cancel_id,body) VALUES(?,?,?) ON CONFLICT(case_id,cancel_id) DO NOTHING').run(record.id,replanKey,JSON.stringify(replan));
           return read();
         }catch(error){refundQuota(rules);throw error;}

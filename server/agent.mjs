@@ -4,6 +4,7 @@ import { evaluate } from './eval.mjs';
 import * as llm from './llm.mjs';
 import { fitsFromRankRows, relativeVerdicts } from './affinity.mjs';
 import { researchValue, allocateResearch, RESEARCH_REASON } from './research-value.mjs';
+import { summarizeActs } from './act-check.mjs';
 
 const low = value => String(value ?? '').toLowerCase().trim();
 const ago = days => new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
@@ -59,13 +60,51 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   say('Discover · mapping the room’s taste and adjacent artists');
   const tags = await run.call('entity_tags', { entities: anchorRefs, entity_type: 'artist' }, 'Taste vocabulary associated with the anchor artists');
   const crowd = usable(tags.env) ? [...new Set(tagsOf(tags.env))].slice(0, 12) : [];
-  const discovery = await run.call('recommend', { target_type: 'artist', signals: anchorRefs, signal_location: city, limit: 8 }, 'Discover adjacent artists for this city');
+  // A live plan looks further and checks each act, so ended acts leave room for working ones.
+  const discovery = await run.call('recommend', { target_type: 'artist', signals: anchorRefs, signal_location: city, limit: discover.checkActs ? 14 : 8 }, 'Discover adjacent artists for this city');
+  let actResults = null;
+  const endedActs = [];
+  if (discover.checkActs && usable(discovery.env)) {
+    say('Check · confirming on MusicBrainz that each act still exists');
+    actResults = await discover.checkActs(rows(discovery.env).map(nameOf).filter(name => name && !lookup.has(low(name))));
+  }
   if (usable(discovery.env)) for (const row of rows(discovery.env)) {
     const name = nameOf(row), ref = idOf(row) || name;
-    if (!name || lookup.has(low(ref)) || lookup.has(low(name)) || candidates.size >= Math.min(discover.limit ?? offers.length + 3, 9)) continue;
+    if (!name || lookup.has(low(ref)) || lookup.has(low(name))) continue;
+    if (actResults?.get(name)?.status === 'ended') { endedActs.push({ name, endedYear: actResults.get(name).endedYear }); continue; }
+    if (candidates.size >= Math.min(discover.limit ?? offers.length + 3, 9)) continue;
     remember(ref, name);
     const discoveredTerms = typeof discover.terms === 'function' ? discover.terms(row) : null;
     candidates.set(ref, { id: ref, name, found: true, terms: discoveredTerms ?? termsFor(name, name), identityReceipt: discovery.receipt.id });
+  }
+  // When no bill of the closest matches fits the budget, the agent searches again for acts the
+  // same fans like at a level the budget can reach, instead of returning an empty bill. Acts from
+  // this wider search must be confirmed active, because lesser-known names are less certain.
+  let widened = null;
+  const slots = constraints.slots ?? defaultConstraints.slots, budget = constraints.budget ?? defaultConstraints.budget;
+  const cheapest = [...candidates.values()].map(candidate => candidate.terms.fee).filter(Number.isFinite).sort((a, b) => a - b).slice(0, slots);
+  if (discover.reachable && (cheapest.length < slots || cheapest.reduce((sum, fee) => sum + fee, 0) > budget)) {
+    const cap = discover.reachable(budget / slots);
+    if (cap != null) {
+      say('Budget · no bill of the closest matches fits, so searching for acts this budget can reach');
+      const wider = await run.call('recommend_within', { signals: anchorRefs, signal_location: city, popularity_max: cap, limit: 20 }, 'Find acts these fans like at a level the budget can reach');
+      const options = usable(wider.env) ? rows(wider.env).filter(row => nameOf(row) && idOf(row) && !lookup.has(low(idOf(row))) && !lookup.has(low(nameOf(row)))) : [];
+      const acts = discover.checkActs ? await discover.checkActs(options.map(nameOf)) : null;
+      const reachable = [];
+      for (const row of options) {
+        const name = nameOf(row), act = acts?.get(name), terms = discover.terms?.(row);
+        if (act?.status === 'ended') { if (actResults) actResults.set(name, act); endedActs.push({ name, endedYear: act.endedYear }); }
+        if (acts && act?.status !== 'active') continue;
+        if (actResults && act) actResults.set(name, act);
+        if (terms?.fee != null && terms.fee <= budget) reachable.push({ ref: idOf(row), name, terms });
+      }
+      if (reachable.length >= slots) {
+        const keep = [...candidates.keys()].slice(0, 2);
+        for (const ref of [...candidates.keys()]) if (!keep.includes(ref)) candidates.delete(ref);
+        for (const { ref, name, terms } of reachable.slice(0, 8 - keep.length)) { remember(ref, name); candidates.set(ref, { id: ref, name, found: true, terms, identityReceipt: wider.receipt.id }); }
+        widened = { popularityMax: cap, added: Math.min(reachable.length, 8 - keep.length), receipt: wider.receipt.id };
+      }
+    }
   }
   if (!candidates.size) { run.emit({ type: 'error', text: 'No candidates could be resolved or discovered.' }); return; }
   say('Rank · testing the candidate pool against your anchors');
@@ -174,10 +213,11 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
     order: baseRaw.order.filter(value => typeof value === 'string').slice(0, 10),
     verdicts: baseRaw.verdicts.filter(value => value && typeof value.name === 'string' && typeof value.reason === 'string' && ['lean yes', 'growth bet', 'hold', 'lean pass'].includes(value.verdict)).slice(0, 10)
   } : null;
+  const actCheck = actResults ? summarizeActs(actResults, endedActs) : null;
   const memo = { items, slate, constraints, input: { city, anchors, anchorIds: anchorRefs, offers, currency, exampleBookingTerms }, currency, exampleBookingTerms,
     fitBasis: rankComplete ? scored.basis : 'unavailable', ...(rankComplete && scored.basis === 'qloo-affinity' ? { fitScale: 'fixed-span-0.05' } : {}),
     mode: run.mode === 'mock' || run.receipts.some(receipt => receipt.source === 'synthetic') ? 'mock' : 'live', caveats, crowd,
-    writer: written ? 'claim-selector' : 'template', ...(research ? { research } : {}), verdictPolicy: 'relative-affinity-bands-v1', summary: '', removed, base,
+    writer: written ? 'claim-selector' : 'template', ...(research ? { research } : {}), ...(actCheck ? { actCheck } : {}), ...(widened ? { widened } : {}), verdictPolicy: 'relative-affinity-bands-v1', summary: '', removed, base,
     quality: { resolved: candidates.size, ranked: rankComplete ? order.length : 0, deepChecked: deep.length, receipts: run.receipts.length, liveCalls: run.used },
     eval: evaluate({ items, ranked: rankComplete ? order.map(ref => candidates.get(ref).name) : [], base, receipts: run.receipts }) };
   run.emit({ type: 'memo', ...memo });

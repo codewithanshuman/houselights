@@ -25,6 +25,7 @@ export function mockCall(tool, args) {
       if (args.entity.startsWith('mock-') && !known.has(args.entity)) return envelope([]);
       return envelope([resolve(args.entity)]);
     }
+    case 'recommend_within': return envelope([1, 2, 3, 4, 5].map(i => entity(`Mock Rising ${i}`, `mock-r${i}`, Math.min(args.popularity_max - .01, .3 + i * .05))));
     case 'entity_tags': return envelope(['indie rock', 'dream pop', 'lo-fi'].map(name => ({ name })));
     case 'audience_demographics': return envelope([{ name: 'age 25-34' }]);
     case 'recommend': {

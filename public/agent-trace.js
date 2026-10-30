@@ -8,7 +8,7 @@
   const e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const STAGES=[['Resolve','Confirm the artists with Qloo'],['Discover','Find artists these fans love in {city}'],['Rank','Rank every candidate for this audience'],
     ['Plan','Choose which acts to check in depth'],['Verify','Check where fans are and how audiences overlap'],['Optimize','Check every possible bill against the budget'],['Write','Write up the decision']];
-  const TOOLS={describe:'Confirm artist',entity_tags:'Read taste tags',recommend:'Find similar artists',rank:'Rank for this audience',
+  const TOOLS={describe:'Confirm artist',entity_tags:'Read taste tags',recommend:'Find similar artists',recommend_within:'Find acts the budget can reach',rank:'Rank for this audience',
     trends:'Check six month trends',where_popular:'Find where fans are',compare_audiences:'Compare audiences'};
   const GLYPHS={describe:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
     entity_tags:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',

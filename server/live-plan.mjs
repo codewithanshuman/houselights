@@ -9,11 +9,12 @@ import { buildMemo } from './agent.mjs';
 import { consumeQuota, refundQuota } from './database.mjs';
 import { saveLivePlan } from './judge.mjs';
 import { locatePlace, nearPlace, summarizePlace } from './place-check.mjs';
+import { checkActs } from './act-check.mjs';
 import { CURRENCIES, usdRate } from './fx.mjs';
 
-import { estimateFee } from './fee-tiers.mjs';
+import { estimateFee, popularityFor } from './fee-tiers.mjs';
 export { FEE_TIERS, estimateFee } from './fee-tiers.mjs';
-export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. Genre limits are not applied in live plans because per-act genres are unverified. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
+export const LIVE_TERMS = 'Estimated fees: each act’s fee is an illustrative tier from its Qloo popularity, not a quote, and availability is assumed. Acts MusicBrainz lists as ended are removed. Genre limits are not applied in live plans because per-act genres are unverified. This is a planning experiment, not a booking or a sales forecast. Unpublished visitor plans expire after 7 days unless retained by an audit or evaluation.';
 
 const fault = (message, status = 400) => Object.assign(new Error(message), { status });
 const clean = (value, max) => typeof value === 'string' ? value.replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max) : '';
@@ -118,7 +119,7 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
         city: input.city, anchors: input.anchors, offers: [], terms: {}, picks: input.picks,
         constraints: { budget: input.budget, slots: input.slots, discoveryMin: 0, maxPerGenre: input.slots, riskTolerance: 50, lockedIds: [], excludedIds: [] },
         currency: input.currency, exampleBookingTerms: true,
-        discover: { limit: 8, research: 'value-of-information', ...(place.status === 'found' ? { nearPlace: rows => nearPlace(place, rows) } : {}), terms: row => {
+        discover: { limit: 8, research: 'value-of-information', reachable: feeLimit => popularityFor(feeLimit / fx.rate), ...(isMock() ? {} : { checkActs: names => checkActs(names) }), ...(place.status === 'found' ? { nearPlace: rows => nearPlace(place, rows) } : {}), terms: row => {
           const fee = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
           return fee == null ? null : { fee: Math.round(fee * fx.rate), available: true, genre: '' };
         } },
@@ -135,7 +136,7 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
       if (unresolved) { send({ type: 'error', text: `Qloo could not confirm ${unresolved.slice(35, -1)}. Check the spelling or remove that artist.` }); return; }
       if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. A comparison needs at least two candidates, even for a one-act show. Try a better-known artist or a larger city.` }); return; }
       const source = { input: memo.input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace };
-      const record = saveLivePlan(source, { title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: fx.rate === 1 ? LIVE_TERMS : `${LIVE_TERMS} Fee tiers are in US dollars, converted at 1 USD = ${fx.rate} ${input.currency} (${fx.source}, ${fx.date}).`, ...(fx.rate === 1 ? {} : { fx: { currency: input.currency, rate: fx.rate, date: fx.date } }), feeBasis: 'estimated-from-qloo-popularity', ...(place.status === 'unchecked' ? {} : { place: summarizePlace(place, run.receipts) }) });
+      const record = saveLivePlan(source, { actCheck: memo.actCheck, widened: memo.widened, title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: fx.rate === 1 ? LIVE_TERMS : `${LIVE_TERMS} Fee tiers are in US dollars, converted at 1 USD = ${fx.rate} ${input.currency} (${fx.source}, ${fx.date}).`, ...(fx.rate === 1 ? {} : { fx: { currency: input.currency, rate: fx.rate, date: fx.date } }), feeBasis: 'estimated-from-qloo-popularity', ...(place.status === 'unchecked' ? {} : { place: summarizePlace(place, run.receipts) }) });
       saved = true;
       send({ type: 'ready', id: record.id, synthetic: record.snapshot.mock === true, calls: run.used });
     } catch (error) {
