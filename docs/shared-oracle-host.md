@@ -1,5 +1,22 @@
 # Sharing an existing Oracle server
 
+## Deployment of f792410 — 30 October 2026
+
+The public host runs `f79241078039945280b102258fd8a44d4dfedf93`, and `/healthz` over public HTTPS reports it. Features that were organizer-only or synthetic are now real for every visitor:
+- **Slate studio:** anyone can build a live Qloo slate, re-optimize, stress-test and save a scenario (2 runs a minute, 40 a day shared; visitor runs are saved unpinned).
+- **Financial Risk:** the synthetic "Pop A / Jazz A" illustration and `financial-demo.json` are removed. Every public scenario runs on a real Booking Desk plan's candidates, Qloo fit and fees, with stated venue, ticket, sell-through and cost assumptions. Identical runs are reused; free-form scenarios stay private.
+- **Autopilot:** fresh research with live Qloo is public, capped at 10 calls and 1 run a minute (30 a day).
+
+- **Before the switch:** the backup `pre-f792410` passed an isolated restore (status verified, integrity ok), and a copy is held off-host. The running image was tagged `houselights-shared:pre-f792410`. The rollback drill reported `997ebea`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:**
+  - `release:verify` passed all 88 checks (three checks now verify the new access rules: free-form financial jobs stay private, Autopilot fresh research is public, and the financial scenario runs on a published plan).
+  - Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow; the settled console probe logged no errors.
+  - **As an anonymous visitor on production:** Financial Risk ran the New York plan (Michael Kiwanuka, Sault, Jordan Rakei, Hiatus Kaiyote…) through 10,000 scenarios in 17 seconds with no console errors. The Slate studio's London example built a live slate in 20.8 seconds (Caribou + BADBADNOTGOOD + Japanese Breakfast; 35 events). Autopilot fresh research made 6 live Qloo calls in 7 seconds and confirmed Michael Kiwanuka + Sault; a second run within the minute was refused with 429.
+
+**Rollback:** tag `houselights-shared:pre-f792410` as `houselights-shared:local`, set `RELEASE_COMMIT=997ebea4b4d1bf346111b7f3dfde44bff067035c`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 997ebea — 30 October 2026
 
 The public host runs `997ebea4b4d1bf346111b7f3dfde44bff067035c`, and `/healthz` over public HTTPS reports it (`"diskOk":true`). On the crowd map, a lead whose split between the booked acts is within two points of even now reads "Even split across the bill" instead of "Leans X · 50%".
