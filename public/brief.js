@@ -18,7 +18,7 @@
     const coin=(aff?.acts??[]).filter(act=>act.verdict==='coin-flip').map(act=>memo.items.find(item=>item.id===act.id)?.name).filter(Boolean);
     const lists=(record.reach?.groups??[]).map(group=>`<div><h2>${e(group.label)}</h2><ul>${group.leads.slice(0,4).map(lead=>`<li>${e(lead.name)}</li>`).join('')}</ul></div>`).join('');
     const place=record.place,where={'this-place':`Qloo's location data sits around ${place?.name}.`,partly:`Qloo's location data only partly matches ${place?.name}.`,elsewhere:`Qloo has no location data near ${place?.name}, so no local fans are claimed.`}[place?.status];
-    const watch=[robust?`Holds in ${pct(robust.share)} of ${robust.draws} fee scenarios.`:'',coin.length?`Coin-flip pick${coin.length>1?'s':''}: ${coin.join(', ')}.`:'',where??''].filter(Boolean);
+    const watch=[robust?`Holds in ${pct(robust.share)} of ${robust.draws} fee scenarios.`:'',coin.length?`Coin-flip pick${coin.length>1?'s':''}: ${coin.join(', ')}.`:'',where??'',record.actCheck?.removed?.length?`Removed because MusicBrainz lists them as ended: ${record.actCheck.removed.map(act=>act.name).join(', ')}.`:''].filter(Boolean);
     const qloo=record.snapshot.receipts.filter(receipt=>receipt.source==='qloo').length;
     box.innerHTML=`<p class="b-kicker">Promoter brief · ${e(memo.input.city)}</p>
       <h1>${e(acts.map(act=>act.name).join(' + '))}</h1>

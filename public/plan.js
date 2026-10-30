@@ -460,7 +460,8 @@
   function askBox(){
     if(!view.base.memo.slate.feasible||view.qlooOff)return '';
     const bill=billNames(view.base),first=bill[0]??'';
-    const tries=[`Drop ${first} and find a replacement`,'Cut the budget by 20%','Where should we play?'];
+    const other=itemsOf(view.base).find(item=>!view.base.memo.slate.selectedIds.includes(item.id))?.name;
+    const tries=[`Drop ${first} and find a replacement`,'Cut the budget by 20%',...(other?[`Why not ${other}?`]:[]),'Where should we play?'];
     return `<form class="ask-agent" id="ask-agent"><label for="ask-input">Tell the agent what to change</label>
         <div class="ask-row"><input id="ask-input" maxlength="300" autocomplete="off" value="${e(view.askDraft??'')}" placeholder="${e(tries[0])}"><button type="submit" class="sketch-btn"${view.askBusy?' disabled aria-busy="true"':''}>${view.askBusy?'Working…':'Send'}</button></div>
         <div class="ask-tries">${tries.map(text=>`<button type="button" class="preset" data-ask="${e(text)}">${e(text)}</button>`).join('')}</div>
@@ -470,9 +471,10 @@
     const owner=view;if(!owner||owner.askBusy||!request.trim())return;
     owner.askBusy=true;owner.askDraft=request;owner.askNote='';render();
     try{
-      const {steps}=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/ask`,{method:'POST',body:{request,budget:owner.budget},timeout:30000,retries:0});
+      const {steps,answer}=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/ask`,{method:'POST',body:{request,budget:owner.budget},timeout:30000,retries:0});
       if(view!==owner)return;
-      if(!steps.length){owner.askNote='I can change the budget, drop a booked act, find a replacement, map the crowd or test the money. Try one of those.';return;}
+      if(answer){owner.askNote=answer;owner.askDraft='';return;}
+      if(!steps.length){owner.askNote='I can change the budget, drop a booked act, find a replacement, say why an act is not booked, map the crowd or test the money. Try one of those.';return;}
       const done=[];
       if(steps.some(step=>step.type==='reset')){owner.budget=owner.base.memo.constraints.budget;owner.cancelId=null;owner.qlooOff=false;done.push('reset the plan');}
       for(const step of steps){

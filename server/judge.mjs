@@ -14,7 +14,7 @@ import {buildReach,REACH_CALLS} from './audience-reach.mjs';
 import {buildReplan,REPLAN_CALLS} from './replan.mjs';
 import {checkActs} from './act-check.mjs';
 import {locatePlace} from './place-check.mjs';
-import {interpretAsk} from './agent-ask.mjs';
+import {interpretAsk,explainAct} from './agent-ask.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 // Audience reach (brands, places, podcasts for the booked bill) is kept beside its case, not in
@@ -274,6 +274,8 @@ export function registerJudgeRoutes(app) {
       const memo=record.snapshot.memo;if(memo.slate?.feasible!==true)throw fault('This plan has no bill to change yet.',409);
       if(!routeQuota(req,'agent-ask',{minuteLimit:8,dayLimit:400}))throw fault('Please wait a moment before the next instruction.',429);
       const budget=Number.isFinite(req.body?.budget)&&req.body.budget>0?req.body.budget:memo.constraints.budget;
+      const answer=typeof req.body?.request==='string'&&req.body.request.length<=300?explainAct(req.body.request,{items:memo.items,slate:memo.slate,constraints:memo.constraints,budget,currency:memo.currency,removed:record.actCheck?.removed}):null;
+      if(answer)return res.json({steps:[],answer,by:'plan'});
       res.json(await interpretAsk(req.body?.request,{acts:memo.items.map(item=>({id:item.id,name:item.name})),billIds:memo.slate.selectedIds,budget}));
     }catch(error){res.status(error.status??500).json({error:error.status?error.message:'The agent could not read that just now.'});}
   });

@@ -22,6 +22,9 @@ Current deployed commit and executed checks: [verified production release](docs/
 8. **Lose an act.** Drop a booked act and the optimizer rebooks from the saved pool. The agent can then search Qloo again for fans of the rest of the bill, rank what it finds with the pool, and rebook with the surviving acts locked.
 9. **Take it away.** Each plan opens as a one-page promoter brief to print or save as PDF, and runs through Financial Risk on its own artists.
 10. **Plan your own show.** Enter any city, town or village and up to three artists your audience loves. The place is confirmed on OpenStreetMap first, and Qloo's location data is measured against it: a plan says whether that data sits around the place, partly matches or lies elsewhere, and an act only counts as having local fans when a result is within 75 km. Only the place name is sent to OpenStreetMap. Plans can be in USD, INR, EUR or GBP: dollar fee tiers convert at the published European Central Bank rate, and if no rate is available the plan is refused rather than guessed. A live run makes up to 12 Qloo calls for the decision (usually under a minute), then 3 more to map its crowd, and returns a shareable plan. Qloo has no booking fees, so fees for new acts are estimates from Qloo popularity tiers, labelled as such.
+11. **Never book an act that no longer exists.** Qloo matches taste, not careers: fans of Nirvana get Soundgarden. Every discovered act is looked up on MusicBrainz, and one listed as ended leaves the shortlist. Only an exact, unambiguous name match can remove an act, and an outage never does.
+12. **Reach a bill at any budget.** When no bill of the closest matches fits, the agent searches again through Qloo Insights below the popularity the budget can reach. Fans of Nirvana in Seattle on $60,000 get Jerry Cantrell + Mudhoney + Candlebox, not an empty page.
+13. **Tell the agent.** Type what to change in plain English, or ask why an act is not booked. Rules read common requests, so this works with no language model. A model may only choose from the same fixed actions, every step is validated, and the page runs the real experiment.
 
 The full lab with Autopilot, the original research timeline and the method comparisons is at [desk.html](https://houselights.80-225-218-239.sslip.io/desk.html).
 
@@ -53,7 +56,7 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->449<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
+| `npm test` | <!--claim:unitTests-->451<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
 | `npm run test:browser` | <!--claim:browserTests-->85<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |
