@@ -997,6 +997,23 @@ test('the planning tools fit a phone, before and after a run', async ({ page }) 
   expect(await overflow()).toBeLessThanOrEqual(0);
 });
 
+test('a plain-English instruction changes the plan through the real controls', { tag: '@cross-browser' }, async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await page.locator('#ask-input').waitFor();
+  await page.fill('#ask-input', 'Cut the budget by 20% and drop Sault');
+  await page.locator('#ask-agent button[type=submit]').click();
+  await expect(page.locator('#ask-note')).toContainText('dropped Sault');
+  await expect(page.locator('#plan-budget-value')).toHaveText('$11,600');
+  await expect(page.locator('#result-title')).not.toContainText('Sault');
+  await page.fill('#ask-input', 'tell me a joke about whales');
+  await page.locator('#ask-agent button[type=submit]').click();
+  await expect(page.locator('#ask-note')).toContainText('I can change the budget');
+  await page.fill('#ask-input', 'reset');
+  await page.locator('#ask-agent button[type=submit]').click();
+  await expect(page.locator('#ask-note')).toContainText('reset the plan');
+  await expect(page.locator('#result-title')).toContainText('Sault');
+});
+
 test('a visitor can run the Festival GM on a saved plan', { tag: '@cross-browser' }, async ({ page }) => {
   const refused = [];
   page.on('response', response => { if (response.status() === 401) refused.push(response.url()); });
@@ -1517,8 +1534,8 @@ test.describe('Booking Desk: plan your show', () => {
       await expect(page.locator('#reach-title')).toBeFocused();
       await expect(page.locator('#result-status')).toHaveText('Audience mapped: sponsor leads, places and podcasts for fans of this bill.');
     }
-    await expect(reach.locator('.reach-card')).toHaveCount(3);
-    await expect(reach.locator('.reach-card .solid-kicker')).toHaveText(['Sponsor leads', 'Places in the city', 'Podcasts to advertise on']);
+    await expect(reach.locator('.reach-card')).toHaveCount(4);
+    await expect(reach.locator('.reach-card .solid-kicker')).toHaveText(['Rooms to book', 'Sponsor leads', 'Places in the city', 'Podcasts to advertise on']);
     await expect(reach.locator('.reach-line')).toContainText(/^Fans of this bill favour .+, listen to .+ and go to .+\.$/);
     await expect(reach.locator('.reach-note')).toContainText('Synthetic development data, not from Qloo.');
     await expect(reach.locator('.reach-note')).toContainText('They do not change the bill.');
@@ -1536,7 +1553,7 @@ test.describe('Booking Desk: plan your show', () => {
     let posted = false;
     page.on('request', request => { if (request.url().endsWith('/reach') && request.method() === 'POST') posted = true; });
     await page.reload();
-    await expect(page.locator('#reach .reach-card')).toHaveCount(3);
+    await expect(page.locator('#reach .reach-card')).toHaveCount(4);
     await expect(page.locator('#reach-run')).toHaveCount(0);
     expect(posted).toBe(false);
     // Dropping an act says the leads belong to the original bill.
@@ -1551,7 +1568,7 @@ test.describe('Booking Desk: plan your show', () => {
     await page.fill('#plan-budget', '12000');
     await page.locator('#plan-submit').click();
     await expect(page.locator('.result-meta')).toContainText('Sheffield', { timeout: 30000 });
-    await expect(page.locator('#reach .reach-card')).toHaveCount(3, { timeout: 15000 });
+    await expect(page.locator('#reach .reach-card')).toHaveCount(4, { timeout: 15000 });
     await expect(page.locator('#reach-run')).toHaveCount(0);
   });
 });

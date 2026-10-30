@@ -8,11 +8,16 @@
 // digests are unchanged. Leads are cultural affinities, not partnerships, availability or
 // audience size.
 import { nameOf, idOf } from './shape.mjs';
+import { distanceKm, NEAR_KM } from './place-check.mjs';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const text = (value, max = 160) => typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : '';
 const usable = env => ['ok', 'partial', 'degraded'].includes(env.status);
+// Qloo's place categories for rooms that host live music.
+const ROOM_TAGS = ['live_music_venue', 'concert_hall', 'auditorium', 'performing_arts_theater'].map(tag => `urn:tag:category:place:${tag}`);
+const NOT_A_ROOM = /banquet|lawns?|karyalaya|wedding|marriage|studio|restaurant|hotel/i;
 export const REACH_DOMAINS = [
+  { key: 'venue', type: 'place', label: 'Rooms to book', hint: 'Live music rooms these fans favour', args: city => ({ filter_location: city, include_tags: ROOM_TAGS, include_tags_operator: 'union' }), keep: row => !NOT_A_ROOM.test(nameOf(row) ?? ''), near: true, extra: 7 },
   { type: 'brand', label: 'Sponsor leads', hint: 'Brands these fans favour', args: city => ({ signal_location: city }) },
   { type: 'place', label: 'Places in the city', hint: 'Where these fans go', args: city => ({ filter_location: city }) },
   { type: 'podcast', label: 'Podcasts to advertise on', hint: 'What these fans listen to', args: city => ({ signal_location: city }) },
@@ -32,24 +37,31 @@ export function driversOf(row, selectedIds) {
 }
 
 /** Runs the three calls for the case's baseline bill. `run` is a bounded Qloo Run. */
-export async function buildReach(snapshot, run) {
+export async function buildReach(snapshot, run, { place = null } = {}) {
   const slate = snapshot.memo.slate, city = snapshot.memo.input.city;
   if (!slate?.feasible || !slate.selectedIds.length) throw Object.assign(new Error('Only a plan with a bookable bill has an audience to map.'), { status: 409 });
   const selectedIds = [...slate.selectedIds], names = selectedIds.map(id => snapshot.memo.items.find(item => item.id === id)?.name ?? id);
   const groups = [];
   for (const domain of REACH_DOMAINS) {
-    const { env, receipt } = await run.call('recommend', { target_type: domain.type, signals: selectedIds, limit: REACH_LEADS + 3, ...domain.args(city) },
+    const { env, receipt } = await run.call('recommend', { target_type: domain.type, signals: selectedIds, limit: REACH_LEADS + (domain.extra ?? 3), ...domain.args(city) },
       `${domain.hint}: fans of ${names.join(' + ')} in ${city}`);
     const seen = new Set(), leads = [];
+    let farAway = 0;
     if (usable(env)) for (const row of env.results) {
       const name = text(nameOf(row)), id = text(idOf(row), 80);
       if (!name || seen.has(name.toLowerCase()) || leads.length >= REACH_LEADS) continue;
+      if (domain.keep && !domain.keep(row)) continue;
+      // Qloo answers for any place name, so a room only counts when it is really nearby.
+      if (domain.near && place?.status === 'found') {
+        const lat = row?.location?.lat ?? row?.location?.latitude, lon = row?.location?.lon ?? row?.location?.longitude;
+        if (!finite(lat) || !finite(lon) || distanceKm(place.lat, place.lon, lat, lon) > NEAR_KM) { farAway++; continue; }
+      }
       seen.add(name.toLowerCase());
-      const address = text(row?.properties?.address, 120);
+      const address = text(row?.properties?.address, 120), website = text(row?.properties?.website, 200);
       leads.push({ name, ...(id ? { id } : {}), ...(finite(row.affinity) ? { affinity: row.affinity } : {}),
-        ...(finite(row.popularity) ? { popularity: row.popularity } : {}), ...(address ? { address } : {}), drivers: driversOf(row, selectedIds) });
+        ...(finite(row.popularity) ? { popularity: row.popularity } : {}), ...(address ? { address } : {}), ...(domain.near && website.startsWith('http') ? { website } : {}), drivers: driversOf(row, selectedIds) });
     }
-    groups.push({ type: domain.type, label: domain.label, hint: domain.hint, receiptId: receipt.id, status: env.status, leads });
+    groups.push({ type: domain.key ?? domain.type, label: domain.label, hint: domain.hint, receiptId: receipt.id, status: env.status, leads, ...(farAway ? { farAway } : {}) });
   }
   return { version: '1.0', city, selectedIds, groups, note: REACH_NOTE, createdAt: new Date().toISOString(),
     mock: run.mode === 'mock', providerCalls: run.receipts.filter(r => r.source === 'qloo' && !r.cached).length,

@@ -45,12 +45,12 @@ test('reach uses the booked acts as signals, one call per domain, and never touc
   const result = await buildReach(snapshot, run);
   assert.equal(JSON.stringify(snapshot), before);
   assert.equal(run.receipts.length, REACH_CALLS);
-  assert.deepEqual(result.groups.map(g => g.type), ['brand', 'place', 'podcast']);
+  assert.deepEqual(result.groups.map(g => g.type), ['venue', 'brand', 'place', 'podcast']);
   for (const [index, receipt] of run.receipts.entries()) {
     assert.deepEqual(receipt.args.signals, ['mock-a', 'mock-b'], 'signals are exactly the booked acts');
     assert.equal(result.groups[index].receiptId, receipt.id);
   }
-  assert.equal(run.receipts[1].args.filter_location, 'London', 'places are filtered to the plan’s city');
+  assert.equal(run.receipts[2].args.filter_location, 'London', 'places are filtered to the plan’s city');
   assert.ok(result.groups.every(g => g.leads.length > 0 && g.leads.length <= REACH_LEADS));
   assert.equal(result.mock, true);
   await assert.rejects(buildReach({ memo: { ...snapshot.memo, slate: { feasible: false, selectedIds: [] } } }, new Run({ budget: 3 })), /bookable bill/);
@@ -80,4 +80,19 @@ test('a plan with no bookable bill has no audience to map', async () => {
   if (loadJudgeCase(id).snapshot.memo.slate.feasible) return;
   const response = await reach(id);
   assert.equal(response.status, 409);
+});
+
+test('rooms to book are concert rooms near the place, or an honest none', async () => {
+  const { REACH_DOMAINS } = await import('../server/audience-reach.mjs');
+  const room = REACH_DOMAINS.find(domain => domain.key === 'venue');
+  assert.ok(room.keep({ name: 'Prithvi Theatre' }));
+  assert.ok(!room.keep({ name: 'Siddhi Gardens and Banquets' }));
+  assert.ok(!room.keep({ name: 'R K Lawns & Hall' }));
+  const snapshot = { memo: { input: { city: 'Akole' }, slate: { feasible: true, selectedIds: ['a'] }, items: [{ id: 'a', name: 'A' }] } };
+  const near = { name: 'Near Hall', entity_id: 'n', location: { lat: 19.55, lon: 74.02 } }, far = { name: 'Far Hall', entity_id: 'f', location: { lat: 18.93, lon: 72.83 } };
+  const run = { mode: 'mock', receipts: [], call: async () => ({ env: { status: 'ok', results: [near, far, { name: 'No Coordinates', entity_id: 'x' }] }, receipt: { id: 'b1' } }) };
+  const reach = await buildReach(snapshot, run, { place: { status: 'found', lat: 19.54, lon: 74.01 } });
+  const rooms = reach.groups.find(group => group.type === 'venue');
+  assert.deepEqual(rooms.leads.map(lead => lead.name), ['Near Hall']);
+  assert.equal(rooms.farAway, 2);
 });

@@ -99,7 +99,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
         if (terms?.fee != null && terms.fee <= budget) reachable.push({ ref: idOf(row), name, terms });
       }
       if (reachable.length >= slots) {
-        const keep = [...candidates.keys()].slice(0, 2);
+        // The closest matches stay for comparison, but only ones confirmed still active.
+        const keep = [...candidates.keys()].filter(ref => !actResults || actResults.get(candidates.get(ref).name)?.status === 'active').slice(0, 2);
         for (const ref of [...candidates.keys()]) if (!keep.includes(ref)) candidates.delete(ref);
         for (const { ref, name, terms } of reachable.slice(0, 8 - keep.length)) { remember(ref, name); candidates.set(ref, { id: ref, name, found: true, terms, identityReceipt: wider.receipt.id }); }
         widened = { popularityMax: cap, added: Math.min(reachable.length, 8 - keep.length), receipt: wider.receipt.id };

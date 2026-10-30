@@ -13,6 +13,8 @@ import {Run,isMock} from './qloo.mjs';
 import {buildReach,REACH_CALLS} from './audience-reach.mjs';
 import {buildReplan,REPLAN_CALLS} from './replan.mjs';
 import {checkActs} from './act-check.mjs';
+import {locatePlace} from './place-check.mjs';
+import {interpretAsk} from './agent-ask.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 // Audience reach (brands, places, podcasts for the booked bill) is kept beside its case, not in
@@ -265,6 +267,16 @@ export function registerJudgeRoutes(app) {
     const source=store.load(req.body?.sourceId);if(!source)throw fault('Saved source not found.',404);
     experimentCache.clear();res.status(201).json(publishJudgeCase(source,req.body?.title));
   }));
+  // Tell the agent: a plain-English instruction becomes steps the page runs itself.
+  app.post('/api/judge/cases/:id/ask',async(req,res)=>{
+    try{
+      const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
+      const memo=record.snapshot.memo;if(memo.slate?.feasible!==true)throw fault('This plan has no bill to change yet.',409);
+      if(!routeQuota(req,'agent-ask',{minuteLimit:8,dayLimit:400}))throw fault('Please wait a moment before the next instruction.',429);
+      const budget=Number.isFinite(req.body?.budget)&&req.body.budget>0?req.body.budget:memo.constraints.budget;
+      res.json(await interpretAsk(req.body?.request,{acts:memo.items.map(item=>({id:item.id,name:item.name})),billIds:memo.slate.selectedIds,budget}));
+    }catch(error){res.status(error.status??500).json({error:error.status?error.message:'The agent could not read that just now.'});}
+  });
   // The planning tools work from a saved source. A published plan is opened as one, so a
   // visitor can use them without an ID. The copy is unpinned and carries only public fields.
   const caseSources=new Map();
@@ -348,7 +360,8 @@ export function registerJudgeRoutes(app) {
       if(!consumeQuota(rules,now)){res.set('Retry-After','600');return res.status(429).json({error:'Audience maps are limited to 3 every 10 minutes per visitor, under a shared daily cap that protects the Qloo quota.'});}
       pending=(async()=>{
         try{
-          const reach=await buildReach(record.snapshot,new Run({budget:REACH_CALLS,deadlineMs:60000,receiptPrefix:'b'}));
+          const place=isMock()?null:await locatePlace(record.snapshot.memo.input.city);
+          const reach=await buildReach(record.snapshot,new Run({budget:REACH_CALLS,deadlineMs:60000,receiptPrefix:'b'}),{place});
           if(!reach.groups.some(group=>group.leads.length))throw Object.assign(new Error('Qloo returned no brands, places or podcasts for this bill. Try again later.'),{status:502});
           db.prepare('INSERT INTO audience_reach(case_id,body) VALUES(?,?) ON CONFLICT(case_id) DO NOTHING').run(record.id,JSON.stringify(reach));
           return loadReach(record.id);

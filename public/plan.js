@@ -146,6 +146,7 @@
         </div>
         <section class="result-qloo" aria-label="What Qloo changes">
           <div class="result-badges" aria-label="Plan assumptions and scoring">${badges}</div>
+          ${askBox()}
           ${placeNote()}
           ${widenNote()}
           ${actNote()}
@@ -455,6 +456,37 @@
     return `<p class="place-note${text[0]?` is-${text[0]}`:''}" data-place="${e(place.status)}">${text[1]} <small>Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></small></p>`;
   }
   // What MusicBrainz said about this plan's acts. Only checked acts are counted.
+  // Tell the agent. The server only names the steps; each one runs through the same controls.
+  function askBox(){
+    if(!view.base.memo.slate.feasible||view.qlooOff)return '';
+    const bill=billNames(view.base),first=bill[0]??'';
+    const tries=[`Drop ${first} and find a replacement`,'Cut the budget by 20%','Where should we play?'];
+    return `<form class="ask-agent" id="ask-agent"><label for="ask-input">Tell the agent what to change</label>
+        <div class="ask-row"><input id="ask-input" maxlength="300" autocomplete="off" value="${e(view.askDraft??'')}" placeholder="${e(tries[0])}"><button type="submit" class="sketch-btn"${view.askBusy?' disabled aria-busy="true"':''}>${view.askBusy?'Working…':'Send'}</button></div>
+        <div class="ask-tries">${tries.map(text=>`<button type="button" class="preset" data-ask="${e(text)}">${e(text)}</button>`).join('')}</div>
+        <p class="ask-note" id="ask-note" role="status">${e(view.askNote??'')}</p></form>`;
+  }
+  async function runAsk(request){
+    const owner=view;if(!owner||owner.askBusy||!request.trim())return;
+    owner.askBusy=true;owner.askDraft=request;owner.askNote='';render();
+    try{
+      const {steps}=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/ask`,{method:'POST',body:{request,budget:owner.budget},timeout:30000,retries:0});
+      if(view!==owner)return;
+      if(!steps.length){owner.askNote='I can change the budget, drop a booked act, find a replacement, map the crowd or test the money. Try one of those.';return;}
+      const done=[];
+      if(steps.some(step=>step.type==='reset')){owner.budget=owner.base.memo.constraints.budget;owner.cancelId=null;owner.qlooOff=false;done.push('reset the plan');}
+      for(const step of steps){
+        if(step.type==='budget'){owner.budget=step.budget;done.push(`set the budget to ${usd(step.budget)}`);}
+        if(step.type==='drop'){owner.cancelId=step.id;done.push(`dropped ${nameOf(owner.base,step.id)}`);}
+      }
+      if(done.length)await rerun();
+      owner.askDraft='';owner.askNote=done.length?`Done: ${done.join(', ')}.`:'';
+      if(view===owner&&steps.some(step=>step.type==='replan')){owner.askNote=`${owner.askNote} Searching Qloo for a replacement.`;await requestReplan();}
+      if(view===owner&&steps.some(step=>step.type==='crowd')){render();$('reach-run')?.click();$('reach')?.scrollIntoView({behavior:'smooth',block:'start'});owner.askNote=owner.askNote||'Mapping rooms, sponsors and fans with Qloo.';}
+      if(view===owner&&steps.some(step=>step.type==='finance')){owner.askNote=`${owner.askNote} Opening the money check below.`.trim();render();document.querySelector('.plan-next')?.scrollIntoView({behavior:'smooth',block:'center'});}
+    }catch(problem){owner.askNote=problem?.message||'The agent could not read that just now.';}
+    finally{owner.askBusy=false;if(view===owner)render();}
+  }
   function widenNote(){
     const widened=view.record.widened;if(!widened)return '';
     return `<p class="place-note" data-widened="true">The closest matches cost more than this budget allows, so the agent searched again and added ${e(widened.added)} acts the same fans like at a level this budget can reach.</p>`;
@@ -563,7 +595,7 @@
   }
 
   // ── Who the bill reaches ───────────────────────────────────────────────────────
-  // Brands, places and podcasts that fans of the booked acts favour, from three Qloo calls
+  // Rooms, brands, places and podcasts that fans of the booked acts favour, from four Qloo calls
   // made after the decision and saved beside the plan. Qloo's explainability gives each
   // booked act's share of every lead. The leads never change the bill.
   const ACT_TONES=['#5E44B8','#C2557F','#2F7FA3','#A87414'];
@@ -574,7 +606,7 @@
     if(!reach)return `<section class="reach" id="reach" aria-labelledby="reach-title">${head}
         <div class="solid-card reach-empty">
           <p class="solid-kicker">Beyond the bill</p>
-          <p class="solid-text">Qloo’s taste graph spans brands, places and podcasts, not just artists. Using the booked acts as the signal, three Qloo calls find sponsor leads, places in ${e(city)} for posters and an aftershow, and podcasts to advertise on, with the act that drives each one.</p>
+          <p class="solid-text">Qloo’s taste graph spans brands, places and podcasts, not just artists. Using the booked acts as the signal, four Qloo calls find rooms to book, sponsor leads, places in ${e(city)} for posters and an aftershow, and podcasts to advertise on, with the act that drives each one.</p>
           <p class="reach-go"><button type="button" class="hero-cta sketch-btn reach-run" id="reach-run"${view.reachBusy?' disabled aria-busy="true"':''}>${view.reachBusy?'Asking Qloo…':'Map this crowd with Qloo <span aria-hidden="true">→</span>'}</button><small>3 Qloo calls, saved with this plan</small></p>
           ${view.reachError?`<p class="reach-error" role="alert">${e(view.reachError)}</p>`:''}
         </div>
@@ -593,6 +625,7 @@
       return `<li class="reach-lead">
           <p class="reach-name"><strong>${e(item.name)}</strong>${item.affinity!=null?`<span class="reach-aff" title="Qloo affinity">${e(item.affinity.toFixed(3))}</span>`:''}</p>
           ${item.address?`<small class="reach-addr">${e(item.address)}</small>`:''}
+          ${item.website?`<small class="reach-addr"><a href="${e(item.website)}" rel="noopener nofollow">Venue website</a></small>`:''}
           ${d.length?`<span class="reach-mix" role="img" aria-label="${e(`Qloo explanation: ${split}`)}">${d.map(x=>`<span style="flex-grow:${x.share.toFixed(4)};background:${tone(x.id)}"></span>`).join('')}</span>
           <small class="reach-who">${leader.share>=.55?`Mostly ${e(nameOf(base,leader.id))}`:leader.share<1/d.length+.02?'Even split across the bill':`Leans ${e(nameOf(base,leader.id))} · ${e(pct(leader.share))}`}</small>`:''}
         </li>`;
@@ -605,7 +638,7 @@
         <div class="reach-grid">${reach.groups.map(group=>`<article class="solid-card reach-card" data-domain="${e(group.type)}">
             <p class="solid-kicker">${e(group.label)}</p>
             <p class="solid-text">${e(group.hint)}${group.type==='place'?` in ${e(reach.city)}`:''}</p>
-            ${group.leads.length?`<ol class="reach-list">${group.leads.map(lead).join('')}</ol>`:'<p class="solid-note">Qloo returned none for this crowd.</p>'}
+            ${group.leads.length?`<ol class="reach-list">${group.leads.map(lead).join('')}</ol>`:(group.farAway?`<p class="solid-note">Qloo’s nearest rooms for this crowd are more than 75 km from ${e(city)}, so none is listed.</p>`:'<p class="solid-note">Qloo returned none for this crowd.</p>')}
             <button type="button" class="link-button reach-receipt" data-receipt="${e(group.receiptId)}">Qloo receipt</button>
           </article>`).join('')}</div>
         <p class="solid-note reach-note">${reach.mock?'<strong>Synthetic development data, not from Qloo.</strong> ':''}${e(reach.note)} ${e(reach.receipts.length)} Qloo calls on ${e(new Date(reach.createdAt).toUTCString().slice(5,16))}.</p>
@@ -642,6 +675,9 @@
     $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     $('reach-run')?.addEventListener('click',()=>void requestReach());
     $('replan-run')?.addEventListener('click',()=>void requestReplan());
+    $('ask-agent')?.addEventListener('submit',event=>{event.preventDefault();void runAsk($('ask-input').value);});
+    $('ask-input')?.addEventListener('input',event=>{view.askDraft=event.target.value;});
+    result.querySelectorAll('[data-ask]').forEach(button=>button.addEventListener('click',()=>void runAsk(button.dataset.ask)));
     $('why-toggle')?.addEventListener('click',event=>{const drawer=$('why-drawer'),open=drawer.hidden;drawer.hidden=!open;event.currentTarget.setAttribute('aria-expanded',String(open));});
     // The explanation reveals once, when it first comes into view.
     const why=$('why');

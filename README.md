@@ -17,7 +17,7 @@ Current deployed commit and executed checks: [verified production release](docs/
 3. **Change the plan.** Cut the budget or drop a booked act; the optimizer rebooks instantly on the same saved evidence.
 4. **Read why this bill.** Plain sentences built from the saved plan, a citation chip on each claim that opens its Qloo receipt, a confidence meter, and real alternatives you can try in one click.
 5. **See how solid it is.** Every plan reports how many of 500 random fee scenarios keep the same bill (estimated fees move across their Qloo popularity tier), a safer bill when one wins more often, the exact fee at which each booked act would flip it, and the budgets at which the bill changes. It also shows whether Qloo's affinities clearly separate each pick or leave it a coin flip, and which Qloo signal changes the decision on its own. A live plan also shows how the agent spent its Qloo calls: it checks the acts whose evidence could change the bill and skips those no result could change. All exact, from the same saved evidence.
-6. **See who the bill reaches.** Qloo’s taste graph spans more than music. Using the booked acts as the signal, three more Qloo calls return sponsor leads (brands), places in the city (for posters and an aftershow) and podcasts to advertise on. Qloo’s explainability shows which booked act drives each lead. This runs after the decision and never changes the bill; leads are cultural affinities, not partnerships.
+6. **See who the bill reaches.** Qloo’s taste graph spans more than music. Using the booked acts as the signal, four more Qloo calls return live music rooms to book, sponsor leads (brands), places in the city (for posters and an aftershow) and podcasts to advertise on. Qloo’s explainability shows which booked act drives each lead. This runs after the decision and never changes the bill; leads are cultural affinities, not partnerships.
 7. **Open a receipt.** Each act links to the saved Qloo ranking with its row highlighted, and each audience lead links to its own Qloo call.
 8. **Lose an act.** Drop a booked act and the optimizer rebooks from the saved pool. The agent can then search Qloo again for fans of the rest of the bill, rank what it finds with the pool, and rebook with the surviving acts locked.
 9. **Take it away.** Each plan opens as a one-page promoter brief to print or save as PDF, and runs through Financial Risk on its own artists.
@@ -53,8 +53,8 @@ npm run verify:all
 
 | Command | Reproduces |
 |---|---|
-| `npm test` | <!--claim:unitTests-->442<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
-| `npm run test:browser` | <!--claim:browserTests-->84<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
+| `npm test` | <!--claim:unitTests-->449<!--/claim--> unit-test definitions, including a 5,000-case independent optimizer reference. Executed totals are reported separately in release verification. |
+| `npm run test:browser` | <!--claim:browserTests-->85<!--/claim--> defined Chromium scenarios. They include axe WCAG 2.1 AA checks on every page, and the judge subset also runs in Firefox and WebKit. |
 | `npm run evaluate:autopilot` | The evidence-withdrawal result |
 | `node scripts/evaluate-rank-vs-optimum.mjs` | Optimizer vs Qloo's top-ranked acts |
 | `node scripts/evaluate-sensitivity.mjs` | Fee-noise and near-tie band sweeps |

@@ -981,7 +981,7 @@
 .reach-legend .dot{width:10px;height:10px;border-radius:3px}
 .reach-legend .reach-legend-note{font-weight:400;color:var(--pp-soft)}
 .reach-changed{margin:0 0 16px;padding:8px 12px;border-radius:12px;background:var(--pp-warn-soft);color:var(--pp-warn);font:400 14px/20px var(--font-ui)}
-.reach-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.reach-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
 .reach-card{align-content:start}
 .reach-list{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:lead}
 .reach-lead{display:grid;gap:4px;padding-top:12px;border-top:1px solid var(--pp-line);counter-increment:lead}
@@ -996,8 +996,7 @@
 .reach-who{font:400 12px/17px var(--font-ui);color:var(--pp-soft)}
 .reach-receipt{justify-self:start;display:inline-flex;align-items:center;min-height:44px;font:500 13px/18px var(--font-ui);color:var(--pp-accent)}
 .reach-note{margin-top:16px}
-@media (max-width:1000px){.reach-grid{grid-template-columns:1fr 1fr}.reach-card[data-domain="podcast"]{grid-column:1/-1}}
-@media (max-width:700px){.reach-grid{grid-template-columns:1fr}.reach-card[data-domain="podcast"]{grid-column:auto}.reach-line{font-size:18px;line-height:27px}}
+@media (max-width:700px){.reach-grid{grid-template-columns:1fr}.reach-line{font-size:18px;line-height:27px}}
 
 /* The two pages share one design. The Booking Desk opens on the product; the landing page ends on the way in. */
 .plan-app .planner{padding-top:40px}
@@ -1098,3 +1097,10 @@
 .plan-next-go{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
 .plan-brief{display:inline-flex;align-items:center;min-height:44px;color:var(--pp-accent);font:500 14px/20px var(--font-ui)}
 .plan-page .plan-row{grid-template-columns:minmax(0,1fr)}
+.ask-agent{margin:0 0 16px;padding:16px;border:1px solid var(--line,#E4E1EA);border-radius:14px;background:var(--panel,#fff)}
+.ask-agent label{display:block;font-weight:600;margin-bottom:8px}
+.ask-row{display:flex;gap:8px}
+.ask-row input{flex:1 1 auto;min-width:0;min-height:44px;padding:8px 12px;border:1px solid var(--line,#D9D6E0);border-radius:10px;font:inherit}
+.ask-tries{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ask-note{margin:8px 0 0;font-size:14px;min-height:1px}
+.ask-note:empty{display:none}
