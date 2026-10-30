@@ -31,6 +31,17 @@
     else text=n!=null?`${n} results`:tool;
     return status&&status!=='ok'?`${text} · ${status}`:text;
   }
+  // A call row that opens to the top results Qloo returned for it. Calls with no named results stay plain rows.
+  function expandable(row,receipt){
+    const results=(receipt.evidence?.rows??[]).filter(item=>item.name).slice(0,5);
+    if(!results.length||row.querySelector('.agent-call-open'))return;
+    const body=row.innerHTML,more=(receipt.evidence?.rows?.length??0)-results.length;
+    row.classList.add('can-open');
+    row.innerHTML=`<button type="button" class="agent-call-open" aria-expanded="false">${body}<svg class="agent-call-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <ul class="agent-detail" hidden>${results.map(item=>`<li><span>${e(item.name)}</span>${typeof item.affinity==='number'?`<code>${e(item.affinity.toFixed(3))}</code>`:''}</li>`).join('')}${more>0?`<li class="agent-detail-more">and ${e(more)} more</li>`:''}</ul>`;
+    const open=row.querySelector('.agent-call-open'),detail=row.querySelector('.agent-detail');
+    open.addEventListener('click',()=>{const show=detail.hidden;detail.hidden=!show;open.setAttribute('aria-expanded',String(show));});
+  }
   const LOADER=Array.from({length:9},(_,i)=>{const r=Math.floor(i/3),c=i%3;return `<span style="--d:${(c+Math.abs(r-1))*90}ms"></span>`;}).join('');
 
   function create(root,{city='',anchor='',label='Researching with Qloo',clock}={}){
@@ -80,9 +91,10 @@
       call(call){
         if(!current)api.stage('Resolve');
         calls+=1;
-        const row=document.createElement('li');row.className='agent-call';
+        const row=document.createElement('li');row.className='agent-call';if(call.id)row.dataset.call=call.id;
         row.innerHTML=`${glyph(call.tool)}<span class="agent-call-label">${e(TOOLS[call.tool]??call.tool)}</span><span class="agent-chip">${e(chipFor({...call,city,anchor,first:calls===1}))}</span>`;
         current.querySelector('.agent-calls').appendChild(row);follow();
+        if(call.receipt)expandable(row,call.receipt);
         $('.agent-count').textContent=`${calls} Qloo call${calls===1?'':'s'}`;
       },
       // A short explanation under the current stage, e.g. why the agent checks some acts and skips others.
@@ -92,6 +104,8 @@
         const row=document.createElement('p');row.className='agent-note';row.innerHTML=html;
         current.querySelector('.agent-calls-wrap').before(row);follow();
       },
+      // Once the saved receipts are known, each call opens to what Qloo actually returned.
+      attach(receipts){for(const row of root.querySelectorAll('.agent-call[data-call]')){const receipt=(receipts??[]).find(item=>item.id===row.dataset.call);if(receipt)expandable(row,receipt);}},
       setBudget(used,max){if(max)$('.agent-count').textContent=`${used} of ${max} Qloo calls`;},
       done(summary,footHtml=''){
         if(finished)return;finished=true;clearInterval(timer);tick();
@@ -120,7 +134,7 @@
     const apply=event=>{
       if(event.type==='stage'&&event.text)trace.stage(event.text);
       else if(event.type==='plan'){const html=researchNote(checksFrom(snapshot));if(html)trace.note(html);}
-      else if(event.type==='receipt'){const r=snapshot.receipts.find(x=>x.id===event.receiptId);if(r)trace.call({tool:r.tool,why:r.why,count:r.evidence?.rows?.length,status:r.status});}
+      else if(event.type==='receipt'){const r=snapshot.receipts.find(x=>x.id===event.receiptId);if(r)trace.call({id:r.id,receipt:r,tool:r.tool,why:r.why,count:r.evidence?.rows?.length,status:r.status});}
       else if(event.type==='memo'){trace.done(`Researched in ${(total/1000).toFixed(1)}s · ${trace.calls} Qloo calls`,`Recorded live run, ${animated?`replayed at ${speed}× speed`:'shown without animation'}. Every call is saved as a receipt. <button type="button" class="link-button agent-replay">Replay</button>`);
         root.querySelector('.agent-replay')?.addEventListener('click',()=>onReplay?onReplay():replay(root,snapshot,{speed,label,onDone}));onDone?.();}
     };

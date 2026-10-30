@@ -898,6 +898,64 @@ test('a real plan leads to Financial Risk on that same plan; a synthetic one doe
   await expect(page.locator('.plan-next')).toHaveCount(0);
 });
 
+test('Why this bill states only saved facts, and each citation opens its receipt', { tag: '@cross-browser' }, async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  const why = page.locator('#why');
+  await expect(why.locator('h3')).toHaveText('Why this bill');
+  await expect(why).toContainText('Michael Kiwanuka ranks 1 of 8 for fans of Leon Bridges in New York.');
+  await expect(why).toContainText('Of 28 possible bills, 8 fit every rule, and this one scores highest at $13,500.');
+  await expect(why).toContainText('Sault is a coin flip with Jordan Rakei');
+  await expect(why.locator('.why-call')).toContainText('Good call, with a watch-out');
+  await expect(why.locator('.why-call')).toContainText('Holds in 80% of fee scenarios');
+  await why.scrollIntoViewIfNeeded();
+  await expect(why.locator('.why-line').first()).toHaveCSS('opacity', '1', { timeout: 5000 });
+  await why.locator('.cite').first().click();
+  await expect(page.locator('#receipt-body tr.is-highlight')).toContainText('Michael Kiwanuka');
+  await page.locator('#receipt-close').click();
+  // Alternatives are real bills from the checks, and trying one rebooks through the optimizer.
+  await expect(page.locator('#why-drawer')).toBeHidden();
+  await page.locator('#why-toggle').click();
+  await expect(page.locator('#why-toggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#why-drawer')).toContainText('Michael Kiwanuka + Jordan Rakei');
+  await expect(page.locator('#why-drawer')).toContainText('Wins 20% of fee scenarios');
+  await page.locator('#why-drawer').getByRole('button', { name: 'Try it' }).first().click();
+  await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Jordan Rakei for $10,000.');
+  const diff = page.locator('.act-diff');
+  await expect(diff.locator('.diff-title')).toHaveText('What changed from the original bill');
+  await expect(diff.locator('li.is-out')).toContainText('Sault');
+  await expect(diff.locator('li.is-in')).toContainText('Jordan Rakei');
+  await expect(diff.locator('li.is-same')).toContainText('Michael Kiwanuka');
+  await expect(diff.locator('.diff-total')).toContainText('−$3,500');
+});
+
+test('the bill difference shows what Qloo changes, and Why this bill steps aside with Qloo off', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  const diff = page.locator('.act-diff');
+  await expect(diff.locator('.diff-title')).toHaveText('What Qloo changes in the bill');
+  await expect(diff.locator('li.is-out')).toHaveCount(2);
+  await expect(diff.locator('li.is-in')).toHaveCount(2);
+  await expect(diff.locator('.diff-total')).toContainText('$13,500 → $9,000');
+  await page.locator('#plan-switch').click();
+  await expect(page.locator('#result-title')).toContainText('Jordan Rakei + Hiatus Kaiyote');
+  await expect(page.locator('#why')).toHaveCount(0);
+  await expect(diff.locator('.diff-title')).toHaveText('What Qloo changes in the bill');
+});
+
+test('a call in the agent card opens to what Qloo returned', { tag: '@cross-browser' }, async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await expect(page.locator('#agent-trace .agent-call-open').first()).toBeAttached({ timeout: 30000 });
+  await expect(page.locator('#agent-trace .agent-replay')).toBeVisible({ timeout: 30000 });
+  const rank = page.locator('#agent-trace .agent-call').filter({ hasText: 'Rank for this audience' });
+  await page.locator('#agent-trace .agent-stage[data-stage="2"] .agent-stage-head').click();
+  const open = rank.locator('.agent-call-open');
+  await open.click();
+  await expect(open).toHaveAttribute('aria-expanded', 'true');
+  await expect(rank.locator('.agent-detail')).toContainText('Michael Kiwanuka');
+  await expect(rank.locator('.agent-detail')).toContainText('0.977');
+  await open.click();
+  await expect(rank.locator('.agent-detail')).toBeHidden();
+});
+
 test('Financial Risk runs on a real Booking Desk plan, never on placeholder artists', async ({ page }) => {
   test.setTimeout(180000);
   await page.goto(`${origin}/financial.html`);

@@ -163,10 +163,12 @@
             <span class="compare-arrow" aria-hidden="true">→</span>
             ${side('off','Without Qloo evidence',offBill,offFee,view.qlooOff)}
           </div>
+          ${billDiff()}
           ${slate.feasible&&slots>1?`<p class="result-why">${provisional?'This provisional bill meets booking constraints, but missing affinity cannot support a confident taste recommendation.':`Not simply Qloo’s top ${e(slots)}: the optimizer weighs each act’s Qloo fit against its fee and selects the highest scoring set that fits the budget.`}</p>`:''}
           ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
         </section>
       </div>
+      ${whySection()}
       ${solidSection()}
       ${actSections()}
       ${reachSection()}
@@ -455,6 +457,67 @@
     return `<section class="plan-next" aria-labelledby="next-title"><div><h3 id="next-title">Would this night make money?</h3><p>Run this plan’s artists through 10,000 scenarios with your own venue, ticket and cost assumptions.</p></div><a class="hero-cta sketch-btn" href="/financial.html?plan=${encodeURIComponent(view.record.id)}">Run the finances <span aria-hidden="true">→</span></a></section>`;
   }
 
+  // ── Why this bill ──────────────────────────────────────────────────────────────
+  // The decision in plain sentences, written only from the saved plan and its analysis. Each
+  // claim carries a chip that opens the Qloo receipt behind it.
+  const cite=(id,label,entity)=>id?`<button type="button" class="cite" data-receipt="${e(id)}"${entity?` data-entity="${e(entity)}"`:''}><span class="cite-pill"><span class="cite-mark" aria-hidden="true">Q</span>${e(label)}</span></button>`:'';
+  function whyLines(){
+    const {current,base}=view,slate=current.memo.slate,fans=listNames(base.memo.input.anchors??[]),city=base.memo.input.city,analysis=current.__analysis;
+    const lines=slate.selectedIds.map(id=>itemsOf(current).find(item=>item.id===id)).filter(Boolean).map(item=>{
+      const links=item.evidenceReceipts??{},score=affinityOf(base,item);
+      const parts=[item.rank?`<strong>${e(item.name)}</strong> ranks ${e(item.rank)} of ${e(item.of)} for fans of ${e(fans)} in ${e(city)}. ${cite(links.rank?.[0],score!=null?`affinity ${score.toFixed(3)}`:'Qloo ranking',item.name)}`:`<strong>${e(item.name)}</strong> has no complete Qloo ranking in this plan.`];
+      if(item.local==='yes'&&links.local?.[0])parts.push(`Its fans are found around ${e(city)}. ${cite(links.local[0],'location data')}`);
+      if((item.momentum==='rising'||item.momentum==='cooling')&&links.trends?.[0])parts.push(`Interest is ${e(item.momentum)}. ${cite(links.trends[0],'six-month trend',item.name)}`);
+      return parts.join(' ');
+    });
+    lines.push(`Of ${e(slate.checkedCount)} possible bills, ${e(slate.feasibleCount)} fit every rule, and this one scores highest at <strong>${e(usd(slate.totalFee))}</strong>.`);
+    const coin=analysis?.affinity?.status==='ready'?analysis.affinity.acts.filter(act=>act.verdict==='coin-flip'):[];
+    for(const act of coin)lines.push(`Watch out: <strong>${e(nameOf(current,act.id))}</strong> is a coin flip${act.rival?` with ${e(nameOf(current,act.rival.id))}`:''}, because Qloo barely separates them.`);
+    return lines;
+  }
+  // How firm the call is, from the same fee and affinity checks the cards below show in full.
+  function confidence(){
+    const analysis=view.current.__analysis,robust=analysis?.robustness;if(robust?.status!=='ready')return null;
+    const coin=analysis.affinity?.status==='ready'&&analysis.affinity.acts.some(act=>act.verdict==='coin-flip');
+    const level=robust.share>=.6?(robust.share>=.9&&!coin?3:2):1;
+    return {level,label:['Close call','Good call, with a watch-out','Strong call'][level-1],detail:`Holds in ${pct(robust.share)} of fee scenarios`};
+  }
+  // Real alternatives only: bills the checks found, each with the reason it is on the list. A
+  // bill the budget ladder reaches can be tried with one click.
+  function alternatives(){
+    const {current}=view,analysis=current.__analysis,robust=analysis?.robustness,ladder=analysis?.ladder,seen=new Set([current.memo.slate.selectedIds.slice().sort().join()]),out=[];
+    const total=ids=>ids.reduce((sum,id)=>sum+(itemsOf(current).find(item=>item.id===id)?.terms.fee??0),0);
+    const add=(ids,why)=>{const key=ids.slice().sort().join();if(!ids.length||seen.has(key))return;seen.add(key);out.push({ids,why,step:ladder?.status==='ready'?ladder.steps.find(step=>sameIds(step.selectedIds,ids)):null});};
+    if(robust?.status==='ready'){
+      if(robust.safer)add(robust.safer.selectedIds,`Safer pick: wins ${pct(robust.safer.share)} of fee scenarios`);
+      for(const row of robust.alternatives??[])add(row.selectedIds,`Wins ${pct(row.share)} of fee scenarios`);
+    }
+    if(ladder?.status==='ready')for(const step of [...ladder.steps].reverse())add(step.selectedIds,`The bill from ${whole(step.budget)}`);
+    return out.slice(0,3).map(row=>({...row,total:total(row.ids)}));
+  }
+  function whySection(){
+    const slate=view.current.memo.slate;if(view.qlooOff||!slate.feasible)return '';
+    const lines=whyLines(),call=confidence(),others=alternatives();
+    const names=ids=>ids.map(id=>nameOf(view.current,id)).join(' + '),est=estimated(view.record)?' est.':'';
+    return `<section class="why${view.whyPlayed?'':' is-armed'}" id="why" aria-labelledby="why-title">
+        <h3 id="why-title">Why this bill</h3>
+        <div class="why-text">${lines.map((line,index)=>`<p class="why-line" style="--i:${index}">${line}</p>`).join('')}</div>
+        ${others.length?`<div class="why-drawer" id="why-drawer" hidden><p class="why-drawer-title">Other bills worth a look</p><ul>${others.map(row=>`<li><span class="why-alt"><strong>${e(names(row.ids))}</strong><small>${e(row.why)}</small></span><span class="why-alt-fee">${e(usd(row.total))}${est}</span>${row.step&&row.step.budget!==view.budget?`<button type="button" class="preset" data-budget="${e(row.step.budget)}">Try it</button>`:''}</li>`).join('')}</ul></div>`:''}
+        ${call||others.length?`<div class="why-foot">${call?`<span class="why-call" data-level="${call.level}"><span class="meter" role="img" aria-label="Confidence ${call.level} of 3">${[1,2,3].map(bar=>`<i class="${bar<=call.level?'is-on':''}"></i>`).join('')}</span><span><strong>${e(call.label)}</strong> <small>${e(call.detail)}</small></span></span>`:'<span></span>'}${others.length?`<button type="button" class="preset why-more" id="why-toggle" aria-expanded="false" aria-controls="why-drawer">Alternatives</button>`:''}</div>`:''}
+      </section>`;
+  }
+  // ── Bill difference ────────────────────────────────────────────────────────────
+  // What moved, act by act: the shown bill against the original, or, on the original bill,
+  // against the same rules without Qloo.
+  function billDiff(){
+    const {base,current,off,qlooOff}=view,from=base.memo.slate,changed=!sameIds(current.memo.slate.selectedIds,from.selectedIds);
+    const target=changed?current:off;if(!target||!from.feasible||!target.memo.slate.feasible)return '';
+    const to=target.memo.slate;if(sameIds(to.selectedIds,from.selectedIds))return '';
+    const est=estimated(view.record)?' est.':'',row=(id,kind)=>{const item=itemsOf(base).find(entry=>entry.id===id);return `<li class="is-${kind}"><span class="diff-mark" aria-hidden="true">${{out:'−',in:'+',same:''}[kind]}</span><span class="diff-name"><span class="sr-only">${{out:'Leaves the bill: ',in:'Enters the bill: ',same:'Stays on the bill: '}[kind]}</span>${e(item?.name??id)}</span><span class="diff-fee">${item?.terms.fee==null?'—':`${e(usd(item.terms.fee))}${est}`}</span></li>`;};
+    const delta=to.totalFee-from.totalFee,title=qlooOff||!changed?'What Qloo changes in the bill':'What changed from the original bill';
+    return `<div class="act-diff"><p class="diff-title">${e(title)}</p><ul>${from.selectedIds.filter(id=>!to.selectedIds.includes(id)).map(id=>row(id,'out')).join('')}${to.selectedIds.filter(id=>!from.selectedIds.includes(id)).map(id=>row(id,'in')).join('')}${to.selectedIds.filter(id=>from.selectedIds.includes(id)).map(id=>row(id,'same')).join('')}</ul><p class="diff-total"><span>${e(usd(from.totalFee))} → ${e(usd(to.totalFee))}</span><span class="diff-fee">${delta===0?'same fee':`${delta>0?'+':'−'}${e(usd(Math.abs(delta)))}`}</span></p></div>`;
+  }
+
   // ── Who the bill reaches ───────────────────────────────────────────────────────
   // Brands, places and podcasts that fans of the booked acts favour, from three Qloo calls
   // made after the decision and saved beside the plan. Qloo's explainability gives each
@@ -534,6 +597,13 @@
     result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
     $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     $('reach-run')?.addEventListener('click',()=>void requestReach());
+    $('why-toggle')?.addEventListener('click',event=>{const drawer=$('why-drawer'),open=drawer.hidden;drawer.hidden=!open;event.currentTarget.setAttribute('aria-expanded',String(open));});
+    // The explanation reveals once, when it first comes into view.
+    const why=$('why');
+    if(why?.classList.contains('is-armed')){
+      if(reduced()||!('IntersectionObserver' in window)){view.whyPlayed=true;why.classList.remove('is-armed');}
+      else{const watch=new IntersectionObserver(entries=>{if(!entries.some(entry=>entry.isIntersecting))return;watch.disconnect();owner.whyPlayed=true;why.classList.remove('is-armed');why.classList.add('is-playing');},{rootMargin:'0px 0px -8% 0px'});watch.observe(why);}
+    }
     result.querySelectorAll('[data-receipt]').forEach(button=>button.addEventListener('click',()=>openReceipt(button.dataset.receipt,button.dataset.entity,button)));
     // Summary and insight links open the card they point to (folded on phones) and move focus there.
     result.querySelectorAll('[data-jump]').forEach(link=>link.addEventListener('click',event=>{
@@ -652,7 +722,7 @@
           if(!block.startsWith('data: '))continue;
           const event=JSON.parse(block.slice(6));
           if(event.type==='stage')trace.stage(event.text);
-          else if(event.type==='call'){trace.call({tool:event.tool,count:event.count,status:event.status});trace.setBudget(event.used,event.max);}
+          else if(event.type==='call'){trace.call({id:event.id,tool:event.tool,count:event.count,status:event.status});trace.setBudget(event.used,event.max);}
           else if(event.type==='research'){const html=window.HLTrace.researchNote(event.checks);if(html)trace.note(html);}
           else if(event.type==='choose'){
             trace.fail(`Which “${event.name}” did you mean?`);
@@ -669,7 +739,7 @@
           else if(event.type==='error'){showError(event.text);done=true;}
           else if(event.type==='ready'){
             trace.done(`Planned with ${event.calls} Qloo calls`,'Every call is saved as a receipt you can open on the plan.');
-            status.textContent='Your plan is ready.';autoReach=event.id;await openCase(event.id,{scroll:true});done=true;
+            status.textContent='Your plan is ready.';autoReach=event.id;await openCase(event.id,{scroll:true});if(view?.record.id===event.id)trace.attach(view.base.receipts);done=true;
           }
         }
       }

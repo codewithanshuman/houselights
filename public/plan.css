@@ -1015,3 +1015,61 @@
 .plan-next{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;margin-top:48px;padding:24px;background:#fff;border:1px solid var(--pp-line);border-radius:20px}
 .plan-next h3{margin:0;font:600 20px/28px var(--font-ui);letter-spacing:-.4px;color:var(--pp-ink)}
 .plan-next p{margin:4px 0 0;max-width:560px;font:400 14px/21px var(--font-ui);color:var(--pp-soft)}
+
+/* Why this bill: the decision in sentences, each claim citing its Qloo receipt. */
+.why{margin-top:48px;padding:24px;background:#fff;border:1px solid var(--pp-line);border-radius:20px;display:grid;gap:14px}
+.why h3{margin:0;font:600 20px/28px var(--font-ui);letter-spacing:-.4px;color:var(--pp-ink)}
+.why-text{display:grid;gap:8px}
+.why-line{margin:0;font:400 16px/27px var(--font-ui);color:var(--pp-soft)}
+.why-line strong{font-weight:600;color:var(--pp-ink)}
+.why.is-armed .why-line{opacity:0}
+.why.is-playing .why-line{animation:why-in .6s var(--pp-ease) both;animation-delay:calc(var(--i)*140ms)}
+@keyframes why-in{from{opacity:0;filter:blur(5px);transform:translateY(4px)}}
+.cite{display:inline-flex;align-items:center;min-height:24px;margin:0 2px;padding:0;vertical-align:middle;border:0;background:none;cursor:pointer}
+.cite-pill{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:1px 8px 1px 3px;border-radius:7px;background:var(--pp-accent-soft);color:var(--pp-accent);font:500 12px/18px var(--font-mono);transition:background .2s}
+.cite:hover .cite-pill{background:#E2DAFB}
+.cite:focus-visible{outline:2px solid var(--pp-accent);outline-offset:2px}
+.cite-mark{display:grid;place-items:center;width:16px;height:16px;border-radius:5px;background:var(--pp-accent);color:#fff;font:600 10px/1 var(--font-ui)}
+.why-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding-top:14px;border-top:1px solid var(--pp-line)}
+.why-call{display:inline-flex;align-items:center;gap:10px;font:400 14px/20px var(--font-ui);color:var(--pp-ink)}
+.why-call strong{font-weight:600}
+.why-call small{font-size:13px;color:var(--pp-soft)}
+.meter{display:inline-flex;align-items:flex-end;gap:3px}
+.meter i{display:block;width:5px;height:14px;border-radius:3px;background:var(--pp-line-strong)}
+.meter i.is-on{background:var(--pp-warn)}
+.why-call[data-level="3"] .meter i.is-on{background:var(--pp-good)}
+.why-call[data-level="1"] .meter i.is-on{background:var(--pp-bad)}
+.why-more{min-height:44px}
+.why-drawer{padding:14px;border-radius:14px;background:var(--pp-accent-soft)}
+.why-drawer-title{margin:0 0 6px;font:600 13px/18px var(--font-ui);color:var(--pp-ink)}
+.why-drawer ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.why-drawer li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:6px 0}
+.why-alt{flex:1 1 220px;min-width:0;display:grid;font:400 14px/20px var(--font-ui);color:var(--pp-ink)}
+.why-alt strong{font-weight:600}
+.why-alt small{font-size:13px;color:var(--pp-soft)}
+.why-alt-fee{font:500 13px/18px var(--font-mono);color:var(--pp-ink)}
+/* The bill, act by act: what left, what entered, what stayed. */
+.act-diff{margin-top:14px;font:400 14px/20px var(--font-ui);color:var(--pp-ink)}
+.diff-title{margin:0 0 6px;font:600 13px/18px var(--font-ui);color:var(--pp-soft)}
+.act-diff ul{list-style:none;margin:0;padding:0;border-radius:12px;overflow:hidden}
+.act-diff li{display:flex;align-items:center;gap:10px;padding:7px 12px}
+.act-diff li.is-out{background:var(--pp-bad-soft);color:var(--pp-bad)}
+.act-diff li.is-in{background:var(--pp-good-soft);color:var(--pp-good)}
+.act-diff li.is-out .diff-name{text-decoration:line-through}
+.diff-mark{flex:0 0 12px;font:600 15px/20px var(--font-mono)}
+.diff-name{flex:1;min-width:0;font-weight:500;overflow-wrap:anywhere}
+.diff-fee{flex-shrink:0;white-space:nowrap;font:500 13px/20px var(--font-mono)}
+.diff-total{display:flex;justify-content:space-between;gap:12px;margin:0;padding:8px 12px 0;font-weight:600}
+/* An agent call that opens to what Qloo returned. */
+.agent-call.can-open{display:block;padding:0;margin-left:0}
+.agent-call-open{display:flex;align-items:center;gap:8px;width:100%;min-height:28px;padding:2px 6px;margin-left:-6px;border:0;border-radius:8px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.agent-call-open:hover{background:#F7F5F0}
+.agent-call-open:focus-visible{outline:2px solid var(--pp-accent);outline-offset:1px}
+.agent-call-chevron{flex-shrink:0;margin-left:auto;color:var(--pp-soft);transition:transform .25s var(--pp-ease)}
+.agent-call-open[aria-expanded="true"] .agent-call-chevron{transform:rotate(180deg)}
+.agent-detail{list-style:none;margin:2px 0 6px 12px;padding:2px 0 2px 12px;border-left:1px solid var(--pp-line);display:grid;gap:2px;font:400 12px/18px var(--font-ui);color:var(--pp-soft)}
+.agent-detail[hidden]{display:none}
+.agent-detail li{display:flex;justify-content:space-between;gap:12px}
+.agent-detail code{font:500 11px/18px var(--font-mono);color:var(--pp-ink)}
+@media (max-width:700px){.why{padding:20px}.why-line{font-size:15px;line-height:25px}.cite{min-height:40px;margin:0}.why-alt{flex-basis:100%}.why-alt-fee{flex:1}.why-call{flex-basis:100%}}
+@media (prefers-reduced-motion:reduce){.why.is-playing .why-line{animation:none}}
