@@ -67,7 +67,7 @@ export function explainAct(request, { items, slate, constraints, budget, currenc
   if (best.selectedIds.includes(item.id)) return `${item.name} is on the bill at this budget.`;
   const fee = item.terms?.fee;
   if (fee == null) return `${item.name} has no fee estimate, so it cannot enter a bill.`;
-  if (fee > budget) return `${item.name}'s estimated fee of ${money(fee, currency)} is more than the whole ${money(budget, currency)} budget.`;
+  if (fee > budget) return `The estimated fee for ${item.name} is ${money(fee, currency)}, more than the whole ${money(budget, currency)} budget.`;
   const forced = optimizeSlate(items, { ...rules, lockedIds: [item.id] });
   if (!forced.feasible) return `No bill with ${item.name} fits: its ${money(fee, currency)} leaves too little for the other acts in ${money(budget, currency)}.`;
   const gap = (best.score ?? 0) - (forced.score ?? 0);

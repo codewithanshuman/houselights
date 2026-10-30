@@ -640,7 +640,7 @@
         <div class="reach-grid">${reach.groups.map(group=>`<article class="solid-card reach-card" data-domain="${e(group.type)}">
             <p class="solid-kicker">${e(group.label)}</p>
             <p class="solid-text">${e(group.hint)}${group.type==='place'?` in ${e(reach.city)}`:''}</p>
-            ${group.leads.length?`<ol class="reach-list">${group.leads.map(lead).join('')}</ol>`:(group.farAway?`<p class="solid-note">Qloo’s nearest rooms for this crowd are more than 75 km from ${e(city)}, so none is listed.</p>`:'<p class="solid-note">Qloo returned none for this crowd.</p>')}
+            ${group.leads.length?`<ol class="reach-list">${group.leads.map(lead).join('')}</ol>`:(group.farAway?`<p class="solid-note">Qloo’s rooms for this crowd are in other places, not ${e(city)}, so none is listed.</p>`:'<p class="solid-note">Qloo returned none for this crowd.</p>')}
             <button type="button" class="link-button reach-receipt" data-receipt="${e(group.receiptId)}">Qloo receipt</button>
           </article>`).join('')}</div>
         <p class="solid-note reach-note">${reach.mock?'<strong>Synthetic development data, not from Qloo.</strong> ':''}${e(reach.note)} ${e(reach.receipts.length)} Qloo calls on ${e(new Date(reach.createdAt).toUTCString().slice(5,16))}.</p>

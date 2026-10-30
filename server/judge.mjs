@@ -252,7 +252,8 @@ export function judgeExperiment(record,raw={},options={}) {
 // clears the cache.
 const experimentCache=new Map(),analysisCache=new Map(),EXPERIMENT_CACHE_MAX=300;
 const reachRuns=new Map(),replanRuns=new Map(),REACH_DAILY_CAP=60;
-export function loadReach(caseId){const row=db.prepare('SELECT body FROM audience_reach WHERE case_id=?').get(caseId);return row?JSON.parse(row.body):null;}
+// A map from before rooms to book is rebuilt on request.
+export function loadReach(caseId){const row=db.prepare('SELECT body FROM audience_reach WHERE case_id=?').get(caseId),reach=row?JSON.parse(row.body):null;return reach?.rooms===2?reach:null;}
 const sortedJson=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 export function registerJudgeRoutes(app) {
   const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
@@ -272,7 +273,7 @@ export function registerJudgeRoutes(app) {
     try{
       const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
       const memo=record.snapshot.memo;if(memo.slate?.feasible!==true)throw fault('This plan has no bill to change yet.',409);
-      if(!routeQuota(req,'agent-ask',{minuteLimit:8,dayLimit:400}))throw fault('Please wait a moment before the next instruction.',429);
+      if(!routeQuota(req,'agent-ask',{minuteLimit:20,dayLimit:1000}))throw fault('Please wait a moment before the next instruction.',429);
       const budget=Number.isFinite(req.body?.budget)&&req.body.budget>0?req.body.budget:memo.constraints.budget;
       const answer=typeof req.body?.request==='string'&&req.body.request.length<=300?explainAct(req.body.request,{items:memo.items,slate:memo.slate,constraints:memo.constraints,budget,currency:memo.currency,removed:record.actCheck?.removed}):null;
       if(answer)return res.json({steps:[],answer,by:'plan'});
@@ -365,7 +366,7 @@ export function registerJudgeRoutes(app) {
           const place=isMock()?null:await locatePlace(record.snapshot.memo.input.city);
           const reach=await buildReach(record.snapshot,new Run({budget:REACH_CALLS,deadlineMs:60000,receiptPrefix:'b'}),{place});
           if(!reach.groups.some(group=>group.leads.length))throw Object.assign(new Error('Qloo returned no brands, places or podcasts for this bill. Try again later.'),{status:502});
-          db.prepare('INSERT INTO audience_reach(case_id,body) VALUES(?,?) ON CONFLICT(case_id) DO NOTHING').run(record.id,JSON.stringify(reach));
+          db.prepare('INSERT INTO audience_reach(case_id,body) VALUES(?,?) ON CONFLICT(case_id) DO UPDATE SET body=excluded.body').run(record.id,JSON.stringify(reach));
           return loadReach(record.id);
         }catch(error){refundQuota(rules);throw error;}
         finally{reachRuns.delete(record.id);}

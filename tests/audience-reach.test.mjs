@@ -89,10 +89,11 @@ test('rooms to book are concert rooms near the place, or an honest none', async 
   assert.ok(!room.keep({ name: 'Siddhi Gardens and Banquets' }));
   assert.ok(!room.keep({ name: 'R K Lawns & Hall' }));
   const snapshot = { memo: { input: { city: 'Akole' }, slate: { feasible: true, selectedIds: ['a'] }, items: [{ id: 'a', name: 'A' }] } };
-  const near = { name: 'Near Hall', entity_id: 'n', location: { lat: 19.55, lon: 74.02 } }, far = { name: 'Far Hall', entity_id: 'f', location: { lat: 18.93, lon: 72.83 } };
-  const run = { mode: 'mock', receipts: [], call: async () => ({ env: { status: 'ok', results: [near, far, { name: 'No Coordinates', entity_id: 'x' }] }, receipt: { id: 'b1' } }) };
-  const reach = await buildReach(snapshot, run, { place: { status: 'found', lat: 19.54, lon: 74.01 } });
+  const row = (name, city) => ({ name, entity_id: name, properties: { geocode: { city, metro: null, admin2_region: 'Ahilyanagar' } } });
+  const run = { mode: 'mock', receipts: [], call: async () => ({ env: { status: 'ok', results: [row('Near Hall', 'Akole'), { name: 'Far Hall', entity_id: 'f', properties: { geocode: { city: 'Mumbai' } } }, { name: 'No Place Named', entity_id: 'x' }] }, receipt: { id: 'b1' } }) };
+  const reach = await buildReach(snapshot, run, { place: { status: 'found', name: 'Akole, Ahilyanagar District, Maharashtra', lat: 19.54, lon: 74.01 } });
   const rooms = reach.groups.find(group => group.type === 'venue');
   assert.deepEqual(rooms.leads.map(lead => lead.name), ['Near Hall']);
   assert.equal(rooms.farAway, 2);
+  assert.ok(room.keep({ name: 'Mississippi Studios' }), 'a music room may be called a studio');
 });

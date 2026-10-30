@@ -8,14 +8,22 @@
 // digests are unchanged. Leads are cultural affinities, not partnerships, availability or
 // audience size.
 import { nameOf, idOf } from './shape.mjs';
-import { distanceKm, NEAR_KM } from './place-check.mjs';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const text = (value, max = 160) => typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : '';
 const usable = env => ['ok', 'partial', 'degraded'].includes(env.status);
 // Qloo's place categories for rooms that host live music.
 const ROOM_TAGS = ['live_music_venue', 'concert_hall', 'auditorium', 'performing_arts_theater'].map(tag => `urn:tag:category:place:${tag}`);
-const NOT_A_ROOM = /banquet|lawns?|karyalaya|wedding|marriage|studio|restaurant|hotel/i;
+const NOT_A_ROOM = /banquet|lawns?\b|karyalaya|wedding|marriage|dance|nritya|yoga|restaurant|hotel/i;
+// Qloo's place results name their city but carry no coordinates, so a room counts as nearby when
+// its city, metro or district appears in the name OpenStreetMap confirmed for the place.
+const fold = value => String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+export function roomIsNear(row, place, city) {
+  const geocode = row?.properties?.geocode, known = fold(`${place?.name ?? ''} ${city}`);
+  const primary = fold(String(place?.name ?? city).split(',')[0]).trim();
+  if (primary && fold(row?.properties?.address).includes(primary)) return true;
+  return [geocode?.city, geocode?.metro, geocode?.admin2_region].some(name => typeof name === 'string' && name.trim() && known.includes(fold(name).trim()));
+}
 export const REACH_DOMAINS = [
   { key: 'venue', type: 'place', label: 'Rooms to book', hint: 'Live music rooms these fans favour', args: city => ({ filter_location: city, include_tags: ROOM_TAGS, include_tags_operator: 'union' }), keep: row => !NOT_A_ROOM.test(nameOf(row) ?? ''), near: true, extra: 7 },
   { type: 'brand', label: 'Sponsor leads', hint: 'Brands these fans favour', args: city => ({ signal_location: city }) },
@@ -52,10 +60,7 @@ export async function buildReach(snapshot, run, { place = null } = {}) {
       if (!name || seen.has(name.toLowerCase()) || leads.length >= REACH_LEADS) continue;
       if (domain.keep && !domain.keep(row)) continue;
       // Qloo answers for any place name, so a room only counts when it is really nearby.
-      if (domain.near && place?.status === 'found') {
-        const lat = row?.location?.lat ?? row?.location?.latitude, lon = row?.location?.lon ?? row?.location?.longitude;
-        if (!finite(lat) || !finite(lon) || distanceKm(place.lat, place.lon, lat, lon) > NEAR_KM) { farAway++; continue; }
-      }
+      if (domain.near && place?.status === 'found' && !roomIsNear(row, place, city)) { farAway++; continue; }
       seen.add(name.toLowerCase());
       const address = text(row?.properties?.address, 120), website = text(row?.properties?.website, 200);
       leads.push({ name, ...(id ? { id } : {}), ...(finite(row.affinity) ? { affinity: row.affinity } : {}),
@@ -63,7 +68,7 @@ export async function buildReach(snapshot, run, { place = null } = {}) {
     }
     groups.push({ type: domain.key ?? domain.type, label: domain.label, hint: domain.hint, receiptId: receipt.id, status: env.status, leads, ...(farAway ? { farAway } : {}) });
   }
-  return { version: '1.0', city, selectedIds, groups, note: REACH_NOTE, createdAt: new Date().toISOString(),
+  return { version: '1.0', rooms: 2, city, selectedIds, groups, note: REACH_NOTE, createdAt: new Date().toISOString(),
     mock: run.mode === 'mock', providerCalls: run.receipts.filter(r => r.source === 'qloo' && !r.cached).length,
     receipts: run.receipts.map(r => ({ id: r.id, tool: r.tool, args: r.args, status: r.status, count: r.count, cached: r.cached, source: r.source,
       fetchedAt: r.fetchedAt, digest: r.digest, evidence: r.evidence })) };

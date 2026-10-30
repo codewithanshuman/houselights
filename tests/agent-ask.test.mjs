@@ -64,7 +64,7 @@ const why = (request, extra = {}) => explainAct(request, { items: pool, constrai
 
 test('why not gives the exact reason, from the plan and the optimizer', () => {
   assert.match(why('Why not Soundgarden?'), /MusicBrainz lists Soundgarden as ended in 2017/);
-  assert.match(why('why not Delta?'), /Delta's estimated fee of \$50,000 is more than the whole \$12,000 budget/);
+  assert.match(why('why not Delta?'), /estimated fee for Delta is \$50,000, more than the whole \$12,000 budget/);
   assert.match(why('Why isn\'t Gamma Ray on the bill?'), /best bill with Gamma Ray is .* for \$11,000\. It scores .* against/);
   assert.match(why('why not Alpha?'), /Alpha is on the bill/);
   assert.match(why('Why not Nobody Known?'), /not on this plan's shortlist/);
