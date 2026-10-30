@@ -72,6 +72,7 @@
     const body={};
     if(view.budget!==view.base.memo.constraints.budget)body.budget=view.budget;
     if(view.cancelId)body.cancelId=view.cancelId;
+    if(view.lockId)body.lockedIds=[view.lockId];
     if(view.qlooOff)body.qlooOff=true;
     const status=$('result-status');
     if(!Object.keys(body).length){view.current=view.base;render();result.setAttribute('aria-busy','false');return true;}
@@ -186,7 +187,7 @@
           <label for="plan-budget-range">Artist budget <strong id="plan-budget-value">${e(usd(view.budget))}</strong></label>
           <input type="range" id="plan-budget-range"${ladderTicks()} min="${Math.max(0,Math.round(base.memo.constraints.budget*.4/100)*100)}" max="${Math.round(base.memo.constraints.budget*1.5/100)*100}" step="100" value="${view.budget}">
           <div class="control-presets">${[1,.9,.8,.7].map(f=>{const value=Math.round(base.memo.constraints.budget*f);return `<button type="button" class="preset${value===view.budget?' is-on':''}" data-budget="${value}">${f===1?'Original':`${Math.round(f*100)}%`}</button>`;}).join('')}
-            <button type="button" class="preset preset-reset" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.qlooOff?' disabled':''}>Reset changes</button></div>
+            <button type="button" class="preset preset-reset" id="plan-reset"${view.budget===base.memo.constraints.budget&&!view.cancelId&&!view.lockId&&!view.qlooOff?' disabled':''}>Reset changes</button></div>
           ${ladderHtml()}
         </div>
         <p id="result-status" class="result-status" role="status" aria-live="polite"></p>
@@ -404,7 +405,7 @@
         <p class="act-kicker"><span class="act-status act-booked">Selected</span>${item.rank?`Qloo rank ${e(item.rank)} of ${e(item.of)}`:'No Qloo rank'}</p>
         <h4>${e(item.name)}</h4>
         <p class="act-fee">${e(f.feeText)}${f.score!=null?` · affinity ${e(f.score.toFixed(3))}`:''}</p>
-        <p class="act-for">For ${e(anchors)} fans in ${e(city)}</p>
+        <p class="act-for">For ${e(anchors)} fans in ${e(city)}${basedIn(item)}</p>
         ${f.chips.length?`<p class="act-chips">${f.chips.map(chip=>`<span>${e(chip)}</span>`).join('')}</p>`:''}
         ${insights.length?`<ul class="act-insights" aria-label="Analysis for ${e(item.name)}">${insights.map(([target,tone,text])=>`<li><a href="#${target}" class="insight${tone?` is-${tone}`:''}" data-jump="${target}">${e(text)}</a></li>`).join('')}</ul>`:''}
       </div>
@@ -476,10 +477,11 @@
       if(answer){owner.askNote=answer;owner.askDraft='';return;}
       if(!steps.length){owner.askNote='I can change the budget, drop a booked act, find a replacement, say why an act is not booked, map the crowd or test the money. Try one of those.';return;}
       const done=[];
-      if(steps.some(step=>step.type==='reset')){owner.budget=owner.base.memo.constraints.budget;owner.cancelId=null;owner.qlooOff=false;done.push('reset the plan');}
+      if(steps.some(step=>step.type==='reset')){owner.budget=owner.base.memo.constraints.budget;owner.cancelId=null;owner.lockId=null;owner.qlooOff=false;done.push('reset the plan');}
       for(const step of steps){
         if(step.type==='budget'){owner.budget=step.budget;done.push(`set the budget to ${usd(step.budget)}`);}
         if(step.type==='drop'){owner.cancelId=step.id;done.push(`dropped ${nameOf(owner.base,step.id)}`);}
+        if(step.type==='lock'){owner.lockId=step.id;done.push(`booked ${nameOf(owner.base,step.id)} and rebuilt the bill around it`);}
       }
       if(done.length)await rerun();
       owner.askDraft='';owner.askNote=done.length?`Done: ${done.join(', ')}.`:'';
@@ -489,6 +491,8 @@
     }catch(problem){owner.askNote=problem?.message||'The agent could not read that just now.';}
     finally{owner.askBusy=false;if(view===owner)render();}
   }
+  // Where MusicBrainz says an act is based, for a booker weighing travel. Absent when unknown.
+  const basedIn=item=>{const from=view.record.actCheck?.from?.[item.name];return from?` · based in ${e(from)}`:'';};
   function widenNote(){
     const widened=view.record.widened;if(!widened)return '';
     return `<p class="place-note" data-widened="true">The closest matches cost more than this budget allows, so the agent searched again and added ${e(widened.added)} acts the same fans like at a level this budget can reach.</p>`;
@@ -674,7 +678,7 @@
     range.addEventListener('input',()=>{calculationRequest++;view.budget=Number(range.value);$('plan-budget-value').textContent=usd(view.budget);clearTimeout(timer);timer=setTimeout(async()=>{if(!current())return;const applied=await rerun();if(applied===null||!current())return;$('plan-budget-range').focus();},350);});
     result.querySelectorAll('[data-budget]').forEach(button=>button.addEventListener('click',async()=>{view.budget=Number(button.dataset.budget);const applied=await rerun();if(applied===null||!current())return;say(`Budget set to ${usd(view.budget)}. ${view.current.memo.slate.feasible?`The bill is ${billNames(view.current).join(' and ')}.`:'No bill fits.'}`);}));
     result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
-    $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
+    $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.lockId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     $('reach-run')?.addEventListener('click',()=>void requestReach());
     $('replan-run')?.addEventListener('click',()=>void requestReplan());
     $('ask-agent')?.addEventListener('submit',event=>{event.preventDefault();void runAsk($('ask-input').value);});

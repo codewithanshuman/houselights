@@ -75,3 +75,10 @@ test('why not uses the budget in force, and the fee stays honest in local money'
   assert.match(why('why not Gamma Ray', { budget: 7000 }), /No bill with Gamma Ray fits/);
   assert.match(why('why not Delta', { currency: 'INR' }), /₹50,000/);
 });
+
+test('a booker can overrule the agent, but only with a shortlisted act', () => {
+  assert.deepEqual(read('Book Jordan Rakei anyway'), [{ type: 'lock', id: 'j' }]);
+  assert.deepEqual(read('we must have Jordan Rakei'), [{ type: 'lock', id: 'j' }]);
+  assert.deepEqual(read('Book Sault'), [], 'an act already on the bill needs no lock');
+  assert.deepEqual(validSteps([{ type: 'lock', id: 'nobody' }], plan), []);
+});

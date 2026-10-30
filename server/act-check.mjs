@@ -78,5 +78,6 @@ export function summarizeActs(results, removed) {
   const statuses = [...results.values()].map(act => act.status);
   return { source: ACT_SOURCE, checked: statuses.filter(status => status !== 'unavailable').length, total: statuses.length,
     active: statuses.filter(status => status === 'active').length,
+    from: Object.fromEntries([...results].filter(([, act]) => act.status === 'active' && act.from).map(([name, act]) => [name, act.from])),
     removed: removed.map(({ name, endedYear }) => ({ name, endedYear: endedYear ?? null })) };
 }

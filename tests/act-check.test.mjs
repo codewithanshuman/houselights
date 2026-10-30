@@ -49,7 +49,7 @@ test('acts past the deadline are unchecked, not ended', async () => {
   const results = await checkActs(['Deadline A', 'Deadline B'], { deadlineMs: 0, fetcher: answer([row('Deadline A', true, '2000')]) });
   assert.deepEqual([...results.values()].map(act => act.status), ['unavailable', 'unavailable']);
   const summary = summarizeActs(new Map([['A', { status: 'active' }], ['B', { status: 'ended' }], ['C', { status: 'unavailable' }]]), [{ name: 'B', endedYear: 2017 }]);
-  assert.deepEqual(summary, { source: 'MusicBrainz', checked: 2, total: 3, active: 1, removed: [{ name: 'B', endedYear: 2017 }] });
+  assert.deepEqual(summary, { source: 'MusicBrainz', checked: 2, total: 3, active: 1, from: {}, removed: [{ name: 'B', endedYear: 2017 }] });
 });
 
 test('an ended act never reaches the pool, and a working act takes its place', async () => {

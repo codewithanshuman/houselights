@@ -1005,6 +1005,13 @@ test('a plain-English instruction changes the plan through the real controls', {
   await expect(page.locator('#ask-note')).toContainText('dropped Sault');
   await expect(page.locator('#plan-budget-value')).toHaveText('$11,600');
   await expect(page.locator('#result-title')).not.toContainText('Sault');
+  await page.fill('#ask-input', 'reset');
+  await page.locator('#ask-agent button[type=submit]').click();
+  await expect(page.locator('#ask-note')).toContainText('reset the plan');
+  await page.fill('#ask-input', 'Book Jordan Rakei anyway');
+  await page.locator('#ask-agent button[type=submit]').click();
+  await expect(page.locator('#ask-note')).toContainText('booked Jordan Rakei');
+  await expect(page.locator('#result-title')).toContainText('Jordan Rakei');
   await page.fill('#ask-input', 'tell me a joke about whales');
   await page.locator('#ask-agent button[type=submit]').click();
   await expect(page.locator('#ask-note')).toContainText('I can change the budget');
