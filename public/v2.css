@@ -458,13 +458,17 @@ body.app-shell .app-top .app-crumbs{margin-right:auto}
   body.app-shell .app-crumb[aria-current] span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 
-/* The main call to action: solid purple, a label and a small arrow that nudges on hover. The 404
-   page keeps its hand-drawn button. */
-.v2:not(.nf-page) .sketch-btn{gap:8px;border:0;border-radius:10px;background:#5E44B8;color:#fff;box-shadow:none;filter:none;transition:background .2s,transform .15s}
-.v2:not(.nf-page) .sketch-btn::before,.v2:not(.nf-page) .sketch-btn::after{content:none}
-.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{transition:transform .2s}
-.v2:not(.nf-page) .sketch-btn:hover{background:#4C3599;box-shadow:none;filter:none;transform:none}
-.v2:not(.nf-page) .sketch-btn:hover>span[aria-hidden]{transform:translateX(3px)}
-.v2:not(.nf-page) .sketch-btn:active{background:#42308A;box-shadow:none;filter:none;transform:translateY(1px)}
+/* The main call to action: a deep purple pill with a white circle holding the arrow. On hover the
+   arrow slides out and a new one slides in; on press the pill settles. CSS only, so a label that
+   changes ("Planning…") needs nothing else. The 404 page keeps its hand-drawn button. */
+.v2:not(.nf-page) .sketch-btn{--hl-dot:36px;gap:0;padding:6px calc(var(--hl-dot) + 18px) 6px 24px;border:0;border-radius:999px;background:linear-gradient(180deg,#6A4FC8,#5438AC);color:#fff;box-shadow:inset 0 1px 0 #FFFFFF38,0 1px 2px #2A1A6E40,0 10px 22px -8px #5E44B88C;filter:none;transition:box-shadow .3s,transform .25s cubic-bezier(.22,1,.36,1)}
+.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{display:none}
+.v2:not(.nf-page) .sketch-btn::before{content:none}
+.v2:not(.nf-page) .sketch-btn::after{content:"";position:absolute;top:50%;right:6px;width:var(--hl-dot);height:var(--hl-dot);margin-top:calc(var(--hl-dot)/-2);border-radius:50%;background-color:#fff;background-image:url(/assets/brand/cta-arrow.svg),url(/assets/brand/cta-arrow.svg);background-repeat:no-repeat;background-size:18px 18px;background-position:center,calc(50% - 44px) center;box-shadow:0 1px 2px #2A1A6E33;transition:background-position .4s cubic-bezier(.22,1,.36,1)}
+.v2:not(.nf-page) .sketch-btn:hover{background:linear-gradient(180deg,#6A4FC8,#5438AC);filter:none;transform:translateY(-1px);box-shadow:inset 0 1px 0 #FFFFFF38,0 1px 2px #2A1A6E40,0 14px 28px -8px #5E44B8B3}
+.v2:not(.nf-page) .sketch-btn:active{filter:none;transform:scale(.98);box-shadow:inset 0 1px 0 #FFFFFF26,0 1px 2px #2A1A6E40,0 6px 14px -6px #5E44B866}
 .v2:not(.nf-page) .sketch-btn:focus-visible{outline:3px solid #8B5CF6;outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.v2:not(.nf-page) .sketch-btn>span[aria-hidden]{transition:none}.v2:not(.nf-page) .sketch-btn:hover>span[aria-hidden]{transform:none}}
+.v2:not(.nf-page) .plan-submit.sketch-btn{padding-left:calc(var(--hl-dot) + 18px)}
+.v2:not(.nf-page) .site-cta.sketch-btn{--hl-dot:32px;padding:6px calc(var(--hl-dot) + 14px) 6px 18px!important}
+@media (hover:hover){.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{background-position:calc(50% + 44px) center,center}}
+@media (prefers-reduced-motion:reduce){.v2:not(.nf-page) .sketch-btn,.v2:not(.nf-page) .sketch-btn::after{transition:none}.v2:not(.nf-page) .sketch-btn:hover{transform:none}.v2:not(.nf-page) .sketch-btn:not(:disabled):hover::after{background-position:center,calc(50% - 44px) center}}
