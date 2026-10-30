@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of a8bc041 — 30 October 2026
+
+The public host runs `a8bc041c8a8cef09595af741bae50c5a3974f335`, and `/healthz` over public HTTPS reports it. Each plan now has Why this bill (sentences from the saved plan, citation chips that open receipts, a confidence meter, real alternatives), a bill difference for the Qloo switch and any change, and agent calls that open to what Qloo returned.
+
+- **Before the switch:** the backup `pre-a8bc041` passed an isolated restore, and a copy is held off-host. The running image was tagged `houselights-shared:pre-a8bc041`. The rollback drill reported `d360eec`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:** `release:verify` passed all 90 checks. Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow, and the settled console probe logged no errors. One live plan (Pune, fans of Prateek Kuhad, $20,000, 2 acts) booked The Local Train + Anuv Jain for $3,000, with the location confirmed, 4 citations, the bill difference and 5 expandable agent calls, and no console errors.
+
+**Rollback:** tag `houselights-shared:pre-a8bc041` as `houselights-shared:local`, set `RELEASE_COMMIT=d360eece7a9e78ee4ea0aece348c2d4756d6be1d`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of d360eec — 30 October 2026
 
 The public host runs `d360eece7a9e78ee4ea0aece348c2d4756d6be1d`, and `/healthz` over public HTTPS reports it. The main call to action is now a dark bar with a purple square and a dot-matrix arrow; on hover the square slides across and a row of arrows ripples. The 404 page keeps its hand-drawn button.
