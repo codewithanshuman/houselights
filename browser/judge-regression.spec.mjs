@@ -1297,6 +1297,8 @@ test.describe('Booking Desk: plan your show', () => {
     await expect(mix).toHaveAttribute('aria-label', /^Qloo explanation: Michael Kiwanuka \d+%, Sault \d+%$/);
     await expect(mix.locator('span')).toHaveCount(2);
     await expect(reach.locator('.reach-legend li').first()).toContainText('Michael Kiwanuka');
+    for (const label of await reach.locator('.reach-who').allTextContents())
+      expect(label).toMatch(/^(Mostly (Michael Kiwanuka|Sault)|Even split across the bill|Leans (Michael Kiwanuka|Sault) · 5[2-4]%)$/);
     await reach.locator('.reach-card[data-domain="brand"] .reach-receipt').click();
     await expect(page.locator('#receipt-title')).toHaveText('Brands fans of this bill favour');
     await expect(page.locator('#receipt-body thead')).toContainText('Name');

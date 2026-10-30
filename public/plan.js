@@ -466,7 +466,7 @@
           <p class="reach-name"><strong>${e(item.name)}</strong>${item.affinity!=null?`<span class="reach-aff" title="Qloo affinity">${e(item.affinity.toFixed(3))}</span>`:''}</p>
           ${item.address?`<small class="reach-addr">${e(item.address)}</small>`:''}
           ${d.length?`<span class="reach-mix" role="img" aria-label="${e(`Qloo explanation: ${split}`)}">${d.map(x=>`<span style="flex-grow:${x.share.toFixed(4)};background:${tone(x.id)}"></span>`).join('')}</span>
-          <small class="reach-who">${leader.share>=.55?`Mostly ${e(nameOf(base,leader.id))}`:`Leans ${e(nameOf(base,leader.id))} · ${e(pct(leader.share))}`}</small>`:''}
+          <small class="reach-who">${leader.share>=.55?`Mostly ${e(nameOf(base,leader.id))}`:leader.share<1/d.length+.02?'Even split across the bill':`Leans ${e(nameOf(base,leader.id))} · ${e(pct(leader.share))}`}</small>`:''}
         </li>`;
     };
     const changed=!sameIds(view.current.memo.slate.selectedIds,reach.selectedIds);
