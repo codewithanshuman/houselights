@@ -129,7 +129,7 @@
       const [access, examples, plans] = await Promise.all([fetch('/api/access').then(r => r.json()), fetch('/api/examples').then(r => r.json()), fetch('/api/judge/cases').then(r => r.json())]);
       editable = access.editable === true;
       $('gm-access-status').textContent = access.protected ? editable ? 'Organizer access unlocked for this tab.' : 'Open a saved plan to research its audience, change the lineup or recover from a cancellation. The LLM control and themed-night research need organizer access.' : 'Local development access. Public deployment will require an organizer token.';
-      $('gm-examples').innerHTML = '<option value="">Choose a saved plan</option>' + (Array.isArray(examples) ? examples : []).map(example => `<option value="${e(example.id)}">${e(example.city)} · ${example.mock ? 'Synthetic' : 'Qloo'} · ${e(example.title)}</option>`).join('') + (plans.cases ?? []).filter(plan => !plan.synthetic && plan.feasible).map(plan => `<option value="case:${e(plan.id)}">${e(plan.title)}</option>`).join('');
+      $('gm-examples').innerHTML = '<option value="">Choose a saved plan</option>' + (Array.isArray(examples) ? examples : []).map(example => `<option value="${e(example.id)}">${e(example.city)} · ${example.mock ? 'Synthetic' : 'Qloo'} · ${e(example.title)}</option>`).join('') + (plans.cases ?? []).filter(plan => !plan.synthetic && plan.feasible).map(plan => `<option value="case:${e(plan.id)}">${e(plan.title.replace(/^Illustrative:\s*/, ''))}</option>`).join('');
       render();
     } catch (failure) { status(failure.message, true); }
   }
@@ -138,7 +138,8 @@
     busy = true; setBusy(true, 'gm'); buttons(); status(action === 'run' ? 'Researching markets, checking evidence gaps, and enumerating feasible lineups…' : 'Checking this decision…');
     try {
       let result;
-      if (['run','season-research','benchmark'].includes(action)) {
+      // Queued research runs belong to the organizer. A visitor's festival run goes straight to its capped route.
+      if (['season-research','benchmark'].includes(action) || (action === 'run' && editable)) {
         result = await window.houselightsResearch.launch(action==='run'?'festival':action==='benchmark'?'benchmark':'season',action==='benchmark'?{trials:1}:body);
       } else {
         const response = await fetch(`/api/gm/${encodeURIComponent(state.savedId)}/${action}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(150000) });

@@ -978,7 +978,22 @@ test('a visitor can use the Demand Lab and the event portfolio from a saved plan
   await page.getByRole('button', { name: /Event portfolio/ }).first().click();
   await page.locator('#portfolio-rehearsal').click();
   await expect(page.locator('#portfolio-status')).toContainText('real saved plan');
-  await expect(page.locator('[data-field=name]').first()).not.toHaveValue(/Illustrative/);
+  await expect(page.locator('#portfolio-events [data-field=name]').first()).not.toHaveValue(/Illustrative/);
+  await page.locator('#portfolio-run').click();
+  await expect(page.locator('#portfolio-status')).not.toHaveText('Working…');
+});
+
+test('a visitor can run the Festival GM on a saved plan', async ({ page }) => {
+  const refused = [];
+  page.on('response', response => { if (response.status() === 401) refused.push(response.url()); });
+  await page.goto(`${origin}/index.html`);
+  await page.getByRole('button', { name: /Festival GM/ }).first().click();
+  const plan = await page.locator('#gm-examples option[value^="case:"]').first().getAttribute('value');
+  await page.selectOption('#gm-examples', plan);
+  await expect(page.locator('#gm-run')).toBeEnabled();
+  await page.locator('#gm-run').click();
+  await expect(page).toHaveURL(/\/m\//, { timeout: 60000 });
+  expect(refused).toEqual([]);
 });
 
 test('a dropped act can be replaced by a fresh Qloo search, leaving the plan unchanged', { tag: '@cross-browser' }, async ({ page }) => {

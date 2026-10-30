@@ -173,7 +173,7 @@
   $('judge-case').onchange=()=>void load($('judge-case').value);
   request('/api/judge/cases').then(({cases})=>{
     $('judge-live-count').textContent=`${cases.filter(c=>!c.synthetic).length} saved live-Qloo cases · ${cases.filter(c=>c.recordedTrace).length} complete recorded run${cases.filter(c=>c.recordedTrace).length===1?'':'s'} · ${cases.filter(c=>c.synthetic).length} synthetic cases`;
-    $('judge-case').innerHTML=cases.map(c=>`<option value="${e(c.id)}">${e(c.title)}${c.synthetic?' · Synthetic':''}</option>`).join('');
+    $('judge-case').innerHTML=cases.map(c=>`<option value="${e(c.id)}">${e(c.title.replace(/^Illustrative:s*/,''))}${c.synthetic?' · Synthetic':''}</option>`).join('');
     if(!cases.length){say('No public cases have been prepared on this server yet.');return;}
     const id=location.hash.slice(1),guided=cases.find(c=>c.id==='8be4d03ef4792ca9f1466983')??cases.find(c=>c.recordedTrace)??cases.find(c=>c.city?.toLowerCase()==='new york');
     $('judge-case').value=cases.some(c=>c.id===id)?id:(guided??cases[0]).id;void load($('judge-case').value);

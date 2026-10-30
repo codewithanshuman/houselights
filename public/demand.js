@@ -106,7 +106,7 @@
     return source;}
   async function openPlan(caseId){$('plan-status').textContent='Opening the saved plan…';try{const {id}=await read(`/api/judge/cases/${encodeURIComponent(caseId)}/source`,{});form.elements.namedItem('sourceId').value=id;await loadSource(id);}catch(error){$('plan-status').textContent=error.message;}}
   async function listPlans(){try{const {cases}=await read('/api/judge/cases'),plans=cases.filter(row=>!row.synthetic&&row.feasible),select=$('source-plan');if(!plans.length)return;
-    select.replaceChildren(...plans.map(row=>{const option=document.createElement('option');option.value=row.id;option.textContent=row.title;return option;}));select.onchange=()=>openPlan(select.value);await openPlan(select.value);}catch(error){$('plan-status').textContent=error.message;}}
+    select.replaceChildren(...plans.map(row=>{const option=document.createElement('option');option.value=row.id;option.textContent=row.title.replace(/^Illustrative:\s*/,'');return option;}));select.onchange=()=>openPlan(select.value);await openPlan(select.value);}catch(error){$('plan-status').textContent=error.message;}}
   $('load-source').onclick=async()=>{try{await loadSource(value('sourceId'));}catch(error){$('plan-status').textContent=error.message;}};
   function showTwin(twin){state.twinId=twin.id;$('load-twin-id').value=twin.id;
     $('twin-status').textContent=`Saved audience twin ${twin.id}: ${twin.clusterCount} synthetic segments from ${twin.originalSeedCount} ${twin.synthetic?'synthetic fixture':'Qloo'} rank patterns. ${twin.excludedSeedArtistIds.length?`${twin.excludedSeedArtistIds.length} seed artist(s) excluded from ranked lineup choices. `:''}Use Analyze to optimize against its declared assumptions.`;
