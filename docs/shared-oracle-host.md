@@ -1,5 +1,19 @@
 # Sharing an existing Oracle server
 
+## Deployment of 2f693d0 — 30 October 2026
+
+The public host runs `2f693d0274e0b004c7e31b19269a496e7887a3b2`, and `/healthz` over public HTTPS reports it. The landing page (`home.html`, served at `/`) is split from the product (`judge.html`, the Booking Desk), so shared `?plan=` and `#case` links keep working. Live plans confirm the place on OpenStreetMap before any Qloo call and measure Qloo's location data against it; a tile over 75 km away cannot count as local fans. Each real plan links to Financial Risk on that plan.
+
+- **Before the switch:** the backup `pre-2f693d0` passed an isolated restore, and a copy is held off-host. The running image was tagged `houselights-shared:pre-2f693d0`. The rollback drill reported `f792410`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit, including the Linux visual baselines.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:**
+  - `release:verify` passed all 90 checks (two new: the landing page exists and holds no planner). `/` redirects to `/home.html`.
+  - Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow; the settled console probe logged no errors.
+  - **Live location runs on production:** "Tiny Village Nowhere" was refused before any Qloo call. Akole, Maharashtra: nearest of 40 location results 114 km away, status `elsewhere`, 0 of 8 acts claimed local fans. Hallstatt, Austria: 1 of 20 results within 75 km, status `partly`, 1 of 8 acts claimed local fans. Sangamner, Maharashtra: 40 of 40 results within 75 km (median 11 km), status `this-place`.
+
+**Rollback:** tag `houselights-shared:pre-2f693d0` as `houselights-shared:local`, set `RELEASE_COMMIT=f79241078039945280b102258fd8a44d4dfedf93`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of f792410 — 30 October 2026
 
 The public host runs `f79241078039945280b102258fd8a44d4dfedf93`, and `/healthz` over public HTTPS reports it. Features that were organizer-only or synthetic are now real for every visitor:
