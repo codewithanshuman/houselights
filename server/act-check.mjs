@@ -12,7 +12,7 @@ const ENDPOINT = 'https://musicbrainz.org/ws/2/artist';
 const AGENT = 'Houselights/1.2 (+https://houselights.80-225-218-239.sslip.io)';
 const SPACING_MS = 1100, TIMEOUT_MS = 3500, CACHE_MAX = 2000, MIN_SCORE = 90;
 export const ACT_SOURCE = 'MusicBrainz';
-export const ACT_DEADLINE_MS = 12000;
+export const ACT_DEADLINE_MS = 16000;
 const cache = new Map();
 let queue = Promise.resolve(), lastAt = 0;
 const low = value => String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
@@ -63,12 +63,17 @@ export function checkAct(name, { fetcher = fetch } = {}) {
   return result;
 }
 
-/** Checks names in order within the deadline; anything not reached is 'unavailable'. */
+/** Checks names in order within the deadline, then goes back for any the service was too busy
+ * to answer. MusicBrainz often refuses a request with a 503 and answers the next one. Anything
+ * still not reached is 'unavailable'. */
 export async function checkActs(names, { fetcher = fetch, deadlineMs = ACT_DEADLINE_MS } = {}) {
   const results = new Map(), stopAt = Date.now() + deadlineMs;
-  for (const name of names) {
+  for (const name of names) results.set(name, { status: 'unavailable' });
+  for (let pass = 0; pass < 3; pass++) for (const name of names) {
+    if (results.get(name).status !== 'unavailable') continue;
     const known = cache.get(low(name));
-    results.set(name, known ?? (Date.now() < stopAt ? await checkAct(name, { fetcher }) : { status: 'unavailable' }));
+    if (known) results.set(name, known);
+    else if (Date.now() < stopAt) results.set(name, await checkAct(name, { fetcher }));
   }
   return results;
 }

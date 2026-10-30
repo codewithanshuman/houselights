@@ -66,7 +66,8 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
   const endedActs = [];
   if (discover.checkActs && usable(discovery.env)) {
     say('Check · confirming on MusicBrainz that each act still exists');
-    actResults = await discover.checkActs(rows(discovery.env).map(nameOf).filter(name => name && !lookup.has(low(name))));
+    // The names that can reach the shortlist, so a busy service spends its retries on them.
+    actResults = await discover.checkActs(rows(discovery.env).map(nameOf).filter(name => name && !lookup.has(low(name))).slice(0, 10));
   }
   if (usable(discovery.env)) for (const row of rows(discovery.env)) {
     const name = nameOf(row), ref = idOf(row) || name;
@@ -89,7 +90,7 @@ export async function buildMemo({ city, anchors, offers, picks = {}, terms = {},
       say('Budget · no bill of the closest matches fits, so searching for acts this budget can reach');
       const wider = await run.call('recommend_within', { signals: anchorRefs, signal_location: city, popularity_max: cap, limit: 20 }, 'Find acts these fans like at a level the budget can reach');
       const options = usable(wider.env) ? rows(wider.env).filter(row => nameOf(row) && idOf(row) && !lookup.has(low(idOf(row))) && !lookup.has(low(nameOf(row)))) : [];
-      const acts = discover.checkActs ? await discover.checkActs(options.map(nameOf)) : null;
+      const acts = discover.checkActs ? await discover.checkActs(options.map(nameOf).slice(0, 10)) : null;
       const reachable = [];
       for (const row of options) {
         const name = nameOf(row), act = acts?.get(name), terms = discover.terms?.(row);

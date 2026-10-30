@@ -101,3 +101,11 @@ test('a fee limit maps to the tier it can afford', async () => {
   assert.equal(popularityFor(500000), null, 'every tier fits');
   assert.equal(popularityFor(100), null, 'no tier fits');
 });
+
+test('a busy service is asked again, in order, within the deadline', async () => {
+  let calls = 0;
+  const flaky = async () => (++calls === 1 ? { ok: false, status: 503 } : answer([row('Busy Retry Test', true, '2022')])());
+  const results = await checkActs(['Busy Retry Test'], { fetcher: flaky, deadlineMs: 5000 });
+  assert.equal(calls, 2);
+  assert.deepEqual(results.get('Busy Retry Test'), { status: 'ended', endedYear: 2022, from: 'US' });
+});

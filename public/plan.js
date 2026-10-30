@@ -501,8 +501,9 @@
     const check=view.record.actCheck;if(!check||!check.checked)return '';
     const removed=(check.removed??[]).map(act=>`<strong>${e(act.name)}</strong>${act.endedYear?` (${e(act.endedYear)})`:''}`);
     const tail=` <small>Artist data from <a href="https://musicbrainz.org">MusicBrainz</a></small>`;
-    if(removed.length)return `<p class="place-note is-warn" data-acts="removed">Removed from the shortlist: ${removed.join(', ')}. Qloo matched ${removed.length===1?'this act':'these acts'} to the audience, but MusicBrainz lists ${removed.length===1?'it':'them'} as ended. ${e(check.active)} of ${e(check.total)} acts checked are still listed as active.${tail}</p>`;
-    return `<p class="place-note is-good" data-acts="clear">Acts checked: ${e(check.active)} of ${e(check.total)} are listed as active on MusicBrainz, and none has ended.${tail}</p>`;
+    if(removed.length)return `<p class="place-note is-warn" data-acts="removed">Removed from the shortlist: ${removed.join(', ')}. Qloo matched ${removed.length===1?'this act':'these acts'} to the audience, but MusicBrainz lists ${removed.length===1?'it':'them'} as ended. ${e(check.checked)} of ${e(check.total)} acts were checked.${tail}</p>`;
+    const missed=check.total-check.checked;
+    return `<p class="place-note${missed?'':' is-good'}" data-acts="clear">${e(check.checked)} of ${e(check.total)} acts checked on MusicBrainz, and none of those has ended.${missed?` ${e(missed)} could not be checked, so confirm they are still performing.`:''}${tail}</p>`;
   }
   // Where a bookable, real plan can go next.
   function nextSteps(){
