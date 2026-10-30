@@ -1,5 +1,17 @@
 # Sharing an existing Oracle server
 
+## Deployment of 65cbb72 — 31 October 2026
+
+The public host runs `65cbb72`, and `/healthz` over public HTTPS reports it. Releases `f305b6b`, `0861b9d`, `8fcc4ad`, `70a4cff`, `e1e45d0` and `1b30b52` went out earlier the same night, each with the same procedure. Together they add the MusicBrainz act check, the budget-aware Qloo search through Insights, rooms to book, Tell the agent, why-not answers and the overrule, and the money on the promoter brief.
+
+- **Before the switch:** the backup `pre-65cbb72` passed an isolated restore, and a copy is held off-host. The rollback drill reported `1b30b52`, served 12 cases and logged no errors.
+- **Switch:** only `RELEASE_COMMIT` changed in the release file. The other containers and the stream process were unchanged.
+- **After the switch:** all 90 release checks passed from outside. A fresh Delhi plan on real Qloo removed Sidhu Moose Wala with 10 of 10 acts checked, and listed rooms and the money on the brief, with no page errors. The previous release passed Chromium, Firefox and WebKit at both widths and the content-security probe.
+- **Found on real services only:** three in ten MusicBrainz requests from this host return 503, Qloo place results carry no coordinates, and the language model's answer was not being unpacked. Fixtures showed none of these.
+- **Disk:** Houselights keeps `pre-65cbb72` and `pre-1b30b52`. Disk is at 83% (7.7 GB free).
+
+**Rollback:** tag `houselights-shared:pre-65cbb72` as `houselights-shared:local`, set `RELEASE_COMMIT` to the full `1b30b52` commit from `git rev-parse 1b30b52`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 2a78395 — 31 October 2026
 
 The public host runs `2a78395`, and `/healthz` over public HTTPS reports it. Visitors can now use the Demand Lab, Audience Twin, event portfolio and Festival GM from a real saved plan, with no token or pasted ID. The outcomes ledger, LLM control, themed-night research, Proof Lab experiments and the organizer workspace stay locked. `dabe11f` went out first; on real Qloo its Festival GM still returned 401 because research went through the queued runs route, which the mock tests did not show.
