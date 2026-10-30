@@ -1,5 +1,16 @@
 # Sharing an existing Oracle server
 
+## Deployment of a133b80 — 30 October 2026
+
+The public host runs `a133b80`, and `/healthz` over public HTTPS reports it. The main call to action is now a ticket whose stub tears on hover and press (the 404 page keeps its button), the ticket's stats sit clear of the band, and the landing fallback is back to the real 18 Qloo calls.
+
+- **Before the switch:** the backup `pre-a133b80` passed an isolated restore, and a copy is held off-host. The running image was tagged `houselights-shared:pre-a133b80`. The rollback drill reported `a8bc041`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit. The previous commit, `366cc26`, failed one browser test on one of two CI machines: a layout test read the ticket's position before it had rendered. That was a timing race in the test, which has since been hardened, not a site fault.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:** `release:verify` passed all 90 checks. Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow, and the settled console probe logged no errors.
+
+**Rollback:** tag `houselights-shared:pre-a133b80` as `houselights-shared:local`, set `RELEASE_COMMIT=a8bc041c8a8cef09595af741bae50c5a3974f335`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of a8bc041 — 30 October 2026
 
 The public host runs `a8bc041c8a8cef09595af741bae50c5a3974f335`, and `/healthz` over public HTTPS reports it. Each plan now has Why this bill (sentences from the saved plan, citation chips that open receipts, a confidence meter, real alternatives), a bill difference for the Qloo switch and any change, and agent calls that open to what Qloo returned.

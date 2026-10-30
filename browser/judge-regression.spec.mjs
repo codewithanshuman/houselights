@@ -792,6 +792,7 @@ test('readable text and contained layout across organizer pages on desktop and p
         }
       }
       if(path==='judge.html'){
+        await page.locator('.tk-band-1').waitFor();
         const head=await page.locator('.tk-head').boundingBox(),band=await page.locator('.tk-band-1').boundingBox();
         expect(head.y+head.height,'ticket header must not cover the bill band').toBeLessThanOrEqual(band.y);
         expect(await page.locator('.tk-stats dt').evaluateAll(nodes=>nodes.every(node=>node.scrollWidth<=node.clientWidth+1)),'ticket statistic labels must fit their columns').toBe(true);
