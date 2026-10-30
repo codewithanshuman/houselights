@@ -1,5 +1,17 @@
 # Sharing an existing Oracle server
 
+## Deployment of 5fcd49a — 30 October 2026
+
+The public host runs `5fcd49a`, and `/healthz` over public HTTPS reports it. It adds the agent re-plan for a cancelled act, the one-page promoter brief, plans in USD, INR, EUR or GBP (rates from Frankfurter), and the clean gradient call to action. Releases `5d64157` and `5985709` went out earlier the same evening; the re-plan failed on real Qloo in both, refusing with "could not rank every candidate" and showing nothing wrong. Qloo ranks at most ten options and leaves a signal out of its own ranking. Both limits are now respected and the mock enforces them.
+
+- **Before the switch:** the backup `pre-5fcd49a` passed an isolated restore, and a copy is held off-host. The rollback drill reported `5985709`, served 12 cases and logged no errors.
+- **CI:** CI passed on the commit.
+- **Switch:** exact checkout, secret scan clean, capped build before the switch, only `RELEASE_COMMIT` changed, only the app container recreated, every other container and the livestream PID unchanged.
+- **Checks:** `release:verify` passed all 90 checks; Chromium, Firefox and WebKit at phone and desktop sizes showed the featured bill with no overflow; the settled console probe logged no errors. One live plan (Nashik, fans of Arijit Singh, ₹1,500,000, 2 acts) booked Shreya Ghoshal + Amit Trivedi for ₹762,160 at 1 USD = 95.27 INR, with the location confirmed. Dropping Shreya Ghoshal rebooked Amit Trivedi + Ankit Tiwari through a live Qloo search, and the brief and Financial Risk ran on the same plan, with no console errors.
+- **Disk:** old Houselights rollback images were removed, keeping `pre-5fcd49a` and `pre-5985709`. Disk went from 90% to 82% (8.3 GB free).
+
+**Rollback:** tag `houselights-shared:pre-5fcd49a` as `houselights-shared:local`, set `RELEASE_COMMIT=59857092e0934f6658be46427c5c402a7f98f082`, check out that commit, then run `up --no-build -d houselights` with both Compose files.
+
 ## Deployment of 5d86308 — 30 October 2026
 
 The public host runs `5d86308`, and `/healthz` over public HTTPS reports it. The main call to action is now a plain solid purple button with a small arrow that nudges on hover. The 404 page keeps its hand-drawn button.
