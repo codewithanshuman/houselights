@@ -719,7 +719,7 @@ test('shock study headlines report the like-for-like solvable rate, never the po
   await expect(page.locator('body')).not.toContainText('9.7%');
 });
 
-const PUBLIC_PAGES=['/home.html','/judge.html','/desk.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
+const PUBLIC_PAGES=['/home.html','/judge.html','/brief.html?plan=8be4d03ef4792ca9f1466983','/desk.html','/evidence.html','/proof-lab.html','/workspace.html#example','/demand.html','/financial.html','/review.html','/index.html','/no-such-page'];
 
 test('every page passes axe WCAG 2.1 AA with no serious or critical issues, at desktop and phone width', async ({ page }) => {
   test.setTimeout(240000);
@@ -885,7 +885,7 @@ test('links shared before the split still open the right plan', async ({ page })
 test('a real plan leads to Financial Risk on that same plan; a synthetic one does not', async ({ page }) => {
   test.setTimeout(180000);
   await page.goto(`${origin}/judge.html`);
-  const next = page.locator('.plan-next a');
+  const next = page.locator('.plan-next .hero-cta');
   await expect(next).toHaveText(/Run the finances/);
   await expect(next).toHaveAttribute('href', `/financial.html?plan=${tracedCaseId}`);
   await next.click();
@@ -955,6 +955,39 @@ test('a call in the agent card opens to what Qloo returned', { tag: '@cross-brow
   await expect(rank.locator('.agent-detail')).toContainText('0.977');
   await open.click();
   await expect(rank.locator('.agent-detail')).toBeHidden();
+});
+
+test('a dropped act can be replaced by a fresh Qloo search, leaving the plan unchanged', { tag: '@cross-browser' }, async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await page.getByRole('button', { name: 'Drop Sault and rebook' }).click();
+  const replan = page.locator('#replan');
+  await expect(replan.locator('h3')).toHaveText('Sault can’t play');
+  await replan.getByRole('button', { name: 'Find a replacement with Qloo' }).click();
+  await expect(replan.locator('.replan-acts li').first()).toBeVisible({ timeout: 20000 });
+  await expect(replan.locator('.replan-acts')).toContainText('Michael Kiwanuka');
+  await expect(replan.locator('.replan-acts')).not.toContainText('Sault');
+  await expect(replan.locator('.solid-note')).toContainText('Synthetic development data');
+  await replan.locator('.cite').first().click();
+  await expect(page.locator('#receipt-body')).toContainText('What Qloo returned');
+  await page.locator('#receipt-close').click();
+  await page.locator('#plan-reset').click();
+  await expect(page.locator('#result-title')).toHaveText('Book Michael Kiwanuka + Sault for $13,500.');
+  await expect(page.locator('#replan')).toHaveCount(0);
+});
+
+test('the promoter brief prints the plan from its saved record', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await expect(page.locator('.plan-brief')).toHaveAttribute('href', `/brief.html?plan=${tracedCaseId}`);
+  await page.locator('.plan-brief').click();
+  await expect(page.locator('#brief-body h1')).toHaveText('Michael Kiwanuka + Sault');
+  await expect(page.locator('#brief-body')).toContainText('$13,500 of a $14,500 artist budget');
+  await expect(page.locator('#brief-body')).toContainText('Holds in 80% of 500 fee scenarios.');
+  await expect(page.locator('#brief-body')).toContainText('Coin-flip pick: Sault.');
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('#brief-print')).toBeHidden();
+  await page.emulateMedia({ media: 'screen' });
+  await page.goto(`${origin}/brief.html`);
+  await expect(page.locator('#brief-body')).toContainText('not valid');
 });
 
 test('Financial Risk runs on a real Booking Desk plan, never on placeholder artists', async ({ page }) => {

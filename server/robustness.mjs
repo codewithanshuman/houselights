@@ -78,11 +78,11 @@ export function seededRandom(seed) {
 
 /** How each fee is redrawn: uniform within ±spread, or log-uniform across its popularity tier
  * when the fees were estimated from Qloo popularity. One uniform draw per fee, in ID order. */
-export function feeModel(snapshot, { spread = SPREAD, feeBasis = null } = {}) {
+export function feeModel(snapshot, { spread = SPREAD, feeBasis = null, fxRate = 1 } = {}) {
   const tiers = feeBasis === 'estimated-from-qloo-popularity', ranges = new Map();
   for (const item of snapshot?.memo?.items ?? []) {
     if (!isFee(item.terms?.fee)) continue;
-    const range = tiers ? tierRange(item.terms.fee) : null;
+    const range = tiers ? tierRange(Math.round(item.terms.fee / fxRate)) : null;
     ranges.set(item.id, range ? { kind: 'tier', low: range[0], high: range[1] } : { kind: 'uniform', low: 1 - spread, high: 1 + spread });
   }
   return { name: tiers ? 'popularity-tiers' : 'uniform', spread, ranges };
@@ -91,11 +91,11 @@ export function drawFee(cents, range, u) {
   return range.kind === 'tier' ? Math.round(cents * range.low * (range.high / range.low) ** u) : Math.round(cents * (range.low + (range.high - range.low) * u));
 }
 
-export function feeRobustness(snapshot, { draws = DRAWS, spread = SPREAD, seed = SEED, feeBasis = null } = {}) {
+export function feeRobustness(snapshot, { draws = DRAWS, spread = SPREAD, seed = SEED, feeBasis = null, fxRate = 1 } = {}) {
   const ctx = prepare(snapshot);
   if (ctx.status !== 'ready') return { status: ctx.status, reason: ctx.reason };
   const { rows, fees, budget, baseline } = ctx, random = seededRandom(seed), ids = [...fees.keys()].sort();
-  const model = feeModel(snapshot, { spread, feeBasis });
+  const model = feeModel(snapshot, { spread, feeBasis, fxRate });
   const baseKey = baseline.feasible ? keyOf(baseline.selectedIds) : null;
   const tally = new Map();
   let holds = 0, none = 0;
@@ -250,8 +250,8 @@ export function affinityRobustness(snapshot, { draws = DRAWS, band = TIE_BAND, s
 }
 
 // A plan is still served if its analysis cannot be computed; the page then omits it.
-export function analyzeDecision(snapshot, { feeBasis = null } = {}) {
+export function analyzeDecision(snapshot, { feeBasis = null, fxRate = 1 } = {}) {
   const safe = fn => { try { return fn(); } catch { return { status: 'unavailable' }; } };
-  return { robustness: safe(() => feeRobustness(snapshot, { feeBasis })), flips: safe(() => flipPoints(snapshot)),
+  return { robustness: safe(() => feeRobustness(snapshot, { feeBasis, fxRate })), flips: safe(() => flipPoints(snapshot)),
     ladder: safe(() => budgetLadder(snapshot)), affinity: safe(() => affinityRobustness(snapshot)) };
 }

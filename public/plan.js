@@ -168,6 +168,7 @@
           ${changed?`<p class="result-changed">Changed from the original bill: ${e(billNames(base).join(' + '))} (${e(usd(baseSlate.totalFee))}).</p>`:''}
         </section>
       </div>
+      ${replanSection()}
       ${whySection()}
       ${solidSection()}
       ${actSections()}
@@ -454,7 +455,35 @@
   // Where a bookable, real plan can go next.
   function nextSteps(){
     if(!view.base.memo.slate.feasible||view.base.mock===true)return '';
-    return `<section class="plan-next" aria-labelledby="next-title"><div><h3 id="next-title">Would this night make money?</h3><p>Run this plan’s artists through 10,000 scenarios with your own venue, ticket and cost assumptions.</p></div><a class="hero-cta sketch-btn" href="/financial.html?plan=${encodeURIComponent(view.record.id)}">Run the finances <span aria-hidden="true">→</span></a></section>`;
+    return `<section class="plan-next" aria-labelledby="next-title"><div><h3 id="next-title">Would this night make money?</h3><p>Run this plan’s artists through 10,000 scenarios with your own venue, ticket and cost assumptions.</p></div><span class="plan-next-go"><a class="plan-brief" href="/brief.html?plan=${encodeURIComponent(view.record.id)}">Promoter brief</a><a class="hero-cta sketch-btn" href="/financial.html?plan=${encodeURIComponent(view.record.id)}">Run the finances <span aria-hidden="true">→</span></a></span></section>`;
+  }
+
+  // ── Agent re-plan ──────────────────────────────────────────────────────────────
+  // A dropped act can be rebooked from the saved pool at once. This goes further: a fresh Qloo
+  // search for fans of the rest of the bill, ranked with the pool, and rebooked exactly.
+  function replanSection(){
+    const id=view.cancelId;if(!id||view.qlooOff)return '';
+    const name=nameOf(view.base,id),plan=view.replans?.[id],busy=view.replanBusy===id,error=view.replanError?.[id];
+    const head=`<h3 id="replan-title">${e(name)} can’t play</h3>`;
+    if(!plan)return `<section class="replan" id="replan" aria-labelledby="replan-title">${head}
+        <p class="solid-text">The bill above comes from the saved pool. The agent can also search Qloo again for fans of the rest of the bill, rank what it finds with the pool, and rebook exactly.</p>
+        <p class="reach-go"><button type="button" class="hero-cta sketch-btn" id="replan-run"${busy?' disabled aria-busy="true"':''}>${busy?'Asking Qloo…':'Find a replacement with Qloo'}</button><small>2 live Qloo calls</small></p>
+        ${error?`<p class="reach-error" role="alert">${e(error)}</p>`:''}
+      </section>`;
+    const est=' est.',found=plan.acts.filter(act=>act.isNew);
+    return `<section class="replan" id="replan" aria-labelledby="replan-title">${head}
+        ${plan.feasible?`<p class="replan-line">The agent rebooks <strong>${e(plan.acts.map(act=>act.name).join(' + '))}</strong> for <strong>${e(usd(plan.totalFee))}</strong>. ${found.length?`${e(listNames(found.map(act=>act.name)))} ${found.length===1?'is':'are'} new: not in the saved pool.`:'The best replacement was already in the saved pool.'}</p>
+        <ul class="replan-acts">${plan.acts.map(act=>`<li><strong>${e(act.name)}</strong>${act.isNew?'<span class="replan-new">Found just now</span>':''}<small>Rank ${e(act.rank)} of ${e(act.of)}${act.affinity!=null?` · affinity ${e(act.affinity.toFixed(3))}`:''}</small><span class="diff-fee">${e(usd(act.fee))}${act.isNew?est:''}</span></li>`).join('')}</ul>`:`<p class="replan-line">No bill fits with the remaining acts locked, even after a fresh Qloo search.</p>`}
+        <p class="replan-receipts">${cite(plan.foundReceiptId,`${plan.newCount} new ${plan.newCount===1?'act':'acts'} found`)}${cite(plan.rankReceiptId,'fresh ranking')}</p>
+        <p class="solid-note">${plan.mock?'<strong>Synthetic development data, not from Qloo.</strong> ':''}${e(plan.note)}</p>
+      </section>`;
+  }
+  async function requestReplan(){
+    const owner=view,id=owner?.cancelId;if(!id||owner.replanBusy)return;
+    owner.replanBusy=id;owner.replanError={...owner.replanError,[id]:null};render();
+    try{const data=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/replan`,{method:'POST',body:{cancelId:id},timeout:90000,retries:0});owner.replans={...owner.replans,[id]:data.replan};}
+    catch(problem){owner.replanError={...owner.replanError,[id]:problem?.message||'Qloo could not search just now. The plan is unchanged.'};}
+    finally{owner.replanBusy=null;if(view===owner){render();$('replan-title')?.setAttribute('tabindex','-1');$('replan-title')?.focus({preventScroll:true});}}
   }
 
   // ── Why this bill ──────────────────────────────────────────────────────────────
@@ -597,6 +626,7 @@
     result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
     $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
     $('reach-run')?.addEventListener('click',()=>void requestReach());
+    $('replan-run')?.addEventListener('click',()=>void requestReplan());
     $('why-toggle')?.addEventListener('click',event=>{const drawer=$('why-drawer'),open=drawer.hidden;drawer.hidden=!open;event.currentTarget.setAttribute('aria-expanded',String(open));});
     // The explanation reveals once, when it first comes into view.
     const why=$('why');
@@ -625,7 +655,7 @@
       where_popular:`Where the fans are within ${city}`,compare_audiences:`How the audience overlaps with ${anchors}’s`,trends:'Six-month popularity trend',entity_tags:'Taste tags for the anchor artist'})[receipt.tool]??`Qloo ${receipt.tool} call`;
   };
   function openReceipt(id,entity,opener){
-    const snapshot=view.base,receipt=snapshot.receipts.find(r=>r.id===id)??view.record.reach?.receipts.find(r=>r.id===id),drawer=$('receipt-drawer');if(!receipt)return;
+    const snapshot=view.base,receipt=snapshot.receipts.find(r=>r.id===id)??view.record.reach?.receipts.find(r=>r.id===id)??Object.values(view.replans??{}).flatMap(plan=>plan.receipts).find(r=>r.id===id),drawer=$('receipt-drawer');if(!receipt)return;
     const same=(a,b)=>String(a??'').toLowerCase()===String(b??'').toLowerCase();
     const rows=receipt.evidence?.rows??[];
     $('receipt-title').textContent=describeReceipt(receipt,snapshot);
@@ -692,12 +722,12 @@
   function readInput(){
     const data=new FormData(form),anchors=[];
     for(const name of data.getAll('anchor').map(value=>String(value).trim()).filter(Boolean))if(!anchors.some(seen=>seen.toLowerCase()===name.toLowerCase()))anchors.push(name);
-    const input={city:String(data.get('city')??'').trim(),anchors,budget:Number(String(data.get('budget')??'').replace(/[$,\s]/g,'')),slots:Number(data.get('slots'))};
+    const input={city:String(data.get('city')??'').trim(),anchors,budget:Number(String(data.get('budget')??'').replace(/[$,\s]/g,'')),slots:Number(data.get('slots')),currency:String(data.get('currency')??'USD')};
     const fail=(field,message)=>{const error=$('plan-error');error.textContent=message;error.hidden=false;$(field).setAttribute('aria-invalid','true');$(field).focus();return null;};
     form.querySelectorAll('[aria-invalid]').forEach(node=>node.removeAttribute('aria-invalid'));$('plan-error').hidden=true;
     if(input.city.length<2)return fail('plan-city','Enter a city.');
     if(!input.anchors.length)return fail('plan-anchor','Enter an artist your audience loves.');
-    if(!Number.isFinite(input.budget)||input.budget<1000||input.budget>500000)return fail('plan-budget','Artist budget must be between $1,000 and $500,000.');
+    if(!Number.isFinite(input.budget)||input.budget<=0||(input.currency==='USD'&&(input.budget<1000||input.budget>500000)))return fail('plan-budget','Artist budget must be between $1,000 and $500,000.');
     return input;
   }
   async function planLive(input){

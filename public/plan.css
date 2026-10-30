@@ -1078,3 +1078,23 @@
 .plan-page .tk-stats{top:64.9%;left:13%;right:13%}
 .plan-page .tk-stats dt{min-height:0;white-space:nowrap}
 .plan-page .tk-stats div{gap:1px}
+
+/* A cancelled act: the agent's fresh search and the rebooked bill. */
+.replan{margin-top:48px;padding:24px;background:#fff;border:1px solid var(--pp-line);border-radius:20px;display:grid;gap:12px}
+.replan h3{margin:0;font:600 20px/28px var(--font-ui);letter-spacing:-.4px;color:var(--pp-ink)}
+.replan-line{margin:0;font:400 16px/26px var(--font-ui);color:var(--pp-soft)}
+.replan-line strong{font-weight:600;color:var(--pp-ink)}
+.replan-acts{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.replan-acts li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:8px 0;border-top:1px solid var(--pp-line);font:400 14px/20px var(--font-ui);color:var(--pp-ink)}
+.replan-acts strong{font-weight:600}
+.replan-acts small{font-size:13px;color:var(--pp-soft)}
+.replan-acts .diff-fee{margin-left:auto}
+.replan-new{padding:1px 8px;border-radius:6px;background:var(--pp-good-soft);color:var(--pp-good);font:500 12px/18px var(--font-ui)}
+.replan-receipts{margin:0}
+
+.plan-money{display:flex;gap:6px}
+.plan-money select{flex:0 0 76px;min-width:0;min-height:48px;padding:0 6px;border:1px solid var(--pp-line-strong);border-radius:12px;background:#fff;color:var(--pp-ink);font:500 14px/20px var(--font-ui)}
+.plan-money input{flex:1;min-width:0}
+.plan-next-go{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.plan-brief{display:inline-flex;align-items:center;min-height:44px;color:var(--pp-accent);font:500 14px/20px var(--font-ui)}
+.plan-page .plan-row{grid-template-columns:minmax(0,1fr)}

@@ -55,8 +55,8 @@
         </div>
         <div class="plan-row">
           <div class="plan-field">
-            <label for="plan-budget">Artist budget (USD)</label>
-            <input id="plan-budget" name="budget" type="number" inputmode="numeric" min="1000" max="500000" step="500" value="20000" required>
+            <label for="plan-budget">Artist budget</label>
+            <span class="plan-money"><select id="plan-currency" name="currency" aria-label="Currency"><option>USD</option><option>INR</option><option>EUR</option><option>GBP</option></select><input id="plan-budget" name="budget" type="number" inputmode="numeric" min="1" step="any" value="20000" required></span>
           </div>
           <fieldset class="plan-field plan-slots">
             <legend>Acts</legend>

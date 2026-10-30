@@ -39,7 +39,7 @@ test('plan input is validated and cleaned', () => {
   assert.throws(() => planInput({ city: 'Leeds', anchor: '', budget: 5000, slots: 2 }), /artist/);
   assert.throws(() => planInput({ city: 'Leeds', anchor: 'A', budget: 50, slots: 2 }), /budget/i);
   assert.throws(() => planInput({ city: 'Leeds', anchor: 'A', budget: 5000, slots: 9 }), /1 to 4/);
-  assert.deepEqual(planInput({ city: '  Leeds <b> ', anchor: 'Arlo   Parks', budget: 12000.4, slots: 2 }), { city: 'Leeds b', anchor: 'Arlo Parks', anchors: ['Arlo Parks'], picks: {}, anchorId: null, budget: 12000, slots: 2 });
+  assert.deepEqual(planInput({ city: '  Leeds <b> ', anchor: 'Arlo   Parks', budget: 12000.4, slots: 2 }), { city: 'Leeds b', currency: 'USD', anchor: 'Arlo Parks', anchors: ['Arlo Parks'], picks: {}, anchorId: null, budget: 12000, slots: 2 });
 });
 
 test('up to three audience artists are accepted, deduplicated, and picks bind only named artists', () => {

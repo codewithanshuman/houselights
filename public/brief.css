@@ -1,0 +1,22 @@
+/* A one-page booking brief, built to print on A4 or Letter. */
+:root{--ink:#16131F;--soft:#4A4658;--line:#E2DFEA;--accent:#5E44B8}
+body{margin:0;background:#F7F6FC;color:var(--ink);font:400 14px/21px Geist,system-ui,sans-serif}
+.brief{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+.brief-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.brief-actions a{color:var(--accent);min-height:44px;display:inline-flex;align-items:center}
+.brief-actions button{min-height:44px;padding:0 18px;border:0;border-radius:10px;background:var(--accent);color:#fff;font:600 14px/20px Geist,system-ui,sans-serif;cursor:pointer}
+#brief-body{padding:32px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.b-kicker{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+#brief-body h1{margin:4px 0 2px;font:600 26px/32px Geist,system-ui,sans-serif;letter-spacing:-.4px}
+.b-sub{margin:0;color:var(--soft)}
+#brief-body h2{margin:20px 0 6px;font:600 14px/20px Geist,system-ui,sans-serif}
+#brief-body table{width:100%;border-collapse:collapse}
+#brief-body th,#brief-body td{padding:5px 8px 5px 0;border-bottom:1px solid var(--line);text-align:left;font-size:13px;font-weight:400}
+#brief-body thead th{color:var(--soft)}
+#brief-body td.n,#brief-body th.n{text-align:right;font-variant-numeric:tabular-nums}
+#brief-body ul{margin:0;padding-left:18px}
+.b-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.b-foot{margin:20px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12px;line-height:17px;color:var(--soft)}
+@media (max-width:600px){#brief-body{padding:20px}.b-cols{grid-template-columns:1fr}}
+@media print{@page{margin:12mm}body{background:#fff;font-size:12px;line-height:17px}.no-print{display:none!important}.brief{max-width:none;padding:0}#brief-body{padding:0;border:0}#brief-body h1{font-size:22px;line-height:27px}#brief-body h2{margin-top:12px}}
+#brief-body tbody th{color:var(--ink)}

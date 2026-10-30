@@ -20,7 +20,7 @@ export function accessMiddleware(req, res, next) {
   if (!req.path.startsWith('/api/')) return next();
   res.set('Cache-Control', 'no-store');
   const ballot = /^\/api\/reviews\/[\w-]+\/ballot$/.test(req.path);
-  const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/(experiment|autopilot|autopilot\/live|reach)$/.test(req.path);
+  const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/(experiment|autopilot|autopilot\/live|reach|replan)$/.test(req.path);
   const livePlan = req.method === 'POST' && req.path === '/api/plan';
   // The Slate studio is public: a visitor's runs use live Qloo under the research caps below
   // and are saved unpinned, so they age out; only organizer runs are retained.

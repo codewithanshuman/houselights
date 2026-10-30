@@ -9,6 +9,7 @@ import { buildMemo } from './agent.mjs';
 import { consumeQuota, refundQuota } from './database.mjs';
 import { saveLivePlan } from './judge.mjs';
 import { locatePlace, nearPlace, summarizePlace } from './place-check.mjs';
+import { CURRENCIES, usdRate } from './fx.mjs';
 
 import { estimateFee } from './fee-tiers.mjs';
 export { FEE_TIERS, estimateFee } from './fee-tiers.mjs';
@@ -30,7 +31,10 @@ export function planInput(body) {
   if (!anchors.length) throw fault('Enter an artist your audience loves.');
   const anchor = anchors[0];
   const budget = Number(body.budget), slots = Number(body.slots);
-  if (!Number.isFinite(budget) || budget < 1000 || budget > 500000) throw fault('Artist budget must be between $1,000 and $500,000.');
+  const currency = body.currency === undefined ? 'USD' : String(body.currency);
+  if (!CURRENCIES.includes(currency)) throw fault('Choose USD, INR, EUR or GBP.');
+  // The range is in US dollars; a local budget is checked after conversion.
+  if (!Number.isFinite(budget) || budget <= 0 || (currency === 'USD' && (budget < 1000 || budget > 500000))) throw fault('Artist budget must be between $1,000 and $500,000.');
   if (!Number.isInteger(slots) || slots < 1 || slots > 4) throw fault('Choose 1 to 4 acts.');
   // A pick settles which Qloo entity an ambiguous name means: anchorId for the first artist,
   // or picks keyed by artist name.
@@ -41,7 +45,7 @@ export function planInput(body) {
       const match = anchors.find(value => value.toLowerCase() === clean(name, 80).toLowerCase());
       if (match && typeof id === 'string' && idPattern.test(id)) picks[match] = { id };
     }
-  return { city, anchor, anchors, picks, anchorId: picks[anchor]?.id ?? null, budget: Math.round(budget), slots };
+  return { city, anchor, anchors, picks, anchorId: picks[anchor]?.id ?? null, budget: Math.round(budget), slots, currency };
 }
 
 export function planVisitorKey(address) {
@@ -67,6 +71,11 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
     let input;
     try { input = planInput(req.body); } catch (error) { return res.status(error.status ?? 400).json({ error: error.message }); }
     if (!isMock() && !process.env.QLOO_API_KEY) return res.status(503).json({ error: 'Live Qloo research is not configured on this server. Open an example plan instead.' });
+    // Local budgets convert at a published rate; without one the plan is refused, never guessed.
+    let fx;
+    try { fx = await usdRate(input.currency); } catch (error) { return res.status(error.status ?? 503).json({ error: error.message }); }
+    const budgetUsd = input.budget / fx.rate;
+    if (budgetUsd < 999.5 || budgetUsd > 500000.5) return res.status(400).json({ error: `Artist budget must be about $1,000 to $500,000, which is ${Math.ceil(1000 * fx.rate).toLocaleString('en-US')} to ${Math.floor(500000 * fx.rate).toLocaleString('en-US')} ${input.currency} today.` });
     const now = Date.now(), tenMinutes = Math.floor(now / 6e5), day = Math.floor(now / 864e5);
     const who = planVisitorKey(req.ip);
     const quotaRules = [
@@ -108,10 +117,10 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
       const memo = await memoBuilder({
         city: input.city, anchors: input.anchors, offers: [], terms: {}, picks: input.picks,
         constraints: { budget: input.budget, slots: input.slots, discoveryMin: 0, maxPerGenre: input.slots, riskTolerance: 50, lockedIds: [], excludedIds: [] },
-        currency: 'USD', exampleBookingTerms: true,
+        currency: input.currency, exampleBookingTerms: true,
         discover: { limit: 8, research: 'value-of-information', ...(place.status === 'found' ? { nearPlace: rows => nearPlace(place, rows) } : {}), terms: row => {
           const fee = estimateFee(typeof row?.popularity === 'number' ? row.popularity : row?.query?.popularity);
-          return fee == null ? null : { fee, available: true, genre: '' };
+          return fee == null ? null : { fee: Math.round(fee * fx.rate), available: true, genre: '' };
         } },
       }, run);
       if (!memo) {
@@ -126,7 +135,7 @@ export function registerLivePlanRoutes(app, { memoBuilder = buildMemo } = {}) {
       if (unresolved) { send({ type: 'error', text: `Qloo could not confirm ${unresolved.slice(35, -1)}. Check the spelling or remove that artist.` }); return; }
       if (memo.items.length < 2) { send({ type: 'error', text: `Qloo found fewer than two similar artists for ${input.city}. A comparison needs at least two candidates, even for a one-act show. Try a better-known artist or a larger city.` }); return; }
       const source = { input: memo.input, mock: memo.mode === 'mock', receipts: run.receipts, memo, trace };
-      const record = saveLivePlan(source, { title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: LIVE_TERMS, feeBasis: 'estimated-from-qloo-popularity', ...(place.status === 'unchecked' ? {} : { place: summarizePlace(place, run.receipts) }) });
+      const record = saveLivePlan(source, { title: `${input.city}: fans of ${listNames(input.anchors)}`, terms: fx.rate === 1 ? LIVE_TERMS : `${LIVE_TERMS} Fee tiers are in US dollars, converted at 1 USD = ${fx.rate} ${input.currency} (${fx.source}, ${fx.date}).`, ...(fx.rate === 1 ? {} : { fx: { currency: input.currency, rate: fx.rate, date: fx.date } }), feeBasis: 'estimated-from-qloo-popularity', ...(place.status === 'unchecked' ? {} : { place: summarizePlace(place, run.receipts) }) });
       saved = true;
       send({ type: 'ready', id: record.id, synthetic: record.snapshot.mock === true, calls: run.used });
     } catch (error) {

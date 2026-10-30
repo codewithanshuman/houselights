@@ -13,7 +13,8 @@ export const PUBLIC_DRAWS = 10000;
 /** The visitor's assumptions, filled from defaults scaled to the plan's artist budget. */
 export function caseAssumptions(record, raw = {}) {
   const budget = record.snapshot.memo.constraints.budget;
-  const ticketPrice = 45, defaults = {
+  // Defaults are in the plan's currency, so a plan in rupees opens with rupee prices.
+  const rate = record.fx?.rate ?? 1, ticketPrice = round(45 * rate, rate > 10 ? 50 : 1), defaults = {
     // A room whose gross at 75% sell-through is about 2.6× the artist budget: the usual
     // rule of thumb for a night that can cover its artists and fixed costs.
     capacity: round(budget * 3.5 / ticketPrice, 100), ticketPrice, sellThrough: 0.75,
@@ -21,7 +22,8 @@ export function caseAssumptions(record, raw = {}) {
   };
   if (raw !== undefined && (raw === null || typeof raw !== 'object' || Array.isArray(raw))) throw fault('Assumptions must be an object.');
   const out = { ...defaults };
-  for (const [key, [min, max, whole]] of Object.entries(FIELDS)) {
+  for (const [key, [min, base, whole]] of Object.entries(FIELDS)) {
+    const max = whole || key === 'sellThrough' ? base : base * rate;
     if (raw?.[key] === undefined) continue;
     const value = raw[key];
     if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max || (whole && !Number.isInteger(value)))
@@ -33,7 +35,7 @@ export function caseAssumptions(record, raw = {}) {
 
 /** The demand input and financial terms for `record`, in the shape the financial API takes. */
 export function caseFinancialRequest(record, assumptions) {
-  const memo = record.snapshot.memo, budget = memo.constraints.budget, a = assumptions;
+  const memo = record.snapshot.memo, budget = memo.constraints.budget, a = assumptions, rate = record.fx?.rate ?? 1, unit = value => Math.round(value * rate * 100) / 100;
   const currency = ['GBP', 'USD', 'EUR', 'INR'].includes(memo.currency) ? memo.currency : 'USD';
   const premium = Math.round(a.capacity * 0.2), general = a.capacity - premium;
   const staffing = round(budget * 0.1, 500), insurance = round(budget * 0.03, 100);
@@ -46,10 +48,10 @@ export function caseFinancialRequest(record, assumptions) {
     candidates: memo.items.map(item => ({ id: item.id, name: item.name, fee: item.terms.fee, genre: item.terms.genre || 'Unspecified', available: item.terms.available === true })),
     financial: {
       currency, ticketTiers: [{ name: 'General', price: a.ticketPrice, allocation: general }, { name: 'Premium', price: Math.round(a.ticketPrice * 1.6), allocation: premium }],
-      costs: { venue: a.venueCost, production: a.productionCost, marketing: a.marketingCost, staffing, insurance, other: 0, perAttendee: 2 },
-      revenue: { ancillaryPerTicket: 3, ancillaryFixed: 0 },
+      costs: { venue: a.venueCost, production: a.productionCost, marketing: a.marketingCost, staffing, insurance, other: 0, perAttendee: unit(2) },
+      revenue: { ancillaryPerTicket: unit(3), ancillaryFixed: 0 },
       tax: { mode: 'included', rate: 0.1, reference: 'Assumed rate; verify applicable tax and contract terms.' },
-      fees: { ownership: 'promoter', perTicket: 1.5, fixed: 0, percent: 0.02 },
+      fees: { ownership: 'promoter', perTicket: unit(1.5), fixed: 0, percent: 0.02 },
       risk: { eventCancellationProbability: 0.01, artistCancellationProbability: 0.03, feeEscalationProbability: 0.1,
         feeEscalationRate: 0.15, artistCancellationRefundFraction: 0.5, eventArtistFeeRefundFraction: 0.25, ticketRefundFraction: 0.25,
         eventTicketRefundFraction: 1, replacementFee: round(budget * 0.15, 500), cancellationPenalty: round(budget * 0.05, 500) },
