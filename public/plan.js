@@ -138,7 +138,7 @@
             </div>
             <p class="tk-band tk-band-2" aria-label="${slate.feasible?`${e(usd(slate.remainingBudget))} under budget`:'No bookable bill'}">${slate.feasible?`${e(usd(slate.remainingBudget))} left`:'No bookable bill'}</p>
             <dl class="tk-stats">
-              <div><dt>Budget used</dt><dd>${slate.feasible?`${Math.round(used*100)}%`:'—'}</dd></div>
+              <div><dt>Used</dt><dd>${slate.feasible?`${Math.round(used*100)}%`:'—'}</dd></div>
               <div><dt>Checked</dt><dd>${e(slate.checkedCount)}</dd></div>
               <div><dt>Bookable</dt><dd>${e(slate.feasibleCount)}</dd></div>
             </dl>

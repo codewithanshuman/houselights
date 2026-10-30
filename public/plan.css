@@ -1073,3 +1073,8 @@
 .agent-detail code{font:500 11px/18px var(--font-mono);color:var(--pp-ink)}
 @media (max-width:700px){.why{padding:20px}.why-line{font-size:15px;line-height:25px}.cite{min-height:40px;margin:0}.why-alt{flex-basis:100%}.why-alt-fee{flex:1}.why-call{flex-basis:100%}}
 @media (prefers-reduced-motion:reduce){.why.is-playing .why-line{animation:none}}
+
+/* The ticket stats sit clear of the band, on one line each. */
+.plan-page .tk-stats{top:64.9%;left:13%;right:13%}
+.plan-page .tk-stats dt{min-height:0;white-space:nowrap}
+.plan-page .tk-stats div{gap:1px}
