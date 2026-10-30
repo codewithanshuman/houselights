@@ -15,7 +15,8 @@ body{margin:0;background:#F7F6FC;color:var(--ink);font:400 14px/21px Geist,syste
 #brief-body thead th{color:var(--soft)}
 #brief-body td.n,#brief-body th.n{text-align:right;font-variant-numeric:tabular-nums}
 #brief-body ul{margin:0;padding-left:18px}
-.b-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.b-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.b-note{margin:6px 0 0;font-size:13px;line-height:18px;color:var(--soft)}
 .b-foot{margin:20px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12px;line-height:17px;color:var(--soft)}
 @media (max-width:600px){#brief-body{padding:20px}.b-cols{grid-template-columns:1fr}}
 @media print{@page{margin:12mm}body{background:#fff;font-size:12px;line-height:17px}.no-print{display:none!important}.brief{max-width:none;padding:0}#brief-body{padding:0;border:0}#brief-body h1{font-size:22px;line-height:27px}#brief-body h2{margin-top:12px}}

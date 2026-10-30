@@ -26,9 +26,33 @@
       <h2>The bill</h2>
       <table><thead><tr><th scope="col">Act</th><th scope="col">Qloo rank</th><th scope="col" class="n">Fee</th></tr></thead><tbody>${acts.map(act=>`<tr><th scope="row">${e(act.name)}</th><td>${act.rank?`${e(act.rank)} of ${e(act.of)}`:'Not ranked'}</td><td class="n">${e(usd(act.terms.fee))}${estimated?' est.':''}</td></tr>`).join('')}</tbody></table>
       ${watch.length?`<h2>How firm it is</h2><ul>${watch.map(line=>`<li>${e(line)}</li>`).join('')}</ul>`:''}
+      <div id="brief-money"></div>
       ${lists?`<div class="b-cols">${lists}</div>`:''}
       <p class="b-foot">Built by Houselights from ${e(qloo)} saved Qloo responses. ${e(record.terms??'')} Plan ${e(record.id)}.</p>`;
     document.title=`Houselights brief — ${acts.map(act=>act.name).join(' + ')}`;
+    void addMoney(record,usd,id);
+  }
+  // The money for this exact bill, from the same seeded scenarios as Financial Risk. A plan that
+  // cannot run one (a limit, a synthetic plan) simply leaves this section out.
+  async function addMoney(record,usd,id){
+    const box=$('brief-money');
+    try{
+      if(record.snapshot.mock===true)return;
+      const started=await fetchJSON('/api/financial/jobs',{method:'POST',body:{caseId:id},timeout:15000,retries:0});
+      let job=null;
+      for(let tries=0;tries<40;tries++){
+        job=await fetchJSON(`/api/financial/jobs/${encodeURIComponent(started.id)}`,{timeout:15000});
+        if(job.status!=='running')break;
+        await new Promise(resolve=>setTimeout(resolve,1500));
+      }
+      if(job?.status!=='completed')return;
+      const bill=[...record.snapshot.memo.slate.selectedIds].sort().join('|');
+      const row=job.result?.assumptionResults?.[0]?.rows?.find(entry=>[...entry.selectedIds].sort().join('|')===bill);
+      if(!row)return;
+      const metrics=row.metrics;
+      box.innerHTML=`<h2>Would it make money?</h2><table><tbody><tr><th scope="row">Expected net profit</th><td class="n">${e(usd(metrics.profit.mean))}</td></tr><tr><th scope="row">Chance of breaking even</th><td class="n">${e(`${Math.round(metrics.breakEvenProbability*100)}%`)}</td></tr><tr><th scope="row">A bad night (5th percentile)</th><td class="n">${e(usd(metrics.profit.p5))}</td></tr></tbody></table>
+        <p class="b-note">${e(Number(job.config.simulation?.draws??10000).toLocaleString('en-US'))} scenarios for a ${e(Number(job.config.sellableCapacity).toLocaleString('en-US'))}-ticket room on stated default assumptions, not calibrated against real sales. <a class="no-print" href="/financial.html?plan=${encodeURIComponent(id)}">Change the assumptions</a></p>`;
+    }catch{/* The rest of the brief stands without this section. */}
   }
   void load();
 })();
