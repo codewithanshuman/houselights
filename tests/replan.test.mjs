@@ -50,12 +50,13 @@ test('a cancelled act is replaced by a fresh Qloo run, keeps the rest of the bil
 
 test('a large pool still fits the ten options Qloo ranks at once, and the surviving act is always kept', async () => {
   const items = Array.from({ length: 12 }, (_, i) => ({ id: `mock-pool-${i}`, name: `Pool act ${i}`, rank: i + 1, of: 12, fit: 1 - i / 12, local: 'no data', momentum: 'unknown', terms: { fee: 100, available: true, genre: '' }, evidence: { rank: true } }));
-  const record = { snapshot: { receipts: [], memo: { input: { city: 'Leeds', anchors: [] }, items, constraints: { budget: 1000, slots: 2, maxPerGenre: 2, discoveryMin: 0, riskTolerance: 50, lockedIds: [], excludedIds: [] }, slate: { feasible: true, selectedIds: ['mock-pool-11', 'mock-pool-0'] } } } };
+  const record = { snapshot: { receipts: [{ tool: 'describe', evidence: { rows: [{ id: 'mock-anchor', name: 'Anchor' }] } }], memo: { input: { city: 'Leeds', anchors: ['Anchor'] }, items, constraints: { budget: 1000, slots: 2, maxPerGenre: 2, discoveryMin: 0, riskTolerance: 50, lockedIds: [], excludedIds: [] }, slate: { feasible: true, selectedIds: ['mock-pool-11', 'mock-pool-0'] } } } };
   const run = new Run({ budget: 2, cacheStore: new Map() });
   const replan = await buildReplan(record, 'mock-pool-0', run);
   assert.ok(run.receipts[1].args.options.length <= MAX_OPTIONS);
   assert.ok(run.receipts[1].args.options.includes('mock-pool-11'), 'the surviving act stays in the ranking, even when ranked last');
   assert.ok(replan.acts.some(act => act.id === 'mock-pool-11'));
+  assert.deepEqual(run.receipts[1].args.signals, ['mock-anchor'], 'ranked for the plan\u2019s own audience, so no candidate is left out as a signal');
 });
 
 test('only a booked act can be replaced, and searches are rate limited', async () => {

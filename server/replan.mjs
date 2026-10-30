@@ -25,7 +25,7 @@ export async function buildReplan(record, cancelId, run) {
   const anchorIds = [...new Set(snapshot.receipts.filter(receipt => receipt.tool === 'describe').flatMap(receipt => receipt.evidence?.rows ?? [])
     .filter(row => row.id && anchors.includes(low(row.name))).map(row => row.id))];
   const signals = [...new Set([...anchorIds, ...survivors])];
-  if (!signals.length) throw fault('This plan has no saved Qloo identities to research from.', 409);
+  if (!anchorIds.length) throw fault('This plan has no saved Qloo identities to research from.', 409);
 
   const names = memo.items.map(item => item.name);
   const found = await run.call('recommend', { target_type: 'artist', signals, signal_location: city, limit: 12 },
@@ -45,7 +45,9 @@ export async function buildReplan(record, cancelId, run) {
   const others = pool.filter(item => !survivors.includes(item.id)).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
   const kept = [...pool.filter(item => survivors.includes(item.id)), ...others].slice(0, MAX_OPTIONS - fresh.length);
   const candidates = [...kept.map(item => ({ ...item })), ...fresh], ids = candidates.map(item => item.id);
-  const ranked = await run.call('rank', { options: ids, option_type: 'artist', signals, signal_location: city },
+  // Ranked for the plan's own audience: Qloo leaves a signal out of its own ranking, so the
+  // surviving acts search with the audience but are ranked for it, like every other candidate.
+  const ranked = await run.call('rank', { options: ids, option_type: 'artist', signals: anchorIds, signal_location: city },
     `Rank the remaining pool and ${fresh.length} newly found ${fresh.length === 1 ? 'act' : 'acts'} for the same audience`);
   const rows = ranked.receipt.evidence?.rows ?? [], byKey = new Map(candidates.flatMap(item => [[low(item.id), item.id], [low(item.name), item.id]]));
   const order = [...new Set(rows.map(row => byKey.get(low(row.id)) ?? byKey.get(low(row.name))).filter(Boolean))];
