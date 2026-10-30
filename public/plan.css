@@ -1104,3 +1104,6 @@
 .ask-tries{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .ask-note{margin:8px 0 0;font-size:14px;min-height:1px}
 .ask-note:empty{display:none}
+.plan-try{margin-top:16px}
+.plan-try p{margin:0 0 8px;font-size:14px;color:var(--pp-muted)}
+.plan-try [role=group]{display:flex;flex-wrap:wrap;gap:6px}

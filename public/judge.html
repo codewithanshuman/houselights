@@ -71,6 +71,14 @@
         <p id="plan-error" class="plan-error" role="alert" hidden></p>
         <button type="submit" class="plan-submit sketch-btn" id="plan-submit">Plan my bill <span aria-hidden="true">→</span></button>
         <p class="plan-note">Fees are estimates from Qloo popularity; availability is assumed. Comparisons need at least two candidates, even for one act. Up to 3 live plans every 10 minutes; unpublished plans expire after 7 days unless retained for audit.</p>
+        <div class="plan-try">
+          <p id="try-label">Or give the agent a hard one, live</p>
+          <div role="group" aria-labelledby="try-label">
+            <button type="button" class="preset" data-try-city="Seattle" data-try-anchor="Nirvana" data-try-budget="60000" data-try-slots="3">Fans of Nirvana in Seattle</button>
+            <button type="button" class="preset" data-try-city="Delhi" data-try-anchor="Diljit Dosanjh" data-try-budget="30000" data-try-slots="2">Fans of Diljit Dosanjh in Delhi</button>
+            <button type="button" class="preset" data-try-city="Nashville" data-try-anchor="Dolly Parton" data-try-budget="20000" data-try-slots="2">Fans of Dolly Parton in Nashville</button>
+          </div>
+        </div>
         <div class="plan-examples">
           <p id="examples-label">Or open a saved plan</p>
           <div id="plan-examples" class="plan-chips" role="group" aria-labelledby="examples-label"></div>

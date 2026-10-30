@@ -1021,6 +1021,14 @@ test('a plain-English instruction changes the plan through the real controls', {
   await expect(page.locator('#result-title')).toContainText('Sault');
 });
 
+test('a hard example fills the form and runs a live plan in one click', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  const posted = page.waitForRequest(request => request.url().endsWith('/api/plan') && request.method() === 'POST');
+  await page.getByRole('button', { name: 'Fans of Nirvana in Seattle' }).click();
+  const body = (await posted).postDataJSON();
+  expect([body.city, body.anchors?.[0] ?? body.anchor, body.budget, body.slots, body.currency]).toEqual(['Seattle', 'Nirvana', 60000, 3, 'USD']);
+});
+
 test('a visitor can run the Festival GM on a saved plan', { tag: '@cross-browser' }, async ({ page }) => {
   const refused = [];
   page.on('response', response => { if (response.status() === 401) refused.push(response.url()); });

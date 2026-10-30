@@ -838,6 +838,12 @@
   let budgetCurrency='USD';
   $('plan-currency').addEventListener('change',event=>{const next=event.target.value,field=$('plan-budget');if(Number(field.value)===DEFAULT_BUDGETS[budgetCurrency])field.value=DEFAULT_BUDGETS[next];budgetCurrency=next;});
   form.addEventListener('submit',event=>{event.preventDefault();const input=readInput();if(input)void planLive(input);});
+  form.querySelectorAll('[data-try-city]').forEach(button=>button.addEventListener('click',()=>{
+    $('plan-city').value=button.dataset.tryCity;$('plan-anchor').value=button.dataset.tryAnchor;
+    $('plan-currency').value='USD';budgetCurrency='USD';$('plan-budget').value=button.dataset.tryBudget;
+    form.querySelector(`input[name=slots][value="${button.dataset.trySlots}"]`).checked=true;
+    form.requestSubmit();
+  }));
 
   // Sections fade up as they enter; the tagline lights word by word along the reading line.
   if('IntersectionObserver' in window){
