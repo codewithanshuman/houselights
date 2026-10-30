@@ -59,6 +59,19 @@ test('a large pool still fits the ten options Qloo ranks at once, and the surviv
   assert.deepEqual(run.receipts[1].args.signals, ['mock-anchor'], 'ranked for the plan\u2019s own audience, so no candidate is left out as a signal');
 });
 
+test('a re-plan works to the budget in force, not the one the plan started with', async () => {
+  const id = await plan(), { selectedIds } = loadJudgeCase(id).snapshot.memo.slate;
+  const original = (await (await post(`/api/judge/cases/${id}/replan`, { cancelId: selectedIds[0] })).json()).replan;
+  const budget = Math.max(1, original.totalFee - 1);
+  const cut = await post(`/api/judge/cases/${id}/replan`, { cancelId: selectedIds[0], budget });
+  assert.equal(cut.status, 201, 'a different budget is a new search, not the earlier answer');
+  const { replan } = await cut.json();
+  assert.equal(replan.budget, budget);
+  assert.ok(!replan.feasible || replan.totalFee <= budget, 'never over the budget in force');
+  assert.equal((await post(`/api/judge/cases/${id}/replan`, { cancelId: selectedIds[0], budget: -1 })).status, 400);
+  assert.equal((await post(`/api/judge/cases/${id}/replan`, { cancelId: selectedIds[0], budget: 'x' })).status, 400);
+});
+
 test('only a booked act can be replaced, and searches are rate limited', async () => {
   const id = await plan();
   assert.equal((await post(`/api/judge/cases/${id}/replan`, { cancelId: 'not-on-the-bill' })).status, 400);

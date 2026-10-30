@@ -9,12 +9,13 @@ const FIELDS = {
   venueCost: [0, 5e6, false], productionCost: [0, 5e6, false], marketingCost: [0, 5e6, false],
 };
 export const PUBLIC_DRAWS = 10000;
+const DEFAULT_TICKET = { USD: 45, INR: 1500, EUR: 40, GBP: 35 };
 
 /** The visitor's assumptions, filled from defaults scaled to the plan's artist budget. */
 export function caseAssumptions(record, raw = {}) {
   const budget = record.snapshot.memo.constraints.budget;
   // Defaults are in the plan's currency, so a plan in rupees opens with rupee prices.
-  const rate = record.fx?.rate ?? 1, ticketPrice = round(45 * rate, rate > 10 ? 50 : 1), defaults = {
+  const rate = record.fx?.rate ?? 1, ticketPrice = DEFAULT_TICKET[record.snapshot.memo.currency] ?? 45, defaults = {
     // A room whose gross at 75% sell-through is about 2.6× the artist budget: the usual
     // rule of thumb for a night that can cover its artists and fixed costs.
     capacity: round(budget * 3.5 / ticketPrice, 100), ticketPrice, sellThrough: 0.75,

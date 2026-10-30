@@ -463,7 +463,7 @@
   // search for fans of the rest of the bill, ranked with the pool, and rebooked exactly.
   function replanSection(){
     const id=view.cancelId;if(!id||view.qlooOff)return '';
-    const name=nameOf(view.base,id),plan=view.replans?.[id],busy=view.replanBusy===id,error=view.replanError?.[id];
+    const slot=`${id}|${view.budget}`,name=nameOf(view.base,id),plan=view.replans?.[slot],busy=view.replanBusy===slot,error=view.replanError?.[slot];
     const head=`<h3 id="replan-title">${e(name)} can’t play</h3>`;
     if(!plan)return `<section class="replan" id="replan" aria-labelledby="replan-title">${head}
         <p class="solid-text">The bill above comes from the saved pool. The agent can also search Qloo again for fans of the rest of the bill, rank what it finds with the pool, and rebook exactly.</p>
@@ -480,9 +480,10 @@
   }
   async function requestReplan(){
     const owner=view,id=owner?.cancelId;if(!id||owner.replanBusy)return;
-    owner.replanBusy=id;owner.replanError={...owner.replanError,[id]:null};render();
-    try{const data=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/replan`,{method:'POST',body:{cancelId:id},timeout:90000,retries:0});owner.replans={...owner.replans,[id]:data.replan};}
-    catch(problem){owner.replanError={...owner.replanError,[id]:problem?.message||'Qloo could not search just now. The plan is unchanged.'};}
+    const budget=owner.budget,slot=`${id}|${budget}`;
+    owner.replanBusy=slot;owner.replanError={...owner.replanError,[slot]:null};render();
+    try{const data=await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/replan`,{method:'POST',body:{cancelId:id,budget},timeout:90000,retries:0});owner.replans={...owner.replans,[slot]:data.replan};}
+    catch(problem){owner.replanError={...owner.replanError,[slot]:problem?.message||'Qloo could not search just now. The plan is unchanged.'};}
     finally{owner.replanBusy=null;if(view===owner){render();$('replan-title')?.setAttribute('tabindex','-1');$('replan-title')?.focus({preventScroll:true});}}
   }
 
@@ -777,6 +778,9 @@
     }catch(problem){showError(problem?.name==='TimeoutError'?'The live plan took too long. Try again, or open a saved plan.':'The live plan was interrupted. Try again, or open a saved plan.');}
     finally{submit.disabled=false;submit.innerHTML='Plan my bill <span aria-hidden="true">→</span>';}
   }
+  const DEFAULT_BUDGETS={USD:20000,INR:1900000,EUR:18000,GBP:15000};
+  let budgetCurrency='USD';
+  $('plan-currency').addEventListener('change',event=>{const next=event.target.value,field=$('plan-budget');if(Number(field.value)===DEFAULT_BUDGETS[budgetCurrency])field.value=DEFAULT_BUDGETS[next];budgetCurrency=next;});
   form.addEventListener('submit',event=>{event.preventDefault();const input=readInput();if(input)void planLive(input);});
 
   // Sections fade up as they enter; the tagline lights word by word along the reading line.

@@ -54,7 +54,7 @@ test('a plan in rupees converts every estimated fee at the stated rate and says 
   assert.ok(memo.items.every(item => Math.abs(item.terms.fee / 95.27 - Math.round(item.terms.fee / 95.27 / 500) * 500) < 1), 'each fee is a dollar tier times the rate');
   assert.equal(feeModel(record.snapshot, { feeBasis: record.feeBasis, fxRate: 95.27 }).name, 'popularity-tiers', 'fee scenarios still move across real tiers');
   const assumptions = caseAssumptions(record), request = caseFinancialRequest(record, assumptions);
-  assert.ok(assumptions.ticketPrice > 1000, 'defaults open in rupees');
+  assert.equal(assumptions.ticketPrice, 1500, 'a local default, not a converted dollar price');
   assert.equal(request.financial.currency, 'INR');
   assert.throws(() => caseAssumptions(record, { ticketPrice: 1e9 }), /ticketPrice/);
 }));

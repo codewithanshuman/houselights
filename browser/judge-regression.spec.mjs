@@ -957,6 +957,17 @@ test('a call in the agent card opens to what Qloo returned', { tag: '@cross-brow
   await expect(rank.locator('.agent-detail')).toBeHidden();
 });
 
+test('changing currency moves an untouched budget, and keeps one the visitor typed', async ({ page }) => {
+  await page.goto(`${origin}/judge.html`);
+  await page.selectOption('#plan-currency', 'INR');
+  await expect(page.locator('#plan-budget')).toHaveValue('1900000');
+  await page.selectOption('#plan-currency', 'USD');
+  await expect(page.locator('#plan-budget')).toHaveValue('20000');
+  await page.fill('#plan-budget', '31000');
+  await page.selectOption('#plan-currency', 'EUR');
+  await expect(page.locator('#plan-budget')).toHaveValue('31000');
+});
+
 test('a dropped act can be replaced by a fresh Qloo search, leaving the plan unchanged', { tag: '@cross-browser' }, async ({ page }) => {
   await page.goto(`${origin}/judge.html`);
   await page.getByRole('button', { name: 'Drop Sault and rebook' }).click();

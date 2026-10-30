@@ -15,7 +15,7 @@ const fault = (message, status = 400) => Object.assign(new Error(message), { sta
 const usable = env => ['ok', 'partial', 'degraded'].includes(env.status);
 export const REPLAN_NOTE = 'A fresh Qloo run for this cancellation. New acts have fees estimated from Qloo popularity tiers and assumed availability, and no location or trend checks yet. The saved plan is unchanged.';
 
-export async function buildReplan(record, cancelId, run) {
+export async function buildReplan(record, cancelId, run, { budget = record.snapshot.memo.constraints.budget } = {}) {
   const snapshot = record.snapshot, memo = snapshot.memo, slate = memo.slate, city = memo.input.city;
   if (!slate?.feasible || !slate.selectedIds.includes(cancelId)) throw fault('Choose an act on the booked bill.');
   const survivors = slate.selectedIds.filter(id => id !== cancelId), pool = memo.items.filter(item => item.id !== cancelId);
@@ -55,10 +55,10 @@ export async function buildReplan(record, cancelId, run) {
   const scored = fitsFromRankRows(order, rows.map(row => ({ ...row, id: byKey.get(low(row.id)) ?? byKey.get(low(row.name)) })));
   const items = candidates.map(item => ({ ...item, fit: scored.fits.get(item.id), affinity: scored.scores.get(item.id), rank: order.indexOf(item.id) + 1, of: order.length,
     rankCoverage: { complete: true, returned: order.length, requested: order.length }, evidence: { ...item.evidence, rank: true } }));
-  const result = optimizeSlate(items, { ...memo.constraints, lockedIds: survivors, excludedIds: [] });
+  const result = optimizeSlate(items, { ...memo.constraints, budget, lockedIds: survivors, excludedIds: [] });
   if (result.status === 'invalid') throw fault(result.reasons.join(' '));
   const describe = id => { const item = items.find(entry => entry.id === id); return { id, name: item.name, fee: item.terms.fee, isNew: item.isNew === true, rank: item.rank, of: item.of, ...(typeof item.affinity === 'number' ? { affinity: item.affinity } : {}) }; };
-  return { version: '1.0', cancelId, cancelledName: cancelled?.name ?? cancelId, survivorIds: survivors, feasible: result.feasible, reasons: result.reasons ?? [],
+  return { version: '1.0', cancelId, budget, cancelledName: cancelled?.name ?? cancelId, survivorIds: survivors, feasible: result.feasible, reasons: result.reasons ?? [],
     acts: result.feasible ? result.selectedIds.map(describe) : [], totalFee: result.feasible ? result.totalFee : null, checkedCount: result.checkedCount, feasibleCount: result.feasibleCount,
     newCount: fresh.length, poolNames: names, note: REPLAN_NOTE, createdAt: new Date().toISOString(), mock: run.mode === 'mock', rankReceiptId: ranked.receipt.id, foundReceiptId: found.receipt.id,
     receipts: run.receipts.map(r => ({ id: r.id, tool: r.tool, args: r.args, status: r.status, count: r.count, cached: r.cached, source: r.source, fetchedAt: r.fetchedAt, digest: r.digest, evidence: r.evidence })) };

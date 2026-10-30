@@ -32,6 +32,11 @@ test('a place is confirmed, not found, or the lookup is unavailable, and those s
   assert.equal(asked, 0, 'the same place is not looked up twice');
 });
 
+test('a place name shows each part once', async () => {
+  const place = await locatePlace('Pune name test', { fetcher: answer([{ lat: '18.5', lon: '73.8', display_name: 'Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India' }]) });
+  assert.equal(place.name, 'Pune, Maharashtra, India');
+});
+
 test('the lookup sends only the place name and identifies itself', async () => {
   let url, options;
   await locatePlace('Hallstatt request test', { fetcher: async (u, o) => { url = new URL(u); options = o; return answer([])(); } });

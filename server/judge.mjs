@@ -293,18 +293,21 @@ export function registerJudgeRoutes(app) {
     if(!record)return res.status(404).json({error:'Published judge case not found.'});
     const cancelId=typeof req.body?.cancelId==='string'?req.body.cancelId.slice(0,180):'';
     if(record.snapshot.memo.slate?.feasible!==true||!record.snapshot.memo.slate.selectedIds.includes(cancelId))return res.status(400).json({error:'Choose an act on the booked bill.'});
-    const read=()=>{const row=db.prepare('SELECT body FROM judge_replans WHERE case_id=? AND cancel_id=?').get(record.id,cancelId);return row?JSON.parse(row.body):null;};
+    const budget=req.body?.budget===undefined?record.snapshot.memo.constraints.budget:req.body.budget;
+    if(typeof budget!=='number'||!Number.isFinite(budget)||budget<=0||budget>1e9)return res.status(400).json({error:'Budget must be a positive number.'});
+    const replanKey=`${cancelId}|${budget}`;
+    const read=()=>{const row=db.prepare('SELECT body FROM judge_replans WHERE case_id=? AND cancel_id=?').get(record.id,replanKey);return row?JSON.parse(row.body):null;};
     const saved=read();if(saved)return res.json({replan:saved,cached:true});
     if(!isMock()&&!process.env.QLOO_API_KEY)return res.status(503).json({error:'Live Qloo research is not configured on this server.'});
-    const key=`${record.id}|${cancelId}`;let pending=replanRuns.get(key);
+    const key=`${record.id}|${replanKey}`;let pending=replanRuns.get(key);
     if(!pending){
       const now=Date.now(),tenMinutes=Math.floor(now/6e5),day=Math.floor(now/864e5),who=digest(req.ip??'unknown');
       const rules=[{key:`replan:${tenMinutes}:${who}`,limit:3,expires:(tenMinutes+1)*6e5},{key:`replan-global:${day}`,limit:REACH_DAILY_CAP,expires:(day+1)*864e5}];
       if(!consumeQuota(rules,now)){res.set('Retry-After','600');return res.status(429).json({error:'Replacement searches are limited to 3 every 10 minutes per visitor, under a shared daily cap that protects the Qloo quota.'});}
       pending=(async()=>{
         try{
-          const replan=await buildReplan(record,cancelId,new Run({budget:REPLAN_CALLS,deadlineMs:60000,receiptPrefix:'c'}));
-          db.prepare('INSERT INTO judge_replans(case_id,cancel_id,body) VALUES(?,?,?) ON CONFLICT(case_id,cancel_id) DO NOTHING').run(record.id,cancelId,JSON.stringify(replan));
+          const replan=await buildReplan(record,cancelId,new Run({budget:REPLAN_CALLS,deadlineMs:60000,receiptPrefix:'c'}),{budget});
+          db.prepare('INSERT INTO judge_replans(case_id,cancel_id,body) VALUES(?,?,?) ON CONFLICT(case_id,cancel_id) DO NOTHING').run(record.id,replanKey,JSON.stringify(replan));
           return read();
         }catch(error){refundQuota(rules);throw error;}
         finally{replanRuns.delete(key);}

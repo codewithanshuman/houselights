@@ -11,6 +11,8 @@ const ENDPOINT = 'https://nominatim.openstreetmap.org/search';
 const AGENT = 'Houselights/1.2 (+https://houselights.80-225-218-239.sslip.io)';
 const SPACING_MS = 1100, TIMEOUT_MS = 6000, CACHE_MAX = 500;
 const cache = new Map();
+// The first three distinct parts, without subdistricts or postcodes: "Pune, Maharashtra, India".
+const displayName = value => [...new Map(String(value).split(',').map(part => part.trim()).filter(part => part && !/subdistrict|tehsil|taluka|^\d/i.test(part)).map(part => [part.toLowerCase(), part])).values()].slice(0, 3).join(', ').slice(0, 120);
 let queue = Promise.resolve(), lastAt = 0;
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 
@@ -43,7 +45,7 @@ export function locatePlace(query, { fetcher = fetch } = {}) {
       const row = (await ask(query, fetcher))[0];
       const lat = Number(row?.lat), lon = Number(row?.lon);
       const place = row && finite(lat) && finite(lon)
-        ? { status: 'found', name: String(row.display_name ?? query).split(',').slice(0, 3).map(part => part.trim()).join(', ').slice(0, 120), lat, lon }
+        ? { status: 'found', name: displayName(row.display_name ?? query), lat, lon }
         : { status: 'not-found' };
       if (cache.size >= CACHE_MAX) cache.delete(cache.keys().next().value);
       cache.set(key, place);
