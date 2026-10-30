@@ -12,7 +12,7 @@ const ENDPOINT = 'https://musicbrainz.org/ws/2/artist';
 const AGENT = 'Houselights/1.2 (+https://houselights.80-225-218-239.sslip.io)';
 const SPACING_MS = 1100, TIMEOUT_MS = 3500, CACHE_MAX = 2000, MIN_SCORE = 90;
 export const ACT_SOURCE = 'MusicBrainz';
-export const ACT_DEADLINE_MS = 9000;
+export const ACT_DEADLINE_MS = 12000;
 const cache = new Map();
 let queue = Promise.resolve(), lastAt = 0;
 const low = value => String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
