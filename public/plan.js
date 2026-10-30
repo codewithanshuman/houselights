@@ -10,7 +10,7 @@
   const usd=value=>money(value,view?.base?.memo?.currency??'USD');
   const result=$('plan-result'),form=$('plan-form'),progress=$('plan-progress');
   let view=null; // {record, base, off, current, budget, cancelId, qlooOff}
-  let caseRequest=0,calculationRequest=0;
+  let caseRequest=0,calculationRequest=0,autoReach=null; // autoReach: a live plan just made here maps its crowd at once
 
   // ── Data helpers ───────────────────────────────────────────────────────────────
   const itemsOf=snapshot=>snapshot.memo.items;
@@ -53,6 +53,7 @@
       render();if(record.id===FEATURED){fillFan(record.snapshot,null);fillPipeline(record.snapshot);if(watchReady||form.contains(document.activeElement))startReplay();}
       if(record.id!==FEATURED||location.search||location.hash)history.replaceState(null,'',record.live?`?plan=${record.id}`:`#${record.id}`);
       if(scroll)result.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});
+      if(autoReach===record.id){autoReach=null;if(!record.reach&&record.snapshot.memo.slate.feasible)void requestReach();}
       // The Qloo-off comparison is shown on every plan, so fetch it once up front.
       experiment({qlooOff:true}).then(data=>{if(request===caseRequest&&view?.record.id===record.id){view.off=data.snapshot;render();if(record.id===FEATURED)fillFan(record.snapshot,data.snapshot);}}).catch(problem=>{if(request===caseRequest&&view?.record.id===record.id){view.offError=problem;render();}});
     }catch(problem){
@@ -167,6 +168,7 @@
       </div>
       ${solidSection()}
       ${actSections()}
+      ${reachSection()}
       <div class="result-controls" aria-labelledby="controls-title">
         <div class="controls-copy">
           <h3 id="controls-title">Change the plan</h3>
@@ -432,6 +434,68 @@
       </div>`;
   }
 
+  // ── Who the bill reaches ───────────────────────────────────────────────────────
+  // Brands, places and podcasts that fans of the booked acts favour, from three Qloo calls
+  // made after the decision and saved beside the plan. Qloo's explainability gives each
+  // booked act's share of every lead. The leads never change the bill.
+  const ACT_TONES=['#5E44B8','#C2557F','#2F7FA3','#A87414'];
+  function reachSection(){
+    const base=view.base;if(!base.memo.slate.feasible)return '';
+    const reach=view.record.reach,city=base.memo.input.city,bill=billNames(base);
+    const head=`<div class="solid-head"><h3 id="reach-title" tabindex="-1">Who this bill reaches</h3><p>What fans of ${e(bill.join(' + '))} like beyond music, from Qloo. The bill does not change.</p></div>`;
+    if(!reach)return `<section class="reach" id="reach" aria-labelledby="reach-title">${head}
+        <div class="solid-card reach-empty">
+          <p class="solid-kicker">Beyond the bill</p>
+          <p class="solid-text">Qloo’s taste graph spans brands, places and podcasts, not just artists. Using the booked acts as the signal, three Qloo calls find sponsor leads, places in ${e(city)} for posters and an aftershow, and podcasts to advertise on, with the act that drives each one.</p>
+          <p class="reach-go"><button type="button" class="hero-cta reach-run" id="reach-run"${view.reachBusy?' disabled aria-busy="true"':''}>${view.reachBusy?'Asking Qloo…':'Map this crowd with Qloo <span aria-hidden="true">→</span>'}</button><small>3 Qloo calls, saved with this plan</small></p>
+          ${view.reachError?`<p class="reach-error" role="alert">${e(view.reachError)}</p>`:''}
+        </div>
+      </section>`;
+    const acts=reach.selectedIds.map((id,index)=>({id,name:nameOf(base,id),tone:ACT_TONES[index%ACT_TONES.length]}));
+    const tone=id=>acts.find(act=>act.id===id)?.tone??'#D9D6E0';
+    const leads=reach.groups.flatMap(group=>group.leads).filter(item=>item.drivers?.length===acts.length);
+    // Each act's average share of Qloo's explanation across every lead it was given for.
+    const pull=acts.map(act=>({...act,share:leads.length?leads.reduce((sum,item)=>sum+(item.drivers.find(d=>d.id===act.id)?.share??0),0)/leads.length:null}));
+    const top=type=>reach.groups.find(group=>group.type===type)?.leads[0]?.name;
+    const parts=[top('brand')&&`favour <strong>${e(top('brand'))}</strong>`,top('podcast')&&`listen to <strong>${e(top('podcast'))}</strong>`,top('place')&&`go to <strong>${e(top('place'))}</strong>`].filter(Boolean);
+    const lead=item=>{
+      const d=item.drivers?.length===acts.length&&acts.length>1?item.drivers:[];
+      const split=d.map(x=>`${nameOf(base,x.id)} ${pct(x.share)}`).join(', ');
+      const leader=d.length?[...d].sort((a,b)=>b.share-a.share)[0]:null;
+      return `<li class="reach-lead">
+          <p class="reach-name"><strong>${e(item.name)}</strong>${item.affinity!=null?`<span class="reach-aff" title="Qloo affinity">${e(item.affinity.toFixed(3))}</span>`:''}</p>
+          ${item.address?`<small class="reach-addr">${e(item.address)}</small>`:''}
+          ${d.length?`<span class="reach-mix" role="img" aria-label="${e(`Qloo explanation: ${split}`)}">${d.map(x=>`<span style="flex-grow:${x.share.toFixed(4)};background:${tone(x.id)}"></span>`).join('')}</span>
+          <small class="reach-who">${leader.share>=.55?`Mostly ${e(nameOf(base,leader.id))}`:`Leans ${e(nameOf(base,leader.id))} · ${e(pct(leader.share))}`}</small>`:''}
+        </li>`;
+    };
+    const changed=!sameIds(view.current.memo.slate.selectedIds,reach.selectedIds);
+    return `<section class="reach" id="reach" aria-labelledby="reach-title">${head}
+        ${parts.length?`<p class="reach-line">Fans of this bill ${parts.length>1?`${parts.slice(0,-1).join(', ')} and ${parts.at(-1)}`:parts[0]}.</p>`:''}
+        ${acts.length>1&&leads.length?`<ul class="reach-legend" aria-label="Which booked act drives these leads">${pull.map(act=>`<li><span class="dot" style="background:${act.tone}" aria-hidden="true"></span>${e(act.name)}<b>${e(pct(act.share))}</b></li>`).join('')}<li class="reach-legend-note">average share of Qloo’s explanation</li></ul>`:''}
+        ${changed?'<p class="reach-changed">These leads are for the original bill. The changed bill above would reach a different crowd.</p>':''}
+        <div class="reach-grid">${reach.groups.map(group=>`<article class="solid-card reach-card" data-domain="${e(group.type)}">
+            <p class="solid-kicker">${e(group.label)}</p>
+            <p class="solid-text">${e(group.hint)}${group.type==='place'?` in ${e(reach.city)}`:''}</p>
+            ${group.leads.length?`<ol class="reach-list">${group.leads.map(lead).join('')}</ol>`:'<p class="solid-note">Qloo returned none for this crowd.</p>'}
+            <button type="button" class="link-button reach-receipt" data-receipt="${e(group.receiptId)}">Qloo receipt</button>
+          </article>`).join('')}</div>
+        <p class="solid-note reach-note">${reach.mock?'<strong>Synthetic development data, not from Qloo.</strong> ':''}${e(reach.note)} ${e(reach.receipts.length)} Qloo calls on ${e(new Date(reach.createdAt).toUTCString().slice(5,16))}.</p>
+      </section>`;
+  }
+  async function requestReach(){
+    const owner=view;if(!owner||owner.reachBusy)return;
+    owner.reachBusy=true;owner.reachError=null;render();
+    try{owner.record.reach=(await fetchJSON(`/api/judge/cases/${encodeURIComponent(owner.record.id)}/reach`,{method:'POST',timeout:90000,retries:0})).reach;}
+    catch(problem){owner.reachError=problem?.message||'Qloo could not map this audience just now. The plan is unchanged.';}
+    finally{
+      owner.reachBusy=false;if(view!==owner)return;
+      render();
+      const status=$('result-status');if(status)status.textContent=owner.record.reach?'Audience mapped: sponsor leads, places and podcasts for fans of this bill.':owner.reachError;
+      if(owner.record.reach)$('reach-title')?.focus({preventScroll:true});else $('reach-run')?.focus({preventScroll:true});
+    }
+  }
+
   function wire(){
     const owner=view,generation=caseRequest,current=()=>view===owner&&generation===caseRequest;
     const say=text=>{const status=$('result-status');if(status)status.textContent=text;};
@@ -448,6 +512,7 @@
     result.querySelectorAll('[data-budget]').forEach(button=>button.addEventListener('click',async()=>{view.budget=Number(button.dataset.budget);const applied=await rerun();if(applied===null||!current())return;say(`Budget set to ${usd(view.budget)}. ${view.current.memo.slate.feasible?`The bill is ${billNames(view.current).join(' and ')}.`:'No bill fits.'}`);}));
     result.querySelectorAll('[data-drop]').forEach(button=>button.addEventListener('click',async()=>{view.cancelId=button.dataset.drop;const name=nameOf(view.base,view.cancelId);const applied=await rerun();if(applied===null||!current())return;say(`${name} dropped. ${view.current.memo.slate.feasible?`The best replacement bill is ${billNames(view.current).join(' and ')}.`:'No bill fits without them.'}`);}));
     $('plan-reset').addEventListener('click',async()=>{view.budget=view.base.memo.constraints.budget;view.cancelId=null;view.qlooOff=false;const applied=await rerun();if(applied===null||!current())return;say('Changes reset to the original plan.');$('plan-switch').focus();});
+    $('reach-run')?.addEventListener('click',()=>void requestReach());
     result.querySelectorAll('[data-receipt]').forEach(button=>button.addEventListener('click',()=>openReceipt(button.dataset.receipt,button.dataset.entity,button)));
     // Summary and insight links open the card they point to (folded on phones) and move focus there.
     result.querySelectorAll('[data-jump]').forEach(link=>link.addEventListener('click',event=>{
@@ -460,20 +525,23 @@
   }
 
   // ── Receipts ───────────────────────────────────────────────────────────────────
+  const REACH_TITLES={brand:'Brands fans of this bill favour',place:'Places fans of this bill go',podcast:'Podcasts fans of this bill listen to'};
+  const reachType=receipt=>receipt.tool==='recommend'&&REACH_TITLES[receipt.args?.target_type]?receipt.args.target_type:null;
   const describeReceipt=(receipt,snapshot)=>{
     const city=snapshot.memo.input.city,anchors=anchorText(snapshot);
+    if(reachType(receipt))return `${REACH_TITLES[reachType(receipt)]}${receipt.args.filter_location?` in ${receipt.args.filter_location}`:''}`;
     return ({describe:'Qloo confirmed the artist’s identity',recommend:`Artists Qloo links to ${anchors} fans in ${city}`,rank:`Qloo’s ranking of every candidate for ${anchors} fans in ${city}`,
       where_popular:`Where the fans are within ${city}`,compare_audiences:`How the audience overlaps with ${anchors}’s`,trends:'Six-month popularity trend',entity_tags:'Taste tags for the anchor artist'})[receipt.tool]??`Qloo ${receipt.tool} call`;
   };
   function openReceipt(id,entity,opener){
-    const snapshot=view.base,receipt=snapshot.receipts.find(r=>r.id===id),drawer=$('receipt-drawer');if(!receipt)return;
+    const snapshot=view.base,receipt=snapshot.receipts.find(r=>r.id===id)??view.record.reach?.receipts.find(r=>r.id===id),drawer=$('receipt-drawer');if(!receipt)return;
     const same=(a,b)=>String(a??'').toLowerCase()===String(b??'').toLowerCase();
     const rows=receipt.evidence?.rows??[];
     $('receipt-title').textContent=describeReceipt(receipt,snapshot);
     const top=Math.max(0,...rows.map(r=>r.affinity??0))||1,chip=(label,value)=>`<span class="receipt-chip"><small>${e(label)}</small><code>${e(value)}</code></span>`;
     $('receipt-body').innerHTML=`<p class="receipt-meta">${chip('Receipt',receipt.id)}${chip('Qloo tool',receipt.tool)}${chip('Status',receipt.status)}${receipt.fetchedAt?chip('Fetched',new Date(receipt.fetchedAt).toUTCString().replace(' GMT',' UTC')):''}${receipt.cached?chip('Source','cache'):''}</p>
-      ${rows.some(r=>r.name)?`<div class="table-scroll"><table class="data-table receipt-table"><caption>What Qloo returned${entity?` (highlighted: ${e(entity)})`:''}</caption><thead><tr><th scope="col">Artist</th><th scope="col">Qloo affinity</th><th scope="col">Popularity</th></tr></thead><tbody>${rows.filter(r=>r.name).map((r,index)=>`<tr style="--i:${index}"${same(r.name,entity)?' class="is-highlight"':''}><th scope="row">${e(r.name)}</th><td>${r.affinity==null?'—':`<span class="receipt-aff"><span class="receipt-bar" aria-hidden="true"><span style="--w:${(Math.max(0,r.affinity)/top*100).toFixed(1)}%"></span></span>${e(r.affinity.toFixed(4))}</span>`}</td><td>${r.popularity==null?'—':e(r.popularity.toFixed(3))}</td></tr>`).join('')}</tbody></table></div>`:'<p>This call returned no named rows in the public record.</p>'}
-      <p class="receipt-note">Affinity is Qloo’s measure of how strongly this audience is drawn to an artist; it is cultural fit, not ticket demand. ${receipt.originalDigest?`Original record digest <code class="receipt-digest">${e(receipt.originalDigest)}</code>.`:''}</p>`;
+      ${rows.some(r=>r.name)?`<div class="table-scroll"><table class="data-table receipt-table"><caption>What Qloo returned${entity?` (highlighted: ${e(entity)})`:''}</caption><thead><tr><th scope="col">${reachType(receipt)?'Name':'Artist'}</th><th scope="col">Qloo affinity</th><th scope="col">Popularity</th></tr></thead><tbody>${rows.filter(r=>r.name).map((r,index)=>`<tr style="--i:${index}"${same(r.name,entity)?' class="is-highlight"':''}><th scope="row">${e(r.name)}</th><td>${r.affinity==null?'—':`<span class="receipt-aff"><span class="receipt-bar" aria-hidden="true"><span style="--w:${(Math.max(0,r.affinity)/top*100).toFixed(1)}%"></span></span>${e(r.affinity.toFixed(4))}</span>`}</td><td>${r.popularity==null?'—':e(r.popularity.toFixed(3))}</td></tr>`).join('')}</tbody></table></div>`:'<p>This call returned no named rows in the public record.</p>'}
+      <p class="receipt-note">${reachType(receipt)?'Affinity is Qloo’s measure of how strongly fans of the booked acts are drawn to each result. It is cultural fit, not a partnership, availability or audience size.':'Affinity is Qloo’s measure of how strongly this audience is drawn to an artist; it is cultural fit, not ticket demand.'} ${receipt.originalDigest?`Original record digest <code class="receipt-digest">${e(receipt.originalDigest)}</code>.`:''}</p>`;
     drawer.showModal();
     // Closing plays the sheet's exit animation first (Escape, the close button or a click outside).
     const sheet=drawer.querySelector('.receipt-sheet');
@@ -580,7 +648,7 @@
           else if(event.type==='error'){showError(event.text);done=true;}
           else if(event.type==='ready'){
             trace.done(`Planned with ${event.calls} Qloo calls`,'Every call is saved as a receipt you can open on the plan.');
-            status.textContent='Your plan is ready.';await openCase(event.id,{scroll:true});done=true;
+            status.textContent='Your plan is ready.';autoReach=event.id;await openCase(event.id,{scroll:true});done=true;
           }
         }
       }

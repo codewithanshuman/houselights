@@ -1,5 +1,5 @@
 import {createHash,randomBytes} from 'node:crypto';
-import {db,consumeQuota,transaction} from './database.mjs';
+import {db,consumeQuota,refundQuota,transaction} from './database.mjs';
 import * as store from './store.mjs';
 import {optimizeSlate} from './optimizer.mjs';
 import {buildDecisionProof,evidenceDependencies} from './decision-proof.mjs';
@@ -8,8 +8,13 @@ import {RESEARCH_REASON,RESEARCH_REASONS} from './research-value.mjs';
 import {preserveRankProvenance} from './gm.mjs';
 import {publicBenchmark,judgeMethods} from './judge-comparison.mjs';
 import {scoringVersion} from './affinity.mjs';
+import {Run,isMock} from './qloo.mjs';
+import {buildReach,REACH_CALLS} from './audience-reach.mjs';
 
 db.exec('CREATE TABLE IF NOT EXISTS judge_cases(id TEXT PRIMARY KEY, body TEXT NOT NULL)');
+// Audience reach (brands, places, podcasts for the booked bill) is kept beside its case, not in
+// it, so a case's record and digests never change when it is added.
+db.exec('CREATE TABLE IF NOT EXISTS audience_reach(case_id TEXT PRIMARY KEY, body TEXT NOT NULL)');
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const fault=(message,status=400)=>Object.assign(new Error(message),{status});
 export const LIVE_PLAN_TTL_MS=7*864e5;
@@ -32,6 +37,7 @@ export function expireLivePlans({now=Date.now(),withinTransaction=false}={}) {
       expired++;
     }
     const deleted=db.prepare("DELETE FROM judge_cases WHERE json_extract(body,'$.expired')=1 AND julianday(json_extract(body,'$.expiresAt'))<julianday(?)").run(new Date(now-TOMBSTONE_TTL_MS).toISOString()).changes;
+    db.prepare("DELETE FROM audience_reach WHERE case_id NOT IN (SELECT id FROM judge_cases WHERE json_extract(body,'$.expired') IS NOT 1)").run();
     if(expired||deleted) experimentCache.clear();
     return {expired,deleted};
   };
@@ -237,6 +243,8 @@ export function judgeExperiment(record,raw={},options={}) {
 // requests reuse a stored result. Quotas still apply first; any publish or unpublish
 // clears the cache.
 const experimentCache=new Map(),analysisCache=new Map(),EXPERIMENT_CACHE_MAX=300;
+const reachRuns=new Map(),REACH_DAILY_CAP=60;
+export function loadReach(caseId){const row=db.prepare('SELECT body FROM audience_reach WHERE case_id=?').get(caseId);return row?JSON.parse(row.body):null;}
 const sortedJson=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 export function registerJudgeRoutes(app) {
   const handle=fn=>(req,res)=>{try{fn(req,res);}catch(error){
@@ -257,9 +265,10 @@ export function registerJudgeRoutes(app) {
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
     const key=`${record.id}|${record.createdAt??''}`;let analysis=analysisCache.get(key);
     if(!analysis){analysis=analyzeDecision(record.snapshot,{feeBasis:record.feeBasis});if(analysisCache.size>=EXPERIMENT_CACHE_MAX)analysisCache.delete(analysisCache.keys().next().value);analysisCache.set(key,analysis);}
-    res.json({...record,analysis});
+    const reach=loadReach(record.id);
+    res.json({...record,analysis,...(reach?{reach}:{})});
   }));
-  app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);experimentCache.clear();res.json({unpublished:true});}));
+  app.delete('/api/judge/cases/:id',handle((req,res)=>{if(!loadJudgeCase(req.params.id))throw fault('Published judge case not found.',404);db.prepare('DELETE FROM judge_cases WHERE id=?').run(req.params.id);db.prepare('DELETE FROM audience_reach WHERE case_id=?').run(req.params.id);experimentCache.clear();res.json({unpublished:true});}));
   app.post('/api/judge/cases/:id/experiment',handle((req,res)=>{
     const record=loadJudgeCase(req.params.id);if(!record)throw fault('Published judge case not found.',404);
     const minute=Math.floor(Date.now()/60000),address=digest(req.ip??'unknown');
@@ -273,4 +282,36 @@ export function registerJudgeRoutes(app) {
     else{result=judgeExperiment(record,req.body);if(experimentCache.size>=EXPERIMENT_CACHE_MAX)experimentCache.delete(experimentCache.keys().next().value);experimentCache.set(key,result);res.set('X-Cache','miss');}
     res.json(result);
   }));
+  // Audience reach: three Qloo calls for the case's bookable bill, made once and saved. A
+  // repeat request, from anyone, returns the saved result; concurrent requests share one run.
+  app.post('/api/judge/cases/:id/reach',async(req,res)=>{
+    let record;
+    try{record=loadJudgeCase(req.params.id);}catch(error){return res.status(error.status??500).json({error:error.message});}
+    if(!record)return res.status(404).json({error:'Published judge case not found.'});
+    const saved=loadReach(record.id);if(saved)return res.json({reach:saved,cached:true});
+    if(record.snapshot.memo.slate?.feasible!==true)return res.status(409).json({error:'Only a plan with a bookable bill has an audience to map.'});
+    if(!isMock()&&!process.env.QLOO_API_KEY)return res.status(503).json({error:'Live Qloo research is not configured on this server.'});
+    let pending=reachRuns.get(record.id);
+    if(!pending){
+      const now=Date.now(),tenMinutes=Math.floor(now/6e5),day=Math.floor(now/864e5),who=digest(req.ip??'unknown');
+      const rules=[{key:`reach:${tenMinutes}:${who}`,limit:3,expires:(tenMinutes+1)*6e5},{key:`reach-global:${day}`,limit:REACH_DAILY_CAP,expires:(day+1)*864e5}];
+      if(!consumeQuota(rules,now)){res.set('Retry-After','600');return res.status(429).json({error:'Audience maps are limited to 3 every 10 minutes per visitor, under a shared daily cap that protects the Qloo quota.'});}
+      pending=(async()=>{
+        try{
+          const reach=await buildReach(record.snapshot,new Run({budget:REACH_CALLS,deadlineMs:60000,receiptPrefix:'b'}));
+          if(!reach.groups.some(group=>group.leads.length))throw Object.assign(new Error('Qloo returned no brands, places or podcasts for this bill. Try again later.'),{status:502});
+          db.prepare('INSERT INTO audience_reach(case_id,body) VALUES(?,?) ON CONFLICT(case_id) DO NOTHING').run(record.id,JSON.stringify(reach));
+          return loadReach(record.id);
+        }catch(error){refundQuota(rules);throw error;}
+        finally{reachRuns.delete(record.id);}
+      })();
+      reachRuns.set(record.id,pending);
+    }
+    try{res.status(201).json({reach:await pending,cached:false});}
+    catch(error){
+      if(Number.isInteger(error?.status)&&error.status>=400&&error.status<600)return res.status(error.status).json({error:error.message});
+      console.error(JSON.stringify({level:'error',requestId:req.id,message:'Audience reach failed'}));
+      res.status(502).json({error:'Qloo could not map this audience just now. The plan itself is unchanged. Try again later.'});
+    }
+  });
 }

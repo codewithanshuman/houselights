@@ -20,7 +20,7 @@ export function accessMiddleware(req, res, next) {
   if (!req.path.startsWith('/api/')) return next();
   res.set('Cache-Control', 'no-store');
   const ballot = /^\/api\/reviews\/[\w-]+\/ballot$/.test(req.path);
-  const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/(experiment|autopilot)$/.test(req.path);
+  const judgeExperiment = req.method === 'POST' && /^\/api\/judge\/cases\/[a-f0-9]{24}\/(experiment|autopilot|reach)$/.test(req.path);
   const livePlan = req.method === 'POST' && req.path === '/api/plan';
   const privateRead = /^\/api\/(pipeline|campaign|studies|events)(\/|$)/.test(req.path) ||
     (req.path.startsWith('/api/experiments') && !/^\/api\/experiments\/public(?:\/|$)/.test(req.path));

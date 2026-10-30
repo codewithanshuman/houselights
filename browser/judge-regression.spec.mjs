@@ -1274,4 +1274,53 @@ test.describe('Booking Desk: plan your show', () => {
     const small = await page.locator('#plan-form button, #plan-form input, #plan-result button').evaluateAll(nodes => nodes.filter(node => { const r = node.getBoundingClientRect(); return r.width && r.height && r.height < 40 && node.type !== 'radio'; }).length);
     expect(small).toBe(0);
   });
+
+  test('Qloo maps the booked bill’s fans beyond music, once, with the act behind each lead', { tag: '@cross-browser' }, async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    const reach = page.locator('#reach');
+    await expect(reach.locator('h3')).toHaveText('Who this bill reaches');
+    await expect(reach).toContainText('What fans of Michael Kiwanuka + Sault like beyond music');
+    const run = reach.getByRole('button', { name: /Map this crowd with Qloo/ });
+    if (await run.count()) {
+      const sent = page.waitForRequest(request => request.url().endsWith(`/api/judge/cases/${tracedCaseId}/reach`) && request.method() === 'POST');
+      await run.click();
+      await sent;
+      await expect(page.locator('#reach-title')).toBeFocused();
+      await expect(page.locator('#result-status')).toHaveText('Audience mapped: sponsor leads, places and podcasts for fans of this bill.');
+    }
+    await expect(reach.locator('.reach-card')).toHaveCount(3);
+    await expect(reach.locator('.reach-card .solid-kicker')).toHaveText(['Sponsor leads', 'Places in the city', 'Podcasts to advertise on']);
+    await expect(reach.locator('.reach-line')).toContainText(/^Fans of this bill favour .+, listen to .+ and go to .+\.$/);
+    await expect(reach.locator('.reach-note')).toContainText('Synthetic development data, not from Qloo.');
+    await expect(reach.locator('.reach-note')).toContainText('They do not change the bill.');
+    const mix = reach.locator('.reach-mix').first();
+    await expect(mix).toHaveAttribute('aria-label', /^Qloo explanation: Michael Kiwanuka \d+%, Sault \d+%$/);
+    await expect(mix.locator('span')).toHaveCount(2);
+    await expect(reach.locator('.reach-legend li').first()).toContainText('Michael Kiwanuka');
+    await reach.locator('.reach-card[data-domain="brand"] .reach-receipt').click();
+    await expect(page.locator('#receipt-title')).toHaveText('Brands fans of this bill favour');
+    await expect(page.locator('#receipt-body thead')).toContainText('Name');
+    await page.locator('#receipt-close').click();
+    // Saved beside the plan: a reload shows the same leads with no button and no new request.
+    let posted = false;
+    page.on('request', request => { if (request.url().endsWith('/reach') && request.method() === 'POST') posted = true; });
+    await page.reload();
+    await expect(page.locator('#reach .reach-card')).toHaveCount(3);
+    await expect(page.locator('#reach-run')).toHaveCount(0);
+    expect(posted).toBe(false);
+    // Dropping an act says the leads belong to the original bill.
+    await page.getByRole('button', { name: 'Drop Sault and rebook' }).click();
+    await expect(page.locator('.reach-changed')).toHaveText('These leads are for the original bill. The changed bill above would reach a different crowd.');
+  });
+
+  test('a fresh live plan maps its crowd as soon as the bill is ready', async ({ page }) => {
+    await page.goto(`${origin}/judge.html`);
+    await page.fill('#plan-city', 'Sheffield');
+    await page.fill('#plan-anchor', 'Arlo Parks');
+    await page.fill('#plan-budget', '12000');
+    await page.locator('#plan-submit').click();
+    await expect(page.locator('.result-meta')).toContainText('Sheffield', { timeout: 30000 });
+    await expect(page.locator('#reach .reach-card')).toHaveCount(3, { timeout: 15000 });
+    await expect(page.locator('#reach-run')).toHaveCount(0);
+  });
 });

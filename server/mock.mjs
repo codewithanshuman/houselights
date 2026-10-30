@@ -28,15 +28,17 @@ export function mockCall(tool, args) {
     case 'entity_tags': return envelope(['indie rock', 'dream pop', 'lo-fi'].map(name => ({ name })));
     case 'audience_demographics': return envelope([{ name: 'age 25-34' }]);
     case 'recommend': {
+      // Synthetic affinity and per-signal explainability, shaped like Qloo's, for non-artist leads.
+      const explain = i => ({ affinity: .95 - i * .01, explainability: { 'signal.interests.entities': (args.signals ?? []).map(id => ({ entity_id: id, score: .3 + (h(`${id}:${i}`) % 40) / 100 })) } });
       if (args.target_type === 'place') {
         const centers = { London: [51.5074, -.1278], Paris: [48.8566, 2.3522], Berlin: [52.52, 13.405], Amsterdam: [52.3676, 4.9041] };
         const [lat, lon] = centers[args.filter_location] || [40, -73];
         return envelope([1, 2, 3].map(i => ({ name: `Mock Venue ${i} · ${args.filter_location}`, entity_id: `mock-v-${h(args.filter_location)}-${i}`,
-          type: 'urn:entity:place', location: { latitude: lat + i * .004, longitude: lon + i * .004 } })));
+          type: 'urn:entity:place', location: { latitude: lat + i * .004, longitude: lon + i * .004 }, properties: { address: `${i} Mock Street, ${args.filter_location}` }, ...explain(i) })));
       }
       if (args.target_type === 'artist') return envelope([1, 2, 3].map(i => entity(`Mock Discovery ${i}`, `mock-d${i}`, .2 + i * .1)));
       const label = String(args.target_type || 'entity').replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase());
-      return envelope([1, 2, 3].map(i => ({ name: `Mock ${label} ${i}`, entity_id: `mock-${args.target_type}-${i}`, type: `urn:entity:${args.target_type}` })));
+      return envelope([1, 2, 3].map(i => ({ name: `Mock ${label} ${i}`, entity_id: `mock-${args.target_type}-${i}`, type: `urn:entity:${args.target_type}`, ...explain(i) })));
     }
     // Saved mock decisions must keep their IDs after a server restart, when the
     // process-local describe registry is empty. Ranking does not re-resolve IDs.
