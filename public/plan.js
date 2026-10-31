@@ -462,14 +462,25 @@
   // The result runs long on a phone, so a small bar stays in reach. It scrolls rather than
   // changing the hash, which keeps the shared plan link as it was.
   const JUMPS=[['ask-agent','Tell the agent'],['why','Why this bill'],['solid-title','How solid'],['lineup-title','The bill'],['reach','Rooms and crowd'],['next-title','The money']];
-  const jumpLinks=()=>`<nav class="result-jump" aria-label="On this plan">${JUMPS.map(([id,label])=>`<a href="#${id}" data-jump="${id}">${label}</a>`).join('')}</nav>`;
+  const jumpLinks=()=>`<nav class="result-jump" aria-label="On this plan">${JUMPS.map(([id,label])=>`<a href="#${id}" data-section="${id}">${label}</a>`).join('')}</nav>`;
   function wireJumps(){
-    document.querySelectorAll('[data-jump]').forEach(link=>{
-      const target=$(link.dataset.jump);
+    document.querySelectorAll('[data-section]').forEach(link=>{
+      const target=$(link.dataset.section);
       if(!target){link.remove();return;}
       link.addEventListener('click',event=>{event.preventDefault();target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});});
     });
+    markJump();
   }
+  // The bar shows the section in view and, on a phone, slides to keep that link on screen.
+  let jumpFrame=0;
+  function markJump(){
+    jumpFrame=0;
+    const links=[...document.querySelectorAll('[data-section]')];
+    const current=links.filter(link=>$(link.dataset.section)?.getBoundingClientRect().top<=200).pop();
+    for(const link of links)link===current?link.setAttribute('aria-current','true'):link.removeAttribute('aria-current');
+    if(current&&current.parentElement.scrollWidth>current.parentElement.clientWidth)current.parentElement.scrollLeft=current.offsetLeft-current.parentElement.offsetLeft-12;
+  }
+  addEventListener('scroll',()=>{jumpFrame||=requestAnimationFrame(markJump);},{passive:true});
   function askBox(){
     if(!view.base.memo.slate.feasible||view.qlooOff)return '';
     const bill=billNames(view.base),first=bill[0]??'';
