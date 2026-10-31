@@ -1,5 +1,11 @@
 # Sharing an existing Oracle server
 
+## Deployment of 06e4950 — 31 October 2026
+
+The public host runs `06e4950`, and `/healthz` over public HTTPS reports it. This release changes the interface only. The backup `pre-06e4950` was verified and copied off-host, the rollback drill reported `65cbb72` with 12 cases and no errors, other containers and the stream were unchanged, and all 90 release checks passed. Houselights keeps `pre-06e4950` and `pre-65cbb72`. Disk is at 83%.
+
+**Rollback:** tag `houselights-shared:pre-06e4950` as `houselights-shared:local`, set `RELEASE_COMMIT` to the full `65cbb72` commit, and recreate only the Houselights service.
+
 ## Deployment of 65cbb72 — 31 October 2026
 
 The public host runs `65cbb72`, and `/healthz` over public HTTPS reports it. Releases `f305b6b`, `0861b9d`, `8fcc4ad`, `70a4cff`, `e1e45d0` and `1b30b52` went out earlier the same night, each with the same procedure. Together they add the MusicBrainz act check, the budget-aware Qloo search through Insights, rooms to book, Tell the agent, why-not answers and the overrule, and the money on the promoter brief.
