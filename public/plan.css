@@ -1107,3 +1107,20 @@
 .plan-try{margin-top:16px}
 .plan-try p{margin:0 0 8px;font-size:14px;color:var(--pp-muted)}
 .plan-try [role=group]{display:flex;flex-wrap:wrap;gap:6px}
+
+/* The result's section bar, the phone shortcut to the form and tidier suggestion chips. */
+.result-jump{position:sticky;top:80px;z-index:30;display:flex;gap:2px;width:fit-content;max-width:100%;margin:0 auto 24px;padding:4px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--pp-line);border-radius:14px;background:#FFFFFFE6;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 8px 20px -12px #2A1A6E59}
+.result-jump::-webkit-scrollbar{display:none}
+.result-jump a{flex:none;display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:10px;color:var(--pp-ink);font:500 14px/20px var(--font-ui);text-decoration:none;transition:background .2s,color .2s}
+.result-jump a:hover{background:#F1EEFC;color:#4F2FC4}
+.plan-result :is(#ask-agent,#why,#solid-title,#lineup-title,#reach,#next-title){scroll-margin-top:148px}
+.plan-jump{display:none;margin:20px 0 24px}
+.plan-jump .sketch-btn{width:100%;text-decoration:none}
+#plan-form{scroll-margin-top:88px}
+@media (max-width:900px){.plan-jump{display:block}}
+@media (max-width:640px){
+  .result-jump{top:72px;margin-left:-4px;margin-right:-4px;max-width:calc(100% + 8px)}
+  .result-jump a{min-height:40px}
+  .ask-tries .preset{flex:1 1 100%;min-height:44px;padding:10px 14px;border-radius:12px;line-height:20px;text-align:left}
+}
+@media print{.result-jump,.plan-jump{display:none}}

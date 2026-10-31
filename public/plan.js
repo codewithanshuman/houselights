@@ -123,6 +123,7 @@
         <p class="compare-fee">${fee!=null?e(usd(fee)):'&nbsp;'}</p>
       </div>`;
     result.innerHTML=`
+      ${jumpLinks()}
       <div class="decision">
         <div class="ticket-stage ${view.qlooOff?'is-qloo-off':'is-qloo-on'}${view.flip?' is-swapping':''}">
           <span class="ticket-poster"><img class="tk-on" src="/assets/brand/ticket-vinyl-on.webp" alt="" width="446" height="820"><img class="tk-off" src="/assets/brand/ticket-vinyl.webp" alt="" width="445" height="820"></span>
@@ -433,7 +434,7 @@
     const selected=view.current.memo.slate.selectedIds,items=[...itemsOf(view.current)].sort((a,b)=>(a.rank??99)-(b.rank??99));
     const booked=selected.map(id=>items.find(item=>item.id===id)).filter(Boolean),others=items.filter(item=>!selected.includes(item.id));
     return `<div class="lineup">
-        <h3 class="act-heading">The bill</h3>
+        <h3 class="act-heading" id="lineup-title">The bill</h3>
         <ul class="act-grid" aria-label="Selected acts">${booked.map(card).join('')||'<li class="act-empty">No act can be selected under these rules.</li>'}</ul>
         ${others.length?`<details class="act-others"${matchMedia('(min-width: 700px)').matches?' open':''}><summary>The other ${others.length} candidates${itemsOf(view.base).every(item=>item.evidence?.rank===true&&Number.isFinite(item.fit)&&item.rankCoverage?.complete!==false)?' Qloo ranked':''}</summary>
           <div class="rank-table">
@@ -458,6 +459,17 @@
   }
   // What MusicBrainz said about this plan's acts. Only checked acts are counted.
   // Tell the agent. The server only names the steps; each one runs through the same controls.
+  // The result runs long on a phone, so a small bar stays in reach. It scrolls rather than
+  // changing the hash, which keeps the shared plan link as it was.
+  const JUMPS=[['ask-agent','Tell the agent'],['why','Why this bill'],['solid-title','How solid'],['lineup-title','The bill'],['reach','Rooms and crowd'],['next-title','The money']];
+  const jumpLinks=()=>`<nav class="result-jump" aria-label="On this plan">${JUMPS.map(([id,label])=>`<a href="#${id}" data-jump="${id}">${label}</a>`).join('')}</nav>`;
+  function wireJumps(){
+    document.querySelectorAll('[data-jump]').forEach(link=>{
+      const target=$(link.dataset.jump);
+      if(!target){link.remove();return;}
+      link.addEventListener('click',event=>{event.preventDefault();target.scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});});
+    });
+  }
   function askBox(){
     if(!view.base.memo.slate.feasible||view.qlooOff)return '';
     const bill=billNames(view.base),first=bill[0]??'';
@@ -665,6 +677,7 @@
   }
 
   function wire(){
+    wireJumps();
     const owner=view,generation=caseRequest,current=()=>view===owner&&generation===caseRequest;
     const say=text=>{const status=$('result-status');if(status)status.textContent=text;};
     $('plan-switch').addEventListener('click',async()=>{
@@ -859,8 +872,8 @@
       tagline.querySelectorAll('.word').forEach(word=>light.observe(word));
     }
   }
-  document.querySelectorAll('a[href="#planner"]').forEach(link=>link.addEventListener('click',event=>{
-    event.preventDefault();$('planner').scrollIntoView({block:'start',behavior:reduced()?'instant':'smooth'});$('plan-city').focus({preventScroll:true});
+  document.querySelectorAll('a[href="#planner"],a[href="#plan-form"]').forEach(link=>link.addEventListener('click',event=>{
+    event.preventDefault();$(link.hash.slice(1)).scrollIntoView({block:'start',behavior:link.hash==='#plan-form'||reduced()?'instant':'smooth'});$('plan-city').focus({preventScroll:true});
   }));
 
   // ── Start ──────────────────────────────────────────────────────────────────────

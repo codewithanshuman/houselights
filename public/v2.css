@@ -467,3 +467,4 @@ body.app-shell .app-top .app-crumbs{margin-right:auto}
 .v2:not(.nf-page) .sketch-btn:active{filter:brightness(.96);transform:translateY(1px);box-shadow:inset 0 1px 0 #FFFFFF33,0 1px 2px #2A1A6E33}
 .v2:not(.nf-page) .sketch-btn:focus-visible{outline:3px solid #8B5CF6;outline-offset:3px}
 .v2:not(.nf-page) .site-cta.sketch-btn{padding:8px 20px!important;min-height:44px!important}
+.v2.app-shell main .access-bar label:has(#source-plan){flex-basis:100%}
