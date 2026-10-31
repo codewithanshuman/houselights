@@ -1,5 +1,11 @@
 # Sharing an existing Oracle server
 
+## Deployment of d12deb2 — 31 October 2026
+
+The public host runs `d12deb2`, and `/healthz` over public HTTPS reports it. This release changes the interface only. The backup `pre-d12deb2` was verified and copied off-host, the rollback drill reported `06e4950` with 12 cases and no errors, other containers and the stream were unchanged, and all 90 release checks passed. Houselights keeps `pre-d12deb2` and `pre-06e4950`. Disk is at 83%.
+
+**Rollback:** tag `houselights-shared:pre-d12deb2` as `houselights-shared:local`, set `RELEASE_COMMIT` to the full `06e4950` commit, and recreate only the Houselights service.
+
 ## Deployment of 06e4950 — 31 October 2026
 
 The public host runs `06e4950`, and `/healthz` over public HTTPS reports it. This release changes the interface only. The backup `pre-06e4950` was verified and copied off-host, the rollback drill reported `65cbb72` with 12 cases and no errors, other containers and the stream were unchanged, and all 90 release checks passed. Houselights keeps `pre-06e4950` and `pre-65cbb72`. Disk is at 83%.
